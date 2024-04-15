@@ -134,3 +134,5 @@ read_seq_write_vec(f'{BASE_DIR}modifications.txt', f'{BASE_DIR}modifications_vec
 read_seq_write_vec(f'{BASE_DIR}modifications_enrich.txt', f'{BASE_DIR}modifications_enrich_vec.npy', "Text",
                    "\nAMITAY_END\n"
                    )
+
+

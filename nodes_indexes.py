@@ -23,7 +23,7 @@ def get_types_values():
 
 
 node_colors = {
-    NodeTypes.reaction: "red",
+    NodeTypes.reaction: "pink",
     NodeTypes.protein: "blue",
     NodeTypes.dna: "green",
     NodeTypes.molecule: "yellow",
@@ -155,13 +155,11 @@ class NodesIndexManager:
             if load_vectors:
                 vec_file = f'{root}/{name}_vec.npy'
                 if os.path.exists(vec_file):
-                    print(f"Loading {vec_file}")
                     vecs = np.load(vec_file)
                     for i, vec in enumerate(vecs):
                         self.vector.update({index + i: vec})
                 else:
                     self.vector.update({index: None for index in range(index, index + len(lines))})
-            print(name, len(lines), len(types))
             for line_index, line in enumerate(lines):
                 *node, count = line.split(":")
                 node = ":".join(node)
@@ -193,6 +191,8 @@ class NodesIndexManager:
         if node not in self.node_to_type:
             return None
         return self.node_to_type[node].lower()
+    def get_index_type(self, index):
+        return self.get_type(self.get_node(index))
 
     def sample_closest_n_from_k(self, index, n=50, k=5):
         type_ = self.get_type(index)

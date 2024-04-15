@@ -117,24 +117,38 @@ def get_nx_for_output_prediction_task(reaction, node_index_manager: NodesIndexMa
     fake_indexes = list(set(fake_indexes))
     fake_indexes = [x for x in fake_indexes if x not in real_vectors_indexes]
     output_vectors = [node_index_manager.vector[i] for i in real_vectors_indexes + fake_indexes]
-    output_vectors = np.stack(output_vectors)
+    output_vectors = np.stack(output_vectors) if len(output_vectors) else output_vectors
     output_labels = [1] * len(real_vectors_indexes) + [0] * len(fake_indexes)
     output_labels = torch.tensor(output_labels, dtype=torch.float32)
-    return G, output_vectors, output_labels
+    return G, output_vectors, output_labels, real_vectors_indexes + fake_indexes
 
 
-def plot_graph(G, ax, title=""):
-    pos = nx.spring_layout(G)
+def plot_graph(G, node_index_manager, ax, title=""):
+    # pos = nx.spring_layout(G)
+    # add order type for each node:
+    order_map = {
+        REACTION: 3,
+        NT.text: 2,
+        NT.protein: 1,
+        NT.molecule: 1,
+        NT.dna: 1,
+        NT.location: 0,
+    }
+    for id, data in G.nodes(data=True):
+        data["order"] = order_map[data["type"]]
 
+    pos = nx.multipartite_layout(G, subset_key="order")
     node_types = nx.get_node_attributes(G, "type")
+    nodes_colors = [node_colors[node_type] for node_type in node_types.values()]
+    nodes_labels = {n: node_index_manager.get_node(data["id"]) for n, data in G.nodes(data=True)}
+    nx.draw_networkx_nodes(G, pos, node_size=2000, ax=ax,
+                           node_color=nodes_colors, alpha=0.5)
 
-    nx.draw_networkx_nodes(G, pos, node_size=150, ax=ax,
-                           node_color=[node_colors[node_type] for node_type in node_types.values()])
     nx.draw_networkx_edges(G, pos, width=1, ax=ax)
-    nx.draw_networkx_labels(G, pos, font_size=10, ax=ax)
-    edge_labels = nx.get_edge_attributes(G, "type")
-    nx.draw_networkx_edge_labels(G, pos, ax=ax, edge_labels=edge_labels)
-    ax.set_title(title)
+    nx.draw_networkx_labels(G, pos, nodes_labels, font_size=20, ax=ax)
+    # edge_labels = nx.get_edge_attributes(G, "type")
+    # nx.draw_networkx_edge_labels(G, pos, ax=ax, edge_labels=edge_labels)
+    ax.set_title(title, fontsize=20)
     ax.axis("off")
 
 
@@ -173,11 +187,30 @@ def reaction_str_to_graph(reaction: str, node_index_manager: NodesIndexManager, 
     return nx_to_torch_geometric(g)
 
 
-def build_dataset_for_node_output_task(reaction: str, node_index_manager: NodesIndexManager):
+def build_dataset_for_node_output_task(reaction: str, node_index_manager: NodesIndexManager, vis: bool = False):
     reaction_dict = eval(reaction)
     reaction = reaction_from_dict(reaction_dict)
-    g, output_vec, y = get_nx_for_output_prediction_task(reaction, node_index_manager)
-    return nx_to_torch_geometric(g, output_vec=output_vec, y=y)
+    g, output_vec, y, indexes = get_nx_for_output_prediction_task(reaction, node_index_manager)
+    output_types = [node_index_manager.get_index_type(i) for i in indexes]
+    if vis:
+        fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(30, 15))
+        plot_graph(g, node_index_manager, ax1, "Reaction Input")
+        g2 = nx.DiGraph()
+        for label_, index_ in zip(y, indexes):
+            g2.add_node(index_, name=node_index_manager.get_node(index_), label=label_)
+        pos = nx.spring_layout(g2)
+        nodes_labels = {n: data["name"] for n, data in g2.nodes(data=True)}
+        nodes_colors = ["red" if data["label"] == 0 else "green" for n, data in g2.nodes(data=True)]
+        nx.draw_networkx_nodes(g2, pos, node_size=2000, ax=ax2,
+                               node_color=nodes_colors, alpha=0.5)
+
+        nx.draw_networkx_labels(g2, pos, nodes_labels, font_size=20, ax=ax2)
+        ax2.set_title("Output Space", fontsize=20)
+        ax2.axis("off")
+        fig.suptitle(reaction.name, fontsize=20)
+        fig.tight_layout()
+        plt.show()
+    return nx_to_torch_geometric(g, output_vec=output_vec, y=y, output_types=output_types)
 
 
 class ReactionDataset:
@@ -187,11 +220,14 @@ class ReactionDataset:
         self.reactions = []
         with open(f'{root}/reaction.txt') as f:
             lines = f.readlines()
+        import random
+        # random.seed(42)
+        random.shuffle(lines)
         if sample > 0:
             lines = lines[:sample]
         for line in tqdm(lines):
             if task == "output_node":
-                self.reactions.append(build_dataset_for_node_output_task(line, self.node_index_manager))
+                self.reactions.append(build_dataset_for_node_output_task(line, self.node_index_manager, VIS))
             else:
                 self.reactions.append(reaction_str_to_graph(line, self.node_index_manager, VIS))
 
@@ -203,6 +239,7 @@ class ReactionDataset:
 
 
 if __name__ == "__main__":
-    dataset = ReactionDataset(sample=10, task="output_node")
+    dataset = ReactionDataset(sample=50, task="output_node")
     for data in dataset:
-        print(data)
+        # print(data)
+        pass
