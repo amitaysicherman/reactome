@@ -10,7 +10,12 @@ EMBEDDING_DATA_TYPES = [DNA, PROTEIN, MOLECULE, TEXT]
 
 LOCATION = "location"
 DATA_TYPES = EMBEDDING_DATA_TYPES + [LOCATION] + [UNKNOWN_ENTITY_TYPE]
-
+TYPE_TO_VEC_DIM = {
+    PROTEIN: 1024,
+    DNA: 768,
+    MOLECULE: 768,
+    TEXT: 768
+}
 
 def db_to_type(db_name):
     db_name = db_name.lower()

@@ -7,7 +7,7 @@ from collections import defaultdict
 from typing import Dict
 from matplotlib import pyplot as plt
 from common import DATA_TYPES, EMBEDDING_DATA_TYPES, PROTEIN, DNA, MOLECULE, TEXT, LOCATION, UNKNOWN_ENTITY_TYPE, \
-    REACTION, COMPLEX
+    REACTION, COMPLEX, TYPE_TO_VEC_DIM
 
 REACTION_NODE_ID = 0
 COMPLEX_NODE_ID = 1
@@ -122,7 +122,6 @@ def get_edges_values():
     return edges
 
 
-
 # def get_entity_reaction_type(type_, is_input=True, is_cat=False, to_complex=False):
 #     if is_cat:
 #         assert is_input
@@ -218,6 +217,8 @@ class NodesIndexManager:
             if dt in EMBEDDING_DATA_TYPES:
                 vec_file = f'{root}/{dt}_vec.npy'
                 vectors = np.load(vec_file)
+            elif dt == UNKNOWN_ENTITY_TYPE:
+                vectors = [np.zeros(TYPE_TO_VEC_DIM[PROTEIN]) for _ in range(len(lines))]
             else:
                 vectors = [None] * len(lines)
             for i, line in enumerate(lines):

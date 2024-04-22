@@ -70,6 +70,7 @@ class Scorer:
 class PartialFixedEmbedding(nn.Module):
     def __init__(self, node_index_manager: NodesIndexManager, learned_embedding_dim):
         super(PartialFixedEmbedding, self).__init__()
+        self.node_index_manager=node_index_manager
         self.embeddings = dict()
         for index in range(node_index_manager.index_count):
             node = node_index_manager.index_to_node[index]
@@ -80,6 +81,7 @@ class PartialFixedEmbedding(nn.Module):
                     nn.init.uniform_(torch.zeros(learned_embedding_dim), -1.0, 1.0).to(device))
 
     def forward(self, input):
+
         input = input.flatten()
         input = torch.stack([self.embeddings[i.item()] for i in input])
         return input

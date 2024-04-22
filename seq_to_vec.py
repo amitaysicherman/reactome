@@ -8,7 +8,7 @@ from npy_append_array import NpyAppendArray
 from tqdm import tqdm
 from transformers import T5Tokenizer, T5EncoderModel, AutoModel, AutoModelForMaskedLM, AutoTokenizer, BertConfig
 
-from common import EMBEDDING_DATA_TYPES, PROTEIN, DNA, MOLECULE, TEXT
+from common import EMBEDDING_DATA_TYPES, PROTEIN, DNA, MOLECULE, TEXT, TYPE_TO_VEC_DIM
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 MAX_LEN = 512
@@ -96,12 +96,7 @@ class BioText2Vec(ABCSeq2Vec):
             self.model.to(torch.float32)
 
 
-TYPE_TO_VEC_DIM = {
-    PROTEIN: 1024,
-    DNA: 768,
-    MOLECULE: 768,
-    TEXT: 768
-}
+
 
 
 class Seq2Vec:
