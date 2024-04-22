@@ -18,7 +18,7 @@ class Entity:
     complex_id: int = 0
 
     def get_unique_id(self):
-        return self.db + "_" + self.id
+        return self.db + "@" + self.id
 
     def to_dict(self):
         return {
@@ -73,6 +73,10 @@ def reaction_from_dict(d: dict) -> Reaction:
     return Reaction(name, inputs, outputs, catalysis)
 
 
+def reaction_from_str(s: str) -> Reaction:
+    return reaction_from_dict(eval(s))
+
+
 def feature_parser(feature) -> str:
     if isinstance(feature, pybiopax.biopax.FragmentFeature):
         return ""
@@ -83,8 +87,6 @@ def feature_parser(feature) -> str:
 
 
 def element_parser(element: pybiopax.biopax.PhysicalEntity, complex_location=None, complex_id=0):
-    if element.member_physical_entity:
-        element = element.member_physical_entity[0]  # TODO: get all set elements
     if not hasattr(element, "entity_reference") or not hasattr(element.entity_reference, "xref"):
         if hasattr(element, "xref"):
             for xref in element.xref:
@@ -122,6 +124,9 @@ def element_parser(element: pybiopax.biopax.PhysicalEntity, complex_location=Non
 
 def add_protein_or_complex(entity, complex_location=None, complex_id=0):
     elements = []
+    if entity.member_physical_entity:
+        entity = entity.member_physical_entity[0]  # TODO: get all set elements
+
     if isinstance(entity, pybiopax.biopax.Complex):
 
         if complex_location is None:
@@ -150,16 +155,19 @@ def catalysis_parser(catalysis_list: List[pybiopax.biopax.Catalysis]) -> List[Ca
 
 
 if __name__ == "__main__":
+
+    write_output = False
+
     input_file = '/home/amitay/PycharmProjects/reactome/data/biopax/Homo_sapiens.owl'  # R-HSA-3928608_level3.owl'  # R-HSA-8850529_level3.owl'  # '  # Homo_sapiens.owl'
-    output_file = "./data/items/reaction.txt"
-    if os.path.exists(output_file):
-        os.remove(output_file)
+    if write_output:
+        output_file = "./data/items/reaction.txt"
+        if os.path.exists(output_file):
+            os.remove(output_file)
     model = pybiopax.model_from_owl_file(input_file)
     reactions = list(model.get_objects_by_type(pybiopax.biopax.BiochemicalReaction))
     all_catalysis = list(model.get_objects_by_type(pybiopax.biopax.Catalysis))
 
     for i, reaction in tqdm(enumerate(reactions)):
-
         assert reaction.conversion_direction == "LEFT-TO-RIGHT"
         left_elements = []
         for entity in reaction.left:
@@ -172,5 +180,6 @@ if __name__ == "__main__":
         catalys_activities = catalysis_parser(catalys_activities)
 
         reaction_obj = Reaction(reaction.name[0], left_elements, right_elements, catalys_activities)
-        with open(output_file, "a") as f:
-            f.write(f'{reaction_obj.to_dict()}\n')
+        if write_output:
+            with open(output_file, "a") as f:
+                f.write(f'{reaction_obj.to_dict()}\n')

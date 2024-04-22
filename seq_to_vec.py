@@ -1,17 +1,26 @@
-from transformers import T5Tokenizer, T5EncoderModel, AutoTokenizer, AutoModel, AutoModelForMaskedLM, AutoTokenizer, \
-    BertConfig
-import re
-import torch
-from abc import ABC
-from npy_append_array import NpyAppendArray
 import os
+import re
+from abc import ABC
+
 import numpy as np
+import torch
+from npy_append_array import NpyAppendArray
 from tqdm import tqdm
+from transformers import T5Tokenizer, T5EncoderModel, AutoModel, AutoModelForMaskedLM, AutoTokenizer, BertConfig
+
+from common import EMBEDDING_DATA_TYPES, PROTEIN, DNA, MOLECULE, TEXT
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+MAX_LEN = 512
 
-MAX_LEN = 1024
-VEC_DIM = 1024
+
+# def clip_to_max_len(x: torch.Tensor, max_len: int = MAX_LEN):
+#     if x.shape[1] <= max_len:
+#         return x
+#     last_token = x[:, -1:]
+#     clipped_x = x[:, :max_len - 1]
+#     result = torch.cat([clipped_x, last_token], dim=1)
+#     return result
 
 
 class ABCSeq2Vec(ABC):
@@ -21,6 +30,9 @@ class ABCSeq2Vec(ABC):
 
     def to_vec(self, seq: str):
         inputs = self.tokenizer(seq, return_tensors='pt')["input_ids"].to(device)
+        if inputs.shape[1] > MAX_LEN:
+            return None
+        # inputs = clip_to_max_len(inputs)
         with torch.no_grad():
             hidden_states = self.model(inputs)[0]
         vec = torch.mean(hidden_states[0], dim=0)
@@ -28,8 +40,6 @@ class ABCSeq2Vec(ABC):
 
     def post_process(self, vec):
         vec = vec.detach().cpu().numpy().flatten()
-        if len(vec) < VEC_DIM:
-            vec = np.concatenate((vec, np.zeros(VEC_DIM - len(vec))))
         return vec.reshape(1, -1)
 
 
@@ -45,8 +55,13 @@ class Prot2vec(ABCSeq2Vec):
         # replace all rare/ambiguous amino acids by X and introduce white-space between all amino acids
         seq = [" ".join(list(re.sub(r"[UZOB]", "X", seq)))]
         ids = self.tokenizer(seq, add_special_tokens=True, padding="longest")
+
         input_ids = torch.tensor(ids['input_ids']).to(device)
         attention_mask = torch.tensor(ids['attention_mask']).to(device)
+        if input_ids.shape[1] > MAX_LEN:
+            return None
+        # input_ids = clip_to_max_len(input_ids)
+        # attention_mask = clip_to_max_len(attention_mask)
         with torch.no_grad():
             embedding_repr = self.model(input_ids=input_ids, attention_mask=attention_mask)
         vec = embedding_repr.last_hidden_state[0].mean(dim=0)
@@ -81,6 +96,14 @@ class BioText2Vec(ABCSeq2Vec):
             self.model.to(torch.float32)
 
 
+TYPE_TO_VEC_DIM = {
+    PROTEIN: 1024,
+    DNA: 768,
+    MOLECULE: 768,
+    TEXT: 768
+}
+
+
 class Seq2Vec:
     def __init__(self):
         self.prot2vec = Prot2vec()
@@ -89,50 +112,40 @@ class Seq2Vec:
         self.text2vec = BioText2Vec()
 
     def to_vec(self, seq: str, seq_type: str):
-        zeros = np.zeros((1, VEC_DIM))
+        zeros = np.zeros((1, TYPE_TO_VEC_DIM[seq_type]))
         if seq == "":
-            return zeros
-        if len(seq) > MAX_LEN:
-            seq = seq[:MAX_LEN]
-        if seq_type == "Protein":
-            return self.prot2vec.to_vec(seq)
-        elif seq_type == "DNA":
-            return self.dna2vec.to_vec(seq)
-        elif seq_type == "Molecule":
-            if len(seq) > 512:
-                seq = seq[:512]
-            return self.mol2vec.to_vec(seq)
-        elif seq_type == "Text":
-            return self.text2vec.to_vec(seq)
+            vec = zeros
+        if seq_type == PROTEIN:
+            vec = self.prot2vec.to_vec(seq)
+        elif seq_type == DNA:
+            vec = self.dna2vec.to_vec(seq)
+        elif seq_type == MOLECULE:
+            vec = self.mol2vec.to_vec(seq)
+        elif seq_type == TEXT:
+            vec = self.text2vec.to_vec(seq)
         else:
             print(f"Unknown sequence type: {seq_type}")
             return zeros
+        if vec is None:
+            return zeros
+        return vec
 
 
-seq2vec = Seq2Vec()
-
-
-def read_seq_write_vec(input_file_name, output_file_name, seq_type="", split_value="\n"):
+def read_seq_write_vec(seq2vec, input_file_name, output_file_name, seq_type):
     with open(input_file_name) as f:
-        seqs = f.read().split(split_value)
+        seqs = f.read().splitlines()
+
     if os.path.exists(output_file_name):
         os.remove(output_file_name)
 
     for seq in tqdm(seqs):
-        if seq_type == "":
-            seq_type, *seq = seq.split(" ")
-            seq = " ".join(seq)
         vec = seq2vec.to_vec(seq, seq_type)
         with NpyAppendArray(output_file_name) as f:
             f.append(vec)
 
 
-BASE_DIR = "./data/items/"
-read_seq_write_vec(f'{BASE_DIR}entities_sequences.txt', f'{BASE_DIR}entities_vec.npy')
-read_seq_write_vec(f'{BASE_DIR}catalyst_activities_sequences.txt', f'{BASE_DIR}catalyst_activities_vec.npy')
-read_seq_write_vec(f'{BASE_DIR}modifications.txt', f'{BASE_DIR}modifications_vec.npy', "Text")
-read_seq_write_vec(f'{BASE_DIR}modifications_enrich.txt', f'{BASE_DIR}modifications_enrich_vec.npy', "Text",
-                   "\nAMITAY_END\n"
-                   )
-
-
+if __name__ == "__main__":
+    seq2vec = Seq2Vec()
+    BASE_DIR = "data/items"
+    for dt in EMBEDDING_DATA_TYPES:
+        read_seq_write_vec(seq2vec, f'{BASE_DIR}/{dt}_sequences.txt', f'{BASE_DIR}/{dt}_vec.npy', dt)

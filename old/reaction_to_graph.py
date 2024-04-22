@@ -1,5 +1,9 @@
-from nodes_indexes import NodesIndexManager, REACTION_NODE_ID, EdgeTypes, NodeTypes, \
-    get_entity_reaction_type, get_location_to_entity, node_colors, bind_edge
+import dataclasses
+
+from index_manger import NodesIndexManager, REACTION_NODE_ID, EdgeTypes, NodeTypes, \
+    get_entity_reaction_type, get_location_to_entity, node_colors, bind_edge, COMPLEX_NODE_ID
+
+from tagging import tag, ReactionTag
 from collections import defaultdict
 
 import matplotlib.pyplot as plt
@@ -123,20 +127,107 @@ def get_nx_for_output_prediction_task(reaction, node_index_manager: NodesIndexMa
     return G, output_vectors, output_labels, real_vectors_indexes + fake_indexes
 
 
+def get_nx_for_tags_prediction_task(reaction, node_index_manager: NodesIndexManager):
+    tags = tag(reaction)
+    G = nx.DiGraph()
+    mem_map = dict()
+    G.add_node(0, id=REACTION_NODE_ID, type=REACTION)
+    complexes = set()
+    catalysis_nodes = sum([c.entities for c in reaction.catalysis], [])
+
+    for element in reaction.inputs + catalysis_nodes:
+        complexes.add(element.complex_id)
+    complexes_to_node_id = dict()
+    for complex_id in complexes:
+        if complex_id == 0:
+            continue
+        n = len(G.nodes)
+        complexes_to_node_id[complex_id] = n
+
+        G.add_node(n, id=COMPLEX_NODE_ID, type=NT.complex)
+        G.add_edge(n, REACTION_NODE_ID, type=ET.complex_to_reaction)
+    is_cat_list = [False] * len(reaction.inputs) + [True] * len(catalysis_nodes)
+    for element, is_cat in zip(reaction.inputs + catalysis_nodes, is_cat_list):
+        n = len(G.nodes)
+        node_type = node_index_manager.get_type(element.get_unique_id())
+        G.add_node(n, id=node_index_manager.get_index(element.get_unique_id()),
+                   type=node_type)
+
+        if element.complex_id == 0:
+            edge_type = get_entity_reaction_type(node_type, is_input=True, is_cat=is_cat, to_complex=False)
+            G.add_edge(n, REACTION_NODE_ID, type=edge_type)
+        else:
+            edge_type = get_entity_reaction_type(node_type, is_input=True, is_cat=is_cat, to_complex=True)
+            G.add_edge(n, complexes_to_node_id[element.complex_id], type=edge_type)
+
+        if element.location in mem_map:
+            n2 = mem_map[element.location]
+        else:
+            n2 = len(G.nodes)
+            mem_map[element.location] = n2
+            G.add_node(n2, id=node_index_manager.get_index(element.location), type=NT.location)
+            G.add_edge(n2, n2, type=ET.location_self_loop)
+        G.add_edge(n2, n, type=get_location_to_entity(node_type))
+        if node_type == NT.protein:
+            for modification in element.modifications:
+                modification_index = node_index_manager.get_index(modification)
+                if modification_index in mem_map:
+                    n3 = mem_map[modification_index]
+                else:
+                    n3 = len(G.nodes)
+                    mem_map[modification_index] = n3
+                    G.add_node(n3, id=modification_index, type=NT.text)
+                    G.add_edge(n3, n3, type=ET.modification_self_loop)
+                assert node_index_manager.get_type(modification) == NT.text
+                # assert node_type == NT.protein, f"Node type is {node_type}"
+                G.add_edge(n3, n, type=ET.modification_to_protein)
+
+    catalysis_activity_nodes = [node_index_manager.get_index(c.activity) for c in reaction.catalysis]
+    for activity_index in catalysis_activity_nodes:
+        if activity_index in mem_map:
+            n = mem_map[activity_index]
+        else:
+            n = len(G.nodes)
+            mem_map[activity_index] = n
+            G.add_node(n, id=activity_index, type=NT.text)
+            G.add_edge(n, n, type=ET.catalysis_activity_self_loop)
+        G.add_edge(n, REACTION_NODE_ID, type=ET.catalysis_activity_to_reaction)
+
+    return G, tags
+
+
+def build_dataset_for_tags_prediction_task(reaction: str, node_index_manager: NodesIndexManager, vis: bool = False):
+    reaction_dict = eval(reaction)
+    reaction = reaction_from_dict(reaction_dict)
+    print(reaction.name)
+    g, tags = get_nx_for_tags_prediction_task(reaction, node_index_manager)
+
+    if vis:
+        title = f"{reaction.name}\n{tags}"
+        fig, ax = plt.subplots(1, 1, figsize=(15, 15))
+        plot_graph(g, node_index_manager, ax, title)
+        plt.show()
+    return nx_to_torch_geometric(g, tags=torch.Tensor(dataclasses.astuple(tags)).to(torch.float32))
+
+
 def plot_graph(G, node_index_manager, ax, title=""):
-    # pos = nx.spring_layout(G)
     # add order type for each node:
     order_map = {
-        REACTION: 3,
+        REACTION: 4,
+        NT.complex: 3,
         NT.text: 2,
         NT.protein: 1,
         NT.molecule: 1,
         NT.dna: 1,
-        NT.location: 0,
+        "?": 1,
+        NT.location: 0
     }
     for id, data in G.nodes(data=True):
+        if data["type"] not in order_map:
+            print(data["type"])
+            data["type"] = "?"
         data["order"] = order_map[data["type"]]
-
+    # pos = nx.spring_layout(G)
     pos = nx.multipartite_layout(G, subset_key="order")
     node_types = nx.get_node_attributes(G, "type")
     nodes_colors = [node_colors[node_type] for node_type in node_types.values()]
@@ -146,8 +237,13 @@ def plot_graph(G, node_index_manager, ax, title=""):
 
     nx.draw_networkx_edges(G, pos, width=1, ax=ax)
     nx.draw_networkx_labels(G, pos, nodes_labels, font_size=20, ax=ax)
-    # edge_labels = nx.get_edge_attributes(G, "type")
-    # nx.draw_networkx_edge_labels(G, pos, ax=ax, edge_labels=edge_labels)
+    edge_labels = nx.get_edge_attributes(G, "type")
+    for k, v in edge_labels.items():
+        if v is None:
+            edge_labels[k] = "?"
+        else:
+            edge_labels[k] = v[1]
+    nx.draw_networkx_edge_labels(G, pos, ax=ax, edge_labels=edge_labels)
     ax.set_title(title, fontsize=20)
     ax.axis("off")
 
@@ -168,7 +264,10 @@ def nx_to_torch_geometric(G: nx.Graph, **kwargs):
         edges_dict[d["type"]].append([nodes_index_to_hetro[src], nodes_index_to_hetro[dst]])
 
     for edge_type, edge_list in edges_dict.items():
+        if edge_type is None or edge_type == False:
+            continue
         edges = torch.IntTensor(edge_list).t().to(torch.int64)
+        # print(edge_type, edges)
         hetero_graph[*edge_type].edge_index = edges
     for k, v in kwargs.items():
         hetero_graph[k] = v
@@ -228,6 +327,8 @@ class ReactionDataset:
         for line in tqdm(lines):
             if task == "output_node":
                 self.reactions.append(build_dataset_for_node_output_task(line, self.node_index_manager, VIS))
+            elif task == "tags":
+                self.reactions.append(build_dataset_for_tags_prediction_task(line, self.node_index_manager, VIS))
             else:
                 self.reactions.append(reaction_str_to_graph(line, self.node_index_manager, VIS))
 
@@ -239,7 +340,7 @@ class ReactionDataset:
 
 
 if __name__ == "__main__":
-    dataset = ReactionDataset(sample=50, task="output_node")
+    dataset = ReactionDataset(root="data/items_bu", sample=50, task="tags")
     for data in dataset:
         # print(data)
         pass

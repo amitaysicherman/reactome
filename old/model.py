@@ -4,7 +4,7 @@ import torch.nn.functional as F
 from torch_geometric.nn import HeteroConv, SAGEConv, Linear, to_hetero
 from torch_geometric.nn import DataParallel
 
-from nodes_indexes import NodesIndexManager, get_types_values, get_edges_values
+from index_manger import NodesIndexManager, get_node_types, get_edges_values
 from reaction_to_graph import ReactionDataset
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -57,7 +57,7 @@ class HeteroGNN(torch.nn.Module):
             self.convs.append(conv)
 
         self.lin_reaction = Linear(hidden_channels, out_channels).to(device)
-        self.lin_nodes = nn.ModuleDict({key: Linear(emb_dim, out_channels).to(device) for key in get_types_values()})
+        self.lin_nodes = nn.ModuleDict({key: Linear(emb_dim, out_channels).to(device) for key in get_node_types()})
         # self.lin_nodes = Linear(emb_dim, out_channels).to(device)
 
     def forward(self, x_dict, edge_index_dict, output_notes_opt, output_nodes_types):
@@ -132,7 +132,7 @@ if __name__ == "__main__":
         #     tot_loss += loss
         #     total_acc += acc
         # print("test", i, tot_loss / len(test_dataset), total_acc / len(test_dataset))
-        torch.save(model.state_dict(), f"model.pt")
-        torch.save(emb_model.state_dict(), f"emb_model.pt")
+        torch.save(model.state_dict(), f"../data/model/model.pt")
+        torch.save(emb_model.state_dict(), f"../data/model/emb_model.pt")
 
     print("Training completed!")
