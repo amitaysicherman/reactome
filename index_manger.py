@@ -8,6 +8,7 @@ from typing import Dict
 from matplotlib import pyplot as plt
 from common import DATA_TYPES, EMBEDDING_DATA_TYPES, PROTEIN, DNA, MOLECULE, TEXT, LOCATION, UNKNOWN_ENTITY_TYPE, \
     REACTION, COMPLEX, TYPE_TO_VEC_DIM
+from functools import lru_cache
 
 REACTION_NODE_ID = 0
 COMPLEX_NODE_ID = 1
@@ -89,10 +90,10 @@ class EdgeTypes:
         return getattr(self, str)
 
     def get_by_src_dst(self, src, dst, is_catalysis=False):
-        if src == UNKNOWN_ENTITY_TYPE:
-            src = NodeTypes.protein
-        if dst == UNKNOWN_ENTITY_TYPE:
-            dst = NodeTypes.protein
+        # if src == UNKNOWN_ENTITY_TYPE:
+        #     src = NodeTypes.protein
+        # if dst == UNKNOWN_ENTITY_TYPE:
+        #     dst = NodeTypes.protein
         if src == NodeTypes.text:
             if dst == NodeTypes.text:
                 if is_catalysis:
@@ -198,8 +199,8 @@ class NodeData:
     def __init__(self, index, name, type_, vec=None):
         self.index = index
         self.name = name
-        if type_ == UNKNOWN_ENTITY_TYPE:
-            type_ = NodeTypes.protein
+        # if type_ == UNKNOWN_ENTITY_TYPE:
+        #     type_ = NodeTypes.protein
         self.type = type_
         self.vec = vec
 
@@ -209,8 +210,12 @@ class NodesIndexManager:
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
         self.nodes = [reaction_node, complex_node]
-        self.index_count = 0
+        locations_counts = {}
+        self.index_count = 2
+        self.dtype_to_first_index = dict()
+        self.dtype_to_last_index = dict()
         for dt in DATA_TYPES:
+            self.dtype_to_first_index[dt] = self.index_count
             names_file = f'{root}/{dt}.txt'
             with open(names_file) as f:
                 lines = f.read().splitlines()
@@ -226,21 +231,53 @@ class NodesIndexManager:
                 node = NodeData(self.index_count, name, dt, vectors[i])
                 self.nodes.append(node)
                 self.index_count += 1
-
+                if dt == LOCATION:
+                    count = line.split("@")[-1]
+                    locations_counts[node.index] = int(count)
+            self.dtype_to_last_index[dt] = self.index_count
+        self.locations = list(locations_counts.keys())
+        self.locations_probs = np.array([locations_counts[l] for l in self.locations]) / sum(locations_counts.values())
         self.index_to_node = {node.index: node for node in self.nodes}
         self.name_to_node: Dict[str, NodeData] = {node.name: node for node in self.nodes}
 
-    def sample_closest_n_from_k(self, index, n=50, k=5):
+        mulecules = [node for node in self.nodes if node.type == NodeTypes.molecule]
+        self.molecule_indexes = [node.index for node in mulecules]
+        self.molecule_array = np.array([node.vec for node in mulecules])
+
+        proteins = [node for node in self.nodes if node.type == NodeTypes.protein]
+        self.protein_indexes = [node.index for node in proteins]
+        self.protein_array = np.array([node.vec for node in proteins])
+
+    @lru_cache(maxsize=4000)
+    def get_probs(self, what, index):
         node = self.index_to_node[index]
-        type_ = node.type
-        vec = node.vec
-        all_options = [node for node in self.index_to_node.values() if node.type == type_]
-        all_options_vec = [node.vec for node in all_options]
-        all_options_index = [node.index for node in all_options]
-        distances = pairwise_distances(vec.reshape(1, -1), np.array(all_options_vec), metric='euclidean').flatten()
-        closest_indices = np.argsort(distances)[:n]
-        all_options_index = all_options_index[closest_indices]
-        return random.sample(list(all_options_index), k=k)
+        if what == 'molecule':
+            array_ = self.molecule_array
+        else:
+            array_ = self.protein_array
+
+        distances = pairwise_distances(node.vec.reshape(1, -1), array_,
+                                       metric='cosine').flatten()
+
+        prob = np.exp(-distances)
+        prob[distances == 0] = 0  # same element
+        prob /= np.sum(prob)
+        return prob
+
+    def sample_entity(self, index, how='similar', what='molecule'):
+        if what == 'molecule':
+            entities = self.molecule_indexes
+        else:
+            entities = self.protein_indexes
+
+        if how == 'similar':
+            prob = self.get_probs(what=what, index=index)
+            return random.choices(entities, prob)[0]
+        else:
+            return random.choice([x for x in entities if x != index])
+
+    def sample_random_locations_map(self):
+        return {l: random.choices(self.locations, self.locations_probs) for l in self.locations}
 
 
 if __name__ == "__main__":

@@ -4,6 +4,7 @@ from typing import List
 import pybiopax
 from pybiopax.biopax import BiochemicalReaction
 from tqdm import tqdm
+import datetime
 
 max_complex_id = 1
 
@@ -50,18 +51,21 @@ def catalyst_from_dict(d: dict) -> CatalystOBJ:
 
 
 class Reaction:
-    def __init__(self, name, inputs: List[Entity], outputs: List[Entity], catalysis: List[CatalystOBJ]):
+    def __init__(self, name, inputs: List[Entity], outputs: List[Entity], catalysis: List[CatalystOBJ],
+                 date: datetime.date):
         self.name = name
         self.inputs = inputs
         self.outputs = outputs
         self.catalysis = catalysis
+        self.date = date
 
     def to_dict(self):
         return {
             "name": self.name,
             "inputs": [e.to_dict() for e in self.inputs],
             "outputs": [e.to_dict() for e in self.outputs],
-            "catalysis": [c.to_dict() for c in self.catalysis]
+            "catalysis": [c.to_dict() for c in self.catalysis],
+            "date": f'{self.date.year}_{self.date.month}_{self.date.day}'
         }
 
 
@@ -70,7 +74,9 @@ def reaction_from_dict(d: dict) -> Reaction:
     inputs = [Entity(**e) for e in d["inputs"]]
     outputs = [Entity(**e) for e in d["outputs"]]
     catalysis = [catalyst_from_dict(c) for c in d["catalysis"]]
-    return Reaction(name, inputs, outputs, catalysis)
+    year, month, day = d["date"].split("_")
+    date = datetime.date(int(year), int(month), int(day))
+    return Reaction(name, inputs, outputs, catalysis, date)
 
 
 def reaction_from_str(s: str) -> Reaction:
@@ -154,9 +160,26 @@ def catalysis_parser(catalysis_list: List[pybiopax.biopax.Catalysis]) -> List[Ca
     return results
 
 
+def get_reaction_date(reaction: BiochemicalReaction, format='%Y-%m-%d',
+                      default_date=datetime.date(1970, 1, 1)) -> datetime.date:
+    if not hasattr(reaction, "comment"):
+        return default_date
+    comments = [c.split(", ")[-1].split(" ")[0] for c in reaction.comment if "Authored" in c]
+    if not comments:
+        return default_date
+    date_str = comments[0]
+    try:
+        date = datetime.datetime.strptime(date_str, format).date()
+    except:
+        date = default_date
+        print(f"Error in date: {date_str}")
+
+    return date
+
+
 if __name__ == "__main__":
 
-    write_output = False
+    write_output = True
 
     input_file = '/home/amitay/PycharmProjects/reactome/data/biopax/Homo_sapiens.owl'  # R-HSA-3928608_level3.owl'  # R-HSA-8850529_level3.owl'  # '  # Homo_sapiens.owl'
     if write_output:
@@ -178,8 +201,8 @@ if __name__ == "__main__":
             right_elements.extend(add_protein_or_complex(entity))
         catalys_activities = [c for c in all_catalysis if c.controlled == reaction]
         catalys_activities = catalysis_parser(catalys_activities)
-
-        reaction_obj = Reaction(reaction.name[0], left_elements, right_elements, catalys_activities)
+        date = get_reaction_date(reaction)
+        reaction_obj = Reaction(reaction.name[0], left_elements, right_elements, catalys_activities, date)
         if write_output:
             with open(output_file, "a") as f:
                 f.write(f'{reaction_obj.to_dict()}\n')

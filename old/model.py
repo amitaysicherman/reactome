@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch_geometric.nn import HeteroConv, SAGEConv, Linear, to_hetero
+from torch_geometric.nn import HeteroConv, SAGEConv, Linear, GATConv
 from torch_geometric.nn import DataParallel
 
 from index_manger import NodesIndexManager, get_node_types, get_edges_values
@@ -53,7 +53,8 @@ class HeteroGNN(torch.nn.Module):
 
         for _ in range(num_layers):
             conv = HeteroConv(
-                {e: SAGEConv(-1, hidden_channels).to(device) for e in get_edges_values()}, aggr='sum')
+                {e: GATConv(-1, hidden_channels,heads=4).to(device) for e in get_edges_values()}, aggr='sum')
+                # {e: SAGEConv(-1, hidden_channels).to(device) for e in get_edges_values()}, aggr='sum')
             self.convs.append(conv)
 
         self.lin_reaction = Linear(hidden_channels, out_channels).to(device)

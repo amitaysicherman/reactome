@@ -1,16 +1,18 @@
 import dataclasses
+import random
 
 import index_manger
 from index_manger import NodesIndexManager, EdgeTypes, NodeTypes, node_colors
 from tagging import tag
 from collections import defaultdict
-
+from common import UNKNOWN_ENTITY_TYPE
 import matplotlib.pyplot as plt
 import networkx as nx
 import torch
 from torch_geometric.data import HeteroData
 from tqdm import tqdm
 from biopax_parser import reaction_from_str
+import numpy as np
 
 ET = EdgeTypes()
 NT = NodeTypes()
@@ -72,8 +74,17 @@ def get_nx_for_tags_prediction_task(reaction, node_index_manager: NodesIndexMana
     return G, tags
 
 
+def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager):
+    for e in reaction.inputs + sum([c.entities for c in reaction.catalysis], []):
+        if node_index_manager.name_to_node[e.get_unique_id()].type == UNKNOWN_ENTITY_TYPE:
+            return True
+    return False
+
+
 def build_dataset_for_tags_prediction_task(reaction: str, node_index_manager: NodesIndexManager, vis: bool = False):
     reaction = reaction_from_str(reaction)
+    if have_unkown_nodes(reaction, node_index_manager):
+        return None
     g, tags = get_nx_for_tags_prediction_task(reaction, node_index_manager)
     if vis:
         title = f"{reaction.name}\n{tags}"
@@ -144,27 +155,123 @@ def nx_to_torch_geometric(G: nx.Graph, **kwargs):
         if edge_type is None or edge_type == False:
             continue
         edges = torch.IntTensor(edge_list).t().to(torch.int64)
-        hetero_graph[*edge_type].edge_index = edges
+        hetero_graph[edge_type].edge_index = edges
     for k, v in kwargs.items():
         hetero_graph[k] = v
-    hetero_graph.validate(raise_on_error=True)
-    return hetero_graph
+    try:
+        hetero_graph.validate(raise_on_error=True)
+        return hetero_graph
+
+    except Exception as error:
+        print("An exception occurred:", error)
+        return None
+
+
+def get_fake_tag(data):
+    tags = torch.zeros_like(data.tags).to(torch.float32)
+    tags[-1] = 1.0
+    return tags
+
+
+def clone_hetero_data(data: HeteroData, change_nodes_mapping=dict()):
+    new_hetero_data = HeteroData()
+    for key, value in data.x_dict.items():
+        new_hetero_data[key].x = torch.clone(value)
+    for change_key, change_value in change_nodes_mapping.items():
+        new_hetero_data[change_key].x = change_value
+    for key, value in data.edge_index_dict.items():
+        new_hetero_data[key].edge_index = torch.clone(value)
+    new_hetero_data.tags = get_fake_tag(data)
+    return new_hetero_data
+
+
+def replace_location_augmentation(index_manager: NodesIndexManager, data: HeteroData):
+    if NodeTypes.location not in data.x_dict:
+        return None
+    random_mapping = index_manager.sample_random_locations_map()
+    new_locations = [random_mapping[l.item()] for l in data.x_dict[NodeTypes.location]]
+    change_nodes_mapping = {NodeTypes.location: torch.LongTensor(new_locations).reshape(-1, 1)}
+    return clone_hetero_data(data, change_nodes_mapping)
+
+
+def replace_entity_augmentation(index_manager: NodesIndexManager, data: HeteroData, dtype, how):
+    if dtype not in data.x_dict:
+        return None
+    new_index = [m.item() for m in data.x_dict[dtype]]
+
+    if dtype == NodeTypes.molecule:
+        etype = ET.molecule_to_complex
+    else:
+        etype = ET.protein_to_complex
+
+    if etype in data.edge_index_dict:
+        in_complexes = data.edge_index_dict[etype][0].tolist()
+        indexes_without_complexes = [i for i in range(len(new_index)) if i not in in_complexes]
+        if len(indexes_without_complexes) == 0:
+            return None
+    else:
+        indexes_without_complexes = list(range(len(new_index)))
+    change_index = random.choice(indexes_without_complexes)
+    new_index[change_index] = index_manager.sample_entity(new_index[change_index], how=how, what=dtype)
+    change_nodes_mapping = {dtype: torch.LongTensor(new_index).reshape(-1, 1)}
+    return clone_hetero_data(data, change_nodes_mapping)
+
+
+def add_if_not_none(data, new_data):
+    if new_data is not None:
+        data.append(new_data)
 
 
 class ReactionDataset:
-    def __init__(self, root="data/items", sample=0):
+    def __init__(self, root="data/items", sample=0, location_augmentation_factor=0, molecule_similier_factor=0,
+                 molecule_random_factor=0, protein_similier_factor=0, protein_random_factor=0, only_fake=False,
+                 one_per_sample=False,order="date"):
         self.root = root
         self.node_index_manager = NodesIndexManager(root)
         self.reactions = []
         with open(f'{root}/reaction.txt') as f:
             lines = f.readlines()
-        import random
-        random.seed(42)
-        random.shuffle(lines)
+        if order == "random":
+            import random
+            random.seed(42)
+            random.shuffle(lines)
+        elif order == "date":
+            lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
         if sample > 0:
             lines = lines[:sample]
+
         for line in tqdm(lines):
-            self.reactions.append(build_dataset_for_tags_prediction_task(line, self.node_index_manager, VIS))
+            data = build_dataset_for_tags_prediction_task(line, self.node_index_manager, VIS)
+            if data is not None and data.tags.sum().item() != 0:
+                new_data = []
+                if not only_fake:
+                    new_data.append(data)
+
+                for _ in range(location_augmentation_factor):
+                    add_if_not_none(new_data, replace_location_augmentation(self.node_index_manager, data))
+                for _ in range(molecule_similier_factor):
+                    add_if_not_none(new_data,
+                                    replace_entity_augmentation(self.node_index_manager, data, NodeTypes.molecule,
+                                                                "similar"))
+                for _ in range(molecule_random_factor):
+                    add_if_not_none(new_data,
+                                    replace_entity_augmentation(self.node_index_manager, data, NodeTypes.molecule,
+                                                                "random"))
+                for _ in range(protein_similier_factor):
+                    add_if_not_none(new_data,
+                                    replace_entity_augmentation(self.node_index_manager, data, NodeTypes.protein,
+                                                                "similar"))
+                for _ in range(protein_random_factor):
+                    add_if_not_none(new_data,
+                                    replace_entity_augmentation(self.node_index_manager, data, NodeTypes.protein,
+                                                                "random"))
+                if len(new_data) == 0:
+                    continue
+                if one_per_sample:
+                    import random
+                    self.reactions.append(random.choice(new_data))
+                else:
+                    self.reactions.extend(new_data)
 
     def __len__(self):
         return len(self.reactions)
@@ -174,7 +281,11 @@ class ReactionDataset:
 
 
 if __name__ == "__main__":
-    dataset = ReactionDataset(root="data/items", sample=5)
+    dataset = ReactionDataset(root="data/items", sample=0, location_augmentation_factor=0,
+                              molecule_similier_factor=0, molecule_random_factor=0, protein_similier_factor=0,
+                              protein_random_factor=0)
+    # dataset = ReactionDataset(root="data/items")
+    print(len(dataset))
     for data in dataset:
         # print(data)
         pass
