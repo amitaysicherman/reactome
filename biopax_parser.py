@@ -52,12 +52,13 @@ def catalyst_from_dict(d: dict) -> CatalystOBJ:
 
 class Reaction:
     def __init__(self, name, inputs: List[Entity], outputs: List[Entity], catalysis: List[CatalystOBJ],
-                 date: datetime.date):
+                 date: datetime.date, reactome_id: str):
         self.name = name
         self.inputs = inputs
         self.outputs = outputs
         self.catalysis = catalysis
         self.date = date
+        self.reactome_id = reactome_id
 
     def to_dict(self):
         return {
@@ -65,8 +66,27 @@ class Reaction:
             "inputs": [e.to_dict() for e in self.inputs],
             "outputs": [e.to_dict() for e in self.outputs],
             "catalysis": [c.to_dict() for c in self.catalysis],
-            "date": f'{self.date.year}_{self.date.month}_{self.date.day}'
+            "date": f'{self.date.year}_{self.date.month}_{self.date.day}',
+            "reactome_id": self.reactome_id
         }
+
+    def to_tuple(self):
+        seq = []
+        entities = self.inputs + self.outputs + [e for c in self.catalysis for e in c.entities]
+        for e in entities:
+            seq.append(e.get_unique_id())
+            seq.append(e.location)
+            seq.append(e.modifications)
+        for c in self.catalysis:
+            seq.append(c.activity)
+        seq = sorted([str(s) for s in seq if s])
+        return tuple(seq)
+
+    def __eq__(self, other):
+        return self.to_tuple() == other.to_tuple()
+
+    def __hash__(self):
+        return hash(self.to_tuple())
 
 
 def reaction_from_dict(d: dict) -> Reaction:
@@ -76,7 +96,8 @@ def reaction_from_dict(d: dict) -> Reaction:
     catalysis = [catalyst_from_dict(c) for c in d["catalysis"]]
     year, month, day = d["date"].split("_")
     date = datetime.date(int(year), int(month), int(day))
-    return Reaction(name, inputs, outputs, catalysis, date)
+    reactome_id = d["reactome_id"]
+    return Reaction(name, inputs, outputs, catalysis, date, reactome_id)
 
 
 def reaction_from_str(s: str) -> Reaction:
@@ -160,6 +181,15 @@ def catalysis_parser(catalysis_list: List[pybiopax.biopax.Catalysis]) -> List[Ca
     return results
 
 
+def get_reactome_id(reaction: BiochemicalReaction) -> str:
+    if not hasattr(reaction, "xref"):
+        return "0"
+    for xref in reaction.xref:
+        if "Reactome" in xref.db:
+            return xref.id
+    return "0"
+
+
 def get_reaction_date(reaction: BiochemicalReaction, format='%Y-%m-%d',
                       default_date=datetime.date(1970, 1, 1)) -> datetime.date:
     if not hasattr(reaction, "comment"):
@@ -181,15 +211,15 @@ if __name__ == "__main__":
 
     write_output = True
 
-    input_file = '/home/amitay/PycharmProjects/reactome/data/biopax/Homo_sapiens.owl'  # R-HSA-3928608_level3.owl'  # R-HSA-8850529_level3.owl'  # '  # Homo_sapiens.owl'
+    input_file = '/home/amitay/PycharmProjects/reactome/data/biopax/Homo_sapiens.owl'  # Homo_sapiens # R-HSA-3928608_level3.owl'  # R-HSA-8850529_level3.owl'  # '  # Homo_sapiens.owl'
     if write_output:
-        output_file = "./data/items/reaction.txt"
+        output_file = "data/items/reaction.txt"
         if os.path.exists(output_file):
             os.remove(output_file)
     model = pybiopax.model_from_owl_file(input_file)
     reactions = list(model.get_objects_by_type(pybiopax.biopax.BiochemicalReaction))
     all_catalysis = list(model.get_objects_by_type(pybiopax.biopax.Catalysis))
-
+    print(len(reactions))
     for i, reaction in tqdm(enumerate(reactions)):
         assert reaction.conversion_direction == "LEFT-TO-RIGHT"
         left_elements = []
@@ -202,7 +232,8 @@ if __name__ == "__main__":
         catalys_activities = [c for c in all_catalysis if c.controlled == reaction]
         catalys_activities = catalysis_parser(catalys_activities)
         date = get_reaction_date(reaction)
-        reaction_obj = Reaction(reaction.name[0], left_elements, right_elements, catalys_activities, date)
+        reactome_id = get_reactome_id(reaction)
+        reaction_obj = Reaction(reaction.name[0], left_elements, right_elements, catalys_activities, date, reactome_id)
         if write_output:
             with open(output_file, "a") as f:
                 f.write(f'{reaction_obj.to_dict()}\n')

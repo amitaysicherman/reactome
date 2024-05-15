@@ -123,90 +123,17 @@ def get_edges_values():
     return edges
 
 
-# def get_entity_reaction_type(type_, is_input=True, is_cat=False, to_complex=False):
-#     if is_cat:
-#         assert is_input
-#         if type_ == NodeTypes.protein:
-#             if to_complex:
-#                 return EdgeTypes.catalysis_protein_to_complex
-#             return EdgeTypes.catalysis_protein_to_reaction
-#         elif type_ == NodeTypes.dna:
-#             if to_complex:
-#                 return EdgeTypes.catalysis_dna_to_complex
-#             return EdgeTypes.catalysis_dna_to_reaction
-#         elif type_ == NodeTypes.molecule:
-#             if to_complex:
-#                 return EdgeTypes.catalysis_molecule_to_complex
-#             return EdgeTypes.catalysis_molecule_to_reaction
-#
-#     if is_input:
-#         if type_ == NodeTypes.protein:
-#             if to_complex:
-#                 return EdgeTypes.protein_to_complex
-#             return EdgeTypes.protein_to_reaction
-#         elif type_ == NodeTypes.dna:
-#             if to_complex:
-#                 return EdgeTypes.dna_to_complex
-#             return EdgeTypes.dna_to_reaction
-#         elif type_ == NodeTypes.molecule:
-#             if to_complex:
-#                 return EdgeTypes.molecule_to_complex
-#             return EdgeTypes.molecule_to_reaction
-#     else:
-#         if type_ == NodeTypes.protein:
-#             return EdgeTypes.reaction_to_protein
-#         elif type_ == NodeTypes.dna:
-#             return EdgeTypes.reaction_to_dna
-#         elif type_ == NodeTypes.molecule:
-#             return EdgeTypes.reaction_to_molecule
-#     print(f"Unknown type: {type_}")
-#     return False
-#
-#
-# def get_location_to_entity(type_):
-#     if type_ == NodeTypes.protein:
-#         return EdgeTypes.location_to_protein
-#     elif type_ == NodeTypes.dna:
-#         return EdgeTypes.location_to_dna
-#     elif type_ == NodeTypes.molecule:
-#         return EdgeTypes.location_to_molecule
-#
-#
-# def bind_edge(type1, type2):
-#     if type1 == NodeTypes.protein and type2 == NodeTypes.protein:
-#         return EdgeTypes.protein_to_protein
-#     elif type1 == NodeTypes.protein and type2 == NodeTypes.molecule:
-#         return EdgeTypes.protein_to_molecule
-#     elif type1 == NodeTypes.protein and type2 == NodeTypes.dna:
-#         return EdgeTypes.protein_to_dna
-#     elif type1 == NodeTypes.molecule and type2 == NodeTypes.protein:
-#         return EdgeTypes.molecule_to_protein
-#     elif type1 == NodeTypes.molecule and type2 == NodeTypes.molecule:
-#         return EdgeTypes.molecule_to_molecule
-#     elif type1 == NodeTypes.molecule and type2 == NodeTypes.dna:
-#         return EdgeTypes.molecule_to_dna
-#     elif type1 == NodeTypes.dna and type2 == NodeTypes.protein:
-#         return EdgeTypes.dna_to_protein
-#     elif type1 == NodeTypes.dna and type2 == NodeTypes.molecule:
-#         return EdgeTypes.dna_to_molecule
-#     elif type1 == NodeTypes.dna and type2 == NodeTypes.dna:
-#         return EdgeTypes.dna_to_dna
-#     else:
-#         raise ValueError(f"Unknown edge type: {type1} to {type2}")
-
 
 class NodeData:
     def __init__(self, index, name, type_, vec=None):
         self.index = index
         self.name = name
-        # if type_ == UNKNOWN_ENTITY_TYPE:
-        #     type_ = NodeTypes.protein
         self.type = type_
         self.vec = vec
 
 
 class NodesIndexManager:
-    def __init__(self, root="data/items"):
+    def __init__(self, root="data/items",fuse_vec=False):
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
         self.nodes = [reaction_node, complex_node]
@@ -220,7 +147,10 @@ class NodesIndexManager:
             with open(names_file) as f:
                 lines = f.read().splitlines()
             if dt in EMBEDDING_DATA_TYPES:
-                vec_file = f'{root}/{dt}_vec.npy'
+                if fuse_vec:
+                    vec_file = f'{root}/{dt}_vec_fuse.npy'
+                else:
+                    vec_file = f'{root}/{dt}_vec.npy'
                 vectors = np.load(vec_file)
             elif dt == UNKNOWN_ENTITY_TYPE:
                 vectors = [np.zeros(TYPE_TO_VEC_DIM[PROTEIN]) for _ in range(len(lines))]
@@ -264,7 +194,7 @@ class NodesIndexManager:
         prob /= np.sum(prob)
         return prob
 
-    def sample_entity(self, index, how='similar', what='molecule'):
+    def sample_entity(self, index, how='similar', what='molecule', k_closest=15):
         if what == 'molecule':
             entities = self.molecule_indexes
         else:
@@ -272,13 +202,20 @@ class NodesIndexManager:
 
         if how == 'similar':
             prob = self.get_probs(what=what, index=index)
-            return random.choices(entities, prob)[0]
+            closest_index = np.argsort(prob)[::-1][:k_closest]
+            closest_prob = prob[closest_index]
+            closest_prob = closest_prob / np.sum(closest_prob)
+            return random.choices(np.array(entities)[closest_index], closest_prob)[0]
         else:
             return random.choice([x for x in entities if x != index])
 
     def sample_random_locations_map(self):
+        mapping = {}
+        for l in self.locations:
+            mapping[l] = random.choice([x for x in self.locations if x != l])
         return {l: random.choices(self.locations, self.locations_probs) for l in self.locations}
 
 
 if __name__ == "__main__":
     n = NodesIndexManager()
+    n.sample_entity(10_000, how='similar', what='molecule')

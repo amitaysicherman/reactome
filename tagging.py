@@ -169,6 +169,11 @@ class ReactionTag:
     def get_num_tags(self):
         return len(dataclasses.astuple(self))
 
+    def get_names(self, get_fake=False):
+        if get_fake:
+            return ["Move", "Modification", "Binding", "Dissociation", "Chemical", "Fake"]
+        return ["Move", "Modification", "Binding", "Dissociation", "Chemical"]
+
 
 def tag(reaction: Reaction) -> ReactionTag:
     return ReactionTag(
@@ -202,7 +207,7 @@ if __name__ == '__main__':
     tags = []
     for line in lines:
         reaction = reaction_from_str(line)
-        #print(reaction.name, len(reaction.inputs), sum([len(c.entities) for c in reaction.catalysis]),
+        # print(reaction.name, len(reaction.inputs), sum([len(c.entities) for c in reaction.catalysis]),
         #      str(tag(reaction)).split())
 
         new_tag = str(tag(reaction)).split()
@@ -246,5 +251,5 @@ if __name__ == '__main__':
         # print(results[results.index == 'miR-211 RISC binds POU3F2 mRNA'].T)
         # print(results[results.index == 'CDT1-mediated formation of MCM2-7 double hexamer at the replication origin'].T)
     print(tags.count("") / len(tags), tags.count("move") / len(tags), tags.count("modification") / len(tags),
-          tags.count("binding") / len(tags), tags.count("dissociation") / len(tags),tags.count("chemical") / len(tags))
+          tags.count("binding") / len(tags), tags.count("dissociation") / len(tags), tags.count("chemical") / len(tags))
     print(np.unique(tags, return_counts=True))

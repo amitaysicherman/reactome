@@ -10,17 +10,22 @@ import random
 from dataclasses import dataclass
 import wandb
 
-run_id = "pmrw1ip4"
+# run = wandb.init(id=run_id, project="reactome-tags")
+
 learned_embedding_dim = 256
 hidden_channels = 256
-# run = wandb.init(id=run_id, project="reactome-tags")
+num_layers = 3
+
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 nodes_index_manager = NodesIndexManager()
 root = "data/items"
-model = HeteroGNN(nodes_index_manager, hidden_channels=hidden_channels, out_channels=ReactionTag().get_num_tags(),
-                  num_layers=4,
-                  learned_embedding_dim=learned_embedding_dim, train_all_emd=False, save_activation=True).to(device)
-model.load_state_dict(torch.load("data/model/model.pt", map_location=torch.device('cpu')))
+layer_type = "SAGEConv"
+
+model = HeteroGNN(nodes_index_manager, hidden_channels=hidden_channels, out_channels=1,
+                  num_layers=num_layers,
+                  learned_embedding_dim=learned_embedding_dim, train_all_emd=False, save_activation=True,
+                  conv_type=layer_type).to(device)
+model.load_state_dict(torch.load("/home/amitay/PycharmProjects/reactome/data/model/model_fake_256_28.pt", map_location=torch.device('cpu')))
 model.eval()
 
 
@@ -38,22 +43,22 @@ def plot_act(dataset, title, method="PCA"):
     for data in tqdm(dataset):
         x_dict = {key: data.x_dict[key] for key in data.x_dict.keys()}
         y = data['tags'].to(device)
-        y = y.float()
+        y = y.float()[-1:]
+
         edge_index_dict = {key: data.edge_index_dict[key].to(device) for key in data.edge_index_dict.keys()}
         out = model(x_dict, edge_index_dict)
         loss.append(torch.nn.BCEWithLogitsLoss()(out, y.unsqueeze(0)).item())
     print(title, np.mean(loss))
-    model.plot_activations(title + "_" + method, reduce_dim_method=method,last_layer_only=False)
-    plt.show()
+    model.plot_activations(title, reduce_dim_method=method, last_layer_only=False)
 
 
 sample = 1000
 configs = [
-    config(sample=sample, entities=0, location=0, only_fake=False, title="Real"),
-    config(sample=sample, entities=0, location=1, only_fake=True, title="Fake Location"),
-    config(sample=sample, entities=1, location=0, only_fake=True, title="Fake Entities"),
-    config(sample=sample, entities=1, location=1, only_fake=True, title="Fake Entities and Location"),
-    config(sample=sample, entities=1, location=3, only_fake=False, title="Real_and_Fake"),
+    config(sample=sample, entities=0, location=0, only_fake=False, title="FAKE"),
+    # config(sample=sample, entities=0, location=1, only_fake=True, title="Fake Location"),
+    # config(sample=sample, entities=1, location=0, only_fake=True, title="Fake Entities"),
+    # config(sample=sample, entities=1, location=1, only_fake=True, title="Fake Entities and Location"),
+    # config(sample=sample, entities=1, location=3, only_fake=False, title="Real_and_Fake"),
 ]
 for config in configs:
     dataset = ReactionDataset(root=root, one_per_sample=True, sample=config.sample,

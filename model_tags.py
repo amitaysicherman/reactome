@@ -3,7 +3,7 @@ import dataclasses
 from tqdm import tqdm
 import torch
 import torch.nn as nn
-from torch_geometric.nn import HeteroConv, SAGEConv, Linear
+from torch_geometric.nn import HeteroConv, TransformerConv, SAGEConv, Linear
 from torch_geometric.nn import DataParallel
 from common import DATA_TYPES, EMBEDDING_DATA_TYPES
 import numpy as np
@@ -17,16 +17,20 @@ from collections import defaultdict
 import random
 from torch_geometric.loader import DataLoader
 
-try:
-    from cuml import TSNE
-except:
-    from sklearn.manifold import TSNE
+from sklearn.manifold import TSNE
 import wandb
 import seaborn as sns
 
 SAMPLE = 0
-EPOCHS = 1
+EPOCHS = 50
 WB = False
+FAKE_TASK = False
+if FAKE_TASK:
+    tag_names = ["fake"]
+else:
+    tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
+fuse = True
+
 sns.set()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 REACTION = NodeTypes().reaction
@@ -41,6 +45,10 @@ type_to_color = {
     "catalysis_dna": (0.8901960784313725, 0.4666666666666667, 0.7607843137254902, 1.0),
     "catalysis_activity": (0.4980392156862745, 0.4980392156862745, 0.4980392156862745, 1.0),
 }
+
+batch_size = 1
+n_layers = 3
+train_all_emd = False
 
 
 def sigmoid(x):
@@ -141,10 +149,21 @@ class PartialFixedEmbedding(nn.Module):
         return x
 
 
+conv_type_to_class = {
+    "TransformerConv": TransformerConv,
+    "SAGEConv": SAGEConv
+}
+
+conv_type_to_args = {
+    "TransformerConv": {},
+    "SAGEConv": {"normalize": True}
+}
+
+
 class HeteroGNN(torch.nn.Module):
     def __init__(self, node_index_manager, hidden_channels, out_channels, num_layers, learned_embedding_dim,
                  train_all_emd,
-                 save_activation=False):
+                 save_activation=False, conv_type="SAGEConv", return_reaction_embedding=False):
         super().__init__()
         self.emb = PartialFixedEmbedding(node_index_manager, learned_embedding_dim, train_all_emd).to(device)
         self.convs = torch.nn.ModuleList()
@@ -153,7 +172,8 @@ class HeteroGNN(torch.nn.Module):
         for i in range(num_layers):
             conv_per_edge = {}
             for edge in get_edges_values():
-                e_conv = SAGEConv(-1, hidden_channels, normalize=True).to(device)
+                e_conv = conv_type_to_class[conv_type](-1, hidden_channels, **conv_type_to_args[conv_type]).to(
+                    device)
                 if save_activation:
                     if edge[2] == NodeTypes.reaction or edge[2] == NodeTypes.complex:
                         e_conv.register_forward_hook(self.get_hook(edge, i))
@@ -161,6 +181,7 @@ class HeteroGNN(torch.nn.Module):
             conv = HeteroConv(conv_per_edge, aggr='sum')
             self.convs.append(conv)
         self.lin_reaction = Linear(hidden_channels, out_channels).to(device)
+        self.return_reaction_embedding = return_reaction_embedding
 
     def get_hook(self, dtype, level):
         def save_hook(_, __, output):
@@ -176,6 +197,8 @@ class HeteroGNN(torch.nn.Module):
         for i, conv in enumerate(self.convs):
             x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
+        if self.return_reaction_embedding:
+            return self.lin_reaction(x_dict[REACTION]), x_dict[REACTION]
         return self.lin_reaction(x_dict[REACTION])
 
     def plot_activations(self, title="", reduce_dim_method="TSNE", max_samples=500, last_layer_only=True):
@@ -209,12 +232,14 @@ class HeteroGNN(torch.nn.Module):
                 for d in combined_data:
                     combined_data_reduced.append(reduced_data[start_index:start_index + len(d)])
                     start_index += len(d)
-                plt.figure(figsize=(10, 10))
+                plt.figure(figsize=(6, 6))
                 for i, data in enumerate(combined_data_reduced):
                     plt.scatter(data[:, 0], data[:, 1], label=labels[i], c=type_to_color[labels[i]], s=10)
                 plt.legend(loc='upper left')
                 params = dict(axis='both', which='both', bottom=False, top=False, labelbottom=False)
                 plt.tick_params(**params)
+                plt.title(f"{title} {type_} {layer_index} {reduce_dim_method}")
+
                 plt.tight_layout()
                 plt.savefig(f"data/fig/{title}_{type_}_{layer_index}_{reduce_dim_method}.png", dpi=300)
                 plt.show()
@@ -224,25 +249,36 @@ class HeteroGNN(torch.nn.Module):
 
 def get_data(root="data/items", location_augmentation_factor=3, entity_augmentation_factor=1, train_test_split=0.8,
              split_method="date"):
-    dataset = ReactionDataset(root=root, sample=SAMPLE, location_augmentation_factor=location_augmentation_factor,
-                              molecule_similier_factor=entity_augmentation_factor,
-                              molecule_random_factor=entity_augmentation_factor,
-                              protein_similier_factor=entity_augmentation_factor,
-                              protein_random_factor=entity_augmentation_factor, order=split_method).reactions
+    if FAKE_TASK:
+
+        dataset = ReactionDataset(root=root, sample=SAMPLE, location_augmentation_factor=location_augmentation_factor,
+                                  molecule_similier_factor=entity_augmentation_factor,
+                                  molecule_random_factor=entity_augmentation_factor,
+                                  protein_similier_factor=entity_augmentation_factor,
+                                  protein_random_factor=entity_augmentation_factor, order=split_method).reactions
+    else:
+        dataset = ReactionDataset(root=root, sample=SAMPLE, order=split_method).reactions
     print(len(dataset))
     tags = torch.stack([reaction.tags for reaction in dataset])
     pos_classes_weights = (1 - tags.mean(dim=0)) / tags.mean(dim=0)
+    if FAKE_TASK:
+        pos_classes_weights = pos_classes_weights[-1]
+    else:
+        pos_classes_weights = pos_classes_weights[:-1]
     train_dataset = dataset[:int(len(dataset) * train_test_split)]
     test_dataset = dataset[int(len(dataset) * train_test_split):]
-    node_index_manager = NodesIndexManager(root=root)
+    node_index_manager = NodesIndexManager(root=root, fuse_vec=fuse)
     return train_dataset, test_dataset, node_index_manager, pos_classes_weights.to(device)
 
 
-def get_models(learned_embedding_dim, hidden_channels, out_channels, num_layers, train_all_emd, lr, lr_emb=None):
+def get_models(learned_embedding_dim, hidden_channels, out_channels, num_layers, train_all_emd, lr,
+               layer_type="SAGEConv"):
     # emb_model = PartialFixedEmbedding(node_index_manager, learned_embedding_dim, train_all_emd).to(device)
     model = HeteroGNN(node_index_manager, hidden_channels=hidden_channels, out_channels=out_channels,
                       num_layers=num_layers,
-                      learned_embedding_dim=learned_embedding_dim, train_all_emd=train_all_emd).to(device)
+                      learned_embedding_dim=learned_embedding_dim, train_all_emd=train_all_emd,
+                      conv_type=layer_type).to(device)
+
     if torch.cuda.device_count() > 1:
         print("Using", torch.cuda.device_count(), "GPUs!")
         model = DataParallel(model)
@@ -257,6 +293,11 @@ def run_model(data, model, optimizer, scorer: Scorer, is_train=True):
     x_dict = {key: data.x_dict[key].to(device) for key in data.x_dict.keys()}
     y = data['tags'].to(device)
     y = y.float()
+    if FAKE_TASK:
+        y = y[-1:]
+    else:
+        y = y[:-1]
+
     edge_index_dict = {key: data.edge_index_dict[key].to(device) for key in data.edge_index_dict.keys()}
     out = model(x_dict, edge_index_dict)
     pred = (out > 0).to(torch.int32)
@@ -270,26 +311,27 @@ def run_model(data, model, optimizer, scorer: Scorer, is_train=True):
         optimizer.step()
 
 
-def train(model, optimizer, batch_size, log_func, epochs=EPOCHS, save_model=False):
-    classes_names = dataclasses.asdict(ReactionTag()).keys()
+def train(model, optimizer, batch_size, log_func, epochs=EPOCHS, save_model=""):
     for i in range(epochs):
 
-        train_score = Scorer("train", classes_names)
-        # train_data = DataLoader(random.choices(train_dataset, k=samples), batch_size=batch_size, shuffle=True)
-        train_data = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+        train_score = Scorer("train", tag_names)
+        train_data = DataLoader(random.choices(train_dataset, k=5_000), batch_size=batch_size, shuffle=True)
 
         for data_index, data in tqdm(enumerate(train_data)):
             run_model(data, model, optimizer, train_score)
         log_func(train_score.get_log(), i)
-        test_score = Scorer("test", classes_names)
-        # test_data = DataLoader(random.choices(test_dataset, k=samples), batch_size=batch_size, shuffle=True)
-        test_data = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+        test_score = Scorer("test", tag_names)
+        test_data = DataLoader(random.choices(test_dataset, k=1_000), batch_size=batch_size, shuffle=True)
         for data_index, data in tqdm(enumerate(test_data)):
             run_model(data, model, optimizer, test_score, False)
         log_func(test_score.get_log(), i)
         if save_model:
-            torch.save(model.state_dict(), f"data/model/model.pt")
-            torch.save(optimizer.state_dict(), f"data/model/optimizer.pt")
+            if FAKE_TASK:
+                name = f'data/model/model_fake_{save_model}_{i}.pt'
+            else:
+                name = f'data/model/model_mlc_{save_model}_{i}.pt'
+            torch.save(model.state_dict(), name)
+            torch.save(optimizer.state_dict(), name.replace("model_", "optimizer_"))
 
 
 def run_wandb():
@@ -305,7 +347,7 @@ def run_wandb():
     sweep_config['metric'] = metric
     parameters_dict = {
         'learned_embedding_dim': {
-            'values': [128, 256, 512],
+            'values': [256],
             'distribution': 'categorical'
         },
         'hidden_channels': {
@@ -313,21 +355,14 @@ def run_wandb():
             'distribution': 'categorical'
         },
         'lr': {
-            'values': [1e-2, 1e-3, 1e-4],
+            'values': [1e-3],
             'distribution': 'categorical'
         },
-        'num_layers': {
-            'values': [1, 2, 3, 4],
-            'distribution': 'categorical'
-        },
-        'train_all_emd': {
-            'values': [True, False],
-            'distribution': 'categorical'
-        },
-        'batch_size': {
-            'values': [1],
+        'layer_type': {
+            'values': ["SAGEConv"],
             'distribution': 'categorical'
         }
+
     }
 
     sweep_config['parameters'] = parameters_dict
@@ -337,11 +372,12 @@ def run_wandb():
             config = wandb.config
             model, optimizer = get_models(config.learned_embedding_dim,
                                           config.hidden_channels,
-                                          ReactionTag().get_num_tags(),
-                                          config.num_layers,
-                                          config.train_all_emd, config.lr)
-            train(model, optimizer, config.batch_size,
-                  lambda x, step: wandb.log(x, step=step))
+                                          len(tag_names),
+                                          n_layers,
+                                          train_all_emd, config.lr, layer_type=config.layer_type)
+            save_prefix = f"{config.hidden_channels}"
+            train(model, optimizer, batch_size,
+                  lambda x, step: wandb.log(x, step=step), save_model=save_prefix)
 
     sweep_id = wandb.sweep(sweep_config, project="reactome-multilabel-classification")
     wandb.agent(sweep_id, wandb_train, count=100)
@@ -350,20 +386,23 @@ def run_wandb():
 def run_local():
     learned_embedding_dim = 256
     hidden_channels = 256
-    lr = 0.0001
-    num_layers = 4
+    lr = 0.001
+    num_layers = 3
     batch_size = 1
     train_all_emd = False
-    model, optimizer = get_models(learned_embedding_dim, hidden_channels,
-                                  ReactionTag().get_num_tags(),
-                                  num_layers, train_all_emd, lr)
+    layer_type = "SAGEConv"
 
     def print_train_log(x, step):
         if "train/loss" in x:
             print(f"Step {step} Loss: {x['train/loss']},AUC: {x['train/all_auc']}")
+        else:
+            print(f"Step {step} Loss: {x['test/loss']},AUC: {x['test/all_auc']}")
 
-    # train(model, optimizer, batch_size, lambda x, step: print(x),save_model=True)
-    train(model, optimizer, batch_size, print_train_log, save_model=True)
+    model, optimizer = get_models(learned_embedding_dim, hidden_channels,
+                                  len(tag_names),
+                                  num_layers, train_all_emd, lr, layer_type=layer_type)
+
+    train(model, optimizer, batch_size, print_train_log, save_model=hidden_channels)
 
 
 if __name__ == "__main__":

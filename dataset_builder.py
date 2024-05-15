@@ -13,6 +13,7 @@ from torch_geometric.data import HeteroData
 from tqdm import tqdm
 from biopax_parser import reaction_from_str
 import numpy as np
+import json
 
 ET = EdgeTypes()
 NT = NodeTypes()
@@ -74,8 +75,12 @@ def get_nx_for_tags_prediction_task(reaction, node_index_manager: NodesIndexMana
     return G, tags
 
 
-def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager):
-    for e in reaction.inputs + sum([c.entities for c in reaction.catalysis], []):
+def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager,check_output=False):
+    if check_output:
+        entitites= reaction.inputs + reaction.outputs + sum([c.entities for c in reaction.catalysis], [])
+    else:
+        entitites = reaction.inputs + sum([c.entities for c in reaction.catalysis], [])
+    for e in entitites:
         if node_index_manager.name_to_node[e.get_unique_id()].type == UNKNOWN_ENTITY_TYPE:
             return True
     return False
@@ -173,12 +178,16 @@ def get_fake_tag(data):
     return tags
 
 
-def clone_hetero_data(data: HeteroData, change_nodes_mapping=dict()):
+def clone_hetero_data(data: HeteroData, change_nodes_mapping=dict(), change_edge=False):
     new_hetero_data = HeteroData()
     for key, value in data.x_dict.items():
         new_hetero_data[key].x = torch.clone(value)
+
     for change_key, change_value in change_nodes_mapping.items():
-        new_hetero_data[change_key].x = change_value
+        if change_edge:
+            new_hetero_data[change_key].edge_index = torch.clone(data.edge_index_dict[change_key])
+        else:
+            new_hetero_data[change_key].x = change_value
     for key, value in data.edge_index_dict.items():
         new_hetero_data[key].edge_index = torch.clone(value)
     new_hetero_data.tags = get_fake_tag(data)
@@ -194,23 +203,35 @@ def replace_location_augmentation(index_manager: NodesIndexManager, data: Hetero
     return clone_hetero_data(data, change_nodes_mapping)
 
 
+def replace_entity_location_augmentation(index_manager: NodesIndexManager, data: HeteroData):
+    dtype = random.choice([NodeTypes.molecule, NodeTypes.protein])
+    if dtype not in data.x_dict:
+        return None
+    new_index = [m.item() for m in data.x_dict[dtype]]
+    change_index = random.choice(range(len(new_index)))
+
+    locations_options = data.x_dict[NodeTypes.location].tolist()
+    locations_options = [l[0] for l in locations_options]
+    if len(locations_options) <= 1:
+        return None
+
+    edge_type = ET.get_by_src_dst(NodeTypes.location, dtype, is_catalysis=False)
+    new_edges_index_type = torch.clone(data.edge_index_dict[edge_type])
+
+    for i in range(new_edges_index_type.shape[1]):
+        if new_edges_index_type[1][i] == change_index:
+            options = [l for l in locations_options if l != new_edges_index_type[0][i].item()]
+            new_edges_index_type[0][i] = random.choice(options)
+    change_nodes_mapping = {edge_type: new_edges_index_type}
+
+    return clone_hetero_data(data, change_nodes_mapping)
+
+
 def replace_entity_augmentation(index_manager: NodesIndexManager, data: HeteroData, dtype, how):
     if dtype not in data.x_dict:
         return None
     new_index = [m.item() for m in data.x_dict[dtype]]
-
-    if dtype == NodeTypes.molecule:
-        etype = ET.molecule_to_complex
-    else:
-        etype = ET.protein_to_complex
-
-    if etype in data.edge_index_dict:
-        in_complexes = data.edge_index_dict[etype][0].tolist()
-        indexes_without_complexes = [i for i in range(len(new_index)) if i not in in_complexes]
-        if len(indexes_without_complexes) == 0:
-            return None
-    else:
-        indexes_without_complexes = list(range(len(new_index)))
+    indexes_without_complexes = list(range(len(new_index)))
     change_index = random.choice(indexes_without_complexes)
     new_index[change_index] = index_manager.sample_entity(new_index[change_index], how=how, what=dtype)
     change_nodes_mapping = {dtype: torch.LongTensor(new_index).reshape(-1, 1)}
@@ -224,8 +245,9 @@ def add_if_not_none(data, new_data):
 
 class ReactionDataset:
     def __init__(self, root="data/items", sample=0, location_augmentation_factor=0, molecule_similier_factor=0,
-                 molecule_random_factor=0, protein_similier_factor=0, protein_random_factor=0, only_fake=False,
-                 one_per_sample=False,order="date"):
+                 molecule_random_factor=0, protein_similier_factor=0, protein_random_factor=0,
+                 replace_entity_location=0, only_fake=False,
+                 one_per_sample=False, order="date"):
         self.root = root
         self.node_index_manager = NodesIndexManager(root)
         self.reactions = []
@@ -265,6 +287,8 @@ class ReactionDataset:
                     add_if_not_none(new_data,
                                     replace_entity_augmentation(self.node_index_manager, data, NodeTypes.protein,
                                                                 "random"))
+                for _ in range(replace_entity_location):
+                    add_if_not_none(new_data, replace_entity_location_augmentation(self.node_index_manager, data))
                 if len(new_data) == 0:
                     continue
                 if one_per_sample:
@@ -280,12 +304,16 @@ class ReactionDataset:
         return self.reactions[idx]
 
 
+
 if __name__ == "__main__":
-    dataset = ReactionDataset(root="data/items", sample=0, location_augmentation_factor=0,
+    dataset = ReactionDataset(root="data/items", sample=1, location_augmentation_factor=0,
                               molecule_similier_factor=0, molecule_random_factor=0, protein_similier_factor=0,
-                              protein_random_factor=0)
+                              protein_random_factor=0, replace_entity_location=10)
     # dataset = ReactionDataset(root="data/items")
     print(len(dataset))
     for data in dataset:
         # print(data)
-        pass
+        dict_data = data.to_dict()
+        print(dict_data)
+        data2 = HeteroData.from_dict(dict_data)
+        print(data2)

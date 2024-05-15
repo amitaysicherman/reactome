@@ -4,7 +4,11 @@ from collections import defaultdict
 from tqdm import tqdm
 
 indexes = {dt: defaultdict(int) for dt in DATA_TYPES}
-input_file = "./data/items/reaction.txt"
+
+
+base_dir = "./data/mus/"
+
+input_file = f"{base_dir}/reaction.txt"
 
 with open(input_file) as f:
     lines = f.readlines()
@@ -24,7 +28,6 @@ for line in tqdm(lines):
         catalyst_activity = f"GO@{catalyst.activity}"
         indexes[TEXT][catalyst_activity] += 1
 
-base_dir = "./data/items/"
 for k, v in indexes.items():
     with open(f"{base_dir}{k}.txt", "w") as f:
         for k, v in v.items():
