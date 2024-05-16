@@ -20,8 +20,8 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 def load_model(learned_embedding_dim=128, hidden_channels=128, num_layers=3, root="../data/items",
-               layer_type="SAGEConv", return_reaction_embedding=False, model_path="../data/model/model.pt",out_channels=1):
-    nodes_index_manager = NodesIndexManager(root)
+               layer_type="SAGEConv", return_reaction_embedding=False, model_path="../data/model/model.pt",out_channels=1,fuse=False):
+    nodes_index_manager = NodesIndexManager(root,fuse_vec=fuse)
 
     model = HeteroGNN(nodes_index_manager, hidden_channels=hidden_channels, out_channels=out_channels,
                       num_layers=num_layers,

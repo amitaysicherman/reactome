@@ -43,8 +43,8 @@ def get_fake_data(data, nodes_index_manager: NodesIndexManager, type_):
 
 
 model, nodes_index_manager = load_model(
-    model_path="/home/amitay/PycharmProjects/reactome/data/model/model_fake_256_10.pt", learned_embedding_dim=256,
-    hidden_channels=256, num_layers=3, out_channels=1)
+    model_path="/home/amitay/PycharmProjects/reactome/data/model/nofuse_model_fake_256_49.pt", learned_embedding_dim=256,
+    hidden_channels=256, num_layers=3, out_channels=1, fuse=True)
 with open(f'{root}/reaction.txt') as f:
     lines = f.readlines()
 lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
@@ -89,6 +89,7 @@ for i, (name, data_type) in enumerate(all_dataset.items()):
     real_values = np.array(real_values).flatten()
     predict_values = np.array(predict_values).flatten()
     fpr, tpr, thresholds = roc_curve(real_values, predict_values)
+    print(name, auc(fpr, tpr))
     with plt.style.context('tableau-colorblind10', after_reset=True):
 
         plt.plot(fpr, tpr, label=f"{name} (AUC={auc(fpr, tpr):.2f})", color=colors[i])

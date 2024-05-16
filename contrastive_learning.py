@@ -213,10 +213,10 @@ def indexes_to_tensor(indexes, node_index_manager: NodesIndexManager):
 
 
 def evel_model(pos_score, neg_score):
-    pos_score_all_mean = np.average([np.mean(v) for k, v in pos_score.items()],
-                                    weights=[len(v) for k, v in pos_score.items()])
-    neg_score_all_mean = np.average([np.mean(v) for k, v in neg_score.items()],
-                                    weights=[len(v) for k, v in neg_score.items()])
+    pos_score_all_mean = np.average([np.mean(v) for k, v in pos_score.items() if len(v)],
+                                    weights=[len(v) for k, v in pos_score.items() if len(v)])
+    neg_score_all_mean = np.average([np.mean(v) for k, v in neg_score.items() if len(v)],
+                                    weights=[len(v) for k, v in neg_score.items() if len(v)])
     pos_score = {k: np.mean(v) for k, v in pos_score.items()}
     neg_score = {k: np.mean(v) for k, v in neg_score.items()}
 
@@ -253,9 +253,6 @@ def save_new_vecs(model, node_index_manager: NodesIndexManager):
 
 
 def evaluate_model(model, node_index_manager, element_to_show=None, n=100):
-    # all_vecs = []
-    # all_labels = []
-
     label_groups = {}
     for dtype in EMBEDDING_DATA_TYPES:
         nodes_in_type = [node for node in node_index_manager.index_to_node.values() if
@@ -276,24 +273,15 @@ def evaluate_model(model, node_index_manager, element_to_show=None, n=100):
             res.loc[label_a, label_b] = distances
             res.loc[label_b, label_a] = distances
     print(res)
-    # all_vecs = np.concatenate(all_vecs, axis=0)
-    # all_labels = np.array(all_labels)
-    # knn = NearestNeighbors(n_neighbors=n)
-    #
-    # knn.fit(all_vecs, all_labels)
-    # for dtype in EMBEDDING_DATA_TYPES:
-    #     neighbors = knn.kneighbors(all_vecs[all_labels == dtype], return_distance=False, n_neighbors=n)
-    #     neighbors = neighbors.flatten()
-    #     perp = all_labels[neighbors] != dtype
-    #     print(f"{dtype}: {perp.mean()}", end="| ")
-    # print()
 
 
-def evel_test_split(model, node_index_manager, test_dataset):
+def evel_test_split(model, node_index_manager, test_dataset, n=500):
     pos_score = {(i, j): [] for i in EMBEDDING_DATA_TYPES for j in EMBEDDING_DATA_TYPES}
     neg_score = {(i, j): [] for i in EMBEDDING_DATA_TYPES for j in EMBEDDING_DATA_TYPES}
-
-    for idx1, idx2, label in test_dataset:
+    p = n / len(test_dataset)
+    for idx1, idx2, label in tqdm(test_dataset):
+        if random.random() > p:
+            continue
         data_1, type_1 = indexes_to_tensor(idx1, node_index_manager)
         data_2, type_2 = indexes_to_tensor(idx2, node_index_manager)
         out1 = model(data_1.to(device), type_1)
