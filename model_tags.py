@@ -7,7 +7,8 @@ from torch_geometric.nn import HeteroConv, TransformerConv, SAGEConv, Linear
 from torch_geometric.nn import DataParallel
 from common import DATA_TYPES, EMBEDDING_DATA_TYPES
 import numpy as np
-from index_manger import NodesIndexManager, get_edges_values, NodeTypes
+from index_manger import NodesIndexManager, get_edges_values, NodeTypes, PRETRAINED_EMD_FUSE, NO_PRETRAINED_EMD, \
+    PRETRAINED_EMD
 from dataset_builder import ReactionDataset
 from tagging import ReactionTag
 from sklearn.metrics import roc_auc_score
@@ -20,16 +21,7 @@ from torch_geometric.loader import DataLoader
 from sklearn.manifold import TSNE
 import wandb
 import seaborn as sns
-
-SAMPLE = 0
-EPOCHS = 50
-WB = False
-FAKE_TASK = False
-if FAKE_TASK:
-    tag_names = ["fake"]
-else:
-    tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
-fuse = True
+from dataset_builder import REAL, FAKE_LOCATION_ALL, FAKE_LOCATION_SINGLE, FAKE_PROTEIN, FAKE_MOLECULE
 
 sns.set()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -47,8 +39,7 @@ type_to_color = {
 }
 
 batch_size = 1
-n_layers = 3
-train_all_emd = False
+EPOCHS = 5
 
 
 def sigmoid(x):
@@ -70,24 +61,32 @@ class Scorer:
         self.true_probs = {class_name: [] for class_name in self.class_names}  # New for true probs
         self.pred_probs = {class_name: [] for class_name in self.class_names}  # New for pred probs
         for class_name in self.class_names:
-            setattr(self, f'{class_name}_acc', 0)
             setattr(self, f'{class_name}_auc', 0)
 
-    def add(self, y, pred, out, loss):
+    def add(self, y, pred, out, loss, class_names=None):
         self.count += len(y)
         self.batch_count += 1
         self.loss += loss
-        for i, class_name in self.index_to_class.items():
-            self.true_probs[class_name].extend(y[:, i].tolist())
-            self.pred_probs[class_name].extend(sigmoid(out[:, i]).tolist())
-            setattr(self, f'{class_name}_acc', getattr(self, f'{class_name}_acc') + (pred[:, i] == y[:, i]).sum())
+        if class_names:
+            for i in range(len(y)):
+                class_name = class_names[i]
+                self.true_probs[class_name].extend(y[i].tolist())
+                self.pred_probs[class_name].extend(sigmoid(out[i]).tolist())
+        else:
+            for i, class_name in self.index_to_class.items():
+                self.true_probs[class_name].extend(y[:, i].tolist())
+                self.pred_probs[class_name].extend(sigmoid(out[:, i]).tolist())
 
     def compute_auc_per_class(self):
         auc_dict = {}
         all_auc = []
+        real_probs = self.true_probs[REAL]
+        real_preds = self.pred_probs[REAL]
         for class_name in self.class_names:
-            true_probs = self.true_probs[class_name]
-            pred_probs = self.pred_probs[class_name]
+            if class_name == REAL:
+                continue
+            true_probs = self.true_probs[class_name] + real_probs
+            pred_probs = self.pred_probs[class_name] + real_preds
             if len(true_probs) > 0 and len(np.unique(true_probs)) > 1:
                 auc_dict[class_name] = roc_auc_score(true_probs, pred_probs)
                 all_auc.append(auc_dict[class_name])
@@ -103,17 +102,18 @@ class Scorer:
             f'{self.name}/all_auc': auc_dict['all'],
         }
         for class_name in self.class_names:
+            if class_name == REAL:
+                continue
             name = f"{self.name}/{class_name}"
-            metrics[f"{name}/acc"] = getattr(self, f'{class_name}_acc') / self.count
-            metrics[f"{name}/auc"] = auc_dict[class_name]
-            if WB:
-                ground_truth = self.true_probs[class_name]
-                predictions_true = np.array(self.pred_probs[class_name])
-                predictions_false = 1 - predictions_true
-                predictions = np.stack([predictions_false, predictions_true], axis=1)
-                if len(np.unique(ground_truth)) == 2:
-                    metrics[f"{name}/roc"] = wandb.plot.roc_curve(np.array(ground_truth).astype(int), predictions,
-                                                                  labels=["no " + name, name], classes_to_plot=[1])
+            metrics[f"{name}"] = auc_dict[class_name]
+            # if WB:
+            #     ground_truth = self.true_probs[class_name]
+            #     predictions_true = np.array(self.pred_probs[class_name])
+            #     predictions_false = 1 - predictions_true
+            #     predictions = np.stack([predictions_false, predictions_true], axis=1)
+            #     if len(np.unique(ground_truth)) == 2:
+            #         metrics[f"{name}/roc"] = wandb.plot.roc_curve(np.array(ground_truth).astype(int), predictions,
+            #                                                       labels=["no " + name, name], classes_to_plot=[1])
         self.reset()
         return metrics
 
@@ -162,8 +162,7 @@ conv_type_to_args = {
 
 class HeteroGNN(torch.nn.Module):
     def __init__(self, node_index_manager, hidden_channels, out_channels, num_layers, learned_embedding_dim,
-                 train_all_emd,
-                 save_activation=False, conv_type="SAGEConv", return_reaction_embedding=False):
+                 train_all_emd, save_activation=False, conv_type="SAGEConv", return_reaction_embedding=False):
         super().__init__()
         self.emb = PartialFixedEmbedding(node_index_manager, learned_embedding_dim, train_all_emd).to(device)
         self.convs = torch.nn.ModuleList()
@@ -247,17 +246,19 @@ class HeteroGNN(torch.nn.Module):
         self.save_activations = defaultdict(list)
 
 
-def get_data(root="data/items", location_augmentation_factor=3, entity_augmentation_factor=1, train_test_split=0.8,
+def get_data(root="data/items", sample=0, location_augmentation_factor=2, entity_augmentation_factor=1,
+             train_test_split=0.8,
              split_method="date"):
     if FAKE_TASK:
 
-        dataset = ReactionDataset(root=root, sample=SAMPLE, location_augmentation_factor=location_augmentation_factor,
-                                  molecule_similier_factor=entity_augmentation_factor,
+        dataset = ReactionDataset(root=root, sample=sample, location_augmentation_factor=location_augmentation_factor,
+                                  # replace_entity_location=location_augmentation_factor,
+                                  # molecule_similier_factor=entity_augmentation_factor,
                                   molecule_random_factor=entity_augmentation_factor,
-                                  protein_similier_factor=entity_augmentation_factor,
+                                  # protein_similier_factor=entity_augmentation_factor,
                                   protein_random_factor=entity_augmentation_factor, order=split_method).reactions
     else:
-        dataset = ReactionDataset(root=root, sample=SAMPLE, order=split_method).reactions
+        dataset = ReactionDataset(root=root, sample=sample, order=split_method).reactions
     print(len(dataset))
     tags = torch.stack([reaction.tags for reaction in dataset])
     pos_classes_weights = (1 - tags.mean(dim=0)) / tags.mean(dim=0)
@@ -267,13 +268,13 @@ def get_data(root="data/items", location_augmentation_factor=3, entity_augmentat
         pos_classes_weights = pos_classes_weights[:-1]
     train_dataset = dataset[:int(len(dataset) * train_test_split)]
     test_dataset = dataset[int(len(dataset) * train_test_split):]
-    node_index_manager = NodesIndexManager(root=root, fuse_vec=fuse)
-    return train_dataset, test_dataset, node_index_manager, pos_classes_weights.to(device)
+    return train_dataset, test_dataset, pos_classes_weights.to(device)
 
 
-def get_models(learned_embedding_dim, hidden_channels, out_channels, num_layers, train_all_emd, lr,
+def get_models(learned_embedding_dim, hidden_channels, out_channels, num_layers, train_all_emd, lr, pretrained_method,
                layer_type="SAGEConv"):
     # emb_model = PartialFixedEmbedding(node_index_manager, learned_embedding_dim, train_all_emd).to(device)
+    node_index_manager = NodesIndexManager(fuse_vec=pretrained_method)
     model = HeteroGNN(node_index_manager, hidden_channels=hidden_channels, out_channels=out_channels,
                       num_layers=num_layers,
                       learned_embedding_dim=learned_embedding_dim, train_all_emd=train_all_emd,
@@ -292,6 +293,7 @@ def get_models(learned_embedding_dim, hidden_channels, out_channels, num_layers,
 def run_model(data, model, optimizer, scorer: Scorer, is_train=True):
     x_dict = {key: data.x_dict[key].to(device) for key in data.x_dict.keys()}
     y = data['tags'].to(device)
+    augmentation_types = data['augmentation_type']
     y = y.float()
     if FAKE_TASK:
         y = y[-1:]
@@ -303,7 +305,8 @@ def run_model(data, model, optimizer, scorer: Scorer, is_train=True):
     pred = (out > 0).to(torch.int32)
     y = y.reshape(out.shape)
     loss = nn.BCEWithLogitsLoss(pos_weight=pos_classes_weights)(out, y)
-    scorer.add(y.cpu().numpy(), pred.detach().cpu().numpy(), out.detach().cpu().numpy(), loss.item())
+    scorer.add(y.cpu().numpy(), pred.detach().cpu().numpy(), out.detach().cpu().numpy(), loss.item(),
+               class_names=augmentation_types if FAKE_TASK else None)
     if is_train:
         optimizer.zero_grad()
         loss.backward()
@@ -314,14 +317,14 @@ def run_model(data, model, optimizer, scorer: Scorer, is_train=True):
 def train(model, optimizer, batch_size, log_func, epochs=EPOCHS, save_model=""):
     for i in range(epochs):
 
-        train_score = Scorer("train", tag_names)
-        train_data = DataLoader(random.choices(train_dataset, k=5_000), batch_size=batch_size, shuffle=True)
+        train_score = Scorer("train", scores_tag_names)
+        train_data = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
         for data_index, data in tqdm(enumerate(train_data)):
             run_model(data, model, optimizer, train_score)
         log_func(train_score.get_log(), i)
-        test_score = Scorer("test", tag_names)
-        test_data = DataLoader(random.choices(test_dataset, k=1_000), batch_size=batch_size, shuffle=True)
+        test_score = Scorer("test", scores_tag_names)
+        test_data = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
         for data_index, data in tqdm(enumerate(test_data)):
             run_model(data, model, optimizer, test_score, False)
         log_func(test_score.get_log(), i)
@@ -336,7 +339,7 @@ def train(model, optimizer, batch_size, log_func, epochs=EPOCHS, save_model=""):
 
 def run_wandb():
     sweep_config = {
-        'method': 'bayes'
+        'method': 'grid',
     }
 
     metric = {
@@ -351,7 +354,7 @@ def run_wandb():
             'distribution': 'categorical'
         },
         'hidden_channels': {
-            'values': [128, 256, 512],
+            'values': [256],
             'distribution': 'categorical'
         },
         'lr': {
@@ -360,6 +363,18 @@ def run_wandb():
         },
         'layer_type': {
             'values': ["SAGEConv"],
+            'distribution': 'categorical'
+        },
+        'num_layers': {
+            'values': [3],
+            'distribution': 'categorical'
+        },
+        'pretrained_method': {
+            'values': [PRETRAINED_EMD, PRETRAINED_EMD_FUSE, NO_PRETRAINED_EMD],
+            'distribution': 'categorical'
+        },
+        'train_all_emd': {
+            'values': [True, False],
             'distribution': 'categorical'
         }
 
@@ -373,13 +388,13 @@ def run_wandb():
             model, optimizer = get_models(config.learned_embedding_dim,
                                           config.hidden_channels,
                                           len(tag_names),
-                                          n_layers,
-                                          train_all_emd, config.lr, layer_type=config.layer_type)
+                                          config.num_layers,
+                                          config.train_all_emd, config.lr, config.pretrained_method, config.layer_type)
             save_prefix = f"{config.hidden_channels}"
             train(model, optimizer, batch_size,
                   lambda x, step: wandb.log(x, step=step), save_model=save_prefix)
 
-    sweep_id = wandb.sweep(sweep_config, project="reactome-multilabel-classification")
+    sweep_id = wandb.sweep(sweep_config, project="reactome-real-rake")
     wandb.agent(sweep_id, wandb_train, count=100)
 
 
@@ -389,26 +404,75 @@ def run_local():
     lr = 0.001
     num_layers = 3
     batch_size = 1
+    pretrained_method = PRETRAINED_EMD
     train_all_emd = False
     layer_type = "SAGEConv"
 
     def print_train_log(x, step):
-        if "train/loss" in x:
-            print(f"Step {step} Loss: {x['train/loss']},AUC: {x['train/all_auc']}")
-        else:
-            print(f"Step {step} Loss: {x['test/loss']},AUC: {x['test/all_auc']}")
+        print(step)
+        print(x)
+        # if "train/loss" in x:
+        #     print(f"Step {step} Loss: {x['train/loss']},AUC: {x['train/all_auc']}")
+        # else:
+        #     print(f"Step {step} Loss: {x['test/loss']},AUC: {x['test/all_auc']}")
 
     model, optimizer = get_models(learned_embedding_dim, hidden_channels,
                                   len(tag_names),
-                                  num_layers, train_all_emd, lr, layer_type=layer_type)
+                                  num_layers, train_all_emd, lr, pretrained_method, layer_type=layer_type)
 
     train(model, optimizer, batch_size, print_train_log, save_model=hidden_channels)
 
 
-if __name__ == "__main__":
+def args_to_str(args):
+    args_dict = vars(args)
+    sorted_args = sorted(args_dict.items())
+    args_str = '-'.join([f"{key}_{value}" for key, value in sorted_args])
+    return args_str
 
-    train_dataset, test_dataset, node_index_manager, pos_classes_weights = get_data()
-    if WB:
-        run_wandb()
+
+def run_with_args(args):
+    file_name = f"data/scores/{args_to_str(args)}.txt"
+
+    def save_to_file(x, step):
+        with open(file_name, "a") as f:
+            f.write(f"{step}\n")
+            f.write(f"{x}\n")
+
+    model, optimizer = get_models(args.learned_embedding_dim, args.hidden_channels,
+                                  len(tag_names),
+                                  args.num_layers, args.train_all_emd, args.lr, args.pretrained_method,
+                                  layer_type=args.layer_type)
+
+    train(model, optimizer, batch_size, save_to_file, save_model=args.hidden_channels)
+
+
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--learned_embedding_dim", type=int, default=256)
+    parser.add_argument("--hidden_channels", type=int, default=256)
+    parser.add_argument("--lr", type=float, default=0.001)
+    parser.add_argument("--num_layers", type=int, default=3)
+    parser.add_argument("--layer_type", type=str, default="SAGEConv", choices=["SAGEConv", "TransformerConv"])
+    parser.add_argument("--pretrained_method", type=str, default=PRETRAINED_EMD,
+                        choices=[PRETRAINED_EMD, PRETRAINED_EMD_FUSE, NO_PRETRAINED_EMD])
+    parser.add_argument("--train_all_emd", type=bool, default=False, choices=[True, False])
+    parser.add_argument("--sample", type=int, default=0)
+    parser.add_argument("--fake_task", type=bool, default=True)
+    args = parser.parse_args()
+    FAKE_TASK = args.fake_task
+
+    if FAKE_TASK:
+        tag_names = ["fake"]
+        scores_tag_names = [REAL, FAKE_LOCATION_ALL, FAKE_LOCATION_SINGLE, FAKE_PROTEIN, FAKE_MOLECULE]
     else:
-        run_local()
+        tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
+        scores_tag_names = tag_names
+
+    train_dataset, test_dataset, pos_classes_weights = get_data(sample=args.sample)
+    run_with_args(args)
+    # if WB:
+    #     run_wandb()
+    # else:
+    #     run_local()

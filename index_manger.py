@@ -14,6 +14,10 @@ REACTION_NODE_ID = 0
 COMPLEX_NODE_ID = 1
 UNKNOWN_ENTITY_TYPE = UNKNOWN_ENTITY_TYPE
 
+NO_PRETRAINED_EMD = 0
+PRETRAINED_EMD = 1
+PRETRAINED_EMD_FUSE = 2
+
 
 @dataclasses.dataclass
 class NodeTypes:
@@ -90,10 +94,6 @@ class EdgeTypes:
         return getattr(self, str)
 
     def get_by_src_dst(self, src, dst, is_catalysis=False):
-        # if src == UNKNOWN_ENTITY_TYPE:
-        #     src = NodeTypes.protein
-        # if dst == UNKNOWN_ENTITY_TYPE:
-        #     dst = NodeTypes.protein
         if src == NodeTypes.text:
             if dst == NodeTypes.text:
                 if is_catalysis:
@@ -123,7 +123,6 @@ def get_edges_values():
     return edges
 
 
-
 class NodeData:
     def __init__(self, index, name, type_, vec=None):
         self.index = index
@@ -133,7 +132,7 @@ class NodeData:
 
 
 class NodesIndexManager:
-    def __init__(self, root="data/items",fuse_vec=False):
+    def __init__(self, root="data/items", fuse_vec=PRETRAINED_EMD):
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
         self.nodes = [reaction_node, complex_node]
@@ -147,11 +146,15 @@ class NodesIndexManager:
             with open(names_file) as f:
                 lines = f.read().splitlines()
             if dt in EMBEDDING_DATA_TYPES:
-                if fuse_vec:
-                    vec_file = f'{root}/{dt}_vec_fuse.npy'
+                if fuse_vec == NO_PRETRAINED_EMD:
+                    random.seed(42)
+                    vectors = np.stack([np.random.rand(TYPE_TO_VEC_DIM[dt]) for _ in range(len(lines))])
                 else:
-                    vec_file = f'{root}/{dt}_vec.npy'
-                vectors = np.load(vec_file)
+                    if fuse_vec == PRETRAINED_EMD_FUSE:
+                        vec_file = f'{root}/{dt}_vec_fuse.npy'
+                    else:  # fuse_vec==PRETRAINED_EMD
+                        vec_file = f'{root}/{dt}_vec.npy'
+                    vectors = np.load(vec_file)
             elif dt == UNKNOWN_ENTITY_TYPE:
                 vectors = [np.zeros(TYPE_TO_VEC_DIM[PROTEIN]) for _ in range(len(lines))]
             else:

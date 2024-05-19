@@ -20,6 +20,11 @@ NT = NodeTypes()
 
 REACTION = NT.reaction
 VIS = False
+REAL = "real"
+FAKE_LOCATION_ALL = "fake_location_all"
+FAKE_LOCATION_SINGLE = "fake_location_single"
+FAKE_PROTEIN = "fake_protein"
+FAKE_MOLECULE = "fake_molecule"
 
 
 def complex_index_to_node_index(complex_id):
@@ -75,9 +80,9 @@ def get_nx_for_tags_prediction_task(reaction, node_index_manager: NodesIndexMana
     return G, tags
 
 
-def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager,check_output=False):
+def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
     if check_output:
-        entitites= reaction.inputs + reaction.outputs + sum([c.entities for c in reaction.catalysis], [])
+        entitites = reaction.inputs + reaction.outputs + sum([c.entities for c in reaction.catalysis], [])
     else:
         entitites = reaction.inputs + sum([c.entities for c in reaction.catalysis], [])
     for e in entitites:
@@ -96,7 +101,8 @@ def build_dataset_for_tags_prediction_task(reaction: str, node_index_manager: No
         fig, ax = plt.subplots(1, 1, figsize=(15, 15))
         plot_graph(g, node_index_manager, ax, title)
         plt.show()
-    return nx_to_torch_geometric(g, tags=torch.Tensor(dataclasses.astuple(tags)).to(torch.float32))
+    return nx_to_torch_geometric(g, tags=torch.Tensor(dataclasses.astuple(tags)).to(torch.float32),
+                                 augmentation_type=REAL)
 
 
 def plot_graph(G, node_index_manager, ax, title=""):
@@ -200,7 +206,9 @@ def replace_location_augmentation(index_manager: NodesIndexManager, data: Hetero
     random_mapping = index_manager.sample_random_locations_map()
     new_locations = [random_mapping[l.item()] for l in data.x_dict[NodeTypes.location]]
     change_nodes_mapping = {NodeTypes.location: torch.LongTensor(new_locations).reshape(-1, 1)}
-    return clone_hetero_data(data, change_nodes_mapping)
+    clone_data = clone_hetero_data(data, change_nodes_mapping)
+    clone_data.augmentation_type = FAKE_LOCATION_ALL
+    return clone_data
 
 
 def replace_entity_location_augmentation(index_manager: NodesIndexManager, data: HeteroData):
@@ -223,8 +231,9 @@ def replace_entity_location_augmentation(index_manager: NodesIndexManager, data:
             options = [l for l in locations_options if l != new_edges_index_type[0][i].item()]
             new_edges_index_type[0][i] = random.choice(options)
     change_nodes_mapping = {edge_type: new_edges_index_type}
-
-    return clone_hetero_data(data, change_nodes_mapping)
+    clone_data = clone_hetero_data(data, change_nodes_mapping)
+    clone_data.augmentation_type = FAKE_LOCATION_SINGLE
+    return clone_data
 
 
 def replace_entity_augmentation(index_manager: NodesIndexManager, data: HeteroData, dtype, how):
@@ -235,7 +244,12 @@ def replace_entity_augmentation(index_manager: NodesIndexManager, data: HeteroDa
     change_index = random.choice(indexes_without_complexes)
     new_index[change_index] = index_manager.sample_entity(new_index[change_index], how=how, what=dtype)
     change_nodes_mapping = {dtype: torch.LongTensor(new_index).reshape(-1, 1)}
-    return clone_hetero_data(data, change_nodes_mapping)
+    clone_data = clone_hetero_data(data, change_nodes_mapping)
+    if dtype == NodeTypes.molecule:
+        clone_data.augmentation_type = FAKE_MOLECULE
+    else:
+        clone_data.augmentation_type = FAKE_PROTEIN
+    return clone_data
 
 
 def add_if_not_none(data, new_data):
@@ -304,16 +318,16 @@ class ReactionDataset:
         return self.reactions[idx]
 
 
-
 if __name__ == "__main__":
-    dataset = ReactionDataset(root="data/items", sample=1, location_augmentation_factor=0,
-                              molecule_similier_factor=0, molecule_random_factor=0, protein_similier_factor=0,
-                              protein_random_factor=0, replace_entity_location=10)
+    dataset = ReactionDataset(root="data/items", sample=1, location_augmentation_factor=1,
+                              molecule_similier_factor=1, molecule_random_factor=1, protein_similier_factor=1,
+                              protein_random_factor=1, replace_entity_location=1)
     # dataset = ReactionDataset(root="data/items")
     print(len(dataset))
     for data in dataset:
+        print(data.augmentation_type)
         # print(data)
-        dict_data = data.to_dict()
-        print(dict_data)
-        data2 = HeteroData.from_dict(dict_data)
-        print(data2)
+        # dict_data = data.to_dict()
+        # print(dict_data)
+        # data2 = HeteroData.from_dict(dict_data)
+        # print(data2)
