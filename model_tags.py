@@ -134,6 +134,8 @@ class PartialFixedEmbedding(nn.Module):
                     torch.tensor(vectors, dtype=torch.float32).to(device))
                 if not train_all_emd:
                     self.embeddings[dtype].requires_grad_(False)
+                else:
+                    self.embeddings[dtype].requires_grad_(True)
             else:
                 n_samples = node_index_manager.dtype_to_last_index[dtype] - node_index_manager.dtype_to_first_index[
                     dtype]
@@ -246,7 +248,8 @@ class HeteroGNN(torch.nn.Module):
         self.save_activations = defaultdict(list)
 
 
-def get_data(root="data/items", sample=0, location_augmentation_factor=2, entity_augmentation_factor=1,
+def get_data(root="data/items", fuse_vec=1, fuse_config="", sample=0, location_augmentation_factor=2,
+             entity_augmentation_factor=1,
              train_test_split=0.8,
              split_method="date"):
     if FAKE_TASK:
@@ -256,9 +259,11 @@ def get_data(root="data/items", sample=0, location_augmentation_factor=2, entity
                                   # molecule_similier_factor=entity_augmentation_factor,
                                   molecule_random_factor=entity_augmentation_factor,
                                   # protein_similier_factor=entity_augmentation_factor,
-                                  protein_random_factor=entity_augmentation_factor, order=split_method).reactions
+                                  protein_random_factor=entity_augmentation_factor, order=split_method,
+                                  fuse_vec=fuse_vec, fuse_config=fuse_config).reactions
     else:
-        dataset = ReactionDataset(root=root, sample=sample, order=split_method).reactions
+        dataset = ReactionDataset(root=root, sample=sample, order=split_method, fuse_vec=fuse_vec,
+                                  fuse_config=fuse_config).reactions
     print(len(dataset))
     tags = torch.stack([reaction.tags for reaction in dataset])
     pos_classes_weights = (1 - tags.mean(dim=0)) / tags.mean(dim=0)
@@ -272,17 +277,18 @@ def get_data(root="data/items", sample=0, location_augmentation_factor=2, entity
 
 
 def get_models(learned_embedding_dim, hidden_channels, out_channels, num_layers, train_all_emd, lr, pretrained_method,
+               fuse_config,
                layer_type="SAGEConv"):
     # emb_model = PartialFixedEmbedding(node_index_manager, learned_embedding_dim, train_all_emd).to(device)
-    node_index_manager = NodesIndexManager(fuse_vec=pretrained_method)
+    node_index_manager = NodesIndexManager(fuse_vec=pretrained_method, fuse_config=fuse_config)
     model = HeteroGNN(node_index_manager, hidden_channels=hidden_channels, out_channels=out_channels,
                       num_layers=num_layers,
                       learned_embedding_dim=learned_embedding_dim, train_all_emd=train_all_emd,
                       conv_type=layer_type).to(device)
 
-    if torch.cuda.device_count() > 1:
-        print("Using", torch.cuda.device_count(), "GPUs!")
-        model = DataParallel(model)
+    # if torch.cuda.device_count() > 1:
+    #     print("Using", torch.cuda.device_count(), "GPUs!")
+    #     model = DataParallel(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     # if not lr_emb:
     #     lr_emb = lr
@@ -337,90 +343,96 @@ def train(model, optimizer, batch_size, log_func, epochs=EPOCHS, save_model=""):
             torch.save(optimizer.state_dict(), name.replace("model_", "optimizer_"))
 
 
-def run_wandb():
-    sweep_config = {
-        'method': 'grid',
-    }
+# def run_wandb():
+#     sweep_config = {
+#         'method': 'grid',
+#     }
+#
+#     metric = {
+#         'name': 'test/all_auc',
+#         'goal': 'maximize'
+#     }
+#
+#     sweep_config['metric'] = metric
+#     parameters_dict = {
+#         'learned_embedding_dim': {
+#             'values': [256],
+#             'distribution': 'categorical'
+#         },
+#         'hidden_channels': {
+#             'values': [256],
+#             'distribution': 'categorical'
+#         },
+#         'lr': {
+#             'values': [1e-3],
+#             'distribution': 'categorical'
+#         },
+#         'layer_type': {
+#             'values': ["SAGEConv"],
+#             'distribution': 'categorical'
+#         },
+#         'num_layers': {
+#             'values': [3],
+#             'distribution': 'categorical'
+#         },
+#         'pretrained_method': {
+#             'values': [PRETRAINED_EMD, PRETRAINED_EMD_FUSE, NO_PRETRAINED_EMD],
+#             'distribution': 'categorical'
+#         },
+#         'train_all_emd': {
+#             'values': [True, False],
+#             'distribution': 'categorical'
+#         },
+#         'fuse_config': {
+#             'values': [""],
+#             'distribution': 'categorical'
+#         }
+#
+#     }
+#
+#     sweep_config['parameters'] = parameters_dict
+#
+#     def wandb_train(config=None):
+#         with wandb.init(config=config):
+#             config = wandb.config
+#             model, optimizer = get_models(config.learned_embedding_dim,
+#                                           config.hidden_channels,
+#                                           len(tag_names),
+#                                           config.num_layers,
+#                                           config.train_all_emd, config.lr, config.pretrained_method, config.fuse_config,
+#                                           config.layer_type)
+#             save_prefix = f"{config.hidden_channels}"
+#             train(model, optimizer, batch_size,
+#                   lambda x, step: wandb.log(x, step=step), save_model=save_prefix)
+#
+#     sweep_id = wandb.sweep(sweep_config, project="reactome-real-rake")
+#     wandb.agent(sweep_id, wandb_train, count=100)
 
-    metric = {
-        'name': 'test/all_auc',
-        'goal': 'maximize'
-    }
 
-    sweep_config['metric'] = metric
-    parameters_dict = {
-        'learned_embedding_dim': {
-            'values': [256],
-            'distribution': 'categorical'
-        },
-        'hidden_channels': {
-            'values': [256],
-            'distribution': 'categorical'
-        },
-        'lr': {
-            'values': [1e-3],
-            'distribution': 'categorical'
-        },
-        'layer_type': {
-            'values': ["SAGEConv"],
-            'distribution': 'categorical'
-        },
-        'num_layers': {
-            'values': [3],
-            'distribution': 'categorical'
-        },
-        'pretrained_method': {
-            'values': [PRETRAINED_EMD, PRETRAINED_EMD_FUSE, NO_PRETRAINED_EMD],
-            'distribution': 'categorical'
-        },
-        'train_all_emd': {
-            'values': [True, False],
-            'distribution': 'categorical'
-        }
-
-    }
-
-    sweep_config['parameters'] = parameters_dict
-
-    def wandb_train(config=None):
-        with wandb.init(config=config):
-            config = wandb.config
-            model, optimizer = get_models(config.learned_embedding_dim,
-                                          config.hidden_channels,
-                                          len(tag_names),
-                                          config.num_layers,
-                                          config.train_all_emd, config.lr, config.pretrained_method, config.layer_type)
-            save_prefix = f"{config.hidden_channels}"
-            train(model, optimizer, batch_size,
-                  lambda x, step: wandb.log(x, step=step), save_model=save_prefix)
-
-    sweep_id = wandb.sweep(sweep_config, project="reactome-real-rake")
-    wandb.agent(sweep_id, wandb_train, count=100)
-
-
-def run_local():
-    learned_embedding_dim = 256
-    hidden_channels = 256
-    lr = 0.001
-    num_layers = 3
-    batch_size = 1
-    pretrained_method = PRETRAINED_EMD
-    train_all_emd = False
-    layer_type = "SAGEConv"
-
-    def print_train_log(x, step):
-        print(step)
-        print(x)
-        # if "train/loss" in x:
-        #     print(f"Step {step} Loss: {x['train/loss']},AUC: {x['train/all_auc']}")
-        # else:
-        #     print(f"Step {step} Loss: {x['test/loss']},AUC: {x['test/all_auc']}")
-
-    model, optimizer = get_models(learned_embedding_dim, hidden_channels,
-                                  len(tag_names),
-                                  num_layers, train_all_emd, lr, pretrained_method, layer_type=layer_type)
-
-    train(model, optimizer, batch_size, print_train_log, save_model=hidden_channels)
+# def run_local():
+#     learned_embedding_dim = 256
+#     hidden_channels = 256
+#     lr = 0.001
+#     num_layers = 3
+#     batch_size = 1
+#     pretrained_method = PRETRAINED_EMD
+#     fuse_config = ""
+#     train_all_emd = False
+#     layer_type = "SAGEConv"
+#
+#     def print_train_log(x, step):
+#         print(step)
+#         print(x)
+#         # if "train/loss" in x:
+#         #     print(f"Step {step} Loss: {x['train/loss']},AUC: {x['train/all_auc']}")
+#         # else:
+#         #     print(f"Step {step} Loss: {x['test/loss']},AUC: {x['test/all_auc']}")
+#
+#     model, optimizer = get_models(learned_embedding_dim, hidden_channels,
+#                                   len(tag_names),
+#                                   num_layers, train_all_emd, lr, pretrained_method, fuse_config, layer_type=layer_type)
+#
+#     train(model, optimizer, batch_size, print_train_log, save_model=hidden_channels)
 
 
 def args_to_str(args):
@@ -431,7 +443,8 @@ def args_to_str(args):
 
 
 def run_with_args(args):
-    file_name = f"data/scores/{args_to_str(args)}.txt"
+    run_name = args_to_str(args)
+    file_name = f"data/scores/{run_name}.txt"
 
     def save_to_file(x, step):
         with open(file_name, "a") as f:
@@ -441,9 +454,10 @@ def run_with_args(args):
     model, optimizer = get_models(args.learned_embedding_dim, args.hidden_channels,
                                   len(tag_names),
                                   args.num_layers, args.train_all_emd, args.lr, args.pretrained_method,
+                                  args.fuse_config,
                                   layer_type=args.layer_type)
 
-    train(model, optimizer, batch_size, save_to_file, save_model=args.hidden_channels)
+    train(model, optimizer, batch_size, save_to_file, save_model=run_name)
 
 
 if __name__ == "__main__":
@@ -455,11 +469,11 @@ if __name__ == "__main__":
     parser.add_argument("--lr", type=float, default=0.001)
     parser.add_argument("--num_layers", type=int, default=3)
     parser.add_argument("--layer_type", type=str, default="SAGEConv", choices=["SAGEConv", "TransformerConv"])
-    parser.add_argument("--pretrained_method", type=str, default=PRETRAINED_EMD,
-                        choices=[PRETRAINED_EMD, PRETRAINED_EMD_FUSE, NO_PRETRAINED_EMD])
-    parser.add_argument("--train_all_emd", type=bool, default=False, choices=[True, False])
+    parser.add_argument("--pretrained_method", type=int, default=PRETRAINED_EMD)
+    parser.add_argument("--train_all_emd", type=int, default=0)
     parser.add_argument("--sample", type=int, default=0)
-    parser.add_argument("--fake_task", type=bool, default=True)
+    parser.add_argument("--fake_task", type=int, default=1)
+    parser.add_argument("--fuse_config", type=str, default="8192_1_1024_0.0_0.001_1_512")
     args = parser.parse_args()
     FAKE_TASK = args.fake_task
 
@@ -470,7 +484,8 @@ if __name__ == "__main__":
         tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
         scores_tag_names = tag_names
 
-    train_dataset, test_dataset, pos_classes_weights = get_data(sample=args.sample)
+    train_dataset, test_dataset, pos_classes_weights = get_data(sample=args.sample, fuse_vec=args.pretrained_method,
+                                                                fuse_config=args.fuse_config)
     run_with_args(args)
     # if WB:
     #     run_wandb()

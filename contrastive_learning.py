@@ -1,9 +1,6 @@
 import numpy as np
-import pandas as pd
-
 from index_manger import NodesIndexManager, NodeTypes, EMBEDDING_DATA_TYPES
-from sklearn.metrics.pairwise import cosine_distances
-
+import os
 from biopax_parser import reaction_from_str, Reaction
 from itertools import combinations
 from tqdm import tqdm
@@ -12,37 +9,34 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
-from dataset_builder import have_unkown_nodes
+from dataset_builder import have_unkown_nodes, have_dna_nodes
 from collections import defaultdict
 from torch.utils.data.sampler import Sampler
-import matplotlib.pyplot as plt
-import seaborn as sns
-from sklearn.neighbors import NearestNeighbors
-# try:
-# from cuml import TSNE
-# except:
-from sklearn.manifold import TSNE
+from sklearn.metrics import roc_auc_score
+from torch.utils.tensorboard import SummaryWriter
+from itertools import chain
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-sns.set()
 
+EPOCHS = 25
 root = "data/items"
+TEST_MODE = False
+WRITE_LOGS = False
 
-TEST_MODE = True
 
-
-def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager):
+def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool):
     elements = []
     reaction_elements = reaction.inputs + reaction.outputs + sum([x.entities for x in reaction.catalysis], [])
     for reaction_element in reaction_elements:
         node = nodes_index_manager.name_to_node[reaction_element.get_unique_id()]
         elements.append(node.index)
-    for mod in sum([list(x.modifications) for x in reaction_elements], []):
-        node = nodes_index_manager.name_to_node["TEXT@" + mod]
-        elements.append(node.index)
-    for act in [x.activity for x in reaction.catalysis]:
-        node = nodes_index_manager.name_to_node["GO@" + act]
-        elements.append(node.index)
+    if not proteins_molecules_only:
+        for mod in sum([list(x.modifications) for x in reaction_elements], []):
+            node = nodes_index_manager.name_to_node["TEXT@" + mod]
+            elements.append(node.index)
+        for act in [x.activity for x in reaction.catalysis]:
+            node = nodes_index_manager.name_to_node["GO@" + act]
+            elements.append(node.index)
     elements = [e for e in elements if not np.all(nodes_index_manager.index_to_node[e].vec == 0)]
     elements = list(set(elements))
     pairs = []
@@ -58,8 +52,9 @@ def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManag
 
 
 class TranferModel(nn.Module):
-    def __init__(self, embedding_dim, n_layers=3, hidden_dim=256, output_dim=128):
+    def __init__(self, embedding_dim, n_layers, hidden_dim, output_dim, dropout):
         super(TranferModel, self).__init__()
+        self.dropout = nn.Dropout(dropout)
         if n_layers < 1:
             raise ValueError("n_layers must be at least 1")
         self.layers = nn.ModuleList()
@@ -74,20 +69,47 @@ class TranferModel(nn.Module):
 
     def forward(self, x, type_):
         x = F.normalize(x, dim=-1)
+        x = self.dropout(x)
         for layer in self.layers[:-1]:
             x = F.relu(layer[type_](x))
         x = self.layers[-1][type_](x)
         return F.normalize(x, dim=-1)
 
 
-def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager):
+class ReconstructionModel(nn.Module):
+    def __init__(self, embedding_dim, n_layers, hidden_dim, output_dim, dropout):
+        super(ReconstructionModel, self).__init__()
+        self.dropout = nn.Dropout(dropout)
+        if n_layers < 1:
+            raise ValueError("n_layers must be at least 1")
+        self.layers = nn.ModuleList()
+        if n_layers == 1:
+            self.layers.append(nn.ModuleDict({k: nn.Linear(output_dim, v) for k, v in embedding_dim.items()}))
+        else:
+            self.layers.append(nn.ModuleDict({k: nn.Linear(output_dim, hidden_dim) for k, v in embedding_dim.items()}))
+            for _ in range(n_layers - 2):
+                self.layers.append(
+                    nn.ModuleDict({k: nn.Linear(hidden_dim, hidden_dim) for k, v in embedding_dim.items()}))
+            self.layers.append(nn.ModuleDict({k: nn.Linear(hidden_dim, v) for k, v in embedding_dim.items()}))
+
+    def forward(self, x, type_):
+        x = F.normalize(x, dim=-1)
+        x = self.dropout(x)
+        for layer in self.layers[:-1]:
+            x = F.relu(self.dropout(layer[type_](x)))
+        x = self.layers[-1][type_](x)
+        return x
+
+
+def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, split):
     a_elements = []
     b_elements = []
+    split_factor = 0 if split == "train" else 4
     for dtype in EMBEDDING_DATA_TYPES:
-        a_elements.append(node_index_manager.dtype_to_first_index[dtype])
-        a_elements.append(node_index_manager.dtype_to_first_index[dtype] + 1)
-        b_elements.append(node_index_manager.dtype_to_first_index[dtype] + 2)
-        b_elements.append(node_index_manager.dtype_to_first_index[dtype] + 3)
+        a_elements.append(node_index_manager.dtype_to_first_index[dtype] + split_factor)
+        a_elements.append(node_index_manager.dtype_to_first_index[dtype] + 1 + split_factor)
+        b_elements.append(node_index_manager.dtype_to_first_index[dtype] + 2 + split_factor)
+        b_elements.append(node_index_manager.dtype_to_first_index[dtype] + 3 + split_factor)
     data = []
     for a1 in a_elements:
         for a2 in a_elements:
@@ -107,10 +129,11 @@ def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager):
 
 
 class PairsDataset(Dataset):
-    def __init__(self, root, nodes_index_manager: NodesIndexManager, neg_count=1, test_mode=TEST_MODE, split="train"):
+    def __init__(self, root, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool, neg_count=1,
+                 test_mode=TEST_MODE, split="train"):
         self.nodes_index_manager = nodes_index_manager
         if test_mode:
-            self.data = get_two_pairs_without_share_nodes(nodes_index_manager)
+            self.data = get_two_pairs_without_share_nodes(nodes_index_manager, split)
             self.elements_unique = np.array(list(set([x[0] for x in self.data] + [x[1] for x in self.data])))
             return
         with open(f'{root}/reaction.txt') as f:
@@ -123,10 +146,13 @@ class PairsDataset(Dataset):
             reactions = reactions[int(len(reactions) * 0.8):]
         reactions = [reaction for reaction in reactions if
                      not have_unkown_nodes(reaction, nodes_index_manager, check_output=True)]
+        if proteins_molecules_only:
+            reactions = [reaction for reaction in reactions if
+                         not have_dna_nodes(reaction, nodes_index_manager, check_output=True)]
         self.all_pairs = []
         self.all_elements = []
         for reaction in tqdm(reactions):
-            elements, pairs = pairs_from_reaction(reaction, nodes_index_manager)
+            elements, pairs = pairs_from_reaction(reaction, nodes_index_manager, proteins_molecules_only)
             self.all_elements.extend(elements)
             self.all_pairs.extend(pairs)
         self.pairs_unique = set(self.all_pairs)
@@ -197,8 +223,12 @@ class SameNameBatchSampler(Sampler):
         Create an iterator that yields batches with the same name.
         """
         names = random.choices(self.names, k=len(self), weights=self.names_probs)
+        names += self.names
         for name in names:
             indices = self.name_to_indices[name]
+            if self.batch_size > len(indices):
+                yield indices
+                continue
             i = random.randint(0, len(indices) - self.batch_size)
             yield indices[i:i + self.batch_size]
 
@@ -212,28 +242,15 @@ def indexes_to_tensor(indexes, node_index_manager: NodesIndexManager):
     return torch.tensor(array), type_
 
 
-def evel_model(pos_score, neg_score):
-    pos_score_all_mean = np.average([np.mean(v) for k, v in pos_score.items() if len(v)],
-                                    weights=[len(v) for k, v in pos_score.items() if len(v)])
-    neg_score_all_mean = np.average([np.mean(v) for k, v in neg_score.items() if len(v)],
-                                    weights=[len(v) for k, v in neg_score.items() if len(v)])
-    pos_score = {k: np.mean(v) for k, v in pos_score.items()}
-    neg_score = {k: np.mean(v) for k, v in neg_score.items()}
-
-    pos_df = pd.DataFrame(columns=EMBEDDING_DATA_TYPES, index=EMBEDDING_DATA_TYPES)
-    neg_df = pd.DataFrame(columns=EMBEDDING_DATA_TYPES, index=EMBEDDING_DATA_TYPES)
-    for k in pos_score.keys():
-        pos_df.loc[k[0], k[1]] = pos_score[k]
-        neg_df.loc[k[0], k[1]] = neg_score[k]
-    print("Positive scores")
-    print(pos_score_all_mean)
-    print(pos_df)
-    print("Negative scores")
-    print(neg_score_all_mean)
-    print(neg_df)
+def remove_vecs_files(run_name):
+    if not os.path.exists(f"{root}/{run_name}"):
+        return
+    for file_name in os.listdir(f"{root}/{run_name}"):
+        if file_name.endswith(".npy"):
+            os.remove(f"{root}/{run_name}/{file_name}")
 
 
-def save_new_vecs(model, node_index_manager: NodesIndexManager):
+def save_new_vecs(model, node_index_manager: NodesIndexManager, run_name, epoch):
     for dtype in EMBEDDING_DATA_TYPES:
         res = []
         for i in range(node_index_manager.dtype_to_first_index[dtype], node_index_manager.dtype_to_last_index[
@@ -248,123 +265,126 @@ def save_new_vecs(model, node_index_manager: NodesIndexManager):
         prev_v = np.load(f"{root}/{dtype}_vec.npy")
 
         assert len(res) == len(prev_v)
+        os.makedirs(f"{root}/{run_name}", exist_ok=True)
 
-        np.save(f"{root}/{dtype}_vec_fuse.npy", res)
-
-
-def evaluate_model(model, node_index_manager, element_to_show=None, n=100):
-    label_groups = {}
-    for dtype in EMBEDDING_DATA_TYPES:
-        nodes_in_type = [node for node in node_index_manager.index_to_node.values() if
-                         node.type == dtype and np.any(node.vec != 0)]
-        if element_to_show is not None:
-            nodes_in_type = [node for node in nodes_in_type if node.index in element_to_show]
-        vecs = np.stack([node.vec for node in nodes_in_type])
-        vecs = model(torch.tensor(vecs).to(device), dtype).cpu().detach().numpy()
-        # all_vecs.append(vecs)
-        # all_labels.extend([dtype] * len(nodes_in_type))
-        label_groups[dtype] = vecs
-    res = pd.DataFrame(index=EMBEDDING_DATA_TYPES, columns=EMBEDDING_DATA_TYPES)
-    for i, label_a in enumerate(EMBEDDING_DATA_TYPES):
-        for label_b in EMBEDDING_DATA_TYPES[i:]:
-            data_a = label_groups[label_a]
-            data_b = label_groups[label_b]
-            distances = np.mean(cosine_distances(data_a, data_b))
-            res.loc[label_a, label_b] = distances
-            res.loc[label_b, label_a] = distances
-    print(res)
+        np.save(f"{root}/{run_name}/{dtype}_vec_fuse_{epoch}.npy", res)
 
 
-def evel_test_split(model, node_index_manager, test_dataset, n=500):
-    pos_score = {(i, j): [] for i in EMBEDDING_DATA_TYPES for j in EMBEDDING_DATA_TYPES}
-    neg_score = {(i, j): [] for i in EMBEDDING_DATA_TYPES for j in EMBEDDING_DATA_TYPES}
-    p = n / len(test_dataset)
-    for idx1, idx2, label in tqdm(test_dataset):
-        if random.random() > p:
+def weighted_mean_loss(loss, labels):
+    positive_mask = (labels == 1).float().to(device)
+    negative_mask = (labels == -1).float().to(device)
+
+    pos_weight = 1.0 / (max(positive_mask.sum(), 1))
+    neg_weight = 1.0 / (max(negative_mask.sum(), 1))
+
+    positive_loss = (loss * positive_mask).sum() * pos_weight
+    negative_loss = (loss * negative_mask).sum() * neg_weight
+
+    return (positive_loss + negative_loss) / (pos_weight + neg_weight)
+
+
+def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch, recon,
+              is_train=True):
+    if is_train:
+        model.train()
+    else:
+        model.eval()
+    total_loss = 0
+    total_recon_loss = 0
+    all_labels = []
+    all_preds = []
+
+    for i, (idx1, idx2, label) in enumerate(loader):
+        data_1, type_1 = indexes_to_tensor(idx1, node_index_manager)
+        data_2, type_2 = indexes_to_tensor(idx2, node_index_manager)
+        out1 = model(data_1.to(device), type_1)
+        out2 = model(data_2.to(device), type_2)
+        all_labels.extend((label == 1).cpu().detach().numpy().astype(int).tolist())
+        all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
+        cont_loss = contrastive_loss(out1, out2, label.to(device))
+        total_loss += cont_loss.mean().item()
+        recon_1 = reconstruction_model(out1, type_1)
+        recon_2 = reconstruction_model(out2, type_2)
+        recon_loss = F.mse_loss(recon_1, data_1.to(device)) + F.mse_loss(recon_2, data_2.to(device))
+        total_recon_loss += recon_loss.item()
+        if not is_train:
             continue
-        data_1, type_1 = indexes_to_tensor(idx1, node_index_manager)
-        data_2, type_2 = indexes_to_tensor(idx2, node_index_manager)
-        out1 = model(data_1.to(device), type_1)
-        out2 = model(data_2.to(device), type_2)
-        loss = contrastive_loss(out1, out2, label.to(device))
-        if label.item() == 1:
-            pos_score[(type_1, type_2)].append(loss.item())
+        if not recon or i % 2 == 0:
+            cont_loss = weighted_mean_loss(cont_loss, label)
+            cont_loss.backward()
+            optimizer.step()
+            optimizer.zero_grad()
         else:
-            neg_score[(type_1, type_2)].append(loss.item())
-    print("Test split")
-    evel_model(pos_score, neg_score)
+            recon_loss.backward()
+            reconstruction_optimizer.step()
+            reconstruction_optimizer.zero_grad()
+    auc = roc_auc_score(all_labels, all_preds)
+    train_test = 'Train' if is_train else 'Test'
+    if WRITE_LOGS:
+        writer.add_scalar(f'cont_loss/{train_test}', total_loss / len(loader), epoch)
+        writer.add_scalar(f'recon_loss/{train_test}', total_recon_loss / len(loader), epoch)
+        writer.add_scalar(f'auc/{train_test}', auc, epoch)
+
+    msg = f"Epoch {epoch} {'Train' if is_train else 'Test'} AUC {auc:.3f} (cont: {total_loss / len(loader):.3f}, " \
+          f"recon: {total_recon_loss / len(loader):.3f})"
+    # msg += f" cont_loss {total_loss / len(loader):.3f}"
+    # msg += f" recon_loss {total_recon_loss / len(loader):.3f}"
+    print(msg)
 
 
-def visualize_data(model, node_index_manager, max_per_type=100, title="", element_to_show=None):
-    all_vecs = []
-    for dtype in EMBEDDING_DATA_TYPES:
-        nodes_in_type = [node for node in node_index_manager.index_to_node.values() if
-                         node.type == dtype and np.any(node.vec != 0)]
-        if element_to_show is not None:
-            nodes_in_type = [node for node in nodes_in_type if node.index in element_to_show]
+if __name__ == '__main__':
 
-        if max_per_type and len(nodes_in_type) > max_per_type:
-            nodes_in_type = random.sample(nodes_in_type, max_per_type)
-        vecs = np.stack([node.vec for node in nodes_in_type])
-        vecs = model(torch.tensor(vecs).to(device), dtype).cpu().detach().numpy()
-        all_vecs.append(vecs)
-    perplexity = min(30, sum([len(x) for x in all_vecs]) // 5)
-    vecs_2d = TSNE(n_components=2, random_state=42, perplexity=perplexity).fit_transform(
-        np.concatenate(all_vecs, axis=0))
-    prev_last_index = 0
-    for i, dtype in enumerate(EMBEDDING_DATA_TYPES):
-        vecs_2d_type = vecs_2d[prev_last_index:prev_last_index + len(all_vecs[i])]
+    import argparse
 
-        prev_last_index += len(all_vecs[i])
-        s = 2 if not TEST_MODE else 25
-        plt.scatter(vecs_2d_type[:, 0], vecs_2d_type[:, 1], label=dtype, s=s)
-    plt.legend()
-    if title:
-        plt.title(title)
-    # plt.savefig(f"data/fig/{title}.png", dpi=300)
-    plt.show()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--batch_size", type=int, default=8192)
+    parser.add_argument("--proteins_molecules_only", type=int, default=1)
+    parser.add_argument("--output_dim", type=int, default=1024)
+    parser.add_argument("--dropout", type=float, default=0.0)
+    parser.add_argument("--lr", type=float, default=1e-3)
+    parser.add_argument("--n_layers", type=int, default=1)
+    parser.add_argument("--hidden_dim", type=int, default=512)
+    parser.add_argument("--recon", type=int, default=1)
+    args = parser.parse_args()
+    run_name = "_".join([str(v) for k, v in sorted(list(vars(args).items()))])
+    if not TEST_MODE:
+        remove_vecs_files(run_name)
+    if WRITE_LOGS:
+        writer = SummaryWriter(log_dir=f'runs/{run_name}')
 
+    if args.proteins_molecules_only:
+        EMBEDDING_DATA_TYPES = [NodeTypes.protein, NodeTypes.molecule]
+    if TEST_MODE:
+        args.batch_size = 2
+    node_index_manager = NodesIndexManager(root)
+    dataset = PairsDataset(root, node_index_manager, proteins_molecules_only=args.proteins_molecules_only)
 
-node_index_manager = NodesIndexManager(root)
-dataset = PairsDataset(root, node_index_manager)
-batch_size = 1024 if not TEST_MODE else 1
-sampler = SameNameBatchSampler(dataset, batch_size)
-loader = DataLoader(dataset, batch_sampler=sampler)
+    sampler = SameNameBatchSampler(dataset, args.batch_size)
+    loader = DataLoader(dataset, batch_sampler=sampler)
 
-test_dataset = DataLoader(PairsDataset(root, node_index_manager, split="test"), 1)
+    test_dataset = PairsDataset(root, node_index_manager, split="test",
+                                proteins_molecules_only=args.proteins_molecules_only)
+    test_sampler = SameNameBatchSampler(test_dataset, args.batch_size)
+    test_loader = DataLoader(test_dataset, batch_sampler=test_sampler)
+    if args.proteins_molecules_only:
+        emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768}
+    else:
+        emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768, NodeTypes.dna: 768, NodeTypes.text: 768}
+    model = TranferModel(emb_dim, n_layers=args.n_layers, hidden_dim=args.hidden_dim, output_dim=args.output_dim,
+                         dropout=args.dropout).to(device)
 
-emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768, NodeTypes.dna: 768, NodeTypes.text: 768}
-model = TranferModel(emb_dim).to(device)
-# model.load_state_dict(torch.load("data/model/cont.pt")['model'])
-optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
-contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
-for epoch in range(100):
-    evel_test_split(model, node_index_manager, test_dataset)
-    total_loss = 0
-    pos_score = {(i, j): [] for i in EMBEDDING_DATA_TYPES for j in EMBEDDING_DATA_TYPES}
-    neg_score = {(i, j): [] for i in EMBEDDING_DATA_TYPES for j in EMBEDDING_DATA_TYPES}
+    reconstruction_model = ReconstructionModel(emb_dim, n_layers=args.n_layers, hidden_dim=args.hidden_dim,
+                                               output_dim=args.output_dim, dropout=args.dropout).to(device)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
+                                                lr=args.lr)
+    contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
+    for epoch in range(EPOCHS):
+        run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, test_loader, contrastive_loss,
+                  epoch, args.recon, is_train=False)
 
-    for i, (idx1, idx2, label) in enumerate(tqdm(loader)):
-        data_1, type_1 = indexes_to_tensor(idx1, node_index_manager)
-        data_2, type_2 = indexes_to_tensor(idx2, node_index_manager)
-        # if type_1 == type_2:
-        #     continue
+        run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch,
+                  args.recon, is_train=True)
 
-        optimizer.zero_grad()
-        out1 = model(data_1.to(device), type_1)
-        out2 = model(data_2.to(device), type_2)
-        loss = contrastive_loss(out1, out2, label.to(device))
-
-        pos_score[(type_1, type_2)].extend(loss[label == 1].cpu().detach().numpy().tolist())
-        neg_score[(type_1, type_2)].extend(loss[label == -1].cpu().detach().numpy().tolist())
-
-        loss = loss.mean()
-
-        total_loss += loss.item()
-        loss.backward()
-
-        optimizer.step()
-    print(f"epoch {epoch} loss {total_loss / len(loader)}")
-    total_loss = 0
-    evel_model(pos_score, neg_score)
-    save_new_vecs(model, node_index_manager)
+        if not TEST_MODE:
+            save_new_vecs(model, node_index_manager, run_name, epoch)

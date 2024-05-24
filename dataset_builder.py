@@ -80,13 +80,24 @@ def get_nx_for_tags_prediction_task(reaction, node_index_manager: NodesIndexMana
     return G, tags
 
 
-def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
+def get_reaction_entities(reaction, check_output):
     if check_output:
-        entitites = reaction.inputs + reaction.outputs + sum([c.entities for c in reaction.catalysis], [])
-    else:
-        entitites = reaction.inputs + sum([c.entities for c in reaction.catalysis], [])
+        return reaction.inputs + reaction.outputs + sum([c.entities for c in reaction.catalysis], [])
+    return reaction.inputs + sum([c.entities for c in reaction.catalysis], [])
+
+
+def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
+    entitites = get_reaction_entities(reaction, check_output)
     for e in entitites:
         if node_index_manager.name_to_node[e.get_unique_id()].type == UNKNOWN_ENTITY_TYPE:
+            return True
+    return False
+
+
+def have_dna_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
+    entitites = get_reaction_entities(reaction, check_output)
+    for e in entitites:
+        if node_index_manager.name_to_node[e.get_unique_id()].type == NT.dna:
             return True
     return False
 
@@ -261,9 +272,9 @@ class ReactionDataset:
     def __init__(self, root="data/items", sample=0, location_augmentation_factor=0, molecule_similier_factor=0,
                  molecule_random_factor=0, protein_similier_factor=0, protein_random_factor=0,
                  replace_entity_location=0, only_fake=False,
-                 one_per_sample=False, order="date"):
+                 one_per_sample=False, order="date", fuse_vec=1, fuse_config=""):
         self.root = root
-        self.node_index_manager = NodesIndexManager(root)
+        self.node_index_manager = NodesIndexManager(root, fuse_vec=fuse_vec, fuse_config=fuse_config)
         self.reactions = []
         with open(f'{root}/reaction.txt') as f:
             lines = f.readlines()

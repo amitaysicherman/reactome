@@ -9,6 +9,7 @@ from matplotlib import pyplot as plt
 from common import DATA_TYPES, EMBEDDING_DATA_TYPES, PROTEIN, DNA, MOLECULE, TEXT, LOCATION, UNKNOWN_ENTITY_TYPE, \
     REACTION, COMPLEX, TYPE_TO_VEC_DIM
 from functools import lru_cache
+import glob
 
 REACTION_NODE_ID = 0
 COMPLEX_NODE_ID = 1
@@ -17,6 +18,13 @@ UNKNOWN_ENTITY_TYPE = UNKNOWN_ENTITY_TYPE
 NO_PRETRAINED_EMD = 0
 PRETRAINED_EMD = 1
 PRETRAINED_EMD_FUSE = 2
+CONCAT_EMD = 3
+pretrained_method_names = {
+    NO_PRETRAINED_EMD: "no_pretrained",
+    PRETRAINED_EMD: "pretrained",
+    PRETRAINED_EMD_FUSE: "pretrained_fuse",
+    CONCAT_EMD: "concat"
+}
 
 
 @dataclasses.dataclass
@@ -131,8 +139,23 @@ class NodeData:
         self.vec = vec
 
 
+def get_fuse_file_from_conf(root, config_name, dt):
+    if config_name == "":
+        if os.path.exists(f'{root}/{dt}_vec_fuse.npy'):
+            return f'{root}/{dt}_vec_fuse.npy'
+        else:
+            print(f'fuse file found in {root}/{dt}_vec_fuse.npy')
+            return f'{root}/{dt}_vec.npy'
+    files_opt = glob.glob(f'{root}/{config_name}/{dt}*')
+    if len(files_opt) == 0:
+        print(f'No files found in {root}/{config_name}/{dt}*')
+        return f'{root}/{dt}_vec.npy'
+    epoch_to_file = {int(file_name.split('_')[-1].split('.')[0]): file_name for file_name in files_opt}
+    return epoch_to_file[max(epoch_to_file.keys())]
+
+
 class NodesIndexManager:
-    def __init__(self, root="data/items", fuse_vec=PRETRAINED_EMD):
+    def __init__(self, root="data/items", fuse_vec=PRETRAINED_EMD, fuse_config=""):
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
         self.nodes = [reaction_node, complex_node]
@@ -150,11 +173,17 @@ class NodesIndexManager:
                     random.seed(42)
                     vectors = np.stack([np.random.rand(TYPE_TO_VEC_DIM[dt]) for _ in range(len(lines))])
                 else:
+                    fuse_vec_file = get_fuse_file_from_conf(root, fuse_config, dt)
+                    print("fuse_vec_file", fuse_vec_file)
+                    pretrained_vec_file = f'{root}/{dt}_vec.npy'
+
                     if fuse_vec == PRETRAINED_EMD_FUSE:
-                        vec_file = f'{root}/{dt}_vec_fuse.npy'
-                    else:  # fuse_vec==PRETRAINED_EMD
-                        vec_file = f'{root}/{dt}_vec.npy'
-                    vectors = np.load(vec_file)
+                        vectors = np.load(fuse_vec_file)
+                    elif fuse_vec == PRETRAINED_EMD:
+                        vectors = np.load(pretrained_vec_file)
+                    else:  # CONCAT_EMD
+                        vectors = np.concatenate([np.load(fuse_vec_file), np.load(pretrained_vec_file)], axis=1)
+
             elif dt == UNKNOWN_ENTITY_TYPE:
                 vectors = [np.zeros(TYPE_TO_VEC_DIM[PROTEIN]) for _ in range(len(lines))]
             else:
