@@ -1,27 +1,26 @@
 from tqdm import tqdm
 from matplotlib import pyplot as plt
-from index_manger import NodesIndexManager, NodeTypes, node_colors
-from biopax_parser import reaction_from_str, Reaction
+from dataset.index_manger import NodesIndexManager
+from common.data_types import Reaction, NodeTypes
 import networkx as nx
-from tagging import tag
+from model.tagging import tag
 import torch
-from tagging import ReactionTag
-from model_tags import HeteroGNN
+from model.tagging import ReactionTag
 import random
-from dataset_builder import get_nx_for_tags_prediction_task, nx_to_torch_geometric, have_unkown_nodes, \
-    replace_location_augmentation, replace_entity_augmentation, add_if_not_none
+from dataset.dataset_builder import reaction_to_nx, nx_to_torch_geometric, have_unkown_nodes, \
+    replace_location_augmentation, replace_entity_augmentation
 import dataclasses
 import numpy as np
 import seaborn as sns
 import requests
 from typing import List
-from utils import load_model
+from common.utils import load_model, reaction_from_str, node_colors
+from common.path_manager import model_path, item_path, reactions_file
 
 sns.set_theme(style="white")
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 NT = NodeTypes()
-root = "../data/items"
 FAKE_TASK = False
 
 
@@ -132,7 +131,7 @@ def get_name_to_opt_hr(reactions: List[Reaction], index_manager: NodesIndexManag
     for reaction in reactions:
         catalisis = sum([c.entities for c in reaction.catalysis], [])
         for node in reaction.inputs + reaction.outputs + catalisis:
-            index_name = node.get_unique_id()
+            index_name = node.get_db_identifier()
             name_to_hr[index_name.lower()] = node.name
     name_to_hr['reaction'] = 'Reaction'
     name_to_hr['complex'] = 'Complex'
@@ -149,20 +148,22 @@ def get_fake_data(data, nodes_index_manager: NodesIndexManager):
     ]
 
 
-with open(f'{root}/reaction.txt') as f:
+with open(reactions_file) as f:
     lines = f.readlines()
 lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
 reactions = [reaction_from_str(line) for line in tqdm(lines)]
 name_to_hr = get_name_to_opt_hr(reactions, NodesIndexManager(root))
 reactions = reactions[int(len(lines) * 0.8):]
-model, nodes_index_manager = load_model(learned_embedding_dim=256, hidden_channels=256, num_layers=3,out_channels=5,
-    model_path="/home/amitay/PycharmProjects/reactome/data/model/model_mlc_256_2.pt")
+model, nodes_index_manager = load_model(learned_embedding_dim=256, hidden_channels=256, num_layers=3, out_channels=5,
+                                        model_path="/data/models_checkpoints/model_mlc_256_2.pt")
 for reaction in random.choices(reactions, k=10):
     if have_unkown_nodes(reaction, nodes_index_manager):
         continue
     if len(reaction.inputs) > 5:
         continue
-    g, tags = get_nx_for_tags_prediction_task(reaction, nodes_index_manager)
+    g = reaction_to_nx(reaction, nodes_index_manager)
+    tags = tag(reaction)
+
     data = nx_to_torch_geometric(g, tags=torch.Tensor(dataclasses.astuple(tags)).to(torch.float32))
 
     if data is None:
@@ -192,7 +193,7 @@ for reaction in random.choices(reactions, k=10):
     title += f'({real_tags})'
     fig.suptitle(title)
     fig.tight_layout()
-    plt.savefig(f"../data/fig/{reaction.reactome_id}.png",dpi=300)
+    plt.savefig(f"../data/fig/{reaction.reactome_id}.png", dpi=300)
     plt.show()
 
     if not FAKE_TASK:
@@ -202,7 +203,6 @@ for reaction in random.choices(reactions, k=10):
     with torch.no_grad():
         out = model(fake_location_data.x_dict, fake_location_data.edge_index_dict)
     out_prob = torch.sigmoid(out).detach().cpu().numpy()[0]
-
 
     for (name, data) in get_fake_data(data, nodes_index_manager):
         if data is None:

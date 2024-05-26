@@ -1,17 +1,19 @@
 import os.path
-from typing import List
+from typing import List, Tuple
 
 import numpy as np
 import torch
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
 
-from biopax_parser import Reaction, reaction_from_str
-from dataset_builder import build_dataset_for_tags_prediction_task, replace_entity_augmentation
-from dataset_builder import get_reaction_entities
-from dataset_builder import have_unkown_nodes, have_dna_nodes
-from index_manger import NodesIndexManager, NodeTypes, NodeData
-from model_tags import HeteroGNN
+from common.utils import reaction_from_str
+from common.data_types import Reaction, NodeTypes
+from dataset.dataset_builder import reaction_to_data, replace_entity_augmentation
+from dataset.dataset_builder import get_reaction_entities
+from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
+from dataset.index_manger import NodesIndexManager, NodeData
+from model_tags import HeteroGNN, GnnModelConfig
+from common.path_manager import  reactions_file, model_path, scores_path
 
 # from tqdm.notebook import tqdm
 
@@ -21,8 +23,6 @@ MODEL_COLUMNS = ['hidden_channels', 'layer_type', 'learned_embedding_dim', 'lr',
 RESULTS_COLUMNS = ['protein_protein', 'molecule_molecule', 'protein_both', 'molecule_both']
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-root = "data/items"
-layer_type = "SAGEConv"
 
 
 def get_args_from_name(name):
@@ -65,7 +65,7 @@ def get_reaction_type(nodes: List[NodeData]):
 
 def get_reaction_nodes(reaction: Reaction, node_index_manager: NodesIndexManager):
     entities = get_reaction_entities(reaction, False)
-    nodes = [node_index_manager.name_to_node[entity.get_unique_id()] for entity in entities]
+    nodes = [node_index_manager.name_to_node[entity.get_db_identifier()] for entity in entities]
     return nodes
 
 
@@ -83,7 +83,7 @@ def sigmoid(x):
 
 def get_all_model_names():
     import os
-    all_models = {model_name.replace(".pt", "") for model_name in os.listdir("data/model")}
+    all_models = {model_name.replace(".pt", "") for model_name in os.listdir("../data/models_checkpoints")}
     all_models = {model_name for model_name in all_models if model_name.startswith("model")}
     all_models_names = {"_".join(m.split("_")[:-1]) for m in all_models}
 
@@ -96,23 +96,24 @@ def get_all_model_names():
     return last_epoch_models
 
 
-def get_model(model_name):
-    args = get_args_from_name(model_name)
-    print(args)
-    node_index_manager = NodesIndexManager(root=root, fuse_config=args['fuse_config'],
-                                           fuse_vec=args['pretrained_method'])
-    hidden_channels = args['hidden_channels']
-    num_layers = args['num_layers']
-    learned_embedding_dim = args['learned_embedding_dim']
-    train_all_emd = args['train_all_emd']
-
-    model = HeteroGNN(node_index_manager, hidden_channels=hidden_channels, out_channels=1, num_layers=num_layers,
-                      learned_embedding_dim=learned_embedding_dim, train_all_emd=train_all_emd, save_activation=False,
-                      conv_type=layer_type).to(device)
-
-    model.load_state_dict(torch.load(f"data/model/{model_name}.pt", map_location=torch.device('cpu')))
+def get_model(model_name) -> Tuple[HeteroGNN, dict]:
+    args = get_args_from_name(model_name.replace("model_",""))
+    config = GnnModelConfig(
+        learned_embedding_dim=args['learned_embedding_dim'],
+        hidden_channels=args['hidden_channels'],
+        num_layers=args['num_layers'],
+        conv_type=args['conv_type'],
+        train_all_emd=args['train_all_emd'],
+        fake_task=True,
+        pretrained_method=args['pretrained_method'],
+        fuse_config=args['fuse_config'],
+        out_channels=1,
+        return_reaction_embedding=False,
+    )
+    model = HeteroGNN(config)
+    model.load_state_dict(torch.load(f"{model_path}/{model_name}.pt", map_location=torch.device('cpu')))
     model.eval()
-    return model, node_index_manager, args
+    return model, args
 
 
 def create_datasets(lines, node_index_manager: NodesIndexManager):
@@ -122,7 +123,7 @@ def create_datasets(lines, node_index_manager: NodesIndexManager):
     for line in lines:
         reaction = reaction_from_str(line)
         reaction_type = get_reaction_type(get_reaction_nodes(reaction, node_index_manager))
-        data = build_dataset_for_tags_prediction_task(line, node_index_manager, False)
+        data = reaction_to_data(line, node_index_manager, False)
         if data is None:
             continue
         if reaction_type == "protein":
@@ -160,7 +161,6 @@ def apply_and_get_score(datasets, model, results):
                 x_dict = {key: data.x_dict[key].to(device) for key in data.x_dict.keys()}
                 y = data['tags'].to(device)
                 y = y.float()
-                y = y[-1:]
                 edge_index_dict = {key: data.edge_index_dict[key].to(device) for key in data.edge_index_dict.keys()}
                 out = model(x_dict, edge_index_dict)
                 preds.extend(sigmoid(out.detach().cpu().numpy()).tolist())
@@ -174,17 +174,17 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str,
-                        default="model_fake_fake_task_1-fuse_config_8192_0.0_512_0.001_1_1024_0_0-hidden_channels_256-layer_type_SAGEConv-learned_embedding_dim_256-lr_0.001-num_layers_3-pretrained_method_2-sample_0-train_all_emd_0_1")
+                        default="model_conv_type_SAGEConv-epochs_10-fake_task_1-fuse_config_8192_1_1024_0.0_0.001_1_512-hidden_channels_256-learned_embedding_dim_256-lr_0.001-num_layers_3-out_channels_1-pretrained_method_1-return_reaction_embedding_0-sample_10-train_all_emd_0_0")
     parser.add_argument("--n", type=int, default=10)
     parser = parser.parse_args()
-    results_file = "data/scores/scores.csv"
+    results_file = f"{scores_path}/scores.csv"
     if not os.path.exists(results_file):
         with open(results_file, "w") as f:
             results_mean_values = [f"{key}_mean" for key in RESULTS_COLUMNS]
             results_std_values = [f"{key}_std" for key in RESULTS_COLUMNS]
             f.write(",".join(FUSE_COLUMNS + MODEL_COLUMNS + results_mean_values + results_std_values) + "\n")
 
-    with open(f'{root}/reaction.txt') as f:
+    with open(reactions_file) as f:
         lines = f.readlines()
     lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
     lines = lines[int(0.8 * len(lines)):]  # only test data
@@ -195,7 +195,9 @@ if __name__ == '__main__':
         model_names = [parser.model_name]
     print(f"Model names: {model_names}")
     for model_name in model_names:
-        model, node_index_manager, args = get_model(model_name)
+
+        model, args = get_model(model_name)
+        node_index_manager = model.emb.node_index_manager
         results = {"protein_protein": [], "molecule_molecule": [], "protein_both": [], "molecule_both": []}
         for _ in tqdm(range(parser.n)):
             datasets = create_datasets(lines, node_index_manager)

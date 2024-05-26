@@ -1,16 +1,14 @@
-from biopax_parser import reaction_from_str
-from common import DATA_TYPES, db_to_type, LOCATION, TEXT
+import os
+
+from common.utils import reaction_from_str
+from common.utils import db_to_type
+from common.data_types import TEXT, LOCATION, DATA_TYPES
+from common.path_manager import reactions_file, item_path
 from collections import defaultdict
 from tqdm import tqdm
 
 indexes = {dt: defaultdict(int) for dt in DATA_TYPES}
-
-
-base_dir = "./data/mus/"
-
-input_file = f"{base_dir}/reaction.txt"
-
-with open(input_file) as f:
+with open(reactions_file) as f:
     lines = f.readlines()
 reactions = []
 for line in tqdm(lines):
@@ -19,7 +17,7 @@ for line in tqdm(lines):
     all_entities = reaction.inputs + reaction.outputs + catalyst_entities
     for entity in all_entities:
         dtype = db_to_type(entity.db)
-        indexes[dtype][entity.get_unique_id()] += 1
+        indexes[dtype][entity.get_db_identifier()] += 1
         indexes[LOCATION][entity.location] += 1
         for mod in entity.modifications:
             mod = f"TEXT@{mod}"
@@ -29,6 +27,7 @@ for line in tqdm(lines):
         indexes[TEXT][catalyst_activity] += 1
 
 for k, v in indexes.items():
-    with open(f"{base_dir}{k}.txt", "w") as f:
+    output_file = os.path.join(item_path, f"{k}.txt")
+    with open(output_file, "w") as f:
         for k, v in v.items():
             f.write(f"{k}@{v}\n")

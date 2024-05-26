@@ -8,19 +8,11 @@ from npy_append_array import NpyAppendArray
 from tqdm import tqdm
 from transformers import T5Tokenizer, T5EncoderModel, AutoModel, AutoModelForMaskedLM, AutoTokenizer, BertConfig
 
-from common import EMBEDDING_DATA_TYPES, PROTEIN, DNA, MOLECULE, TEXT, TYPE_TO_VEC_DIM
+from common.utils import TYPE_TO_VEC_DIM
+from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 MAX_LEN = 512
-
-
-# def clip_to_max_len(x: torch.Tensor, max_len: int = MAX_LEN):
-#     if x.shape[1] <= max_len:
-#         return x
-#     last_token = x[:, -1:]
-#     clipped_x = x[:, :max_len - 1]
-#     result = torch.cat([clipped_x, last_token], dim=1)
-#     return result
 
 
 class ABCSeq2Vec(ABC):
@@ -96,9 +88,6 @@ class BioText2Vec(ABCSeq2Vec):
             self.model.to(torch.float32)
 
 
-
-
-
 class Seq2Vec:
     def __init__(self):
         self.prot2vec = Prot2vec()
@@ -108,8 +97,6 @@ class Seq2Vec:
 
     def to_vec(self, seq: str, seq_type: str):
         zeros = np.zeros((1, TYPE_TO_VEC_DIM[seq_type]))
-        if seq == "":
-            vec = zeros
         if seq_type == PROTEIN:
             vec = self.prot2vec.to_vec(seq)
         elif seq_type == DNA:
@@ -140,7 +127,8 @@ def read_seq_write_vec(seq2vec, input_file_name, output_file_name, seq_type):
 
 
 if __name__ == "__main__":
+    from common.path_manager import item_path
+
     seq2vec = Seq2Vec()
-    BASE_DIR = "data/items"
     for dt in EMBEDDING_DATA_TYPES:
-        read_seq_write_vec(seq2vec, f'{BASE_DIR}/{dt}_sequences.txt', f'{BASE_DIR}/{dt}_vec.npy', dt)
+        read_seq_write_vec(seq2vec, f'{item_path}/{dt}_sequences.txt', f'{item_path}/{dt}_vec.npy', dt)

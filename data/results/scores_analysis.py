@@ -9,7 +9,7 @@ pretrained_method_names = {
     1: "pretrained",
     2: "fuse"
 }
-base_dir = "/home/amitay/PycharmProjects/reactome/data/scores"
+base_dir = "/data/results"
 keys_to_show = ["train_all_emd", "pretrained_method"]
 
 

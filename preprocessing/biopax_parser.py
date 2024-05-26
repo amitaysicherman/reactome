@@ -1,107 +1,13 @@
 import os.path
-from dataclasses import dataclass
 from typing import List
 import pybiopax
 from pybiopax.biopax import BiochemicalReaction
 from tqdm import tqdm
 import datetime
 
+from common.data_types import Entity, CatalystOBJ, Reaction
+
 max_complex_id = 1
-
-
-@dataclass
-class Entity:
-    name: str
-    db: str
-    id: str
-    location: str
-    modifications: tuple = ()
-    complex_id: int = 0
-
-    def get_unique_id(self):
-        return self.db + "@" + self.id
-
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "db": self.db,
-            "id": self.id,
-            "location": self.location,
-            "modifications": self.modifications,
-            "complex_id": self.complex_id
-        }
-
-
-@dataclass
-class CatalystOBJ:
-    entities: List[Entity]
-    activity: str
-
-    def to_dict(self):
-        return {
-            "entities": [e.to_dict() for e in self.entities],
-            "activity": self.activity
-        }
-
-
-def catalyst_from_dict(d: dict) -> CatalystOBJ:
-    entities = [Entity(**e) for e in d["entities"]]
-    activity = d["activity"]
-    return CatalystOBJ(entities, activity)
-
-
-class Reaction:
-    def __init__(self, name, inputs: List[Entity], outputs: List[Entity], catalysis: List[CatalystOBJ],
-                 date: datetime.date, reactome_id: str):
-        self.name = name
-        self.inputs = inputs
-        self.outputs = outputs
-        self.catalysis = catalysis
-        self.date = date
-        self.reactome_id = reactome_id
-
-    def to_dict(self):
-        return {
-            "name": self.name,
-            "inputs": [e.to_dict() for e in self.inputs],
-            "outputs": [e.to_dict() for e in self.outputs],
-            "catalysis": [c.to_dict() for c in self.catalysis],
-            "date": f'{self.date.year}_{self.date.month}_{self.date.day}',
-            "reactome_id": self.reactome_id
-        }
-
-    def to_tuple(self):
-        seq = []
-        entities = self.inputs + self.outputs + [e for c in self.catalysis for e in c.entities]
-        for e in entities:
-            seq.append(e.get_unique_id())
-            seq.append(e.location)
-            seq.append(e.modifications)
-        for c in self.catalysis:
-            seq.append(c.activity)
-        seq = sorted([str(s) for s in seq if s])
-        return tuple(seq)
-
-    def __eq__(self, other):
-        return self.to_tuple() == other.to_tuple()
-
-    def __hash__(self):
-        return hash(self.to_tuple())
-
-
-def reaction_from_dict(d: dict) -> Reaction:
-    name = d["name"]
-    inputs = [Entity(**e) for e in d["inputs"]]
-    outputs = [Entity(**e) for e in d["outputs"]]
-    catalysis = [catalyst_from_dict(c) for c in d["catalysis"]]
-    year, month, day = d["date"].split("_")
-    date = datetime.date(int(year), int(month), int(day))
-    reactome_id = d["reactome_id"]
-    return Reaction(name, inputs, outputs, catalysis, date, reactome_id)
-
-
-def reaction_from_str(s: str) -> Reaction:
-    return reaction_from_dict(eval(s))
 
 
 def feature_parser(feature) -> str:
@@ -208,12 +114,13 @@ def get_reaction_date(reaction: BiochemicalReaction, format='%Y-%m-%d',
 
 
 if __name__ == "__main__":
+    from common.path_manager import data_path,reactions_file
+    import os
 
     write_output = True
-
-    input_file = '/home/amitay/PycharmProjects/reactome/data/biopax/Homo_sapiens.owl'  # Homo_sapiens # R-HSA-3928608_level3.owl'  # R-HSA-8850529_level3.owl'  # '  # Homo_sapiens.owl'
+    input_file = os.path.join(data_path, "biopax", "Homo_sapiens.owl")
     if write_output:
-        output_file = "data/items/reaction.txt"
+        output_file = reactions_file
         if os.path.exists(output_file):
             os.remove(output_file)
     model = pybiopax.model_from_owl_file(input_file)

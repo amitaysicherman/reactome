@@ -1,17 +1,16 @@
 import random
 from typing import List
 
-import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
-# from tqdm.notebook import tqdm
 
-from biopax_parser import Reaction, reaction_from_str
-from dataset_builder import get_reaction_entities
-from dataset_builder import have_unkown_nodes, have_dna_nodes
-from index_manger import NodesIndexManager, NodeTypes, PRETRAINED_EMD_FUSE, NodeData
-
+from common.utils import reaction_from_str
+from common.data_types import Reaction, NodeTypes
+from dataset.dataset_builder import get_reaction_entities
+from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
+from dataset.index_manger import NodesIndexManager, PRETRAINED_EMD_FUSE, NodeData
+from common.path_manager import reactions_file
 DEBUG = True
 
 
@@ -29,7 +28,7 @@ def get_reaction_type(nodes: List[NodeData]):
 
 def get_reaction_nodes(reaction: Reaction, node_index_manager: NodesIndexManager):
     entities = get_reaction_entities(reaction, False)
-    nodes = [node_index_manager.name_to_node[entity.get_unique_id()] for entity in entities]
+    nodes = [node_index_manager.name_to_node[entity.get_db_identifier()] for entity in entities]
     return nodes
 
 
@@ -98,8 +97,7 @@ def clean_reaction(reactions: List[Reaction], node_index_manager: NodesIndexMana
 
 if __name__ == '__main__':
     node_index_manager = NodesIndexManager(fuse_vec=PRETRAINED_EMD_FUSE, fuse_config="8192_1_1024_0.0_0.001_1_512")
-    root = "data/items"
-    with open(f'{root}/reaction.txt') as f:
+    with open(reactions_file) as f:
         lines = f.readlines()
     lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
     reactions = [reaction_from_str(line) for line in lines]

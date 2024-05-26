@@ -1,38 +1,29 @@
 import dataclasses
 import random
 
-import index_manger
-from index_manger import NodesIndexManager, EdgeTypes, NodeTypes, node_colors
-from tagging import tag
+from dataset.index_manger import NodesIndexManager, COMPLEX_NODE_ID
+from model.tagging import tag
 from collections import defaultdict
-from common import UNKNOWN_ENTITY_TYPE
-import matplotlib.pyplot as plt
+from common.data_types import UNKNOWN_ENTITY_TYPE, NodeTypes, EdgeTypes, REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, \
+    FAKE_MOLECULE
 import networkx as nx
 import torch
 from torch_geometric.data import HeteroData
 from tqdm import tqdm
-from biopax_parser import reaction_from_str
-import numpy as np
-import json
+from common.utils import reaction_from_str
+from common.path_manager import item_path, reactions_file
 
 ET = EdgeTypes()
 NT = NodeTypes()
 
 REACTION = NT.reaction
-VIS = False
-REAL = "real"
-FAKE_LOCATION_ALL = "fake_location_all"
-FAKE_LOCATION_SINGLE = "fake_location_single"
-FAKE_PROTEIN = "fake_protein"
-FAKE_MOLECULE = "fake_molecule"
 
 
 def complex_index_to_node_index(complex_id):
     return f'c_{complex_id}'
 
 
-def get_nx_for_tags_prediction_task(reaction, node_index_manager: NodesIndexManager):
-    tags = tag(reaction)
+def reaction_to_nx(reaction, node_index_manager: NodesIndexManager):
     G = nx.DiGraph()
     reaction_node = node_index_manager.name_to_node[NT.reaction]
     G.add_node(reaction_node.index, name=reaction_node.name, type=reaction_node.type)
@@ -48,7 +39,7 @@ def get_nx_for_tags_prediction_task(reaction, node_index_manager: NodesIndexMana
 
     is_cat_list = [False] * len(reaction.inputs) + [True] * len(catalysis_nodes)
     for element, is_cat in zip(reaction.inputs + catalysis_nodes, is_cat_list):
-        node = node_index_manager.name_to_node[element.get_unique_id()]
+        node = node_index_manager.name_to_node[element.get_db_identifier()]
         G.add_node(node.index, name=node.name, type=node.type)
         if element.complex_id == 0:
             edge_type = ET.get_by_src_dst(node.type, NT.reaction, is_catalysis=is_cat)
@@ -77,7 +68,7 @@ def get_nx_for_tags_prediction_task(reaction, node_index_manager: NodesIndexMana
             G.add_node(activity_node.index, name=activity_node.name, type=activity_node.type)
             G.add_edge(activity_node.index, activity_node.index, type=ET.catalysis_activity_self_loop)
         G.add_edge(activity_node.index, reaction_node.index, type=ET.catalysis_activity_to_reaction)
-    return G, tags
+    return G
 
 
 def get_reaction_entities(reaction, check_output):
@@ -89,7 +80,7 @@ def get_reaction_entities(reaction, check_output):
 def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
     entitites = get_reaction_entities(reaction, check_output)
     for e in entitites:
-        if node_index_manager.name_to_node[e.get_unique_id()].type == UNKNOWN_ENTITY_TYPE:
+        if node_index_manager.name_to_node[e.get_db_identifier()].type == UNKNOWN_ENTITY_TYPE:
             return True
     return False
 
@@ -97,60 +88,22 @@ def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager, check_out
 def have_dna_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
     entitites = get_reaction_entities(reaction, check_output)
     for e in entitites:
-        if node_index_manager.name_to_node[e.get_unique_id()].type == NT.dna:
+        if node_index_manager.name_to_node[e.get_db_identifier()].type == NT.dna:
             return True
     return False
 
 
-def build_dataset_for_tags_prediction_task(reaction: str, node_index_manager: NodesIndexManager, vis: bool = False):
+def reaction_to_data(reaction: str, node_index_manager: NodesIndexManager, fake_task: bool):
     reaction = reaction_from_str(reaction)
     if have_unkown_nodes(reaction, node_index_manager):
         return None
-    g, tags = get_nx_for_tags_prediction_task(reaction, node_index_manager)
-    if vis:
-        title = f"{reaction.name}\n{tags}"
-        fig, ax = plt.subplots(1, 1, figsize=(15, 15))
-        plot_graph(g, node_index_manager, ax, title)
-        plt.show()
-    return nx_to_torch_geometric(g, tags=torch.Tensor(dataclasses.astuple(tags)).to(torch.float32),
-                                 augmentation_type=REAL)
-
-
-def plot_graph(G, node_index_manager, ax, title=""):
-    # add order type for each node:
-    order_map = {
-        REACTION: 4,
-        NT.complex: 3,
-        NT.text: 2,
-        NT.protein: 1,
-        NT.molecule: 1,
-        NT.dna: 1,
-        "?": 1,
-        NT.location: 0
-    }
-    for id, data in G.nodes(data=True):
-        if data["type"] not in order_map:
-            print(data["type"])
-            data["type"] = "?"
-        data["order"] = order_map[data["type"]]
-    # pos = nx.spring_layout(G)
-    pos = nx.multipartite_layout(G, subset_key="order")
-    node_types = nx.get_node_attributes(G, "type")
-    nodes_colors = [node_colors[node_type] for node_type in node_types.values()]
-    nodes_labels = {n: data['name'] for n, data in G.nodes(data=True)}
-    nx.draw_networkx_nodes(G, pos, node_size=2000, ax=ax,
-                           node_color=nodes_colors, alpha=0.5)
-    nx.draw_networkx_edges(G, pos, width=1, ax=ax)
-    nx.draw_networkx_labels(G, pos, nodes_labels, font_size=20, ax=ax)
-    edge_labels = nx.get_edge_attributes(G, "type")
-    for k, v in edge_labels.items():
-        if v is None:
-            edge_labels[k] = "?"
-        else:
-            edge_labels[k] = v[1]
-    nx.draw_networkx_edge_labels(G, pos, ax=ax, edge_labels=edge_labels)
-    ax.set_title(title, fontsize=20)
-    ax.axis("off")
+    g = reaction_to_nx(reaction, node_index_manager)
+    if fake_task:
+        tags = torch.Tensor([0]).to(torch.float32)
+    else:
+        tags = tag(reaction)
+        tags = torch.Tensor(dataclasses.astuple(tags)).to(torch.float32)
+    return nx_to_torch_geometric(g, tags=tags, augmentation_type=REAL)
 
 
 def nx_to_torch_geometric(G: nx.Graph, **kwargs):
@@ -166,7 +119,7 @@ def nx_to_torch_geometric(G: nx.Graph, **kwargs):
 
     for node_type, node_ids in nodes_dict.items():
         if node_type == NT.complex:
-            node_ids = [index_manger.COMPLEX_NODE_ID] * len(node_ids)
+            node_ids = [COMPLEX_NODE_ID] * len(node_ids)
         hetero_graph[node_type].x = torch.LongTensor(node_ids).reshape(-1, 1)
 
     for src_id, dst_id, edge_data in G.edges(data=True):
@@ -222,31 +175,6 @@ def replace_location_augmentation(index_manager: NodesIndexManager, data: Hetero
     return clone_data
 
 
-def replace_entity_location_augmentation(index_manager: NodesIndexManager, data: HeteroData):
-    dtype = random.choice([NodeTypes.molecule, NodeTypes.protein])
-    if dtype not in data.x_dict:
-        return None
-    new_index = [m.item() for m in data.x_dict[dtype]]
-    change_index = random.choice(range(len(new_index)))
-
-    locations_options = data.x_dict[NodeTypes.location].tolist()
-    locations_options = [l[0] for l in locations_options]
-    if len(locations_options) <= 1:
-        return None
-
-    edge_type = ET.get_by_src_dst(NodeTypes.location, dtype, is_catalysis=False)
-    new_edges_index_type = torch.clone(data.edge_index_dict[edge_type])
-
-    for i in range(new_edges_index_type.shape[1]):
-        if new_edges_index_type[1][i] == change_index:
-            options = [l for l in locations_options if l != new_edges_index_type[0][i].item()]
-            new_edges_index_type[0][i] = random.choice(options)
-    change_nodes_mapping = {edge_type: new_edges_index_type}
-    clone_data = clone_hetero_data(data, change_nodes_mapping)
-    clone_data.augmentation_type = FAKE_LOCATION_SINGLE
-    return clone_data
-
-
 def replace_entity_augmentation(index_manager: NodesIndexManager, data: HeteroData, dtype, how):
     if dtype not in data.x_dict:
         return None
@@ -269,14 +197,14 @@ def add_if_not_none(data, new_data):
 
 
 class ReactionDataset:
-    def __init__(self, root="data/items", sample=0, location_augmentation_factor=0, molecule_similier_factor=0,
+
+    def __init__(self, node_index_manager: NodesIndexManager, sample=0, location_augmentation_factor=0,
+                 molecule_similier_factor=0,
                  molecule_random_factor=0, protein_similier_factor=0, protein_random_factor=0,
-                 replace_entity_location=0, only_fake=False,
-                 one_per_sample=False, order="date", fuse_vec=1, fuse_config=""):
-        self.root = root
-        self.node_index_manager = NodesIndexManager(root, fuse_vec=fuse_vec, fuse_config=fuse_config)
+                 only_fake=False, one_per_sample=False, order="date", fake_task=True):
+        self.node_index_manager = node_index_manager
         self.reactions = []
-        with open(f'{root}/reaction.txt') as f:
+        with open(reactions_file) as f:
             lines = f.readlines()
         if order == "random":
             import random
@@ -288,12 +216,12 @@ class ReactionDataset:
             lines = lines[:sample]
 
         for line in tqdm(lines):
-            data = build_dataset_for_tags_prediction_task(line, self.node_index_manager, VIS)
-            if data is not None and data.tags.sum().item() != 0:
+            data = reaction_to_data(line, self.node_index_manager, fake_task)
+
+            if data is not None and (fake_task or data.tags.sum().item() != 0):
                 new_data = []
                 if not only_fake:
                     new_data.append(data)
-
                 for _ in range(location_augmentation_factor):
                     add_if_not_none(new_data, replace_location_augmentation(self.node_index_manager, data))
                 for _ in range(molecule_similier_factor):
@@ -312,8 +240,6 @@ class ReactionDataset:
                     add_if_not_none(new_data,
                                     replace_entity_augmentation(self.node_index_manager, data, NodeTypes.protein,
                                                                 "random"))
-                for _ in range(replace_entity_location):
-                    add_if_not_none(new_data, replace_entity_location_augmentation(self.node_index_manager, data))
                 if len(new_data) == 0:
                     continue
                 if one_per_sample:
@@ -329,16 +255,32 @@ class ReactionDataset:
         return self.reactions[idx]
 
 
+def get_data(node_index_manager: NodesIndexManager, sample=0, location_augmentation_factor=2,
+             entity_augmentation_factor=1,
+             train_test_split=0.8,
+             split_method="date", fake_task=True):
+    if fake_task:
+        dataset = ReactionDataset(node_index_manager, sample=sample,
+                                  location_augmentation_factor=location_augmentation_factor,
+                                  molecule_random_factor=entity_augmentation_factor,
+                                  protein_random_factor=entity_augmentation_factor, order=split_method).reactions
+    else:
+        dataset = ReactionDataset(node_index_manager, sample=sample, order=split_method).reactions
+    print(len(dataset))
+
+    tags = torch.stack([reaction.tags for reaction in dataset])
+    pos_classes_weights = (1 - tags.mean(dim=0)) / tags.mean(dim=0)
+
+    train_dataset = dataset[:int(len(dataset) * train_test_split)]
+    test_dataset = dataset[int(len(dataset) * train_test_split):]
+    return train_dataset, test_dataset, pos_classes_weights
+
+
 if __name__ == "__main__":
-    dataset = ReactionDataset(root="data/items", sample=1, location_augmentation_factor=1,
+    node_index_manager = NodesIndexManager()
+    dataset = ReactionDataset(node_index_manager, sample=1, location_augmentation_factor=1,
                               molecule_similier_factor=1, molecule_random_factor=1, protein_similier_factor=1,
-                              protein_random_factor=1, replace_entity_location=1)
-    # dataset = ReactionDataset(root="data/items")
+                              protein_random_factor=1)
     print(len(dataset))
     for data in dataset:
         print(data.augmentation_type)
-        # print(data)
-        # dict_data = data.to_dict()
-        # print(dict_data)
-        # data2 = HeteroData.from_dict(dict_data)
-        # print(data2)

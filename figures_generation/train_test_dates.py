@@ -1,16 +1,16 @@
-from biopax_parser import reaction_from_str
+from common.utils import reaction_from_str
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-
+import os
+from common.path_manager import reactions_file,figures_path
 sns.set()
 colors = sns.color_palette("tab10")
 blue = colors[0]
 green = colors[2]
 red = colors[3]
 
-root = "../data/items"
-with open(f'{root}/reaction.txt') as f:
+with open(reactions_file) as f:
     lines = f.readlines()
 
 years = [reaction_from_str(line).date.year for line in lines]
@@ -41,5 +41,7 @@ plt.ylabel('Reactions Counts')
 plt.title('Training & Testing Data Split')
 plt.legend()
 plt.tight_layout()
-plt.savefig("../data/fig/train_test_dates.png", dpi=300)
+output_file=os.path.join(figures_path,"train_test_dates.png")
+
+plt.savefig(output_file, dpi=300)
 plt.show()

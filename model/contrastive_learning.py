@@ -1,7 +1,10 @@
+import dataclasses
+
 import numpy as np
-from index_manger import NodesIndexManager, NodeTypes, EMBEDDING_DATA_TYPES
+from dataset.index_manger import NodesIndexManager
 import os
-from biopax_parser import reaction_from_str, Reaction
+from common.utils import reaction_from_str
+from common.data_types import Reaction, EMBEDDING_DATA_TYPES, NodeTypes
 from itertools import combinations
 from tqdm import tqdm
 import random
@@ -9,26 +12,72 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
-from dataset_builder import have_unkown_nodes, have_dna_nodes
+from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
 from collections import defaultdict
 from torch.utils.data.sampler import Sampler
 from sklearn.metrics import roc_auc_score
 from torch.utils.tensorboard import SummaryWriter
 from itertools import chain
+from typing import List
+from common.path_manager import reactions_file, item_path
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 EPOCHS = 25
-root = "data/items"
 TEST_MODE = False
 WRITE_LOGS = False
+
+
+@dataclasses.dataclass
+class MultiModalLinearConfig:
+    embedding_dim: List[int]
+    n_layers: int
+    names: List[str]
+    hidden_dim: int
+    output_dim: List[int]
+    dropout: float
+    normalize_last: int
+
+
+class MiltyModalLinear(nn.Module):
+    def __init__(self, config: MultiModalLinearConfig):
+        super(MiltyModalLinear, self).__init__()
+
+        self.normalize_last = config.normalize_last
+        self.dropout = nn.Dropout(config.dropout)
+        if config.n_layers < 1:
+            raise ValueError("n_layers must be at least 1")
+        self.layers = nn.ModuleList()
+        embedding_dim = {k: v for k, v in zip(config.names, config.embedding_dim)}
+        output_dim = {k: v for k, v in zip(config.names, config.output_dim)}
+        if config.n_layers == 1:
+            self.layers.append(nn.ModuleDict({k: nn.Linear(v, output_dim[k]) for k, v in embedding_dim.items()}))
+        else:
+            self.layers.append(nn.ModuleDict({k: nn.Linear(v, config.hidden_dim) for k, v in embedding_dim.items()}))
+            for _ in range(config.n_layers - 2):
+                self.layers.append(
+                    nn.ModuleDict(
+                        {k: nn.Linear(config.hidden_dim, config.hidden_dim) for k, v in embedding_dim.items()}))
+            self.layers.append(
+                nn.ModuleDict({k: nn.Linear(config.hidden_dim, output_dim[k]) for k, v in embedding_dim.items()}))
+
+    def forward(self, x, type_):
+        x = F.normalize(x, dim=-1)
+        x = self.dropout(x)
+        for layer in self.layers[:-1]:
+            x = F.relu(layer[type_](x))
+        x = self.layers[-1][type_](x)
+        if self.normalize_last:
+            return F.normalize(x, dim=-1)
+        else:
+            return x
 
 
 def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool):
     elements = []
     reaction_elements = reaction.inputs + reaction.outputs + sum([x.entities for x in reaction.catalysis], [])
     for reaction_element in reaction_elements:
-        node = nodes_index_manager.name_to_node[reaction_element.get_unique_id()]
+        node = nodes_index_manager.name_to_node[reaction_element.get_db_identifier()]
         elements.append(node.index)
     if not proteins_molecules_only:
         for mod in sum([list(x.modifications) for x in reaction_elements], []):
@@ -49,56 +98,6 @@ def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManag
         else:
             pairs.append((e1, e2))
     return elements, pairs
-
-
-class TranferModel(nn.Module):
-    def __init__(self, embedding_dim, n_layers, hidden_dim, output_dim, dropout):
-        super(TranferModel, self).__init__()
-        self.dropout = nn.Dropout(dropout)
-        if n_layers < 1:
-            raise ValueError("n_layers must be at least 1")
-        self.layers = nn.ModuleList()
-        if n_layers == 1:
-            self.layers.append(nn.ModuleDict({k: nn.Linear(v, output_dim) for k, v in embedding_dim.items()}))
-        else:
-            self.layers.append(nn.ModuleDict({k: nn.Linear(v, hidden_dim) for k, v in embedding_dim.items()}))
-            for _ in range(n_layers - 2):
-                self.layers.append(
-                    nn.ModuleDict({k: nn.Linear(hidden_dim, hidden_dim) for k, v in embedding_dim.items()}))
-            self.layers.append(nn.ModuleDict({k: nn.Linear(hidden_dim, output_dim) for k, v in embedding_dim.items()}))
-
-    def forward(self, x, type_):
-        x = F.normalize(x, dim=-1)
-        x = self.dropout(x)
-        for layer in self.layers[:-1]:
-            x = F.relu(layer[type_](x))
-        x = self.layers[-1][type_](x)
-        return F.normalize(x, dim=-1)
-
-
-class ReconstructionModel(nn.Module):
-    def __init__(self, embedding_dim, n_layers, hidden_dim, output_dim, dropout):
-        super(ReconstructionModel, self).__init__()
-        self.dropout = nn.Dropout(dropout)
-        if n_layers < 1:
-            raise ValueError("n_layers must be at least 1")
-        self.layers = nn.ModuleList()
-        if n_layers == 1:
-            self.layers.append(nn.ModuleDict({k: nn.Linear(output_dim, v) for k, v in embedding_dim.items()}))
-        else:
-            self.layers.append(nn.ModuleDict({k: nn.Linear(output_dim, hidden_dim) for k, v in embedding_dim.items()}))
-            for _ in range(n_layers - 2):
-                self.layers.append(
-                    nn.ModuleDict({k: nn.Linear(hidden_dim, hidden_dim) for k, v in embedding_dim.items()}))
-            self.layers.append(nn.ModuleDict({k: nn.Linear(hidden_dim, v) for k, v in embedding_dim.items()}))
-
-    def forward(self, x, type_):
-        x = F.normalize(x, dim=-1)
-        x = self.dropout(x)
-        for layer in self.layers[:-1]:
-            x = F.relu(self.dropout(layer[type_](x)))
-        x = self.layers[-1][type_](x)
-        return x
 
 
 def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, split):
@@ -129,14 +128,14 @@ def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, spl
 
 
 class PairsDataset(Dataset):
-    def __init__(self, root, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool, neg_count=1,
+    def __init__(self, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool, neg_count=1,
                  test_mode=TEST_MODE, split="train"):
         self.nodes_index_manager = nodes_index_manager
         if test_mode:
             self.data = get_two_pairs_without_share_nodes(nodes_index_manager, split)
             self.elements_unique = np.array(list(set([x[0] for x in self.data] + [x[1] for x in self.data])))
             return
-        with open(f'{root}/reaction.txt') as f:
+        with open(reactions_file) as f:
             lines = f.readlines()
         lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
         reactions = [reaction_from_str(line) for line in lines]
@@ -198,9 +197,6 @@ class PairsDataset(Dataset):
 
 class SameNameBatchSampler(Sampler):
     def __init__(self, dataset: PairsDataset, batch_size):
-        """
-        Initialize the sampler with the dataset and the batch size.
-        """
         self.dataset = dataset
         self.batch_size = batch_size
         self.name_to_indices = defaultdict(list)
@@ -219,9 +215,6 @@ class SameNameBatchSampler(Sampler):
         self.names_probs = self.names_probs / self.names_probs.sum()
 
     def __iter__(self):
-        """
-        Create an iterator that yields batches with the same name.
-        """
         names = random.choices(self.names, k=len(self), weights=self.names_probs)
         names += self.names
         for name in names:
@@ -243,11 +236,11 @@ def indexes_to_tensor(indexes, node_index_manager: NodesIndexManager):
 
 
 def remove_vecs_files(run_name):
-    if not os.path.exists(f"{root}/{run_name}"):
+    if not os.path.exists(f"{item_path}/{run_name}"):
         return
-    for file_name in os.listdir(f"{root}/{run_name}"):
+    for file_name in os.listdir(f"{item_path}/{run_name}"):
         if file_name.endswith(".npy"):
-            os.remove(f"{root}/{run_name}/{file_name}")
+            os.remove(f"{item_path}/{run_name}/{file_name}")
 
 
 def save_new_vecs(model, node_index_manager: NodesIndexManager, run_name, epoch):
@@ -262,12 +255,12 @@ def save_new_vecs(model, node_index_manager: NodesIndexManager, run_name, epoch)
             res.append(new_vec)
 
         res = np.stack(res)
-        prev_v = np.load(f"{root}/{dtype}_vec.npy")
+        prev_v = np.load(f"{item_path}/{dtype}_vec.npy")
 
         assert len(res) == len(prev_v)
-        os.makedirs(f"{root}/{run_name}", exist_ok=True)
+        os.makedirs(f"{item_path}/{run_name}", exist_ok=True)
 
-        np.save(f"{root}/{run_name}/{dtype}_vec_fuse_{epoch}.npy", res)
+        np.save(f"{item_path}/{run_name}/{dtype}_vec_fuse_{epoch}.npy", res)
 
 
 def weighted_mean_loss(loss, labels):
@@ -327,8 +320,6 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
 
     msg = f"Epoch {epoch} {'Train' if is_train else 'Test'} AUC {auc:.3f} (cont: {total_loss / len(loader):.3f}, " \
           f"recon: {total_recon_loss / len(loader):.3f})"
-    # msg += f" cont_loss {total_loss / len(loader):.3f}"
-    # msg += f" recon_loss {total_recon_loss / len(loader):.3f}"
     print(msg)
 
 
@@ -356,13 +347,13 @@ if __name__ == '__main__':
         EMBEDDING_DATA_TYPES = [NodeTypes.protein, NodeTypes.molecule]
     if TEST_MODE:
         args.batch_size = 2
-    node_index_manager = NodesIndexManager(root)
-    dataset = PairsDataset(root, node_index_manager, proteins_molecules_only=args.proteins_molecules_only)
+    node_index_manager = NodesIndexManager()
+    dataset = PairsDataset(node_index_manager, proteins_molecules_only=args.proteins_molecules_only)
 
     sampler = SameNameBatchSampler(dataset, args.batch_size)
     loader = DataLoader(dataset, batch_sampler=sampler)
 
-    test_dataset = PairsDataset(root, node_index_manager, split="test",
+    test_dataset = PairsDataset(node_index_manager, split="test",
                                 proteins_molecules_only=args.proteins_molecules_only)
     test_sampler = SameNameBatchSampler(test_dataset, args.batch_size)
     test_loader = DataLoader(test_dataset, batch_sampler=test_sampler)
@@ -370,11 +361,29 @@ if __name__ == '__main__':
         emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768}
     else:
         emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768, NodeTypes.dna: 768, NodeTypes.text: 768}
-    model = TranferModel(emb_dim, n_layers=args.n_layers, hidden_dim=args.hidden_dim, output_dim=args.output_dim,
-                         dropout=args.dropout).to(device)
 
-    reconstruction_model = ReconstructionModel(emb_dim, n_layers=args.n_layers, hidden_dim=args.hidden_dim,
-                                               output_dim=args.output_dim, dropout=args.dropout).to(device)
+    model_config = MultiModalLinearConfig(
+        embedding_dim=list(emb_dim.values()),
+        n_layers=args.n_layers,
+        names=list(emb_dim.keys()),
+        hidden_dim=args.hidden_dim,
+        output_dim=[args.output_dim] * len(emb_dim),
+        dropout=args.dropout,
+        normalize_last=True
+    )
+
+    model = MiltyModalLinear(model_config)
+    recons_config = MultiModalLinearConfig(
+        embedding_dim=[args.output_dim] * len(emb_dim),
+        n_layers=args.n_layers,
+        names=list(emb_dim.keys()),
+        hidden_dim=args.hidden_dim,
+        output_dim=list(emb_dim.values()),
+        dropout=args.dropout,
+        normalize_last=False
+    )
+
+    reconstruction_model = MiltyModalLinear(recons_config)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
                                                 lr=args.lr)

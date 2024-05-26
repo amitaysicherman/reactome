@@ -1,4 +1,5 @@
-from common import db_to_type, EMBEDDING_DATA_TYPES
+from common.utils import db_to_type
+from common.data_types import EMBEDDING_DATA_TYPES
 import requests
 from libchebipy._chebi_entity import ChebiEntity
 from tqdm import tqdm
@@ -64,9 +65,11 @@ def get_sequence(identifier, db_name):
 
     return handler(identifier)
 
-if __name__ == "__main__":
 
-    base_dir = "data/items"
+if __name__ == "__main__":
+    from common.path_manager import item_path
+
+    base_dir = item_path
     for dt in EMBEDDING_DATA_TYPES:
         print(f"Processing {dt}")
         with open(f"{base_dir}/{dt}.txt") as f:
