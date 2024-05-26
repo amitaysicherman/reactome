@@ -2,7 +2,7 @@ from setuptools import setup,find_packages
 
 setup(
     name='reactome',
-    version='',
+    version=1,
     packages=find_packages(),
     url='',
     license='',

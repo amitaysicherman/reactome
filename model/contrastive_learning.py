@@ -23,7 +23,7 @@ from common.path_manager import reactions_file, item_path
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
-EPOCHS = 25
+EPOCHS = 15
 TEST_MODE = False
 WRITE_LOGS = False
 
