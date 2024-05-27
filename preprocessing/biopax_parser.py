@@ -92,7 +92,7 @@ def get_reactome_id(reaction: BiochemicalReaction) -> str:
         return "0"
     for xref in reaction.xref:
         if "Reactome" in xref.db:
-            return xref.id
+            return xref.db_id
     return "0"
 
 

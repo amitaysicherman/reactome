@@ -3,6 +3,8 @@ from common.data_types import EMBEDDING_DATA_TYPES
 import requests
 from libchebipy._chebi_entity import ChebiEntity
 from tqdm import tqdm
+import time
+import os
 
 
 def get_req(url: str, to_json=False):
@@ -14,6 +16,8 @@ def get_req(url: str, to_json=False):
             return response.text
         else:
             print(f"Failed to retrieve url ({i}): {url} ")
+            time.sleep(1)
+
     if to_json:
         return {}
     return ""
@@ -70,16 +74,39 @@ if __name__ == "__main__":
     from common.path_manager import item_path
 
     base_dir = item_path
+    fail_count = 0
     for dt in EMBEDDING_DATA_TYPES:
         print(f"Processing {dt}")
-        with open(f"{base_dir}/{dt}.txt") as f:
+        input_file = f"{base_dir}/{dt}.txt"
+        output_file = f"{base_dir}/{dt}_sequences.txt"
+
+        with open(input_file) as f:
             lines = f.read().splitlines()
+
+        output_lines = [""] * lines
+        if os.path.exists(output_file):
+            print(f"Output file already exists: {output_file}")
+            with open(output_file) as f:
+                output_lines = f.readlines()
+                assert len(output_lines) == len(lines)
+                missing_count = output_lines.count("")
+                print(f"Missing {missing_count}({missing_count / len(lines):%}) sequences")
+            continue
+
         seqs = []
 
-        for line in tqdm(lines):
-            db_, id_, count_ = line.split("@")
-            seqs.append(get_sequence(id_, db_))
-        with open(f"{base_dir}/{dt}_sequences.txt", "w") as f:
+        for line, output_line in tqdm(zip(lines, output_lines), total=len(lines)):
+            if output_line:
+                new_seq = output_line
+            else:
+                db_, id_, count_ = line.split("@")
+                new_seq = get_sequence(id_, db_)
+                if not new_seq:
+                    fail_count += 1
+            seqs.append(new_seq)
+        print(f"Failed to retrieve {fail_count}({fail_count / len(lines):%}) sequences")
+
+        with open(output_file, "w") as f:
             for seq in seqs:
                 if "\n" in seq:
                     seq = seq.replace("\n", "\t")
