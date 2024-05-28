@@ -304,7 +304,8 @@ if __name__ == '__main__':
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     for file_name in os.listdir(save_dir):
-        os.remove(f"{save_dir}/{file_name}")
+        if file_name.endswith(".pt"):
+            os.remove(f"{save_dir}/{file_name}")
     scores_file = f"{scores_path}/fuse_{run_name}.txt"
     if os.path.exists(scores_file):
         os.remove(scores_file)

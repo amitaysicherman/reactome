@@ -82,7 +82,8 @@ def run_with_args(args):
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     for file in os.listdir(save_dir):
-        os.remove(f"{save_dir}/{file}")
+        if file.endswith(".pt"):
+            os.remove(f"{save_dir}/{file}")
 
     score_file = f"{scores_path}/gnn_{args.name}.txt"
     if os.path.exists(score_file):
