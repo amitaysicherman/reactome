@@ -16,12 +16,12 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class EmdDataset:
-    def __init__(self, dataset, model):
+    def __init__(self, dataset, model,filter_tags=None):
         self.all_emd = []
         self.labels = []
         for data in tqdm(dataset):
             data = data.to(device)
-            if data.bp.item() == -1:
+            if data.bp.item() == -1 or (filter_tags is not None and data.bp.item() not in filter_tags):
                 continue
             with torch.no_grad():
                 x_dict = {key: data.x_dict[key] for key in data.x_dict.keys()}
@@ -53,11 +53,15 @@ def load_data(model):
                                               entity_augmentation_factor=0)
 
     train_emd = EmdDataset(train_dataset, model)
-    test_emd = EmdDataset(test_dataset, model)
+    train_tags= np.unique([d[1].item() for d in train_emd])
+    test_emd = EmdDataset(test_dataset, model, train_tags)
+    labels = torch.stack([d[1].item() for d in train_emd])
+    counts = torch.bincount(labels) + 1
+    weights = 1 / counts
 
     train_loader = DataLoader(train_emd, batch_size=32, shuffle=True)
     test_loader = DataLoader(test_emd, batch_size=1, shuffle=True)
-    return train_loader, test_loader, node_index_manager
+    return train_loader, test_loader, node_index_manager, weights
 
 
 def run_epoch(model, data_loader, optimizer, criterion, is_train, epoch, n_bp, scores_file):
@@ -87,7 +91,7 @@ def run_epoch(model, data_loader, optimizer, criterion, is_train, epoch, n_bp, s
     skip_count = n_bp - len(auc_scores)
     train_or_test = "train" if is_train else "test"
     print(f"Epoch {epoch} ({train_or_test}) AUC: {np.mean(auc_scores):.4f} skip: {skip_count}/{n_bp}")
-    with open(f"{save_dir}/{train_or_test}_auc.txt", "a") as f:
+    with open(scores_file, "a") as f:
         f.write(f"Epoch {epoch} ({train_or_test}) AUC: {np.mean(auc_scores):.4f} skip: {skip_count}/{n_bp}")
 
 
@@ -100,7 +104,7 @@ if __name__ == '__main__':
 
     model, config = load_model(args.model_name)
     model = model.to(device)
-    train_loader, test_loader, node_index_manager = load_data(model)
+    train_loader, test_loader, node_index_manager,weights = load_data(model)
 
     save_dir = f"{model_path}/reaction_{args.model_name}"
     if not os.path.exists(save_dir):
@@ -121,8 +125,7 @@ if __name__ == '__main__':
     classify_model = MiltyModalLinear(classify_config).to(device)
     classify_model = classify_model.to(device)
     optimizer = torch.optim.Adam(classify_model.parameters(), lr=0.001)
-
-    criterion = torch.nn.CrossEntropyLoss()
+    criterion = torch.nn.CrossEntropyLoss(weight=torch.tensor(weights).to(device))
 
     for epoch in range(100):
         run_epoch(classify_model, train_loader, optimizer, criterion, True, epoch, n_bp, scores_file)
