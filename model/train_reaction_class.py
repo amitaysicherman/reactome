@@ -113,7 +113,8 @@ if __name__ == '__main__':
         os.makedirs(save_dir)
     else:
         for f in os.listdir(save_dir):
-            os.remove(f"{save_dir}/{f}")
+            if f.endswith(".pt"):
+                os.remove(f"{save_dir}/{f}")
     scores_file = f"{scores_path}/reaction_{args.model_name}.txt"
 
     n_bp = len(node_index_manager.bp_name_to_index)
