@@ -7,7 +7,7 @@ from common.utils import get_last_epoch_model
 from dataset.index_manger import NodesIndexManager
 from model.gnn_models import GnnModelConfig, HeteroGNN
 from model.models import MultiModalLinearConfig, MiltyModalLinear
-from common.path_manager import model_path
+from common.path_manager import model_path, scores_path
 from common.data_types import REACTION
 from tqdm import tqdm
 import os
@@ -114,7 +114,7 @@ if __name__ == '__main__':
     else:
         for f in os.listdir(save_dir):
             os.remove(f"{save_dir}/{f}")
-    scores_file = f"{save_dir}/scores.txt"
+    scores_file = f"{scores_path}/reaction_{args.model_name}.txt"
 
     n_bp = len(node_index_manager.bp_name_to_index)
     classify_config = MultiModalLinearConfig(
