@@ -304,6 +304,8 @@ if __name__ == '__main__':
     for file_name in os.listdir(save_dir):
         os.remove(f"{save_dir}/{file_name}")
     scores_file = f"{scores_path}/fuse_{run_name}.txt"
+    if os.path.exists(scores_file):
+        os.remove(scores_file)
     model_config = MultiModalLinearConfig(
         embedding_dim=list(emb_dim.values()),
         n_layers=args.n_layers,

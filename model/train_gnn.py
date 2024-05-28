@@ -85,7 +85,8 @@ def run_with_args(args):
         os.remove(f"{save_dir}/{file}")
 
     score_file = f"{scores_path}/gnn_{args.name}.txt"
-
+    if os.path.exists(score_file):
+        os.remove(score_file)
     def save_to_file(x, step):
         with open(score_file, "a") as f:
             f.write(f"{step}\n")

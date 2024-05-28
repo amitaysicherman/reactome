@@ -141,7 +141,7 @@ if __name__ == "__main__":
     from common.path_manager import data_path, reactions_file
     import os
 
-    write_output = False
+    write_output = True
 
     input_file = os.path.join(data_path, "biopax", "Homo_sapiens.owl")
     if write_output:
