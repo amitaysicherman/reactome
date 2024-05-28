@@ -53,9 +53,9 @@ def load_data(model):
                                               entity_augmentation_factor=0)
 
     train_emd = EmdDataset(train_dataset, model)
-    train_tags= np.unique([d[1].item() for d in train_emd])
+    train_tags= np.unique([d[1] for d in train_emd])
     test_emd = EmdDataset(test_dataset, model, train_tags)
-    labels = torch.stack([d[1].item() for d in train_emd])
+    labels = torch.stack([d[1] for d in train_emd])
     counts = torch.bincount(labels) + 1
     weights = 1 / counts
 
