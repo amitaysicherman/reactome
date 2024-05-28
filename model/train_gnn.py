@@ -49,12 +49,12 @@ def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
         train_score = Scorer("train", scores_tag_names)
         train_data = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
-        for data_index, data in tqdm(enumerate(train_data)):
+        for data_index, data in tqdm(enumerate(train_data), total=len(train_dataset) // batch_size):
             run_model(data, model, optimizer, train_score)
         log_func(train_score.get_log(), i)
         test_score = Scorer("test", scores_tag_names)
         test_data = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
-        for data_index, data in tqdm(enumerate(test_data)):
+        for data_index, data in tqdm(enumerate(test_data), total=len(test_dataset) // batch_size):
             run_model(data, model, optimizer, test_score, False)
         log_func(test_score.get_log(), i)
 
@@ -87,11 +87,14 @@ def run_with_args(args):
     score_file = f"{scores_path}/gnn_{args.name}.txt"
     if os.path.exists(score_file):
         os.remove(score_file)
+
     def save_to_file(x, step):
         with open(score_file, "a") as f:
             f.write(f"{step}\n")
             f.write(f"{x}\n")
 
+    config = args_to_config(args)
+    config.save_to_file(f"{save_dir}/config.txt")
     model = HeteroGNN(args_to_config(args)).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
 

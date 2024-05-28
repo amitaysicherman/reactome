@@ -36,7 +36,7 @@ def vectors_fuse(fuse_model, dtype, vectors):
     if fuse_model is None or dtype not in fuse_model.layers[0]:
         return vectors
     with torch.no_grad():
-        vec = torch.tensor(vectors)
+        vec = torch.tensor(vectors).float()
         vec = fuse_model(vec, dtype)
     return vec.detach().cpu().numpy()
 
