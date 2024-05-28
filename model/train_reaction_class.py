@@ -16,7 +16,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
 
 class EmdDataset:
-    def __init__(self, dataset, model,filter_tags=None):
+    def __init__(self, dataset, model, filter_tags=None):
         self.all_emd = []
         self.labels = []
         for data in tqdm(dataset):
@@ -53,10 +53,12 @@ def load_data(model):
                                               entity_augmentation_factor=0)
 
     train_emd = EmdDataset(train_dataset, model)
-    train_tags= np.unique([d[1] for d in train_emd])
+    train_tags = np.unique([d[1] for d in train_emd])
     test_emd = EmdDataset(test_dataset, model, train_tags)
-    labels = torch.LongTensor([d[1] for d in train_emd])
-    counts = torch.bincount(labels) + 1
+    n_bp = len(node_index_manager.bp_name_to_index)
+    labels = torch.LongTensor(list(range(n_bp)) + [d[1] for d in train_emd])
+
+    counts = torch.bincount(labels)
     weights = 1 / counts
 
     train_loader = DataLoader(train_emd, batch_size=32, shuffle=True)
@@ -104,7 +106,7 @@ if __name__ == '__main__':
 
     model, config = load_model(args.model_name)
     model = model.to(device)
-    train_loader, test_loader, node_index_manager,weights = load_data(model)
+    train_loader, test_loader, node_index_manager, weights = load_data(model)
 
     save_dir = f"{model_path}/reaction_{args.model_name}"
     if not os.path.exists(save_dir):
