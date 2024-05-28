@@ -12,8 +12,8 @@ from common.utils import TYPE_TO_VEC_DIM
 from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-MAX_LEN = 1024
-
+MAX_LEN = 512
+PROTEIN_MAX_LEN = 1024
 
 def clip_to_max_len(x: torch.Tensor, max_len: int = MAX_LEN):
     if x.shape[1] <= max_len:
@@ -56,9 +56,9 @@ class Prot2vec(ABCSeq2Vec):
         ids = self.tokenizer(seq, add_special_tokens=True, padding="longest")
 
         input_ids = torch.tensor(ids['input_ids']).to(device)
-        input_ids = clip_to_max_len(input_ids)
+        input_ids = clip_to_max_len(input_ids,PROTEIN_MAX_LEN)
         attention_mask = torch.tensor(ids['attention_mask']).to(device)
-        attention_mask = clip_to_max_len(attention_mask)
+        attention_mask = clip_to_max_len(attention_mask,PROTEIN_MAX_LEN)
 
         with torch.no_grad():
             embedding_repr = self.model(input_ids=input_ids, attention_mask=attention_mask)
