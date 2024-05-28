@@ -12,7 +12,7 @@ from common.utils import TYPE_TO_VEC_DIM
 from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-MAX_LEN = 512
+MAX_LEN = 510
 PROTEIN_MAX_LEN = 1024
 
 def clip_to_max_len(x: torch.Tensor, max_len: int = MAX_LEN):
