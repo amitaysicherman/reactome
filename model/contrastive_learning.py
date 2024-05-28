@@ -273,7 +273,7 @@ if __name__ == '__main__':
     parser.add_argument("--hidden_dim", type=int, default=512)
     parser.add_argument("--recon", type=int, default=1)
     parser.add_argument("--name", type=str, default="all-recon")
-    parser.add_argument("--epochs", type=int, default=25)
+    parser.add_argument("--epochs", type=int, default=15)
     args = parser.parse_args()
     EPOCHS = args.epochs
 
