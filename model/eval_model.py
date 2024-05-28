@@ -120,9 +120,10 @@ def apply_and_get_score(datasets, model, results):
                 y = y.float()
                 edge_index_dict = {key: data.edge_index_dict[key].to(device) for key in data.edge_index_dict.keys()}
                 out = model(x_dict, edge_index_dict)
-                preds.extend(sigmoid(out.detach().cpu().numpy()).tolist()[0][0])
-                real.extend(y.item())
+                preds.append(sigmoid(out.detach().cpu().numpy()).tolist()[0][0])
+                real.append(y.item())
         results[name].append(roc_auc_score(real, preds))
+        print(name,results[name][-1])
     return results
 
 

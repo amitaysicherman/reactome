@@ -12,7 +12,16 @@ from common.utils import TYPE_TO_VEC_DIM
 from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
-MAX_LEN = 512
+MAX_LEN = 1024
+
+
+def clip_to_max_len(x: torch.Tensor, max_len: int = MAX_LEN):
+    if x.shape[1] <= max_len:
+        return x
+    last_token = x[:, -1:]
+    clipped_x = x[:, :max_len - 1]
+    result = torch.cat([clipped_x, last_token], dim=1)
+    return result
 
 
 class ABCSeq2Vec(ABC):
@@ -22,9 +31,7 @@ class ABCSeq2Vec(ABC):
 
     def to_vec(self, seq: str):
         inputs = self.tokenizer(seq, return_tensors='pt')["input_ids"].to(device)
-        if inputs.shape[1] > MAX_LEN:
-            return None
-        # inputs = clip_to_max_len(inputs)
+        inputs = clip_to_max_len(inputs)
         with torch.no_grad():
             hidden_states = self.model(inputs)[0]
         vec = torch.mean(hidden_states[0], dim=0)
@@ -49,11 +56,10 @@ class Prot2vec(ABCSeq2Vec):
         ids = self.tokenizer(seq, add_special_tokens=True, padding="longest")
 
         input_ids = torch.tensor(ids['input_ids']).to(device)
+        input_ids = clip_to_max_len(input_ids)
         attention_mask = torch.tensor(ids['attention_mask']).to(device)
-        if input_ids.shape[1] > MAX_LEN:
-            return None
-        # input_ids = clip_to_max_len(input_ids)
-        # attention_mask = clip_to_max_len(attention_mask)
+        attention_mask = clip_to_max_len(attention_mask)
+
         with torch.no_grad():
             embedding_repr = self.model(input_ids=input_ids, attention_mask=attention_mask)
         vec = embedding_repr.last_hidden_state[0].mean(dim=0)
@@ -116,14 +122,17 @@ class Seq2Vec:
 def read_seq_write_vec(seq2vec, input_file_name, output_file_name, seq_type):
     with open(input_file_name) as f:
         seqs = f.read().splitlines()
-
+    missing_count = 0
     if os.path.exists(output_file_name):
         os.remove(output_file_name)
 
     for seq in tqdm(seqs):
         vec = seq2vec.to_vec(seq, seq_type)
+        if vec is None:
+            missing_count += 1
         with NpyAppendArray(output_file_name) as f:
             f.append(vec)
+    print(f"Missing {missing_count}({missing_count / len(seqs):%}) sequences for {seq_type}")
 
 
 if __name__ == "__main__":
