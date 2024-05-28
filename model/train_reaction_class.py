@@ -114,7 +114,7 @@ if __name__ == '__main__':
     else:
         for f in os.listdir(save_dir):
             os.remove(f"{save_dir}/{f}")
-    scores_file = open(f"{save_dir}/scores.txt", "w")
+    scores_file = f"{save_dir}/scores.txt"
 
     n_bp = len(node_index_manager.bp_name_to_index)
     classify_config = MultiModalLinearConfig(
