@@ -116,7 +116,8 @@ if __name__ == '__main__':
             if f.endswith(".pt"):
                 os.remove(f"{save_dir}/{f}")
     scores_file = f"{scores_path}/reaction_{args.model_name}.txt"
-
+    if os.path.exists(scores_file):
+        os.remove(scores_file)
     n_bp = len(node_index_manager.bp_name_to_index)
     classify_config = MultiModalLinearConfig(
         embedding_dim=[config.hidden_channels], n_layers=1,
