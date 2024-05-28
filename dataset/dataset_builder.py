@@ -138,6 +138,7 @@ def nx_to_torch_geometric(G: nx.Graph, **kwargs):
         hetero_graph[k] = v
     try:
         hetero_graph.validate(raise_on_error=True)
+        hetero_graph.edge_index_dict.keys()
         return hetero_graph
 
     except Exception as error:
@@ -282,10 +283,10 @@ def get_data(node_index_manager: NodesIndexManager, sample=0, location_augmentat
 
 if __name__ == "__main__":
     node_index_manager = NodesIndexManager()
-    dataset = ReactionDataset(node_index_manager, sample=1, location_augmentation_factor=1,
+    dataset = ReactionDataset(node_index_manager, sample=0, location_augmentation_factor=1,
                               molecule_similier_factor=1, molecule_random_factor=1, protein_similier_factor=1,
                               protein_random_factor=1)
     print(len(dataset))
     for data in dataset:
-        print(data.augmentation_type)
-        print(data.bp)
+        print(data.edge_index_dict.keys())
+        edge_index_dict = {key: data.edge_index_dict[key] for key in data.edge_index_dict.keys()}
