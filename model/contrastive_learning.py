@@ -20,7 +20,6 @@ from model.models import MultiModalLinearConfig, MiltyModalLinear
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Device: {device}")
-EPOCHS = 15
 TEST_MODE = False
 
 
@@ -274,7 +273,10 @@ if __name__ == '__main__':
     parser.add_argument("--hidden_dim", type=int, default=512)
     parser.add_argument("--recon", type=int, default=1)
     parser.add_argument("--name", type=str, default="all-recon")
+    parser.add_argument("--epochs", type=int, default=25)
     args = parser.parse_args()
+    EPOCHS = args.epochs
+
     run_name = args.name
     if not TEST_MODE:
         remove_vecs_files(run_name)

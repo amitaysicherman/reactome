@@ -130,7 +130,7 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_name", type=str, default="default")
+    parser.add_argument("--model_name", type=str, default="gnn_default")
     parser.add_argument("--n", type=int, default=10)
     parser = parser.parse_args()
     results_file = f"{scores_path}/summary_gnn.csv"
