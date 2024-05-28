@@ -155,6 +155,7 @@ if __name__ == '__main__':
 
         config_file = os.path.join(os.path.dirname(model_name), "config.txt")
         model = get_model(model_name, config_file)
+        model = model.to(device)
         node_index_manager = model.emb.node_index_manager
         results = {"protein_protein": [], "molecule_molecule": [], "protein_both": [], "molecule_both": []}
         for _ in tqdm(range(parser.n)):
