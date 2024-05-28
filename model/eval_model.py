@@ -53,15 +53,15 @@ def sigmoid(x):
 
 
 def get_last_epoch_model(model_dir):
-    files = os.listdir(f'{model_path}/{model_dir}')
+    files = os.listdir(f'{model_dir}')
     ephocs = [int(x.split("_")[-1].replace(".pt", "")) for x in files if x.startswith("model")]
     last_epoch = max(ephocs)
-    return f"{model_path}/{model_dir}/model_{last_epoch}.pt"
+    return f"{model_dir}/model_{last_epoch}.pt"
 
 
 def get_all_model_names():
     model_names = [x for x in os.listdir(model_path) if x.startswith("gnn_")]
-    last_epoch_models = [get_last_epoch_model(model_dir) for model_dir in model_names]
+    last_epoch_models = [get_last_epoch_model(f"{model_path}/{model_dir}/") for model_dir in model_names]
     return last_epoch_models
 
 
