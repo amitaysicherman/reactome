@@ -98,12 +98,15 @@ def reaction_to_data(reaction: str, node_index_manager: NodesIndexManager, fake_
     if have_unkown_nodes(reaction, node_index_manager):
         return None
     g = reaction_to_nx(reaction, node_index_manager)
+    bp = node_index_manager.bp_name_to_index[
+        reaction.biological_process[0]]  # TODO: handle more then one biological_process.
+
     if fake_task:
         tags = torch.Tensor([0]).to(torch.float32)
     else:
         tags = tag(reaction)
         tags = torch.Tensor(dataclasses.astuple(tags)).to(torch.float32)
-    return nx_to_torch_geometric(g, tags=tags, augmentation_type=REAL)
+    return nx_to_torch_geometric(g, tags=tags, augmentation_type=REAL, bp=torch.LongTensor([bp]))
 
 
 def nx_to_torch_geometric(G: nx.Graph, **kwargs):
@@ -161,6 +164,7 @@ def clone_hetero_data(data: HeteroData, change_nodes_mapping=dict(), change_edge
     for key, value in data.edge_index_dict.items():
         new_hetero_data[key].edge_index = torch.clone(value)
     new_hetero_data.tags = get_fake_tag(data)
+    new_hetero_data.bp = data.bp.clone()
     return new_hetero_data
 
 
@@ -284,3 +288,4 @@ if __name__ == "__main__":
     print(len(dataset))
     for data in dataset:
         print(data.augmentation_type)
+        print(data.bp)

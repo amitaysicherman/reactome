@@ -1,5 +1,3 @@
-import dataclasses
-
 import numpy as np
 from dataset.index_manger import NodesIndexManager
 import os
@@ -16,61 +14,14 @@ from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
 from collections import defaultdict
 from torch.utils.data.sampler import Sampler
 from sklearn.metrics import roc_auc_score
-from torch.utils.tensorboard import SummaryWriter
 from itertools import chain
-from typing import List
-from common.path_manager import reactions_file, item_path
+from common.path_manager import reactions_file, item_path, model_path, scores_path
+from model.models import MultiModalLinearConfig, MiltyModalLinear
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+print(f"Device: {device}")
 EPOCHS = 15
 TEST_MODE = False
-WRITE_LOGS = False
-
-
-@dataclasses.dataclass
-class MultiModalLinearConfig:
-    embedding_dim: List[int]
-    n_layers: int
-    names: List[str]
-    hidden_dim: int
-    output_dim: List[int]
-    dropout: float
-    normalize_last: int
-
-
-class MiltyModalLinear(nn.Module):
-    def __init__(self, config: MultiModalLinearConfig):
-        super(MiltyModalLinear, self).__init__()
-
-        self.normalize_last = config.normalize_last
-        self.dropout = nn.Dropout(config.dropout)
-        if config.n_layers < 1:
-            raise ValueError("n_layers must be at least 1")
-        self.layers = nn.ModuleList()
-        embedding_dim = {k: v for k, v in zip(config.names, config.embedding_dim)}
-        output_dim = {k: v for k, v in zip(config.names, config.output_dim)}
-        if config.n_layers == 1:
-            self.layers.append(nn.ModuleDict({k: nn.Linear(v, output_dim[k]) for k, v in embedding_dim.items()}))
-        else:
-            self.layers.append(nn.ModuleDict({k: nn.Linear(v, config.hidden_dim) for k, v in embedding_dim.items()}))
-            for _ in range(config.n_layers - 2):
-                self.layers.append(
-                    nn.ModuleDict(
-                        {k: nn.Linear(config.hidden_dim, config.hidden_dim) for k, v in embedding_dim.items()}))
-            self.layers.append(
-                nn.ModuleDict({k: nn.Linear(config.hidden_dim, output_dim[k]) for k, v in embedding_dim.items()}))
-
-    def forward(self, x, type_):
-        x = F.normalize(x, dim=-1)
-        x = self.dropout(x)
-        for layer in self.layers[:-1]:
-            x = F.relu(layer[type_](x))
-        x = self.layers[-1][type_](x)
-        if self.normalize_last:
-            return F.normalize(x, dim=-1)
-        else:
-            return x
 
 
 def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool):
@@ -243,24 +194,11 @@ def remove_vecs_files(run_name):
             os.remove(f"{item_path}/{run_name}/{file_name}")
 
 
-def save_new_vecs(model, node_index_manager: NodesIndexManager, run_name, epoch):
-    for dtype in EMBEDDING_DATA_TYPES:
-        res = []
-        for i in range(node_index_manager.dtype_to_first_index[dtype], node_index_manager.dtype_to_last_index[
-            dtype]):
-            node = node_index_manager.index_to_node[i]
-            new_vec = model(torch.tensor(node.vec).to(device).unsqueeze(0), dtype).cpu().detach().numpy().flatten()
-            if np.all(node.vec == 0):
-                new_vec = np.zeros_like(new_vec)
-            res.append(new_vec)
-
-        res = np.stack(res)
-        prev_v = np.load(f"{item_path}/{dtype}_vec.npy")
-
-        assert len(res) == len(prev_v)
-        os.makedirs(f"{item_path}/{run_name}", exist_ok=True)
-
-        np.save(f"{item_path}/{run_name}/{dtype}_vec_fuse_{epoch}.npy", res)
+def save_fuse_model(model: MiltyModalLinear, reconstruction_model: MiltyModalLinear, save_dir, epoch):
+    output_file = f"{save_dir}/fuse_{epoch}.pt"
+    torch.save(model.state_dict(), output_file)
+    output_file = f"{save_dir}/fuse-recon_{epoch}.pt"
+    torch.save(reconstruction_model.state_dict(), output_file)
 
 
 def weighted_mean_loss(loss, labels):
@@ -277,7 +215,7 @@ def weighted_mean_loss(loss, labels):
 
 
 def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch, recon,
-              is_train=True):
+              output_file, is_train=True):
     if is_train:
         model.train()
     else:
@@ -290,15 +228,17 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
     for i, (idx1, idx2, label) in enumerate(loader):
         data_1, type_1 = indexes_to_tensor(idx1, node_index_manager)
         data_2, type_2 = indexes_to_tensor(idx2, node_index_manager)
-        out1 = model(data_1.to(device), type_1)
-        out2 = model(data_2.to(device), type_2)
+        data_1 = data_1.to(device).float()
+        data_2 = data_2.to(device).float()
+        out1 = model(data_1, type_1)
+        out2 = model(data_2, type_2)
         all_labels.extend((label == 1).cpu().detach().numpy().astype(int).tolist())
         all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
         cont_loss = contrastive_loss(out1, out2, label.to(device))
         total_loss += cont_loss.mean().item()
         recon_1 = reconstruction_model(out1, type_1)
         recon_2 = reconstruction_model(out2, type_2)
-        recon_loss = F.mse_loss(recon_1, data_1.to(device)) + F.mse_loss(recon_2, data_2.to(device))
+        recon_loss = F.mse_loss(recon_1, data_1) + F.mse_loss(recon_2, data_2)
         total_recon_loss += recon_loss.item()
         if not is_train:
             continue
@@ -312,14 +252,11 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
             reconstruction_optimizer.step()
             reconstruction_optimizer.zero_grad()
     auc = roc_auc_score(all_labels, all_preds)
-    train_test = 'Train' if is_train else 'Test'
-    if WRITE_LOGS:
-        writer.add_scalar(f'cont_loss/{train_test}', total_loss / len(loader), epoch)
-        writer.add_scalar(f'recon_loss/{train_test}', total_recon_loss / len(loader), epoch)
-        writer.add_scalar(f'auc/{train_test}', auc, epoch)
 
     msg = f"Epoch {epoch} {'Train' if is_train else 'Test'} AUC {auc:.3f} (cont: {total_loss / len(loader):.3f}, " \
           f"recon: {total_recon_loss / len(loader):.3f})"
+    with open(output_file, "a") as f:
+        f.write(msg + "\n")
     print(msg)
 
 
@@ -329,19 +266,18 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--batch_size", type=int, default=8192)
-    parser.add_argument("--proteins_molecules_only", type=int, default=1)
+    parser.add_argument("--proteins_molecules_only", type=int, default=0)
     parser.add_argument("--output_dim", type=int, default=1024)
     parser.add_argument("--dropout", type=float, default=0.0)
     parser.add_argument("--lr", type=float, default=1e-3)
     parser.add_argument("--n_layers", type=int, default=1)
     parser.add_argument("--hidden_dim", type=int, default=512)
     parser.add_argument("--recon", type=int, default=1)
+    parser.add_argument("--name", type=str, default="all-recon")
     args = parser.parse_args()
-    run_name = "_".join([str(v) for k, v in sorted(list(vars(args).items()))])
+    run_name = args.name
     if not TEST_MODE:
         remove_vecs_files(run_name)
-    if WRITE_LOGS:
-        writer = SummaryWriter(log_dir=f'runs/{run_name}')
 
     if args.proteins_molecules_only:
         EMBEDDING_DATA_TYPES = [NodeTypes.protein, NodeTypes.molecule]
@@ -362,6 +298,12 @@ if __name__ == '__main__':
     else:
         emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768, NodeTypes.dna: 768, NodeTypes.text: 768}
 
+    save_dir = f"{model_path}/fuse_{run_name}"
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    for file_name in os.listdir(save_dir):
+        os.remove(f"{save_dir}/{file_name}")
+    scores_file = f"{scores_path}/fuse_{run_name}.txt"
     model_config = MultiModalLinearConfig(
         embedding_dim=list(emb_dim.values()),
         n_layers=args.n_layers,
@@ -369,10 +311,13 @@ if __name__ == '__main__':
         hidden_dim=args.hidden_dim,
         output_dim=[args.output_dim] * len(emb_dim),
         dropout=args.dropout,
-        normalize_last=True
+        normalize_last=1
     )
 
-    model = MiltyModalLinear(model_config)
+    model = MiltyModalLinear(model_config).to(device)
+
+    model_config.save_to_file(f"{save_dir}/config.txt")
+
     recons_config = MultiModalLinearConfig(
         embedding_dim=[args.output_dim] * len(emb_dim),
         n_layers=args.n_layers,
@@ -380,20 +325,20 @@ if __name__ == '__main__':
         hidden_dim=args.hidden_dim,
         output_dim=list(emb_dim.values()),
         dropout=args.dropout,
-        normalize_last=False
+        normalize_last=0
     )
+    recons_config.save_to_file(f"{save_dir}/config-recon.txt")
 
-    reconstruction_model = MiltyModalLinear(recons_config)
+    reconstruction_model = MiltyModalLinear(recons_config).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
     reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
                                                 lr=args.lr)
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
     for epoch in range(EPOCHS):
         run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, test_loader, contrastive_loss,
-                  epoch, args.recon, is_train=False)
+                  epoch, args.recon, scores_file, is_train=False)
 
         run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch,
-                  args.recon, is_train=True)
+                  args.recon, scores_file, is_train=True)
 
-        if not TEST_MODE:
-            save_new_vecs(model, node_index_manager, run_name, epoch)
+        save_fuse_model(model, reconstruction_model, save_dir, epoch)

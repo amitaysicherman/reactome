@@ -96,7 +96,7 @@ def clean_reaction(reactions: List[Reaction], node_index_manager: NodesIndexMana
 
 
 if __name__ == '__main__':
-    node_index_manager = NodesIndexManager(fuse_vec=PRETRAINED_EMD_FUSE, fuse_config="8192_1_1024_0.0_0.001_1_512")
+    node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD_FUSE, fuse_name="all-recon")
     with open(reactions_file) as f:
         lines = f.readlines()
     lines = sorted(lines, key=lambda x: reaction_from_str(x).date)

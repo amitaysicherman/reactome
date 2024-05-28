@@ -1,10 +1,14 @@
 # Description: This file contains common variables and functions used by other files in the project.
 import datetime
+import glob
 
+import torch
 from matplotlib import pyplot as plt
 
 from common.data_types import CatalystOBJ, Entity, Reaction, UNKNOWN_ENTITY_TYPE, DNA, PROTEIN, MOLECULE, TEXT, \
-    NodeTypes, EdgeTypes
+    NodeTypes
+from common.path_manager import model_path
+from model.models import MultiModalLinearConfig, MiltyModalLinear
 
 TYPE_TO_VEC_DIM = {
     PROTEIN: 1024,
@@ -53,7 +57,8 @@ def reaction_from_dict(d: dict) -> Reaction:
     year, month, day = d["date"].split("_")
     date = datetime.date(int(year), int(month), int(day))
     reactome_id = d["reactome_id"]
-    return Reaction(name, inputs, outputs, catalysis, date, reactome_id)
+    biological_process = d["biological_process"].split("_")
+    return Reaction(name, inputs, outputs, catalysis, date, reactome_id, biological_process)
 
 
 def reaction_from_str(s: str) -> Reaction:
@@ -69,26 +74,16 @@ color_palette = plt.get_cmap("tab10")
 node_colors = {node_type: color_palette(i) for i, node_type in enumerate(get_node_types())}
 
 
-def get_edges_values():
-    attributes = dir(EdgeTypes)
-    edges = []
-    for attr in attributes:
-        value = getattr(EdgeTypes, attr)
-        if isinstance(value, tuple) and len(value) == 3:
-            edges.append(value)
-    return edges
 
-
-# def load_model(learned_embedding_dim=128, hidden_channels=128, num_layers=3, root="../data/items",
-#                layer_type="SAGEConv", return_reaction_embedding=False, model_path="../data/model/model.pt",out_channels=1,fuse=False):
-#     nodes_index_manager = NodesIndexManager(root,fuse_vec=fuse)
-#
-#     model = HeteroGNN(nodes_index_manager, hidden_channels=hidden_channels, out_channels=out_channels,
-#                       num_layers=num_layers,
-#                       learned_embedding_dim=learned_embedding_dim, train_all_emd=False, save_activation=True,
-#                       conv_type=layer_type, return_reaction_embedding=return_reaction_embedding)
-#     model.load_state_dict(torch.load(model_path, map_location=torch.device('cpu')))
-#     model.eval()
-#     return model, nodes_index_manager
-
-
+def load_fuse_model(name):
+    model_names = glob.glob(f'{model_path}/fuse_{name}/fuse_*')
+    if len(model_names) == 0:
+        return None
+    model_to_epoch = {int(model_name.split('_')[-1].replace(".pt", "")): model_name for model_name in model_names}
+    last_model = model_to_epoch[max(model_to_epoch.keys())]
+    config_file = f'{model_path}/fuse_{name}/config.txt'
+    config = MultiModalLinearConfig.load_from_file(config_file)
+    model = MiltyModalLinear(config)
+    model.load_state_dict(torch.load(last_model))
+    model.eval()
+    return model

@@ -41,13 +41,14 @@ class CatalystOBJ:
 
 class Reaction:
     def __init__(self, name, inputs: List[Entity], outputs: List[Entity], catalysis: List[CatalystOBJ],
-                 date: datetime.date, reactome_id: str):
+                 date: datetime.date, reactome_id: str, biological_process:List[str]):
         self.name = name
         self.inputs = inputs
         self.outputs = outputs
         self.catalysis = catalysis
         self.date = date
         self.reactome_id = reactome_id
+        self.biological_process = biological_process
 
     def to_dict(self):
         return {
@@ -56,26 +57,9 @@ class Reaction:
             "outputs": [e.to_dict() for e in self.outputs],
             "catalysis": [c.to_dict() for c in self.catalysis],
             "date": f'{self.date.year}_{self.date.month}_{self.date.day}',
-            "reactome_id": self.reactome_id
+            "reactome_id": self.reactome_id,
+            "biological_process": "_".join(self.biological_process)
         }
-
-    def to_tuple(self):
-        seq = []
-        entities = self.inputs + self.outputs + [e for c in self.catalysis for e in c.entities]
-        for e in entities:
-            seq.append(e.get_db_identifier())
-            seq.append(e.location)
-            seq.append(e.modifications)
-        for c in self.catalysis:
-            seq.append(c.activity)
-        seq = sorted([str(s) for s in seq if s])
-        return tuple(seq)
-
-    def __eq__(self, other):
-        return self.to_tuple() == other.to_tuple()
-
-    def __hash__(self):
-        return hash(self.to_tuple())
 
 
 REACTION = "reaction"
@@ -88,7 +72,7 @@ TEXT = "text"
 EMBEDDING_DATA_TYPES = [DNA, PROTEIN, MOLECULE, TEXT]
 LOCATION = "location"
 DATA_TYPES = EMBEDDING_DATA_TYPES + [LOCATION] + [UNKNOWN_ENTITY_TYPE]
-
+BIOLOGICAL_PROCESS = "bp"
 
 @dataclasses.dataclass
 class NodeTypes:

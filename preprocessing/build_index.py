@@ -2,15 +2,17 @@ import os
 
 from common.utils import reaction_from_str
 from common.utils import db_to_type
-from common.data_types import TEXT, LOCATION, DATA_TYPES
+from common.data_types import TEXT, LOCATION, DATA_TYPES, BIOLOGICAL_PROCESS
 from common.path_manager import reactions_file, item_path
 from collections import defaultdict
 from tqdm import tqdm
 
 indexes = {dt: defaultdict(int) for dt in DATA_TYPES}
+indexes[BIOLOGICAL_PROCESS] = defaultdict(int)
 with open(reactions_file) as f:
     lines = f.readlines()
 reactions = []
+
 for line in tqdm(lines):
     reaction = reaction_from_str(line)
     catalyst_entities = sum([c.entities for c in reaction.catalysis], [])
@@ -25,6 +27,8 @@ for line in tqdm(lines):
     for catalyst in reaction.catalysis:
         catalyst_activity = f"GO@{catalyst.activity}"
         indexes[TEXT][catalyst_activity] += 1
+    for bp in reaction.biological_process:
+        indexes[BIOLOGICAL_PROCESS][bp] += 1
 
 for k, v in indexes.items():
     output_file = os.path.join(item_path, f"{k}.txt")

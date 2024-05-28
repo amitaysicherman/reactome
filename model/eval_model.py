@@ -12,8 +12,8 @@ from dataset.dataset_builder import reaction_to_data, replace_entity_augmentatio
 from dataset.dataset_builder import get_reaction_entities
 from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
 from dataset.index_manger import NodesIndexManager, NodeData
-from model_tags import HeteroGNN, GnnModelConfig
-from common.path_manager import  reactions_file, model_path, scores_path
+from model.gnn_models import GnnModelConfig, HeteroGNN
+from common.path_manager import reactions_file, model_path, scores_path
 
 # from tqdm.notebook import tqdm
 
@@ -96,8 +96,10 @@ def get_all_model_names():
     return last_epoch_models
 
 
-def get_model(model_name) -> Tuple[HeteroGNN, dict]:
-    args = get_args_from_name(model_name.replace("model_",""))
+def get_model(model_name,return_reaction_embedding=False, **new_args) -> Tuple[HeteroGNN, dict]:
+    args = get_args_from_name(model_name.replace("model_", ""))
+    for key in new_args.keys():
+        args[key] = new_args[key]
     config = GnnModelConfig(
         learned_embedding_dim=args['learned_embedding_dim'],
         hidden_channels=args['hidden_channels'],
@@ -108,7 +110,7 @@ def get_model(model_name) -> Tuple[HeteroGNN, dict]:
         pretrained_method=args['pretrained_method'],
         fuse_config=args['fuse_config'],
         out_channels=1,
-        return_reaction_embedding=False,
+        return_reaction_embedding=return_reaction_embedding,
     )
     model = HeteroGNN(config)
     model.load_state_dict(torch.load(f"{model_path}/{model_name}.pt", map_location=torch.device('cpu')))

@@ -1,10 +1,12 @@
-import os.path
-from typing import List
+from typing import List, Dict
 import pybiopax
 from pybiopax.biopax import BiochemicalReaction
+from pybiopax.biopax.model import BioPaxModel
+from pybiopax.biopax.base import Pathway
+from pybiopax.biopax.util import RelationshipXref as RelXref
 from tqdm import tqdm
+from collections import defaultdict
 import datetime
-
 from common.data_types import Entity, CatalystOBJ, Reaction
 
 max_complex_id = 1
@@ -92,7 +94,7 @@ def get_reactome_id(reaction: BiochemicalReaction) -> str:
         return "0"
     for xref in reaction.xref:
         if "Reactome" in xref.db:
-            return xref.db_id
+            return xref.id
     return "0"
 
 
@@ -113,17 +115,41 @@ def get_reaction_date(reaction: BiochemicalReaction, format='%Y-%m-%d',
     return date
 
 
+def reactions_to_biological_process(model: BioPaxModel) -> Dict[str, List[str]]:
+    pathways = list(model.get_objects_by_type(Pathway))
+    inv_mapping = {}
+    for pathway in pathways:
+        for c in pathway.pathway_component:
+            inv_mapping[c] = pathway
+    mappings = defaultdict(list)
+    for reaction in model.get_objects_by_type(BiochemicalReaction):
+        parent = reaction
+        while True:
+            if parent not in inv_mapping:
+                go_relations = []
+                break
+            parent = inv_mapping[parent]
+            go_relations = [ref.id for ref in parent.xref if isinstance(ref, RelXref) and ref.db == "GENE ONTOLOGY"]
+            if len(go_relations) > 0:
+                break
+
+        mappings[reaction.uid].extend(go_relations)
+    return mappings
+
+
 if __name__ == "__main__":
-    from common.path_manager import data_path,reactions_file
+    from common.path_manager import data_path, reactions_file
     import os
 
-    write_output = True
+    write_output = False
+
     input_file = os.path.join(data_path, "biopax", "Homo_sapiens.owl")
     if write_output:
         output_file = reactions_file
         if os.path.exists(output_file):
             os.remove(output_file)
     model = pybiopax.model_from_owl_file(input_file)
+    reaction_to_go = reactions_to_biological_process(model)
     reactions = list(model.get_objects_by_type(pybiopax.biopax.BiochemicalReaction))
     all_catalysis = list(model.get_objects_by_type(pybiopax.biopax.Catalysis))
     print(len(reactions))
@@ -140,7 +166,9 @@ if __name__ == "__main__":
         catalys_activities = catalysis_parser(catalys_activities)
         date = get_reaction_date(reaction)
         reactome_id = get_reactome_id(reaction)
-        reaction_obj = Reaction(reaction.name[0], left_elements, right_elements, catalys_activities, date, reactome_id)
+        biological_process = reaction_to_go[reaction.uid]
+        reaction_obj = Reaction(reaction.name[0], left_elements, right_elements, catalys_activities, date, reactome_id,
+                                biological_process)
         if write_output:
             with open(output_file, "a") as f:
                 f.write(f'{reaction_obj.to_dict()}\n')

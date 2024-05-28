@@ -1,10 +1,10 @@
 from common.utils import db_to_type
 from common.data_types import EMBEDDING_DATA_TYPES
 import requests
-from libchebipy._chebi_entity import ChebiEntity
 from tqdm import tqdm
 import time
 import os
+import xml.etree.ElementTree as ET
 
 
 def get_req(url: str, to_json=False):
@@ -30,6 +30,29 @@ def from_second_line(seq):
     return "".join(seq[1:])
 
 
+def get_smiles_from_chebi(chebi_id, default_seq=""):
+    chebi_id = chebi_id.replace("CHEBI:", "")
+    url = f"https://www.ebi.ac.uk/chebi/saveStructure.do?xml=true&chebiId={chebi_id}&imageId=0"
+    response = requests.get(url)
+    if response.status_code == 200:
+        try:
+            root = ET.fromstring(response.content)
+            smiles_tag = root.find('.//SMILES')
+            if smiles_tag is not None:
+                return smiles_tag.text
+            else:
+                print(f"Failed to find SMILES for {chebi_id}")
+                return default_seq
+        except:
+            print(f"Failed to find SMILES for {chebi_id}")
+
+            return default_seq
+    else:
+        print(f"Failed to find SMILES for {chebi_id}")
+
+        return default_seq
+
+
 def get_sequence(identifier, db_name):
     db_name = db_name.lower()
     default_seq = ""
@@ -41,7 +64,7 @@ def get_sequence(identifier, db_name):
         "embl": lambda id: from_second_line(get_req(f"https://www.ebi.ac.uk/ena/browser/api/fasta/{id}")),
         "uniprot": lambda id: from_second_line(get_req(f"https://www.uniprot.org/uniprot/{id}.fasta")),
         "uniprot isoform": lambda id: from_second_line(get_req(f"https://www.uniprot.org/uniprot/{id}.fasta")),
-        "chebi": lambda id: ChebiEntity(id).get_smiles() or default_seq,
+        "chebi": lambda id: get_smiles_from_chebi(id, default_seq),
         "guide to pharmacology": lambda id: get_req(
             f"https://www.guidetopharmacology.org/services/ligands/{id}/structure",
             to_json=True
@@ -74,8 +97,9 @@ if __name__ == "__main__":
     from common.path_manager import item_path
 
     base_dir = item_path
-    fail_count = 0
-    for dt in EMBEDDING_DATA_TYPES:
+    for dt in EMBEDDING_DATA_TYPES[2:]:
+        fail_count = 0
+
         print(f"Processing {dt}")
         input_file = f"{base_dir}/{dt}.txt"
         output_file = f"{base_dir}/{dt}_sequences.txt"
@@ -83,15 +107,15 @@ if __name__ == "__main__":
         with open(input_file) as f:
             lines = f.read().splitlines()
 
-        output_lines = [""] * lines
+        output_lines = [""] * len(lines)
         if os.path.exists(output_file):
             print(f"Output file already exists: {output_file}")
             with open(output_file) as f:
-                output_lines = f.readlines()
+                output_lines = f.read().splitlines()
+                output_lines = [line.strip() for line in output_lines]
                 assert len(output_lines) == len(lines)
                 missing_count = output_lines.count("")
                 print(f"Missing {missing_count}({missing_count / len(lines):%}) sequences")
-            continue
 
         seqs = []
 
