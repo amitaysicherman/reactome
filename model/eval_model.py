@@ -1,13 +1,12 @@
-import glob
 import os.path
-from typing import List, Tuple
+from typing import List
 
 import numpy as np
 import torch
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
 
-from common.utils import reaction_from_str
+from common.utils import reaction_from_str, get_last_epoch_model, sigmoid
 from common.data_types import Reaction, NodeTypes
 from dataset.dataset_builder import reaction_to_data, replace_entity_augmentation
 from dataset.dataset_builder import get_reaction_entities
@@ -46,17 +45,6 @@ def clean_reaction(reactions: List[Reaction], node_index_manager: NodesIndexMana
     reactions = [reaction for reaction in reactions if
                  not have_dna_nodes(reaction, node_index_manager, check_output=True)]
     return reactions
-
-
-def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
-
-
-def get_last_epoch_model(model_dir):
-    files = os.listdir(f'{model_dir}')
-    ephocs = [int(x.split("_")[-1].replace(".pt", "")) for x in files if x.startswith("model")]
-    last_epoch = max(ephocs)
-    return f"{model_dir}/model_{last_epoch}.pt"
 
 
 def get_all_model_names():
@@ -123,7 +111,7 @@ def apply_and_get_score(datasets, model, results):
                 preds.append(sigmoid(out.detach().cpu().numpy()).tolist()[0][0])
                 real.append(y.item())
         results[name].append(roc_auc_score(real, preds))
-        print(name,results[name][-1])
+        print(name, results[name][-1])
     return results
 
 

@@ -1,7 +1,9 @@
 # Description: This file contains common variables and functions used by other files in the project.
 import datetime
 import glob
+import os
 
+import numpy as np
 import torch
 from matplotlib import pyplot as plt
 
@@ -74,7 +76,6 @@ color_palette = plt.get_cmap("tab10")
 node_colors = {node_type: color_palette(i) for i, node_type in enumerate(get_node_types())}
 
 
-
 def load_fuse_model(name):
     model_names = glob.glob(f'{model_path}/fuse_{name}/fuse_*')
     if len(model_names) == 0:
@@ -87,3 +88,14 @@ def load_fuse_model(name):
     model.load_state_dict(torch.load(last_model))
     model.eval()
     return model
+
+
+def get_last_epoch_model(model_dir):
+    files = os.listdir(f'{model_dir}')
+    ephocs = [int(x.split("_")[-1].replace(".pt", "")) for x in files if x.startswith("model")]
+    last_epoch = max(ephocs)
+    return f"{model_dir}/model_{last_epoch}.pt"
+
+
+def sigmoid(x):
+    return 1 / (1 + np.exp(-x))
