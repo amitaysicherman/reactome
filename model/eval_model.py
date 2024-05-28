@@ -74,13 +74,13 @@ def get_model(cp_name, config_name) -> HeteroGNN:
 
 
 def create_datasets(lines, node_index_manager: NodesIndexManager):
-    datasets = {"protein_protein": [], "molecule_molecule": [], "protein_both": [], "molecule_both": [], }
+    datasets = {"protein_protein": [], "molecule_molecule": [], "protein_both": [], "molecule_both": []}
 
     skip_count = 0
     for line in lines:
         reaction = reaction_from_str(line)
         reaction_type = get_reaction_type(get_reaction_nodes(reaction, node_index_manager))
-        data = reaction_to_data(line, node_index_manager, False)
+        data = reaction_to_data(line, node_index_manager, True)
         if data is None:
             continue
         if reaction_type == "protein":
@@ -133,7 +133,7 @@ if __name__ == '__main__':
     parser.add_argument("--model_name", type=str, default="default")
     parser.add_argument("--n", type=int, default=10)
     parser = parser.parse_args()
-    results_file = f"{scores_path}/scores.csv"
+    results_file = f"{scores_path}/summary_gnn.csv"
 
     if not os.path.exists(results_file):
         with open(results_file, "w") as f:
