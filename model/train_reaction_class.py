@@ -99,6 +99,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     model, config = load_model(args.model_name)
+    model = model.to(device)
     train_loader, test_loader, node_index_manager = load_data(model)
 
     save_dir = f"{model_path}/reaction_{args.model_name}"
@@ -118,7 +119,9 @@ if __name__ == '__main__':
     classify_config.save_to_file(f"{save_dir}/config.txt")
 
     classify_model = MiltyModalLinear(classify_config).to(device)
+    classify_model = classify_model.to(device)
     optimizer = torch.optim.Adam(classify_model.parameters(), lr=0.001)
+
     criterion = torch.nn.CrossEntropyLoss()
 
     for epoch in range(100):
