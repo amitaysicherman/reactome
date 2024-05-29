@@ -19,7 +19,7 @@ text_dim = TYPE_TO_VEC_DIM[TEXT]
 
 
 class EmdDataset:
-    def __init__(self, dataset, model, filter_tags=None, neg_count=3, return_index=False):
+    def __init__(self, dataset, model, neg_count=3, return_index=False):
         self.return_index = return_index
         self.all_emd = []
         self.all_vec = []
@@ -29,7 +29,7 @@ class EmdDataset:
         self.vectors = np.load(f'{item_path}/bp_vec.npy')
         for data in tqdm(dataset):
             data = data.to(device)
-            if data.bp.item() == -1 or (filter_tags is not None and data.bp.item() not in filter_tags):
+            if data.bp.item() == -1:
                 continue
             with torch.no_grad():
                 x_dict = {key: data.x_dict[key] for key in data.x_dict.keys()}
@@ -73,17 +73,10 @@ def load_data(model):
                                               entity_augmentation_factor=0)
 
     train_emd = EmdDataset(train_dataset, model)
-    train_tags = np.unique([d[1] for d in train_emd])
-    test_emd = EmdDataset(test_dataset, model, train_tags)
-    n_bp = len(node_index_manager.bp_name_to_index)
-    labels = torch.LongTensor(list(range(n_bp)) + [d[1] for d in train_emd])
-
-    counts = torch.bincount(labels)
-    weights = 1 / counts
-
+    test_emd = EmdDataset(test_dataset, model)
     train_loader = DataLoader(train_emd, batch_size=32, shuffle=True)
-    test_loader = DataLoader(test_emd, batch_size=1, shuffle=True)
-    return train_loader, test_loader, node_index_manager, weights
+    test_loader = DataLoader(test_emd, batch_size=32, shuffle=True)
+    return train_loader, test_loader, node_index_manager
 
 
 def evaluate(model, dataset: EmdDataset):
@@ -145,7 +138,7 @@ if __name__ == '__main__':
 
     model, config = load_model(args.model_name)
     model = model.to(device)
-    train_loader, test_loader, node_index_manager, weights = load_data(model)
+    train_loader, test_loader, node_index_manager = load_data(model)
 
     save_dir = f"{model_path}/reaction-vec_{args.model_name}"
     if not os.path.exists(save_dir):
