@@ -89,6 +89,7 @@ def load_data(model):
 def evaluate(model, dataset: EmdDataset):
     model.eval()
     dataset.return_index = True
+    indexes = []
     for i in range(len(dataset)):
         emd, _, label, index = dataset[i]
 
@@ -102,7 +103,8 @@ def evaluate(model, dataset: EmdDataset):
         sim = torch.nn.functional.cosine_similarity(out, dataset.vectors)
         sim = sim.cpu().numpy()
         order = list(np.argsort(sim))
-        print(order.index(index))
+        indexes.append(order.index(index))
+    print(np.mean(indexes))
 
     dataset.return_index = False
 
@@ -126,6 +128,7 @@ def run_epoch(model, data_loader, optimizer, criterion, is_train, epoch, scores_
     print(msg)
     with open(scores_file, "a") as f:
         f.write(msg + "\n")
+    evaluate(model, data_loader.dataset)
 
 
 if __name__ == '__main__':
