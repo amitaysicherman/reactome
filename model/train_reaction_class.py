@@ -64,7 +64,7 @@ def load_data(model):
     weights = 1 / counts
 
     train_loader = DataLoader(train_emd, batch_size=32, shuffle=True)
-    test_loader = DataLoader(test_emd, batch_size=1, shuffle=True)
+    test_loader = DataLoader(test_emd, batch_size=32, shuffle=True)
     return train_loader, test_loader, node_index_manager, weights
 
 
