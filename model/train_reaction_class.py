@@ -1,16 +1,18 @@
+import os
+
 import numpy as np
 import torch
 from sklearn.metrics import roc_auc_score
-from dataset.dataset_builder import get_data
 from torch.utils.data import DataLoader
+from tqdm import tqdm
+
+from common.data_types import REACTION
+from common.path_manager import model_path, scores_path
 from common.utils import get_last_epoch_model
+from dataset.dataset_builder import get_data
 from dataset.index_manger import NodesIndexManager
 from model.gnn_models import GnnModelConfig, HeteroGNN
 from model.models import MultiModalLinearConfig, MiltyModalLinear
-from common.path_manager import model_path, scores_path
-from common.data_types import REACTION
-from tqdm import tqdm
-import os
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -94,7 +96,7 @@ def run_epoch(model, data_loader, optimizer, criterion, is_train, epoch, n_bp, s
     train_or_test = "train" if is_train else "test"
     print(f"Epoch {epoch} ({train_or_test}) AUC: {np.mean(auc_scores):.4f} skip: {skip_count}/{n_bp}")
     with open(scores_file, "a") as f:
-        f.write(f"Epoch {epoch} ({train_or_test}) AUC: {np.mean(auc_scores):.4f} skip: {skip_count}/{n_bp}")
+        f.write(f"Epoch {epoch} ({train_or_test}) AUC: {np.mean(auc_scores):.4f} skip: {skip_count}/{n_bp}\n")
 
 
 if __name__ == '__main__':
@@ -102,6 +104,8 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str, default="gnn_default")
+    parser.add_argument("--dropout", type=float, default=0.5)
+
     args = parser.parse_args()
 
     model, config = load_model(args.model_name)
@@ -122,7 +126,7 @@ if __name__ == '__main__':
     classify_config = MultiModalLinearConfig(
         embedding_dim=[config.hidden_channels], n_layers=1,
         names=[REACTION], hidden_dim=config.hidden_channels,
-        output_dim=[n_bp], dropout=0.0, normalize_last=0
+        output_dim=[n_bp], dropout=args.dropout, normalize_last=0
     )
     classify_config.save_to_file(f"{save_dir}/config.txt")
 
@@ -131,7 +135,7 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(classify_model.parameters(), lr=0.001)
     criterion = torch.nn.CrossEntropyLoss(weight=torch.tensor(weights).to(device))
 
-    for epoch in range(100):
+    for epoch in range(10):
         run_epoch(classify_model, train_loader, optimizer, criterion, True, epoch, n_bp, scores_file)
         run_epoch(classify_model, test_loader, optimizer, criterion, False, epoch, n_bp, scores_file)
         torch.save(classify_model.state_dict(), f"{save_dir}/epoch_{epoch}.pt")
