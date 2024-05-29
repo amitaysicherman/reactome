@@ -68,7 +68,7 @@ def load_data(model):
     return train_loader, test_loader, node_index_manager, weights
 
 
-def run_epoch(model, data_loader, optimizer, criterion, is_train, epoch, n_bp, scores_file, top_k=3):
+def run_epoch(model, data_loader, optimizer, criterion, is_train, epoch, n_bp, scores_file, top_k):
     model.train() if is_train else model.eval()
     per_label_acc = defaultdict(list)
     all_loss = []
@@ -120,6 +120,7 @@ if __name__ == '__main__':
     parser.add_argument("--n_layers", type=int, default=2)
     parser.add_argument("--hidden_dim", type=int, default=64)
     parser.add_argument("--epochs", type=int, default=50)
+    parser.add_argument("--topk", type=int, default=10)
 
     args = parser.parse_args()
 
@@ -151,6 +152,6 @@ if __name__ == '__main__':
     criterion = torch.nn.CrossEntropyLoss(weight=torch.tensor(weights).to(device))
 
     for epoch in range(args.epochs):
-        run_epoch(classify_model, train_loader, optimizer, criterion, True, epoch, n_bp, scores_file)
-        run_epoch(classify_model, test_loader, optimizer, criterion, False, epoch, n_bp, scores_file)
+        run_epoch(classify_model, train_loader, optimizer, criterion, True, epoch, n_bp, scores_file,args.topk)
+        run_epoch(classify_model, test_loader, optimizer, criterion, False, epoch, n_bp, scores_file,args.topk)
         torch.save(classify_model.state_dict(), f"{save_dir}/epoch_{epoch}.pt")
