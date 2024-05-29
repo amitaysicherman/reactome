@@ -95,7 +95,7 @@ def evaluate(model, dataset: EmdDataset):
         torch_tensor = torch.tensor(dataset.vectors).to(device)
         sim = torch.nn.functional.cosine_similarity(out, torch_tensor)
         sim = sim.cpu().numpy()
-        order = list(np.argsort(sim))
+        order = list(np.argsort(sim))[::-1]
         indexes.append(order.index(index))
     print(np.mean(indexes))
 
