@@ -135,7 +135,7 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(classify_model.parameters(), lr=0.001)
     criterion = torch.nn.CrossEntropyLoss(weight=torch.tensor(weights).to(device))
 
-    for epoch in range(10):
+    for epoch in range(25):
         run_epoch(classify_model, train_loader, optimizer, criterion, True, epoch, n_bp, scores_file)
         run_epoch(classify_model, test_loader, optimizer, criterion, False, epoch, n_bp, scores_file)
         torch.save(classify_model.state_dict(), f"{save_dir}/epoch_{epoch}.pt")
