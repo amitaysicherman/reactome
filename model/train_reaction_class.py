@@ -1,11 +1,11 @@
 import os
+from collections import defaultdict
 
 import numpy as np
 import torch
-from sklearn.metrics import roc_auc_score
 from torch.utils.data import DataLoader
 from tqdm import tqdm
-from collections import defaultdict
+
 from common.data_types import REACTION
 from common.path_manager import model_path, scores_path
 from common.utils import get_last_epoch_model
@@ -68,7 +68,7 @@ def load_data(model):
     return train_loader, test_loader, node_index_manager, weights
 
 
-def run_epoch(model, data_loader, optimizer, criterion, is_train, epoch, n_bp, scores_file):
+def run_epoch(model, data_loader, optimizer, criterion, is_train, epoch, n_bp, scores_file, top_k=3):
     model.train() if is_train else model.eval()
     per_label_acc = defaultdict(list)
     all_loss = []
@@ -84,14 +84,20 @@ def run_epoch(model, data_loader, optimizer, criterion, is_train, epoch, n_bp, s
                 loss.backward()
                 optimizer.step()
         all_loss.append(loss.item())
-        preds = out.argmax(dim=-1)
-        acc = (preds == labels).sum().item() / len(labels)
+
+        # Calculate top-k accuracy
+        _, topk_preds = out.topk(top_k, dim=-1)
+        correct_topk = topk_preds.eq(labels.view(-1, 1).expand_as(topk_preds))
+
+        acc = correct_topk.sum().item() / len(labels)
         per_label_acc["all"].append(acc)
+
         for i in range(n_bp):
             mask = labels == i
             if mask.sum() > 0:
-                acc = (preds[mask] == labels[mask]).sum().item() / mask.sum().item()
+                acc = correct_topk[mask].sum().item() / mask.sum().item()
                 per_label_acc[i].append(acc)
+
     per_label_acc = {k: np.mean(v) for k, v in per_label_acc.items()}
     per_label_mean = np.mean([v for k, v in per_label_acc.items() if k != "all"])
     all_mean = per_label_acc["all"]
