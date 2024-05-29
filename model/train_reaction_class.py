@@ -124,8 +124,8 @@ if __name__ == '__main__':
         os.remove(scores_file)
     n_bp = len(node_index_manager.bp_name_to_index)
     classify_config = MultiModalLinearConfig(
-        embedding_dim=[config.hidden_channels], n_layers=1,
-        names=[REACTION], hidden_dim=config.hidden_channels,
+        embedding_dim=[config.hidden_channels], n_layers=2,
+        names=[REACTION], hidden_dim=64,
         output_dim=[n_bp], dropout=args.dropout, normalize_last=0
     )
     classify_config.save_to_file(f"{save_dir}/config.txt")
