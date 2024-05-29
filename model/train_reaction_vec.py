@@ -97,10 +97,11 @@ def evaluate(model, dataset: EmdDataset):
         sim = sim.cpu().numpy()
         order = list(np.argsort(sim))[::-1]
         indexes.append(order.index(index))
-    top_1= np.mean([1 for i in indexes if i < 1])
-    top_5 = np.mean([1 for i in indexes if i < 5])
-    top_10 = np.mean([1 for i in indexes if i < 10])
-    top_50 = np.mean([1 for i in indexes if i < 50])
+    top_1 = np.mean([i < 1 for i in indexes])
+    top_5 = np.mean([i < 5 for i in indexes])
+    top_10 = np.mean([i < 10 for i in indexes])
+    top_50 = np.mean([i < 50 for i in indexes])
+
     print(f"Top 1: {top_1}, Top 5: {top_5}, Top 10: {top_10}, Top 50: {top_50}, Mean Index: {np.mean(indexes)}")
 
     dataset.return_index = False
