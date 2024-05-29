@@ -19,7 +19,7 @@ text_dim = TYPE_TO_VEC_DIM[TEXT]
 
 
 class EmdDataset:
-    def __init__(self, dataset, model, neg_count=3, return_index=False):
+    def __init__(self, dataset, model, neg_count=10, return_index=False):
         self.return_index = return_index
         self.all_emd = []
         self.all_vec = []
