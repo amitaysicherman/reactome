@@ -92,8 +92,8 @@ def evaluate(model, dataset: EmdDataset):
 
         with torch.no_grad():
             out = model(emd.unsqueeze(0), REACTION)[0]
-
-        sim = torch.nn.functional.cosine_similarity(out, dataset.vectors)
+        torch_tensor = torch.tensor(dataset.vectors).to(device)
+        sim = torch.nn.functional.cosine_similarity(out, torch_tensor)
         sim = sim.cpu().numpy()
         order = list(np.argsort(sim))
         indexes.append(order.index(index))
