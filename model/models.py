@@ -65,6 +65,7 @@ class MiltyModalLinear(nn.Module):
         x = self.dropout(x)
         for layer in self.layers[:-1]:
             x = F.relu(layer[type_](x))
+            x = self.dropout(x)
         x = self.layers[-1][type_](x)
         if self.normalize_last:
             return F.normalize(x, dim=-1)
