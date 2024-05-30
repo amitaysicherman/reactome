@@ -47,6 +47,7 @@ def plot_results(df, title, save_path):
 
 
 if __name__ == "__main__":
+
     output_dir = f"{figures_path}/gnn/"
     if not os.path.exists(output_dir):
         os.makedirs(output_dir)
