@@ -20,7 +20,7 @@ from model.models import MultiModalLinearConfig, MiltyModalLinear
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Device: {device}")
-TEST_MODE = True
+TEST_MODE = False
 
 
 def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool):
