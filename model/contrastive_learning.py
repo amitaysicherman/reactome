@@ -20,7 +20,7 @@ from model.models import MultiModalLinearConfig, MiltyModalLinear
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Device: {device}")
-TEST_MODE = False
+TEST_MODE = True
 
 
 def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool):
@@ -50,21 +50,21 @@ def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManag
     return elements, pairs
 
 
-def filter_all_to_port(data_pairs, node_index_manager: NodesIndexManager):
-    filter_data = []
-    for a, b, label in data_pairs:
-        type_a = node_index_manager.index_to_node[a].type
-        type_b = node_index_manager.index_to_node[b].type
-        if type_a == NodeTypes.protein and type_b == NodeTypes.protein:
-            continue
-        if type_a != NodeTypes.protein and type_b != NodeTypes.protein:
-            continue
-        filter_data.append((a, b, label))
+# def filter_all_to_one(data_pairs, node_index_manager: NodesIndexManager, dtype=NodeTypes.protein):
+#     filter_data = []
+#     for a, b, label in data_pairs:
+#         type_a = node_index_manager.index_to_node[a].type
+#         type_b = node_index_manager.index_to_node[b].type
+#         if type_a == dtype and type_b == dtype:
+#             continue
+#         if type_a != dtype and type_b != dtype:
+#             continue
+#         filter_data.append((a, b, label))
+#
+#     return filter_data
 
-    return filter_data
 
-
-def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, split, all_to_port):
+def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, split):
     a_elements = []
     b_elements = []
     split_factor = 0 if split == "train" else 4
@@ -88,17 +88,17 @@ def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, spl
         for b2 in b_elements:
             if b1 != b2:
                 data.append((b1, b2, 1))
-    if all_to_port:
-        data = filter_all_to_port(data, node_index_manager)
+    # if all_to_port:
+    #     data = filter_all_to_one(data, node_index_manager)
     return data
 
 
 class PairsDataset(Dataset):
     def __init__(self, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool, neg_count=1,
-                 test_mode=TEST_MODE, split="train", all_to_prot=False):
+                 test_mode=TEST_MODE, split="train"):
         self.nodes_index_manager = nodes_index_manager
         if test_mode:
-            self.data = get_two_pairs_without_share_nodes(nodes_index_manager, split, all_to_prot)
+            self.data = get_two_pairs_without_share_nodes(nodes_index_manager, split)
             self.elements_unique = np.array(list(set([x[0] for x in self.data] + [x[1] for x in self.data])))
             return
         with open(reactions_file) as f:
@@ -135,12 +135,6 @@ class PairsDataset(Dataset):
             a, b = self.all_pairs[i]
             a_type = nodes_index_manager.index_to_node[a].type
             b_type = nodes_index_manager.index_to_node[b].type
-            if all_to_prot:
-                if a_type != NodeTypes.protein and b_type != NodeTypes.protein:
-                    continue
-                if a_type == NodeTypes.protein and b_type == NodeTypes.protein:
-                    continue
-
             self.data.append((a, b, 1))
             self.data.append((b, a, 1))
             for i in range(neg_count):
@@ -155,9 +149,9 @@ class PairsDataset(Dataset):
     def sample_neg_pair(self, a_=None, b_=None, other_dtype=None):
         while True:
             elements = getattr(self, f'{other_dtype}_unique')
-            # probs = getattr(self, f'{other_dtype}_probs')
             a = random.choice(elements) if a_ is None else a_
             b = random.choice(elements) if b_ is None else b_
+            # probs = getattr(self, f'{other_dtype}_probs')
             # a = random.choices(elements, weights=probs, k=1)[0] if a_ is None else a_
             # b = random.choices(elements, weights=probs, k=1)[0] if b_ is None else b_
             if (a, b) not in self.pairs_unique:
@@ -169,6 +163,7 @@ class PairsDataset(Dataset):
 
 class SameNameBatchSampler(Sampler):
     def __init__(self, dataset: PairsDataset, batch_size, shuffle=False):
+
         self.dataset = dataset
         self.batch_size = batch_size
         self.name_to_indices = defaultdict(list)
@@ -188,8 +183,22 @@ class SameNameBatchSampler(Sampler):
         for i in range(len(self.names_probs)):
             print(self.names[i], self.names_probs[i])
         self.names_probs = self.names_probs / self.names_probs.sum()
+        self.all_to_one = None
+
+    # def filter_names_to_one(self):
+    #     if self.all_to_one is None:
+    #         return self.names
+    #     filter_names = []
+    #     for a_type, b_type in self.names:
+    #         if a_type != self.all_to_one and b_type != self.all_to_one:
+    #             continue
+    #         if a_type == self.all_to_one and b_type == self.all_to_one:
+    #             continue
+    #         filter_names.append((a_type, b_type))
+    #     return filter_names
 
     def __iter__(self):
+        # for name in self.filter_names_to_one():
         for name in self.names:
             indices = self.name_to_indices[name]
             if self.batch_size > len(indices):
@@ -237,7 +246,7 @@ def weighted_mean_loss(loss, labels):
 
 
 def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch, recon,
-              output_file, is_train=True, all_to_prot=False):
+              output_file, is_train=True, all_to_one=False):
     if is_train:
         model.train()
     else:
@@ -254,23 +263,18 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
         data_1 = data_1.to(device).float()
         data_2 = data_2.to(device).float()
 
-        if all_to_prot:
-            if type_1 == NodeTypes.protein:
-                out1 = data_1
-                out2 = model(data_2, type_2)
-                recon_2 = reconstruction_model(out2, type_2)
-                recon_loss = F.mse_loss(recon_2, data_2)
-            else:  # type_2 == NodeTypes.protein
-                out2 = data_2
-                out1 = model(data_1, type_1)
-                recon_1 = reconstruction_model(out1, type_1)
-                recon_loss = F.mse_loss(recon_1, data_1)
+        if all_to_one:
+            out1 = model(data_1, (type_1, type_2))
+            out2 = data_2
+            recon_1 = reconstruction_model(out1, (type_1, type_2))
+            recon_2 = data_2
         else:
             out1 = model(data_1, type_1)
-            recon_1 = reconstruction_model(out1, type_1)
             out2 = model(data_2, type_2)
+            recon_1 = reconstruction_model(out1, type_1)
             recon_2 = reconstruction_model(out2, type_2)
-            recon_loss = F.mse_loss(recon_1, data_1) + F.mse_loss(recon_2, data_2)
+
+        recon_loss = F.mse_loss(recon_1, data_1) + F.mse_loss(recon_2, data_2)
 
         cont_loss = contrastive_loss(out1, out2, label.to(device))
 
@@ -313,13 +317,11 @@ if __name__ == '__main__':
     parser.add_argument("--n_layers", type=int, default=1)
     parser.add_argument("--hidden_dim", type=int, default=512)
     parser.add_argument("--recon", type=int, default=0)
-    parser.add_argument("--name", type=str, default="all_to_port")
-    parser.add_argument("--all_to_prot", type=int, default=1)
-
+    parser.add_argument("--name", type=str, default="all_to_one")
+    parser.add_argument("--all_to_one", type=int, default=1)
     parser.add_argument("--epochs", type=int, default=15)
     args = parser.parse_args()
-    if args.all_to_prot:
-        args.output_dim = TYPE_TO_VEC_DIM[NodeTypes.protein]
+
     EPOCHS = args.epochs
 
     run_name = args.name
@@ -331,14 +333,13 @@ if __name__ == '__main__':
     if TEST_MODE:
         args.batch_size = 2
     node_index_manager = NodesIndexManager()
-    dataset = PairsDataset(node_index_manager, proteins_molecules_only=args.proteins_molecules_only,
-                           all_to_prot=args.all_to_prot)
+    dataset = PairsDataset(node_index_manager, proteins_molecules_only=args.proteins_molecules_only)
 
     sampler = SameNameBatchSampler(dataset, args.batch_size)
     loader = DataLoader(dataset, batch_sampler=sampler)
 
     test_dataset = PairsDataset(node_index_manager, split="test",
-                                proteins_molecules_only=args.proteins_molecules_only, all_to_prot=args.all_to_prot)
+                                proteins_molecules_only=args.proteins_molecules_only)
     test_sampler = SameNameBatchSampler(test_dataset, args.batch_size)
     test_loader = DataLoader(test_dataset, batch_sampler=test_sampler)
     if args.proteins_molecules_only:
@@ -355,14 +356,30 @@ if __name__ == '__main__':
     scores_file = f"{scores_path}/fuse_{run_name}.txt"
     if os.path.exists(scores_file):
         os.remove(scores_file)
+
+    if args.all_to_one == 1:
+        names = []
+        src_dims = []
+        dst_dim = []
+        for src in EMBEDDING_DATA_TYPES:
+            for dst in EMBEDDING_DATA_TYPES:
+                src_dims.append(emb_dim[src])
+                names.append((src, dst))
+                dst_dim.append(emb_dim[dst])
+    else:
+        names = EMBEDDING_DATA_TYPES
+        src_dims = [emb_dim[x] for x in EMBEDDING_DATA_TYPES]
+        dst_dim = [args.output_dim] * len(EMBEDDING_DATA_TYPES)
+
     model_config = MultiModalLinearConfig(
-        embedding_dim=list(emb_dim.values()),
+        embedding_dim=src_dims,
         n_layers=args.n_layers,
-        names=list(emb_dim.keys()),
+        names=names,
         hidden_dim=args.hidden_dim,
-        output_dim=[args.output_dim] * len(emb_dim),
+        output_dim=dst_dim,
         dropout=args.dropout,
         normalize_last=1
+
     )
 
     model = MiltyModalLinear(model_config).to(device)
@@ -370,11 +387,11 @@ if __name__ == '__main__':
     model_config.save_to_file(f"{save_dir}/config.txt")
 
     recons_config = MultiModalLinearConfig(
-        embedding_dim=[args.output_dim] * len(emb_dim),
+        embedding_dim=dst_dim,
         n_layers=args.n_layers,
-        names=list(emb_dim.keys()),
+        names=names,
         hidden_dim=args.hidden_dim,
-        output_dim=list(emb_dim.values()),
+        output_dim=src_dims,
         dropout=args.dropout,
         normalize_last=0
     )
@@ -385,11 +402,12 @@ if __name__ == '__main__':
     reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
                                                 lr=args.lr)
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
+
     for epoch in range(EPOCHS):
         run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch,
-                  args.recon, scores_file, is_train=True, all_to_prot=args.all_to_prot)
+                  args.recon, scores_file, is_train=True, all_to_one=args.all_to_one)
 
         run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, test_loader, contrastive_loss,
-                  epoch, args.recon, scores_file, is_train=False, all_to_prot=args.all_to_prot)
+                  epoch, args.recon, scores_file, is_train=False, all_to_one=args.all_to_one)
 
         save_fuse_model(model, reconstruction_model, save_dir, epoch)

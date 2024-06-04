@@ -1,6 +1,8 @@
 import dataclasses
 from typing import List
 
+import numpy as np
+import torch
 from torch import nn as nn
 from torch.nn import functional as F
 
@@ -18,7 +20,9 @@ class MultiModalLinearConfig:
     def save_to_file(self, file_name):
         with open(file_name, "w") as f:
             for k, v in dataclasses.asdict(self).items():
-                if isinstance(v, list):
+                if isinstance(v, list) or isinstance(v, tuple):
+                    if isinstance(v[0], tuple):
+                        v = ["_".join([str(x) for x in y]) for y in v]
                     v = ",".join([str(x) for x in v])
                 f.write(f"{k}={v}\n")
 
@@ -28,10 +32,12 @@ class MultiModalLinearConfig:
             data = {}
             for line in f:
                 k, v = line.strip().split("=")
+                if k == "names":
+                    v = [v_.split("_") for v_ in v.split(",")]
                 data[k] = v
         return MultiModalLinearConfig(embedding_dim=[int(x) for x in data["embedding_dim"].split(",")],
                                       n_layers=int(data["n_layers"]),
-                                      names=data["names"].split(","),
+                                      names=data["names"],
                                       hidden_dim=int(data["hidden_dim"]),
                                       output_dim=[int(x) for x in data["output_dim"].split(",")],
                                       dropout=float(data["dropout"]),
@@ -41,14 +47,14 @@ class MultiModalLinearConfig:
 class MiltyModalLinear(nn.Module):
     def __init__(self, config: MultiModalLinearConfig):
         super(MiltyModalLinear, self).__init__()
-
+        self.names = ["_".join(x) for x in config.names]
         self.normalize_last = config.normalize_last
         self.dropout = nn.Dropout(config.dropout)
         if config.n_layers < 1:
             raise ValueError("n_layers must be at least 1")
         self.layers = nn.ModuleList()
-        embedding_dim = {k: v for k, v in zip(config.names, config.embedding_dim)}
-        output_dim = {k: v for k, v in zip(config.names, config.output_dim)}
+        embedding_dim = {k: v for k, v in zip(self.names, config.embedding_dim)}
+        output_dim = {k: v for k, v in zip(self.names, config.output_dim)}
         if config.n_layers == 1:
             self.layers.append(nn.ModuleDict({k: nn.Linear(v, output_dim[k]) for k, v in embedding_dim.items()}))
         else:
@@ -60,7 +66,16 @@ class MiltyModalLinear(nn.Module):
             self.layers.append(
                 nn.ModuleDict({k: nn.Linear(config.hidden_dim, output_dim[k]) for k, v in embedding_dim.items()}))
 
+    def have_type(self, type_):
+        if isinstance(type_, tuple):
+            type_ = "_".join(type_)
+        return type_ in self.names
+
     def forward(self, x, type_):
+        if isinstance(type_, tuple):
+            type_ = "_".join(type_)
+        if isinstance(x,np.ndarray):
+            x=torch.Tensor(x).float()
         x = F.normalize(x, dim=-1)
         x = self.dropout(x)
         for layer in self.layers[:-1]:
@@ -73,3 +88,25 @@ class MiltyModalLinear(nn.Module):
             return x
 
 
+def concat_all_to_one_typs(model: MiltyModalLinear, x, src_type):
+    res = []
+    for name in model.names:
+        src_name, dst_name = name.split("_")
+        if src_name == src_type:
+            if model.have_type(name):
+                res.append(model(x, name))
+            else:
+                print(f"Warning: model does not have type {name}")
+                res.append(x)
+            # res.append(model(x, name))
+    return torch.cat(res, dim=-1)
+
+
+def apply_model(model: MiltyModalLinear, x, type_):
+    if "_" in model.names[0]:
+        return concat_all_to_one_typs(model, x, type_)
+    else:
+        if not model.have_type(type_):
+            print(f"Warning: model does not have type {type_}")
+            return x
+        return model(x, type_)

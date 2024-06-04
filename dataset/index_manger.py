@@ -6,6 +6,7 @@ from common.utils import TYPE_TO_VEC_DIM, load_fuse_model
 from common.path_manager import item_path
 from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, EMBEDDING_DATA_TYPES, LOCATION, \
     DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS
+from model.models import apply_model
 from functools import lru_cache
 import torch
 
@@ -29,15 +30,6 @@ class NodeData:
         self.name = name
         self.type = type_
         self.vec = vec
-
-
-def vectors_fuse(fuse_model, dtype, vectors):
-    if fuse_model is None or dtype not in fuse_model.layers[0]:
-        return vectors
-    with torch.no_grad():
-        vec = torch.tensor(vectors).float()
-        vec = fuse_model(vec, dtype)
-    return vec.detach().cpu().numpy()
 
 
 class NodesIndexManager:
@@ -69,8 +61,7 @@ class NodesIndexManager:
                     pretrained_vec_file = f'{item_path}/{dt}_vec.npy'
                     vectors = np.load(pretrained_vec_file)
                     if pretrained_method == PRETRAINED_EMD_FUSE:
-                        vectors = vectors_fuse(self.fuse_model, dt, vectors)
-
+                        vectors = apply_model(self.fuse_model, vectors, dt).detach().cpu().numpy()
             elif dt == UNKNOWN_ENTITY_TYPE:
                 vectors = [np.zeros(TYPE_TO_VEC_DIM[PROTEIN]) for _ in range(len(lines))]
             else:
@@ -136,4 +127,5 @@ class NodesIndexManager:
 
 
 if __name__ == "__main__":
-    node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD_FUSE, fuse_name="default")
+    node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD_FUSE, fuse_name="all_to_one")
+    print(node_index_manager.index_to_node[10].vec.shape)
