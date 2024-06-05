@@ -157,6 +157,7 @@ if __name__ == '__main__':
         results_mean_values = [np.mean(results[key]) for key in RESULTS_COLUMNS]
         results_std_values = [np.std(results[key]) for key in RESULTS_COLUMNS]
         name = os.path.dirname(model_name).replace(model_path, "")
+        name = name.replace("/", "")
         if parser.cp_index != -1:
             name += f"_{parser.cp_index}"
         results = [name, *results_mean_values, *results_std_values]
