@@ -47,9 +47,9 @@ def clean_reaction(reactions: List[Reaction], node_index_manager: NodesIndexMana
     return reactions
 
 
-def get_all_model_names():
+def get_all_model_names(cp_index: int):
     model_names = [x for x in os.listdir(model_path) if x.startswith("gnn_")]
-    last_epoch_models = [get_last_epoch_model(f"{model_path}/{model_dir}/") for model_dir in model_names]
+    last_epoch_models = [get_last_epoch_model(f"{model_path}/{model_dir}/", cp_index) for model_dir in model_names]
     return last_epoch_models
 
 
@@ -120,7 +120,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--model_name", type=str, default="gnn_default")
+    parser.add_argument("--cp_idx", type=int, default=-1)
     parser.add_argument("--n", type=int, default=10)
+
     parser = parser.parse_args()
     results_file = f"{scores_path}/summary_gnn.csv"
 
@@ -136,9 +138,9 @@ if __name__ == '__main__':
     lines = lines[int(0.8 * len(lines)):]  # only test data
 
     if parser.model_name == "all":
-        model_names = get_all_model_names()
+        model_names = get_all_model_names(parser.cp_idx)
     else:
-        model_names = [get_last_epoch_model(f"{model_path}/{parser.model_name}")]
+        model_names = [get_last_epoch_model(f"{model_path}/{parser.model_name}", parser.cp_idx)]
     print(f"Model names: {model_names}")
     for model_name in model_names:
 
@@ -155,6 +157,8 @@ if __name__ == '__main__':
         results_mean_values = [np.mean(results[key]) for key in RESULTS_COLUMNS]
         results_std_values = [np.std(results[key]) for key in RESULTS_COLUMNS]
         name = os.path.dirname(model_name).replace(model_path, "")
+        if parser.cp_index != -1:
+            name += f"_{parser.cp_index}"
         results = [name, *results_mean_values, *results_std_values]
         with open(results_file, "a") as f:
             f.write(",".join([str(val) for val in results]) + "\n")
