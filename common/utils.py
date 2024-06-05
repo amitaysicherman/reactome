@@ -90,9 +90,9 @@ def load_fuse_model(name):
     return model
 
 
-def get_last_epoch_model(model_dir, cp_index):
-    if cp_index != -1:
-        return f"{model_dir}/model_{cp_index}.pt"
+def get_last_epoch_model(model_dir, cp_idx):
+    if cp_idx != -1:
+        return f"{model_dir}/model_{cp_idx}.pt"
     files = os.listdir(f'{model_dir}')
     ephocs = [int(x.split("_")[-1].replace(".pt", "")) for x in files if x.startswith("model")]
     last_epoch = max(ephocs)

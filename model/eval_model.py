@@ -47,9 +47,9 @@ def clean_reaction(reactions: List[Reaction], node_index_manager: NodesIndexMana
     return reactions
 
 
-def get_all_model_names(cp_index: int):
+def get_all_model_names(cp_idx: int):
     model_names = [x for x in os.listdir(model_path) if x.startswith("gnn_")]
-    last_epoch_models = [get_last_epoch_model(f"{model_path}/{model_dir}/", cp_index) for model_dir in model_names]
+    last_epoch_models = [get_last_epoch_model(f"{model_path}/{model_dir}/", cp_idx) for model_dir in model_names]
     return last_epoch_models
 
 
@@ -158,8 +158,8 @@ if __name__ == '__main__':
         results_std_values = [np.std(results[key]) for key in RESULTS_COLUMNS]
         name = os.path.dirname(model_name).replace(model_path, "")
         name = name.replace("/", "")
-        if parser.cp_index != -1:
-            name += f"_{parser.cp_index}"
+        if parser.cp_idx != -1:
+            name += f"_{parser.cp_idx}"
         results = [name, *results_mean_values, *results_std_values]
         with open(results_file, "a") as f:
             f.write(",".join([str(val) for val in results]) + "\n")
