@@ -105,7 +105,7 @@ def get_best_fuse_cp(score_file):
     with open(score_file, "r") as f:
         lines = f.read().splitlines()
 
-    lines = [x for x in lines if x.startswith("Test")]
+    lines = [x for x in lines if "Test" in x]
     print(lines)
     best_score = 0
     best_index = len(lines) - 1
