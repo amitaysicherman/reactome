@@ -101,17 +101,14 @@ def load_fuse_model(name):
 
 
 def get_best_fuse_cp(score_file):
-    print(score_file)
     with open(score_file, "r") as f:
         lines = f.read().splitlines()
 
     lines = [x for x in lines if "Test" in x]
-    print(lines)
     best_score = 0
     best_index = len(lines) - 1
     for index, line in enumerate(lines):
         score = float(line.split("AUC")[1].split("(")[0])
-        print(score)
         if score > best_score:
             best_score = score
             best_index = index
