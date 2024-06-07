@@ -8,10 +8,6 @@ echo "Number of GPUs found: $num_gpus"
 
 gpus=($(seq 0 $((num_gpus - 1))))
 args=(
-  "--name no_pretrained_freeze --gnn_pretrained_method 0 --gnn_train_all_emd 0"
-  "--name no_pretrained_trained --gnn_pretrained_method 0 --gnn_train_all_emd 1"
-  "--name pretrained_freeze --gnn_pretrained_method 1 --gnn_train_all_emd 0"
-  "--name pretrained_trained --gnn_pretrained_method 1 --gnn_train_all_emd 1"
   "--name fuse --gnn_pretrained_method 2 --gnn_train_all_emd 0"
   "--name fuse_recon --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
   "--name fuse_all_to_one --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one all"
@@ -19,6 +15,10 @@ args=(
   "--name fuse_all_to_mol --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one molecule"
   "--name fuse_all_to_text --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one text"
   "--name fuse_all_to_dna --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one dna"
+  "--name no_pretrained_freeze --gnn_pretrained_method 0 --gnn_train_all_emd 0"
+  "--name no_pretrained_trained --gnn_pretrained_method 0 --gnn_train_all_emd 1"
+  "--name pretrained_freeze --gnn_pretrained_method 1 --gnn_train_all_emd 0"
+  "--name pretrained_trained --gnn_pretrained_method 1 --gnn_train_all_emd 1"
   )
 
 for i in "${!args[@]}"; do
