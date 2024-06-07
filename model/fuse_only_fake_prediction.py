@@ -8,9 +8,8 @@ from tqdm import tqdm
 from common.utils import reaction_from_str
 from common.data_types import Reaction, NodeTypes
 from dataset.dataset_builder import get_reaction_entities
-from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
+from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes,get_reactions
 from dataset.index_manger import NodesIndexManager, PRETRAINED_EMD_FUSE, NodeData
-from common.path_manager import reactions_file
 DEBUG = True
 
 
@@ -97,19 +96,12 @@ def clean_reaction(reactions: List[Reaction], node_index_manager: NodesIndexMana
 
 if __name__ == '__main__':
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD_FUSE, fuse_name="all-recon")
-    with open(reactions_file) as f:
-        lines = f.readlines()
-    lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
-    reactions = [reaction_from_str(line) for line in lines]
+    train_lines, val_lines, test_lines = get_reactions()
+    train_reactions = [reaction_from_str(line) for line in train_lines]
+    # validation_reactions = [reaction_from_str(line) for line in test_lines]
+    test_reactions = [reaction_from_str(line) for line in test_lines]
 
-    types = [get_reaction_type(get_reaction_nodes(reaction, node_index_manager)) for reaction in
-             clean_reaction(reactions, node_index_manager)]
-    print("Reactions types:")
-    print({t: types.count(t) for t in set(types)})
-
-    train_reactions = clean_reaction(reactions[:int(len(reactions) * 0.8)], node_index_manager)
     train_reactions = [get_reaction_nodes(reaction, node_index_manager) for reaction in train_reactions]
-    test_reactions = clean_reaction(reactions[int(len(reactions) * 0.8):], node_index_manager)
     test_reactions = [get_reaction_nodes(reaction, node_index_manager) for reaction in test_reactions]
 
     configs = [("protein", "protein"), ("molecule", "molecule"), ("protein", "both"), ("molecule", "both")]

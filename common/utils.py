@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 from common.data_types import CatalystOBJ, Entity, Reaction, UNKNOWN_ENTITY_TYPE, DNA, PROTEIN, MOLECULE, TEXT, \
     NodeTypes
-from common.path_manager import model_path
+from common.path_manager import model_path, scores_path
 from model.models import MultiModalLinearConfig, MiltyModalLinear
 
 TYPE_TO_VEC_DIM = {
@@ -80,23 +80,56 @@ def load_fuse_model(name):
     model_names = glob.glob(f'{model_path}/fuse_{name}/fuse_*')
     if len(model_names) == 0:
         return None
-    model_to_epoch = {int(model_name.split('_')[-1].replace(".pt", "")): model_name for model_name in model_names}
-    last_model = model_to_epoch[max(model_to_epoch.keys())]
+    score_file = f'{scores_path}/fuse_{name}.txt'
+    cp_idx = get_best_fuse_cp(score_file)
+    model_cp = f"{model_path}/fuse_{name}/fuse_{cp_idx}.pt"
     config_file = f'{model_path}/fuse_{name}/config.txt'
     config = MultiModalLinearConfig.load_from_file(config_file)
     model = MiltyModalLinear(config)
-    model.load_state_dict(torch.load(last_model))
+    model.load_state_dict(torch.load(model_cp))
     model.eval()
     return model
 
 
-def get_last_epoch_model(model_dir, cp_idx):
-    if cp_idx != -1:
-        return f"{model_dir}/model_{cp_idx}.pt"
-    files = os.listdir(f'{model_dir}')
-    ephocs = [int(x.split("_")[-1].replace(".pt", "")) for x in files if x.startswith("model")]
-    last_epoch = max(ephocs)
-    return f"{model_dir}/model_{last_epoch}.pt"
+# def get_last_epoch_model(model_dir, cp_idx):
+#     if cp_idx != -1:
+#         return f"{model_dir}/model_{cp_idx}.pt"
+#     files = os.listdir(f'{model_dir}')
+#     ephocs = [int(x.split("_")[-1].replace(".pt", "")) for x in files if x.startswith("model")]
+#     last_epoch = max(ephocs)
+#     return f"{model_dir}/model_{last_epoch}.pt"
+
+
+def get_best_fuse_cp(score_file):
+    with open(score_file, "r") as f:
+        lines = f.read().splitlines()
+    lines = [x for x in lines if x.startswith("Test")]
+    best_score = 0
+    best_index = - 1
+    for line in lines:
+        score = float(line.split("AUC")[1].split("(")[0])
+        if score > best_score:
+            best_score = score
+            best_index = int(line.split(" ")[1])
+    return best_index
+
+
+def get_best_gnn_cp(name):
+    score_file = f'{scores_path}/gnn_{name}.txt'
+    with open(score_file, "r") as f:
+        lines = f.read().splitlines()
+    lines = [x for x in lines if x.startswith("Test")]
+    best_score = 0
+    best_index = - 1
+    for i in range(len(lines) // 4):
+        line = lines[i * 4 + 3]
+        line = eval(line)
+        score = line["test/fake_protein"]
+        if score > best_score:
+            best_score = score
+            best_index = int(line.split(" ")[1])
+    best_cp = f"{model_path}/gnn_{name}/gnn_{best_index}.pt"
+    return best_index
 
 
 def sigmoid(x):

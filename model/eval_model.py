@@ -6,14 +6,14 @@ import torch
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
 
-from common.utils import reaction_from_str, get_last_epoch_model, sigmoid
+from common.utils import reaction_from_str, sigmoid, get_best_gnn_cp
 from common.data_types import Reaction, NodeTypes
 from dataset.dataset_builder import reaction_to_data, replace_entity_augmentation
-from dataset.dataset_builder import get_reaction_entities
+from dataset.dataset_builder import get_reaction_entities, get_reactions
 from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
 from dataset.index_manger import NodesIndexManager, NodeData
 from model.gnn_models import GnnModelConfig, HeteroGNN
-from common.path_manager import reactions_file, model_path, scores_path
+from common.path_manager import model_path, scores_path
 import os
 
 RESULTS_COLUMNS = ['protein_protein', 'molecule_molecule', 'protein_both', 'molecule_both']
@@ -47,10 +47,10 @@ def clean_reaction(reactions: List[Reaction], node_index_manager: NodesIndexMana
     return reactions
 
 
-def get_all_model_names(cp_idx: int):
-    model_names = [x for x in os.listdir(model_path) if x.startswith("gnn_")]
-    last_epoch_models = [get_last_epoch_model(f"{model_path}/{model_dir}/", cp_idx) for model_dir in model_names]
-    return last_epoch_models
+def get_all_model_names():
+    model_names = [x.replace("gnn_") for x in os.listdir(model_path) if x.startswith("gnn_")]
+    best_models = [get_best_gnn_cp(name) for name in model_names]
+    return best_models
 
 
 def get_model(cp_name, config_name) -> HeteroGNN:
@@ -119,8 +119,7 @@ if __name__ == '__main__':
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--model_name", type=str, default="gnn_default")
-    parser.add_argument("--cp_idx", type=int, default=-1)
+    parser.add_argument("--model_name", type=str, default="default")
     parser.add_argument("--n", type=int, default=10)
 
     parser = parser.parse_args()
@@ -132,15 +131,12 @@ if __name__ == '__main__':
             results_std_values = [f"{key}_std" for key in RESULTS_COLUMNS]
             f.write(",".join(['name'] + results_mean_values + results_std_values) + "\n")
 
-    with open(reactions_file) as f:
-        lines = f.readlines()
-    lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
-    lines = lines[int(0.8 * len(lines)):]  # only test data
+    _, _, lines = get_reactions()
 
     if parser.model_name == "all":
-        model_names = get_all_model_names(parser.cp_idx)
+        model_names = get_all_model_names()
     else:
-        model_names = [get_last_epoch_model(f"{model_path}/{parser.model_name}", parser.cp_idx)]
+        model_names = [get_best_gnn_cp(parser.model_name)]
     print(f"Model names: {model_names}")
     for model_name in model_names:
 

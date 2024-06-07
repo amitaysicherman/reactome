@@ -10,12 +10,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
-from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
+from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes, get_reactions
 from collections import defaultdict
 from torch.utils.data.sampler import Sampler
 from sklearn.metrics import roc_auc_score
 from itertools import chain
-from common.path_manager import reactions_file, item_path, model_path, scores_path
+from common.path_manager import item_path, model_path, scores_path
 from model.models import MultiModalLinearConfig, MiltyModalLinear
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -50,20 +50,6 @@ def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManag
     return elements, pairs
 
 
-# def filter_all_to_one(data_pairs, node_index_manager: NodesIndexManager, dtype=NodeTypes.protein):
-#     filter_data = []
-#     for a, b, label in data_pairs:
-#         type_a = node_index_manager.index_to_node[a].type
-#         type_b = node_index_manager.index_to_node[b].type
-#         if type_a == dtype and type_b == dtype:
-#             continue
-#         if type_a != dtype and type_b != dtype:
-#             continue
-#         filter_data.append((a, b, label))
-#
-#     return filter_data
-
-
 def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, split):
     a_elements = []
     b_elements = []
@@ -94,21 +80,14 @@ def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, spl
 
 
 class PairsDataset(Dataset):
-    def __init__(self, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool, neg_count=1,
+    def __init__(self, reactions, nodes_index_manager: NodesIndexManager, proteins_molecules_only: bool, neg_count=1,
                  test_mode=TEST_MODE, split="train"):
         self.nodes_index_manager = nodes_index_manager
         if test_mode:
             self.data = get_two_pairs_without_share_nodes(nodes_index_manager, split)
             self.elements_unique = np.array(list(set([x[0] for x in self.data] + [x[1] for x in self.data])))
             return
-        with open(reactions_file) as f:
-            lines = f.readlines()
-        lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
-        reactions = [reaction_from_str(line) for line in lines]
-        if split == "train":
-            reactions = reactions[:int(len(reactions) * 0.8)]
-        else:
-            reactions = reactions[int(len(reactions) * 0.8):]
+
         reactions = [reaction for reaction in reactions if
                      not have_unkown_nodes(reaction, nodes_index_manager, check_output=True)]
         if proteins_molecules_only:
@@ -333,12 +312,18 @@ if __name__ == '__main__':
     if TEST_MODE:
         args.batch_size = 2
     node_index_manager = NodesIndexManager()
-    dataset = PairsDataset(node_index_manager, proteins_molecules_only=args.proteins_molecules_only)
 
-    sampler = SameNameBatchSampler(dataset, args.batch_size)
-    loader = DataLoader(dataset, batch_sampler=sampler)
+    train_lines, val_lines, test_lines = get_reactions()
+    train_reactions = [reaction_from_str(line) for line in train_lines]
+    validation_reactions = [reaction_from_str(line) for line in test_lines]
 
-    test_dataset = PairsDataset(node_index_manager, split="test",
+    train_dataset = PairsDataset(train_reactions, node_index_manager,
+                                 proteins_molecules_only=args.proteins_molecules_only)
+
+    sampler = SameNameBatchSampler(train_dataset, args.batch_size)
+    loader = DataLoader(train_dataset, batch_sampler=sampler)
+
+    test_dataset = PairsDataset(validation_reactions, node_index_manager, split="test",
                                 proteins_molecules_only=args.proteins_molecules_only)
     test_sampler = SameNameBatchSampler(test_dataset, args.batch_size)
     test_loader = DataLoader(test_dataset, batch_sampler=test_sampler)

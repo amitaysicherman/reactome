@@ -11,7 +11,7 @@ import torch
 from torch_geometric.data import HeteroData
 from tqdm import tqdm
 from common.utils import reaction_from_str
-from common.path_manager import item_path, reactions_file
+from common.path_manager import reactions_file
 
 ET = EdgeTypes()
 NT = NodeTypes()
@@ -201,50 +201,54 @@ def add_if_not_none(data, new_data):
         data.append(new_data)
 
 
+@dataclasses.dataclass
+class AugmentationsFactors:
+    location_augmentation_factor: int = 0
+    molecule_similier_factor: int = 0
+    molecule_random_factor: int = 0
+    protein_similier_factor: int = 0
+    protein_random_factor: int = 0
+
+    def get_name_factors(self):
+        return ["location"] * self.location_augmentation_factor + [
+            "molecule_similier"] * self.molecule_similier_factor + ["molecule_random"] * self.molecule_random_factor + [
+            "protein_similier"] * self.protein_similier_factor + ["protein_random"] * self.protein_random_factor
+
+
+def get_default_augmentation_factors():
+    return AugmentationsFactors(location_augmentation_factor=2, molecule_similier_factor=0, molecule_random_factor=1,
+                                protein_similier_factor=0, protein_random_factor=1)
+
+
+def apply_augmentation(data, node_index_manager: NodesIndexManager, augmentation_type: str):
+    if augmentation_type == "location":
+        return replace_location_augmentation(node_index_manager, data)
+    if augmentation_type == "molecule_similier":
+        return replace_entity_augmentation(node_index_manager, data, NodeTypes.molecule, "similar")
+    if augmentation_type == "molecule_random":
+        return replace_entity_augmentation(node_index_manager, data, NodeTypes.molecule, "random")
+    if augmentation_type == "protein_similier":
+        return replace_entity_augmentation(node_index_manager, data, NodeTypes.protein, "similar")
+    if augmentation_type == "protein_random":
+        return replace_entity_augmentation(node_index_manager, data, NodeTypes.protein, "random")
+    return None
+
+
 class ReactionDataset:
 
-    def __init__(self, node_index_manager: NodesIndexManager, sample=0, location_augmentation_factor=0,
-                 molecule_similier_factor=0,
-                 molecule_random_factor=0, protein_similier_factor=0, protein_random_factor=0,
-                 only_fake=False, one_per_sample=False, order="date", fake_task=True):
+    def __init__(self, node_index_manager: NodesIndexManager, lines, augmentations_factors: AugmentationsFactors,
+                 only_fake=False, one_per_sample=False, fake_task=True):
         self.node_index_manager = node_index_manager
         self.reactions = []
-        with open(reactions_file) as f:
-            lines = f.readlines()
-        if order == "random":
-            import random
-            random.seed(42)
-            random.shuffle(lines)
-        elif order == "date":
-            lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
-        if sample > 0:
-            lines = lines[:sample]
 
         for line in tqdm(lines):
             data = reaction_to_data(line, self.node_index_manager, fake_task)
-
             if data is not None and (fake_task or data.tags.sum().item() != 0):
                 new_data = []
                 if not only_fake:
                     new_data.append(data)
-                for _ in range(location_augmentation_factor):
-                    add_if_not_none(new_data, replace_location_augmentation(self.node_index_manager, data))
-                for _ in range(molecule_similier_factor):
-                    add_if_not_none(new_data,
-                                    replace_entity_augmentation(self.node_index_manager, data, NodeTypes.molecule,
-                                                                "similar"))
-                for _ in range(molecule_random_factor):
-                    add_if_not_none(new_data,
-                                    replace_entity_augmentation(self.node_index_manager, data, NodeTypes.molecule,
-                                                                "random"))
-                for _ in range(protein_similier_factor):
-                    add_if_not_none(new_data,
-                                    replace_entity_augmentation(self.node_index_manager, data, NodeTypes.protein,
-                                                                "similar"))
-                for _ in range(protein_random_factor):
-                    add_if_not_none(new_data,
-                                    replace_entity_augmentation(self.node_index_manager, data, NodeTypes.protein,
-                                                                "random"))
+                for name in augmentations_factors.get_name_factors():
+                    add_if_not_none(new_data, apply_augmentation(data, self.node_index_manager, name))
                 if len(new_data) == 0:
                     continue
                 if one_per_sample:
@@ -260,33 +264,45 @@ class ReactionDataset:
         return self.reactions[idx]
 
 
-def get_data(node_index_manager: NodesIndexManager, sample=0, location_augmentation_factor=2,
-             entity_augmentation_factor=1,
-             train_test_split=0.8,
-             split_method="date", fake_task=True):
-    if fake_task:
-        dataset = ReactionDataset(node_index_manager, sample=sample,
-                                  location_augmentation_factor=location_augmentation_factor,
-                                  molecule_random_factor=entity_augmentation_factor,
-                                  protein_random_factor=entity_augmentation_factor, order=split_method).reactions
-    else:
-        dataset = ReactionDataset(node_index_manager, sample=sample, order=split_method).reactions
-    print(len(dataset))
+def get_data(node_index_manager: NodesIndexManager, augmentations_factors: AugmentationsFactors = None, sample=0,
+             fake_task=True):
+    if augmentations_factors is None:
+        augmentations_factors = get_default_augmentation_factors()
+    train_lines, val_lines, test_lines = get_reactions(sample)
+    train_dataset = ReactionDataset(node_index_manager, train_lines, augmentations_factors,
+                                    fake_task=fake_task).reactions
+    val_dataset = ReactionDataset(node_index_manager, val_lines, augmentations_factors, fake_task=fake_task).reactions
+    test_dataset = ReactionDataset(node_index_manager, test_lines, augmentations_factors, fake_task=fake_task).reactions
 
-    tags = torch.stack([reaction.tags for reaction in dataset])
+    print(f"Train dataset size: {len(train_dataset)}", f"Val dataset size: {len(val_dataset)}",
+          f"Test dataset size: {len(test_dataset)}")
+
+    tags = torch.stack([reaction.tags for reaction in train_dataset])
     pos_classes_weights = (1 - tags.mean(dim=0)) / tags.mean(dim=0)
 
-    train_dataset = dataset[:int(len(dataset) * train_test_split)]
-    test_dataset = dataset[int(len(dataset) * train_test_split):]
-    return train_dataset, test_dataset, pos_classes_weights
+    return train_dataset, val_dataset, test_dataset, pos_classes_weights
+
+
+def get_reactions(sample_count=0):
+    with open(reactions_file) as f:
+        lines = f.readlines()
+    lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
+    train_val_index = int(0.7 * len(lines))
+    val_test_index = int(0.85 * len(lines))
+    train_lines = lines[:train_val_index]
+    val_lines = lines[train_val_index:val_test_index]
+    test_lines = lines[val_test_index:]
+    if sample_count > 0:
+        train_lines = train_lines[:sample_count]
+        val_lines = val_lines[:sample_count]
+        test_lines = test_lines[:sample_count]
+    return train_lines, val_lines, test_lines
 
 
 if __name__ == "__main__":
     node_index_manager = NodesIndexManager()
-    dataset = ReactionDataset(node_index_manager, sample=0, location_augmentation_factor=1,
-                              molecule_similier_factor=1, molecule_random_factor=1, protein_similier_factor=1,
-                              protein_random_factor=1)
-    print(len(dataset))
-    for data in dataset:
+    train_dataset, val_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager, None, sample=10,
+                                                                             fake_task=True)
+    for data in test_dataset:
         print(data.edge_index_dict.keys())
         edge_index_dict = {key: data.edge_index_dict[key] for key in data.edge_index_dict.keys()}

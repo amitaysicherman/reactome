@@ -8,7 +8,6 @@ from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, E
     DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS
 from model.models import apply_model
 from functools import lru_cache
-import torch
 
 REACTION_NODE_ID = 0
 COMPLEX_NODE_ID = 1
