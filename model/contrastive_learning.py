@@ -285,32 +285,20 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
 
 if __name__ == '__main__':
 
-    import argparse
+    from common.args_manager import get_args
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--batch_size", type=int, default=8192)
-    parser.add_argument("--proteins_molecules_only", type=int, default=0)
-    parser.add_argument("--output_dim", type=int, default=1024)
-    parser.add_argument("--dropout", type=float, default=0.0)
-    parser.add_argument("--lr", type=float, default=1e-3)
-    parser.add_argument("--n_layers", type=int, default=1)
-    parser.add_argument("--hidden_dim", type=int, default=512)
-    parser.add_argument("--recon", type=int, default=0)
-    parser.add_argument("--name", type=str, default="all_to_one")
-    parser.add_argument("--all_to_one", type=int, default=1)
-    parser.add_argument("--epochs", type=int, default=15)
-    args = parser.parse_args()
+    args = get_args()
 
-    EPOCHS = args.epochs
+    EPOCHS = args.fuse_epochs
 
-    run_name = args.name
+    run_name = args.fuse_name
     if not TEST_MODE:
         remove_vecs_files(run_name)
 
-    if args.proteins_molecules_only:
+    if args.fuse_proteins_molecules_only:
         EMBEDDING_DATA_TYPES = [NodeTypes.protein, NodeTypes.molecule]
     if TEST_MODE:
-        args.batch_size = 2
+        args.fuse_batch_size = 2
     node_index_manager = NodesIndexManager()
 
     train_lines, val_lines, test_lines = get_reactions()
@@ -318,16 +306,16 @@ if __name__ == '__main__':
     validation_reactions = [reaction_from_str(line) for line in test_lines]
 
     train_dataset = PairsDataset(train_reactions, node_index_manager,
-                                 proteins_molecules_only=args.proteins_molecules_only)
+                                 proteins_molecules_only=args.fuse_proteins_molecules_only)
 
-    sampler = SameNameBatchSampler(train_dataset, args.batch_size)
+    sampler = SameNameBatchSampler(train_dataset, args.fuse_batch_size)
     loader = DataLoader(train_dataset, batch_sampler=sampler)
 
     test_dataset = PairsDataset(validation_reactions, node_index_manager, split="test",
-                                proteins_molecules_only=args.proteins_molecules_only)
-    test_sampler = SameNameBatchSampler(test_dataset, args.batch_size)
+                                proteins_molecules_only=args.fuse_proteins_molecules_only)
+    test_sampler = SameNameBatchSampler(test_dataset, args.fuse_batch_size)
     test_loader = DataLoader(test_dataset, batch_sampler=test_sampler)
-    if args.proteins_molecules_only:
+    if args.fuse_proteins_molecules_only:
         emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768}
     else:
         emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768, NodeTypes.dna: 768, NodeTypes.text: 768}
@@ -342,7 +330,7 @@ if __name__ == '__main__':
     if os.path.exists(scores_file):
         os.remove(scores_file)
 
-    if args.all_to_one == 1:
+    if args.fuse_all_to_one == 1:
         names = []
         src_dims = []
         dst_dim = []
@@ -354,15 +342,15 @@ if __name__ == '__main__':
     else:
         names = EMBEDDING_DATA_TYPES
         src_dims = [emb_dim[x] for x in EMBEDDING_DATA_TYPES]
-        dst_dim = [args.output_dim] * len(EMBEDDING_DATA_TYPES)
+        dst_dim = [args.fuse_output_dim] * len(EMBEDDING_DATA_TYPES)
 
     model_config = MultiModalLinearConfig(
         embedding_dim=src_dims,
-        n_layers=args.n_layers,
+        n_layers=args.fuse_n_layers,
         names=names,
-        hidden_dim=args.hidden_dim,
+        hidden_dim=args.fuse_hidden_dim,
         output_dim=dst_dim,
-        dropout=args.dropout,
+        dropout=args.fuse_dropout,
         normalize_last=1
 
     )
@@ -373,26 +361,26 @@ if __name__ == '__main__':
 
     recons_config = MultiModalLinearConfig(
         embedding_dim=dst_dim,
-        n_layers=args.n_layers,
+        n_layers=args.fuse_n_layers,
         names=names,
-        hidden_dim=args.hidden_dim,
+        hidden_dim=args.fuse_hidden_dim,
         output_dim=src_dims,
-        dropout=args.dropout,
+        dropout=args.fuse_dropout,
         normalize_last=0
     )
     recons_config.save_to_file(f"{save_dir}/config-recon.txt")
 
     reconstruction_model = MiltyModalLinear(recons_config).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.fuse_lr)
     reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
-                                                lr=args.lr)
+                                                lr=args.fuse_lr)
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
 
     for epoch in range(EPOCHS):
         run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch,
-                  args.recon, scores_file, is_train=True, all_to_one=args.all_to_one)
+                  args.fuse_recon, scores_file, is_train=True, all_to_one=args.fuse_all_to_one)
 
         run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, test_loader, contrastive_loss,
-                  epoch, args.recon, scores_file, is_train=False, all_to_one=args.all_to_one)
+                  epoch, args.fuse_recon, scores_file, is_train=False, all_to_one=args.fuse_all_to_one)
 
         save_fuse_model(model, reconstruction_model, save_dir, epoch)

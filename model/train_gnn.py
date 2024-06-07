@@ -65,27 +65,27 @@ def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
 
 def args_to_config(args):
     return GnnModelConfig(
-        learned_embedding_dim=args.learned_embedding_dim,
-        hidden_channels=args.hidden_channels,
-        num_layers=args.num_layers,
-        conv_type=args.conv_type,
-        train_all_emd=args.train_all_emd,
-        fake_task=args.fake_task,
-        pretrained_method=args.pretrained_method,
-        fuse_name=args.fuse_name,
-        out_channels=args.out_channels,
+        learned_embedding_dim=args.gnn_learned_embedding_dim,
+        hidden_channels=args.gnn_hidden_channels,
+        num_layers=args.gnn_num_layers,
+        conv_type=args.gnn_conv_type,
+        train_all_emd=args.gnn_train_all_emd,
+        fake_task=args.gnn_fake_task,
+        pretrained_method=args.gnn_pretrained_method,
+        fuse_name=args.gnn_fuse_name,
+        out_channels=args.gnn_out_channels,
     )
 
 
 def run_with_args(args):
-    save_dir = f"{model_path}/gnn_{args.name}/"
+    save_dir = f"{model_path}/gnn_{args.gnn_name}/"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     for file in os.listdir(save_dir):
         if file.endswith(".pt"):
             os.remove(f"{save_dir}/{file}")
 
-    score_file = f"{scores_path}/gnn_{args.name}.txt"
+    score_file = f"{scores_path}/gnn_{args.gnn_name}.txt"
     if os.path.exists(score_file):
         os.remove(score_file)
 
@@ -97,38 +97,25 @@ def run_with_args(args):
     config = args_to_config(args)
     config.save_to_file(f"{save_dir}/config.txt")
     model = HeteroGNN(args_to_config(args)).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=args.lr)
+    optimizer = torch.optim.Adam(model.parameters(), lr=args.gnn_lr)
 
-    train(model, optimizer, batch_size, save_to_file, args.epochs, save_dir=save_dir)
+    train(model, optimizer, batch_size, save_to_file, args.gnn_epochs, save_dir=save_dir)
 
 
 if __name__ == "__main__":
-    import argparse
+    from common.args_manager import get_args
 
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--learned_embedding_dim", type=int, default=256)
-    parser.add_argument("--hidden_channels", type=int, default=256)
-    parser.add_argument("--lr", type=float, default=0.001)
-    parser.add_argument("--num_layers", type=int, default=3)
-    parser.add_argument("--conv_type", type=str, default="SAGEConv", choices=["SAGEConv", "TransformerConv"])
-    parser.add_argument("--pretrained_method", type=int, default=PRETRAINED_EMD)
-    parser.add_argument("--train_all_emd", type=int, default=0)
-    parser.add_argument("--sample", type=int, default=0)
-    parser.add_argument("--fake_task", type=int, default=1)
-    parser.add_argument("--fuse_name", type=str, default="all-recon")
-    parser.add_argument("--epochs", type=int, default=10)
-    parser.add_argument("--name", type=str, default="default")
+    args = get_args()
 
-    args = parser.parse_args()
-    args.out_channels = 1 if args.fake_task else 6
-    if args.fake_task:
+    args.gnn_out_channels = 1 if args.gnn_fake_task else 6
+    if args.gnn_fake_task:
         tag_names = ["fake"]
         scores_tag_names = [REAL, FAKE_LOCATION_ALL, FAKE_LOCATION_SINGLE, FAKE_PROTEIN, FAKE_MOLECULE]
     else:
         tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
         scores_tag_names = tag_names
-    node_index_manager = NodesIndexManager(pretrained_method=args.pretrained_method, fuse_name=args.fuse_name)
-    train_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager, sample=args.sample,
-                                                                fake_task=args.fake_task)
+    node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.gnn_fuse_name)
+    train_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager, sample=args.gnn_sample,
+                                                                fake_task=args.gnn_fake_task)
     pos_classes_weights = pos_classes_weights.to(device)
     run_with_args(args)

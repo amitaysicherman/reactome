@@ -116,13 +116,8 @@ def apply_and_get_score(datasets, model, results):
 
 
 if __name__ == '__main__':
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--model_name", type=str, default="default")
-    parser.add_argument("--n", type=int, default=10)
-
-    parser = parser.parse_args()
+    from common.args_manager import get_args
+    args=get_args()
     results_file = f"{scores_path}/summary_gnn.csv"
 
     if not os.path.exists(results_file):
@@ -133,10 +128,10 @@ if __name__ == '__main__':
 
     _, _, lines = get_reactions()
 
-    if parser.model_name == "all":
+    if args.evel_model_name == "all":
         model_names = get_all_model_names()
     else:
-        model_names = [get_best_gnn_cp(parser.model_name)]
+        model_names = [get_best_gnn_cp(args.evel_model_name)]
     print(f"Model names: {model_names}")
     for model_name in model_names:
 
@@ -145,7 +140,7 @@ if __name__ == '__main__':
         model = model.to(device)
         node_index_manager = model.emb.node_index_manager
         results = {"protein_protein": [], "molecule_molecule": [], "protein_both": [], "molecule_both": []}
-        for _ in tqdm(range(parser.n)):
+        for _ in tqdm(range(args.eval_n)):
             datasets = create_datasets(lines, node_index_manager)
             results = apply_and_get_score(datasets, model, results)
         for key, values in results.items():
@@ -154,8 +149,6 @@ if __name__ == '__main__':
         results_std_values = [np.std(results[key]) for key in RESULTS_COLUMNS]
         name = os.path.dirname(model_name).replace(model_path, "")
         name = name.replace("/", "")
-        if parser.cp_idx != -1:
-            name += f"_{parser.cp_idx}"
         results = [name, *results_mean_values, *results_std_values]
         with open(results_file, "a") as f:
             f.write(",".join([str(val) for val in results]) + "\n")
