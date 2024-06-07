@@ -47,7 +47,7 @@ class MultiModalLinearConfig:
 class MiltyModalLinear(nn.Module):
     def __init__(self, config: MultiModalLinearConfig):
         super(MiltyModalLinear, self).__init__()
-        self.names = ["_".join(x) for x in config.names]
+        self.names = ["_".join(x) if isinstance(x, tuple) else x for x in config.names]
         self.normalize_last = config.normalize_last
         self.dropout = nn.Dropout(config.dropout)
         if config.n_layers < 1:
