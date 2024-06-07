@@ -1,7 +1,4 @@
 #!/bin/bash
-
-
-#!/bin/bash
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && cd .. && pwd)"
 cd "$SCRIPT_DIR"
 pip install -e .
@@ -20,12 +17,9 @@ for i in "${!args[@]}"; do
     script="python model/contrastive_learning.py $arg_i && python model/train_gnn.py $arg_i && python model/eval_model.py $arg_i"
     echo $script
 
-    CUDA_VISIBLE_DEVICES="${gpus[$gpu_index]}" "$script" &
+    CUDA_VISIBLE_DEVICES="${gpus[$gpu_index]}" $script &
     if (( (i + 1) % num_gpus == 0 )); then
         wait
     fi
 done
 wait
-
-
-
