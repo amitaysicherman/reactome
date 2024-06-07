@@ -14,9 +14,12 @@ args=(
   "--name pretrained_trained --gnn_pretrained_method 1 --gnn_train_all_emd 1"
   "--name fuse --gnn_pretrained_method 2 --gnn_train_all_emd 0"
   "--name fuse_recon --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
-  "--name fuse_all_to_one --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one 1"
-  "--name fuse_all_to_one_trained --gnn_pretrained_method 2 --gnn_train_all_emd 1 --fuse_all_to_one 1"
-)
+  "--name fuse_all_to_one --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one all"
+  "--name fuse_all_to_port --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one protein"
+  "--name fuse_all_to_mol --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one molecule"
+  "--name fuse_all_to_text --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one text"
+  "--name fuse_all_to_dna --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one dna"
+  )
 
 for i in "${!args[@]}"; do
     gpu_index=$((i % num_gpus))

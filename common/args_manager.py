@@ -5,6 +5,7 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--name", type=str, default="default")
+    parser.add_argument("--skip_if_exists", type=int, default=1)
 
     parser.add_argument("--fuse_batch_size", type=int, default=8192)
     parser.add_argument("--fuse_proteins_molecules_only", type=int, default=0)
@@ -14,7 +15,7 @@ def get_args():
     parser.add_argument("--fuse_n_layers", type=int, default=1)
     parser.add_argument("--fuse_hidden_dim", type=int, default=512)
     parser.add_argument("--fuse_recon", type=int, default=0)
-    parser.add_argument("--fuse_all_to_one", type=int, default=0)
+    parser.add_argument("--fuse_all_to_one", type=str, default="")
     parser.add_argument("--fuse_epochs", type=int, default=15)
 
     parser.add_argument("--gnn_learned_embedding_dim", type=int, default=256)

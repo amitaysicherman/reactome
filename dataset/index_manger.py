@@ -22,7 +22,6 @@ pretrained_method_names = {
     PRETRAINED_EMD_FUSE: "pretrained_fuse",
 }
 
-
 class NodeData:
     def __init__(self, index, name, type_, vec=None):
         self.index = index

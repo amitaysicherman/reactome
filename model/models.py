@@ -74,8 +74,8 @@ class MiltyModalLinear(nn.Module):
     def forward(self, x, type_):
         if isinstance(type_, tuple):
             type_ = "_".join(type_)
-        if isinstance(x,np.ndarray):
-            x=torch.Tensor(x).float()
+        if isinstance(x, np.ndarray):
+            x = torch.Tensor(x).float()
         x = F.normalize(x, dim=-1)
         x = self.dropout(x)
         for layer in self.layers[:-1]:
@@ -98,7 +98,6 @@ def concat_all_to_one_typs(model: MiltyModalLinear, x, src_type):
             else:
                 print(f"Warning: model does not have type {name}")
                 res.append(x)
-            # res.append(model(x, name))
     return torch.cat(res, dim=-1)
 
 

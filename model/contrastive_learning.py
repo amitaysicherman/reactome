@@ -243,6 +243,8 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
         data_2 = data_2.to(device).float()
 
         if all_to_one:
+            if not model.have_type((type_1, type_2)):
+                continue
             out1 = model(data_1, (type_1, type_2))
             out2 = data_2
             recon_1 = reconstruction_model(out1, (type_1, type_2))
@@ -323,6 +325,10 @@ if __name__ == '__main__':
     save_dir = f"{model_path}/fuse_{run_name}"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
+    else:
+        if args.skip_if_exists:
+            print(f"Skip {run_name}")
+            exit(0)
     for file_name in os.listdir(save_dir):
         if file_name.endswith(".pt"):
             os.remove(f"{save_dir}/{file_name}")
@@ -330,19 +336,20 @@ if __name__ == '__main__':
     if os.path.exists(scores_file):
         os.remove(scores_file)
 
-    if args.fuse_all_to_one == 1:
+    if args.fuse_all_to_one == "":
+        names = EMBEDDING_DATA_TYPES
+        src_dims = [emb_dim[x] for x in EMBEDDING_DATA_TYPES]
+        dst_dim = [args.fuse_output_dim] * len(EMBEDDING_DATA_TYPES)
+    else:
         names = []
         src_dims = []
         dst_dim = []
         for src in EMBEDDING_DATA_TYPES:
             for dst in EMBEDDING_DATA_TYPES:
-                src_dims.append(emb_dim[src])
-                names.append((src, dst))
-                dst_dim.append(emb_dim[dst])
-    else:
-        names = EMBEDDING_DATA_TYPES
-        src_dims = [emb_dim[x] for x in EMBEDDING_DATA_TYPES]
-        dst_dim = [args.fuse_output_dim] * len(EMBEDDING_DATA_TYPES)
+                if args.fuse_all_to_one == "all" or dst == args.fuse_all_to_one:
+                    src_dims.append(emb_dim[src])
+                    names.append((src, dst))
+                    dst_dim.append(emb_dim[dst])
 
     model_config = MultiModalLinearConfig(
         embedding_dim=src_dims,
