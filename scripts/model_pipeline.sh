@@ -8,7 +8,14 @@ echo "Number of GPUs found: $num_gpus"
 
 gpus=($(seq 0 $((num_gpus - 1))))
 args=(
-    "--fuse_name tmp --gnn_fuse_name tmp --gnn_name tmp --eval_model_name tmp --fuse_epochs 2 --gnn_epochs 2"
+  "--name no_pretrained_freeze --gnn_pretrained_method 0 --gnn_train_all_emd 0"
+  "--name no_pretrained_trained --gnn_pretrained_method 0 --gnn_train_all_emd 1"
+  "--name pretrained_freeze --gnn_pretrained_method 1 --gnn_train_all_emd 0"
+  "--name pretrained_trained --gnn_pretrained_method 1 --gnn_train_all_emd 1"
+  "--name fuse --gnn_pretrained_method 2 --gnn_train_all_emd 0"
+  "--name fuse_recon --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
+  "--name fuse_all_to_one --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one 1"
+  "--name fuse_all_to_one_trained --gnn_pretrained_method 2 --gnn_train_all_emd 1 --fuse_all_to_one 1"
 )
 
 for i in "${!args[@]}"; do

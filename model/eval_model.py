@@ -1,3 +1,4 @@
+import os
 import os.path
 from typing import List
 
@@ -6,15 +7,14 @@ import torch
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
 
-from common.utils import reaction_from_str, sigmoid, get_best_gnn_cp
 from common.data_types import Reaction, NodeTypes
-from dataset.dataset_builder import reaction_to_data, replace_entity_augmentation
+from common.path_manager import model_path, scores_path
+from common.utils import reaction_from_str, sigmoid, get_best_gnn_cp
 from dataset.dataset_builder import get_reaction_entities, get_reactions
 from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
+from dataset.dataset_builder import reaction_to_data, replace_entity_augmentation
 from dataset.index_manger import NodesIndexManager, NodeData
 from model.gnn_models import GnnModelConfig, HeteroGNN
-from common.path_manager import model_path, scores_path
-import os
 
 RESULTS_COLUMNS = ['protein_protein', 'molecule_molecule', 'protein_both', 'molecule_both']
 
@@ -117,7 +117,8 @@ def apply_and_get_score(datasets, model, results):
 
 if __name__ == '__main__':
     from common.args_manager import get_args
-    args=get_args()
+
+    args = get_args()
     results_file = f"{scores_path}/summary_gnn.csv"
 
     if not os.path.exists(results_file):
@@ -128,10 +129,10 @@ if __name__ == '__main__':
 
     _, _, lines = get_reactions()
 
-    if args.evel_model_name == "all":
+    if args.name == "all":
         model_names = get_all_model_names()
     else:
-        model_names = [get_best_gnn_cp(args.evel_model_name)]
+        model_names = [get_best_gnn_cp(args.name)]
     print(f"Model names: {model_names}")
     for model_name in model_names:
 

@@ -72,20 +72,20 @@ def args_to_config(args):
         train_all_emd=args.gnn_train_all_emd,
         fake_task=args.gnn_fake_task,
         pretrained_method=args.gnn_pretrained_method,
-        fuse_name=args.gnn_fuse_name,
+        fuse_name=args.name,
         out_channels=args.gnn_out_channels,
     )
 
 
 def run_with_args(args):
-    save_dir = f"{model_path}/gnn_{args.gnn_name}/"
+    save_dir = f"{model_path}/gnn_{args.name}/"
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     for file in os.listdir(save_dir):
         if file.endswith(".pt"):
             os.remove(f"{save_dir}/{file}")
 
-    score_file = f"{scores_path}/gnn_{args.gnn_name}.txt"
+    score_file = f"{scores_path}/gnn_{args.name}.txt"
     if os.path.exists(score_file):
         os.remove(score_file)
 
@@ -114,7 +114,7 @@ if __name__ == "__main__":
     else:
         tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
         scores_tag_names = tag_names
-    node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.gnn_fuse_name)
+    node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.name)
     train_dataset, test_dataset, _, pos_classes_weights = get_data(node_index_manager, sample=args.gnn_sample,
                                                                    fake_task=args.gnn_fake_task)
     pos_classes_weights = pos_classes_weights.to(device)

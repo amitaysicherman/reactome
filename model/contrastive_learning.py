@@ -291,7 +291,7 @@ if __name__ == '__main__':
 
     EPOCHS = args.fuse_epochs
 
-    run_name = args.fuse_name
+    run_name = args.name
     if not TEST_MODE:
         remove_vecs_files(run_name)
 
