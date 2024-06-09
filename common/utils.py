@@ -119,7 +119,6 @@ def get_best_gnn_cp(name):
     score_file = f'{scores_path}/gnn_{name}.txt'
     with open(score_file, "r") as f:
         lines = f.read().splitlines()
-    lines = [x for x in lines if x.startswith("Test")]
     best_score = 0
     best_index = - 1
     for i in range(len(lines) // 4):
