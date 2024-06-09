@@ -291,9 +291,26 @@ if __name__ == '__main__':
 
     args = get_args()
 
+    run_name = args.name
+
+
+    save_dir = f"{model_path}/fuse_{run_name}"
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    else:
+        if args.skip_if_exists:
+            print(f"Skip {run_name}")
+            exit(0)
+    for file_name in os.listdir(save_dir):
+        if file_name.endswith(".pt"):
+            os.remove(f"{save_dir}/{file_name}")
+    scores_file = f"{scores_path}/fuse_{run_name}.txt"
+    if os.path.exists(scores_file):
+        os.remove(scores_file)
+
+
     EPOCHS = args.fuse_epochs
 
-    run_name = args.name
     if not TEST_MODE:
         remove_vecs_files(run_name)
 
@@ -322,19 +339,6 @@ if __name__ == '__main__':
     else:
         emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768, NodeTypes.dna: 768, NodeTypes.text: 768}
 
-    save_dir = f"{model_path}/fuse_{run_name}"
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-    else:
-        if args.skip_if_exists:
-            print(f"Skip {run_name}")
-            exit(0)
-    for file_name in os.listdir(save_dir):
-        if file_name.endswith(".pt"):
-            os.remove(f"{save_dir}/{file_name}")
-    scores_file = f"{scores_path}/fuse_{run_name}.txt"
-    if os.path.exists(scores_file):
-        os.remove(scores_file)
 
     if args.fuse_all_to_one == "":
         names = EMBEDDING_DATA_TYPES

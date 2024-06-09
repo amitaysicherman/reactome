@@ -33,7 +33,7 @@ class MultiModalLinearConfig:
             for line in f:
                 k, v = line.strip().split("=")
                 if k == "names":
-                    v = [v_.split("_") for v_ in v.split(",")]
+                    v = [tuple(v_.split("_")) for v_ in v.split(",")]
                 data[k] = v
         return MultiModalLinearConfig(embedding_dim=[int(x) for x in data["embedding_dim"].split(",")],
                                       n_layers=int(data["n_layers"]),
