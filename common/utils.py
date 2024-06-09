@@ -123,7 +123,7 @@ def get_best_gnn_cp(name):
     best_index = - 1
     for i in range(len(lines) // 4):
         line = lines[i * 4 + 3]
-        line = eval(line)
+        line = eval(line.replace("nan", "0"))
         score = line["test/fake_protein"]
         if score > best_score:
             best_score = score
