@@ -129,8 +129,8 @@ def get_best_gnn_cp(name):
         if score > best_score:
             best_score = score
             best_index = int(line.split(" ")[1])
-    best_cp = f"{model_path}/gnn_{name}/gnn_{best_index}.pt"
-    return best_index
+    best_cp = f"{model_path}/gnn_{name}/model_{best_index}.pt"
+    return best_cp
 
 
 def sigmoid(x):
