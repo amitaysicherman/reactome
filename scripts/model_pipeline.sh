@@ -8,17 +8,19 @@ echo "Number of GPUs found: $num_gpus"
 
 gpus=($(seq 0 $((num_gpus - 1))))
 args=(
-  "--name fuse --gnn_pretrained_method 2 --gnn_train_all_emd 0"
-  "--name fuse_recon --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
-  "--name fuse_all_to_one --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one all"
-  "--name fuse_all_to_port --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one protein"
-  "--name fuse_all_to_mol --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one molecule"
-  "--name fuse_all_to_text --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one text"
-  "--name fuse_all_to_dna --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one dna"
-  "--name no_pretrained_freeze --gnn_pretrained_method 0 --gnn_train_all_emd 0"
-  "--name no_pretrained_trained --gnn_pretrained_method 0 --gnn_train_all_emd 1"
-  "--name pretrained_freeze --gnn_pretrained_method 1 --gnn_train_all_emd 0"
-  "--name pretrained_trained --gnn_pretrained_method 1 --gnn_train_all_emd 1"
+  "--name trans_fuse_recon --gnn_conv_type TransformerConv --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
+  "--name trans_fuse_all_to_one --gnn_conv_type TransformerConv --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one all"
+  "--name trans_no_pretrained_trained --gnn_conv_type TransformerConv --gnn_pretrained_method 0 --gnn_train_all_emd 1"
+  "--name trans_pretrained_freeze --gnn_conv_type TransformerConv --gnn_pretrained_method 1 --gnn_train_all_emd 0"
+  "--name large_fuse_recon --gnn_hidden_channels 1024 --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
+  "--name large_fuse_all_to_one --gnn_hidden_channels 1024 --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one all"
+  "--name large_no_pretrained_trained --gnn_hidden_channels 1024 --gnn_pretrained_method 0 --gnn_train_all_emd 1"
+  "--name large_pretrained_freeze --gnn_hidden_channels 1024 --gnn_pretrained_method 1 --gnn_train_all_emd 0"
+  "--name small_fuse_recon --gnn_hidden_channels 32 --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
+  "--name small_fuse_all_to_one --gnn_hidden_channels 32 --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one all"
+  "--name small_no_pretrained_trained --gnn_hidden_channels 32 --gnn_pretrained_method 0 --gnn_train_all_emd 1"
+  "--name small_pretrained_freeze --gnn_hidden_channels 32 --gnn_pretrained_method 1 --gnn_train_all_emd 0"
+
   )
 
 for i in "${!args[@]}"; do
