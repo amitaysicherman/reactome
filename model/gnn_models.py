@@ -21,6 +21,8 @@ class GnnModelConfig:
     pretrained_method: int
     fuse_name: str
     out_channels: int
+    last_or_concat: int
+    reaction_or_mean: int
 
     def save_to_file(self, file_name):
         with open(file_name, "w") as f:
@@ -42,7 +44,10 @@ class GnnModelConfig:
                               fake_task=int(data["fake_task"]),
                               pretrained_method=int(data["pretrained_method"]),
                               fuse_name=data["fuse_name"],
-                              out_channels=int(data["out_channels"]))
+                              out_channels=int(data["out_channels"]),
+                              last_or_concat=int(data["last_or_concat"]),
+                              reaction_or_mean=int(data["reaction_or_mean"])
+                              )
 
 
 class PartialFixedEmbedding(nn.Module):
@@ -107,6 +112,8 @@ class HeteroGNN(torch.nn.Module):
         self.emb = PartialFixedEmbedding(node_index_manager, config.learned_embedding_dim, config.train_all_emd)
         self.convs = torch.nn.ModuleList()
         self.save_activations = defaultdict(list)
+        self.last_or_concat = config.last_or_concat
+        self.reaction_or_mean = config.reaction_or_mean
 
         for i in range(config.num_layers):
             conv_per_edge = {}
@@ -117,14 +124,34 @@ class HeteroGNN(torch.nn.Module):
                 conv_per_edge[edge] = e_conv
             conv = HeteroConv(conv_per_edge, aggr='sum')
             self.convs.append(conv)
-        self.lin_reaction = Linear(config.hidden_channels, config.out_channels)
+        if self.last_or_concat:
+            self.lin_reaction = Linear(config.hidden_channels * config.num_layers, config.out_channels)
+        else:
+            self.lin_reaction = Linear(config.hidden_channels, config.out_channels)
 
     def forward(self, x_dict, edge_index_dict, return_reaction_embedding=False):
         for key, x in x_dict.items():
             x_dict[key] = self.emb(x)
+        all_emb = []
         for i, conv in enumerate(self.convs):
             x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
+            if self.reaction_or_mean:
+                nodes = []
+                for dtype in [NodeTypes.complex, NodeTypes.molecule, NodeTypes.protein, NodeTypes.dna]:
+                    if dtype in x_dict:
+                        nodes.append(x_dict[dtype])
+                nodes = torch.cat(nodes, dim=0)
+                nodes = nodes.mean(dim=0).unsqueeze(0)
+
+            else:
+                nodes = x_dict[REACTION]
+            all_emb.append(nodes)
+        if self.last_or_concat:
+            all_emb = torch.cat(all_emb, dim=-1)
+        else:
+            all_emb = all_emb[-1]
+        prediction = self.lin_reaction(all_emb)
         if return_reaction_embedding:
-            return self.lin_reaction(x_dict[REACTION]), x_dict[REACTION]
-        return self.lin_reaction(x_dict[REACTION])
+            return prediction, all_emb
+        return prediction

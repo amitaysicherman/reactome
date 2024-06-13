@@ -60,7 +60,7 @@ def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
 
         name = f'{save_dir}/model_{i}.pt'
         torch.save(model.state_dict(), name)
-        torch.save(optimizer.state_dict(), name.replace("model_", "optimizer_"))
+        # torch.save(optimizer.state_dict(), name.replace("model_", "optimizer_"))
 
 
 def args_to_config(args):
@@ -74,6 +74,8 @@ def args_to_config(args):
         pretrained_method=args.gnn_pretrained_method,
         fuse_name=args.name,
         out_channels=args.gnn_out_channels,
+        last_or_concat=args.gnn_last_or_concat,
+        reaction_or_mean=args.gnn_reaction_or_mean
     )
 
 
