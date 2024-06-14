@@ -64,7 +64,7 @@ class Reaction:
 
 REACTION = "reaction"
 COMPLEX = "complex"
-UNKNOWN_ENTITY_TYPE = "?"
+UNKNOWN_ENTITY_TYPE = "_"
 DNA = "dna"
 PROTEIN = "protein"
 MOLECULE = "molecule"
