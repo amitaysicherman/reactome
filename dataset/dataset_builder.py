@@ -216,7 +216,7 @@ class AugmentationsFactors:
 
 
 def get_default_augmentation_factors():
-    return AugmentationsFactors(location_augmentation_factor=2, molecule_similier_factor=0, molecule_random_factor=1,
+    return AugmentationsFactors(location_augmentation_factor=0, molecule_similier_factor=0, molecule_random_factor=0,
                                 protein_similier_factor=0, protein_random_factor=1)
 
 
