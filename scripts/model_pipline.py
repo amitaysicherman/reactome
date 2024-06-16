@@ -86,7 +86,7 @@ def get_args(node_emd, model_size, graph_emb, aug_data):
     fill_aug_data_args(args, aug_data)
     name = f"{node_emd}_{model_size}_{graph_emb}_{aug_data}"
     args['name'] = name
-    return args_to_str(args)
+    return args_to_str(args),name
 
 
 num_gpus = torch.cuda.device_count()
@@ -122,8 +122,7 @@ for model_size in ["s", "m", "l"]:
     for aug_data in ["all", "protein", "molecule", "location"]:
         for graph_emb in ["reaction", "mean", "concat", "both"]:
             for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]:
-                args = get_args(node_emd, model_size, graph_emb, aug_data)
-                name = args['name']
+                args,name = get_args(node_emd, model_size, graph_emb, aug_data)
                 rm_cmd = f'rm -rf model/gnn_{name}'
                 script = f"python model/train_gnn.py {args} && python model/eval_model.py {args} && {rm_cmd}"
                 counter += 1
