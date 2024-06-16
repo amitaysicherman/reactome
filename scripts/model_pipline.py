@@ -119,10 +119,10 @@ for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-mol", "a
 run_commands(commands)
 
 commands = []
-for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]:
-    for model_size in ["s", "m", "l"]:
+for model_size in ["s", "m", "l"]:
+    for aug_data in ["all", "protein", "molecule", "location"]:
         for graph_emb in ["reaction", "mean", "concat", "both"]:
-            for aug_data in ["all", "location", "protein", "molecule"]:
+            for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]:
                 args = get_args(node_emd, model_size, graph_emb, aug_data)
                 name = args['name']
                 rm_cmd = f'rm -rf model/gnn_{name}'
