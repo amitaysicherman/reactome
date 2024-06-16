@@ -101,7 +101,6 @@ def run_commands(commands):
         if len(processes) >= max_concurrent_runs:
             for p in processes:
                 p.wait()
-            os.system("rm -rf data/models_checkpoints/gnn_")
             processes = []
     for p in processes:
         p.wait()
@@ -114,7 +113,7 @@ for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-mol", "a
     fill_node_emd_args(args, name)
     args['name'] = name
     gpu_index = i % num_gpus
-    script = f"python model/contrastive_learning.py --name {name} &&"
+    script = f"python model/contrastive_learning.py --name {name}"
     cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}" &'
     commands.append(cmd)
 run_commands(commands)
@@ -123,9 +122,11 @@ commands = []
 for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]:
     for model_size in ["s", "m", "l"]:
         for graph_emb in ["reaction", "mean", "concat", "both"]:
-            for aug_data in ["all", "prot", "mol", "location"]:
+            for aug_data in ["all", "location", "protein", "molecule"]:
                 args = get_args(node_emd, model_size, graph_emb, aug_data)
-                script = f"python model/train_gnn.py {args} && python model/eval_model.py {args}"
+                name = args['name']
+                rm_cmd = f'rm -rf model/gnn_{name}'
+                script = f"python model/train_gnn.py {args} && python model/eval_model.py {args} && {rm_cmd}"
                 counter += 1
                 gpu_index = counter % num_gpus
                 cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}" &'
