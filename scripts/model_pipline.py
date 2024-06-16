@@ -73,7 +73,8 @@ def fill_aug_data_args(args, aug_data):
 def args_to_str(args):
     args_str = ""
     for key, value in args.items():
-        args_str += f"--{key} {value} "
+        if value != "":
+            args_str += f"--{key} {value} "
     return args_str
 
 

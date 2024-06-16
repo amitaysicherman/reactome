@@ -37,6 +37,6 @@ def get_args():
     parser.add_argument("--eval_n", type=int, default=10)
 
     args = parser.parse_args()
-    if args.fuse_name == "":
+    if args.fuse_name == "" or args.fuse_name == "0":
         args.fuse_name = args.name
     return args
