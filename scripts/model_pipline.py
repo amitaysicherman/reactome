@@ -101,5 +101,5 @@ for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all
                 gpu_index = counter % num_gpus
                 cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}" &'
                 print(cmd)
-                # os.system(cmd)
+                os.system(cmd)
 print(counter)
