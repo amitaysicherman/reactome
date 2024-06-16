@@ -2,7 +2,6 @@ import torch
 import os
 import subprocess
 
-counter = 0
 
 
 def get_default_args():
@@ -92,6 +91,7 @@ def get_args(node_emd, model_size, graph_emb, aug_data):
 
 num_gpus = torch.cuda.device_count()
 max_concurrent_runs = 64
+counter = 0
 
 
 def run_commands(commands):
@@ -106,7 +106,6 @@ def run_commands(commands):
         p.wait()
 
 
-# Collect commands for the first loop
 commands = []
 for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]):
     args = get_default_args()
@@ -114,7 +113,7 @@ for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-mol", "a
     args['name'] = name
     gpu_index = i % num_gpus
     script = f"python model/contrastive_learning.py --name {name}"
-    cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}" &'
+    cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}"'
     commands.append(cmd)
 run_commands(commands)
 
@@ -129,7 +128,7 @@ for model_size in ["s", "m", "l"]:
                 script = f"python model/train_gnn.py {args} && python model/eval_model.py {args} && {rm_cmd}"
                 counter += 1
                 gpu_index = counter % num_gpus
-                cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}" &'
+                cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}"'
                 commands.append(cmd)
 
 # Run the second set of commands
