@@ -72,7 +72,7 @@ def args_to_config(args):
         train_all_emd=args.gnn_train_all_emd,
         fake_task=args.gnn_fake_task,
         pretrained_method=args.gnn_pretrained_method,
-        fuse_name=args.name,
+        fuse_name=args.fuse_name,
         out_channels=args.gnn_out_channels,
         last_or_concat=args.gnn_last_or_concat,
         reaction_or_mean=args.gnn_reaction_or_mean
@@ -116,8 +116,8 @@ if __name__ == "__main__":
     else:
         tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
         scores_tag_names = tag_names
-    node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.name)
+    node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name)
     train_dataset, test_dataset, _, pos_classes_weights = get_data(node_index_manager, sample=args.gnn_sample,
-                                                                   fake_task=args.gnn_fake_task)
+                                                                   fake_task=args.gnn_fake_task,data_aug=args.data_aug)
     pos_classes_weights = pos_classes_weights.to(device)
     run_with_args(args)

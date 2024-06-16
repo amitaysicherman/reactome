@@ -291,7 +291,7 @@ if __name__ == '__main__':
 
     args = get_args()
 
-    run_name = args.name
+    run_name = args.fuse_name
 
 
     save_dir = f"{model_path}/fuse_{run_name}"

@@ -16,7 +16,7 @@ args=(
   "--name fuse_recon --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
   "--name fuse_all_to_one --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one 1"
   "--name fuse_all_to_one_trained --gnn_pretrained_method 2 --gnn_train_all_emd 1 --fuse_all_to_one 1"
-  "--name large_fuse_recon --gnn_hidden_channels 1024 --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
+  "--name large_fuse_recon -- 1024 --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_recon 1"
   "--name large_fuse_all_to_one --gnn_hidden_channels 1024 --gnn_pretrained_method 2 --gnn_train_all_emd 0 --fuse_all_to_one all"
   "--name large_no_pretrained_trained --gnn_hidden_channels 1024 --gnn_pretrained_method 0 --gnn_train_all_emd 1"
   "--name large_pretrained_freeze --gnn_hidden_channels 1024 --gnn_pretrained_method 1 --gnn_train_all_emd 0"

@@ -215,9 +215,21 @@ class AugmentationsFactors:
             "protein_similier"] * self.protein_similier_factor + ["protein_random"] * self.protein_random_factor
 
 
-def get_default_augmentation_factors():
-    return AugmentationsFactors(location_augmentation_factor=0, molecule_similier_factor=0, molecule_random_factor=0,
-                                protein_similier_factor=0, protein_random_factor=1)
+def get_default_augmentation_factors(data_aug="protein"):
+    if data_aug == "protein":
+        return AugmentationsFactors(location_augmentation_factor=0, molecule_similier_factor=0,
+                                    molecule_random_factor=0,
+                                    protein_similier_factor=0, protein_random_factor=1)
+    elif data_aug == "molecule":
+        return AugmentationsFactors(location_augmentation_factor=0, molecule_similier_factor=0,
+                                    molecule_random_factor=1,
+                                    protein_similier_factor=0, protein_random_factor=0)
+    elif data_aug == "location":
+        return AugmentationsFactors(location_augmentation_factor=1, molecule_similier_factor=0,
+                                    molecule_random_factor=0,
+                                    protein_similier_factor=0, protein_random_factor=0)
+    else:
+        return AugmentationsFactors(location_augmentation_factor=2, molecule_random_factor=1, protein_random_factor=1)
 
 
 def apply_augmentation(data, node_index_manager: NodesIndexManager, augmentation_type: str):
@@ -265,9 +277,9 @@ class ReactionDataset:
 
 
 def get_data(node_index_manager: NodesIndexManager, augmentations_factors: AugmentationsFactors = None, sample=0,
-             fake_task=True):
+             fake_task=True, data_aug="protein"):
     if augmentations_factors is None:
-        augmentations_factors = get_default_augmentation_factors()
+        augmentations_factors = get_default_augmentation_factors(data_aug)
     train_lines, val_lines, test_lines = get_reactions(sample)
     train_dataset = ReactionDataset(node_index_manager, train_lines, augmentations_factors,
                                     fake_task=fake_task).reactions

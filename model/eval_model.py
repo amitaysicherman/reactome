@@ -12,11 +12,11 @@ from common.path_manager import model_path, scores_path
 from common.utils import reaction_from_str, sigmoid, get_best_gnn_cp
 from dataset.dataset_builder import get_reaction_entities, get_reactions
 from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
-from dataset.dataset_builder import reaction_to_data, replace_entity_augmentation
+from dataset.dataset_builder import reaction_to_data, replace_entity_augmentation, replace_location_augmentation
 from dataset.index_manger import NodesIndexManager, NodeData
 from model.gnn_models import GnnModelConfig, HeteroGNN
 
-RESULTS_COLUMNS = ['protein_protein', 'molecule_molecule', 'protein_both', 'molecule_both']
+RESULTS_COLUMNS = ['protein_protein', 'molecule_molecule', 'protein_both', 'molecule_both', 'location_both']
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -62,7 +62,7 @@ def get_model(cp_name, config_name) -> HeteroGNN:
 
 
 def create_datasets(lines, node_index_manager: NodesIndexManager):
-    datasets = {"protein_protein": [], "molecule_molecule": [], "protein_both": [], "molecule_both": []}
+    datasets = {x: [] for x in RESULTS_COLUMNS}
 
     skip_count = 0
     for line in lines:
@@ -84,12 +84,16 @@ def create_datasets(lines, node_index_manager: NodesIndexManager):
         elif reaction_type == "both":
             change_protein_data = replace_entity_augmentation(node_index_manager, data, NodeTypes.protein, "random")
             change_molecule_data = replace_entity_augmentation(node_index_manager, data, NodeTypes.molecule, "random")
+            change_location_data = replace_location_augmentation(node_index_manager, data)
             if change_protein_data is not None:
                 datasets["protein_both"].append(data)
                 datasets["protein_both"].append(change_protein_data)
             if change_molecule_data is not None:
                 datasets["molecule_both"].append(data)
                 datasets["molecule_both"].append(change_molecule_data)
+            if change_location_data is not None:
+                datasets['location_both'].append(data)
+                datasets['location_both'].append(change_location_data)
         else:
             skip_count += 1
             continue
@@ -140,7 +144,7 @@ if __name__ == '__main__':
         model = get_model(model_name, config_file)
         model = model.to(device)
         node_index_manager = model.emb.node_index_manager
-        results = {"protein_protein": [], "molecule_molecule": [], "protein_both": [], "molecule_both": []}
+        results = {x: [] for x in RESULTS_COLUMNS}
         for _ in tqdm(range(args.eval_n)):
             datasets = create_datasets(lines, node_index_manager)
             results = apply_and_get_score(datasets, model, results)
