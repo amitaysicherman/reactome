@@ -36,13 +36,13 @@ def fill_node_emd_args(args, node_emd):
             args['fuse_name'] = "recon"
         elif node_emd == "all-to-prot":
             args['fuse_all_to_one'] = 'protein'
-            args['fuse_name'] = "prot"
+            args['fuse_name'] = "all-to-prot"
         elif node_emd == "all-to-mol":
             args['fuse_all_to_one'] = 'molecule'
-            args['fuse_name'] = "mol"
+            args['fuse_name'] = "all-to-mol"
         elif node_emd == "all-to-all":
             args['fuse_all_to_one'] = 'all'
-            args['fuse_name'] = "all"
+            args['fuse_name'] = "all-to-all"
 
 
 def fill_size_args(args, model_size):
