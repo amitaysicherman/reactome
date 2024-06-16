@@ -61,7 +61,7 @@ class Scorer:
         auc_dict = self.compute_auc_per_class()
         metrics = {
             f"{self.name}/loss": self.loss / self.batch_count,
-            f'{self.name}/all_auc': auc_dict['all'],
+            f'{self.name}/fake_all': auc_dict['all'],
         }
         for class_name in self.class_names:
             if class_name == REAL:

@@ -136,7 +136,7 @@ if __name__ == '__main__':
     if args.name == "all":
         model_names = get_all_model_names()
     else:
-        model_names = [get_best_gnn_cp(args.name)]
+        model_names = [get_best_gnn_cp(args.name, args.data_aug)]
     print(f"Model names: {model_names}")
     for model_name in model_names:
 

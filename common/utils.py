@@ -115,7 +115,7 @@ def get_best_fuse_cp(score_file):
     return best_index
 
 
-def get_best_gnn_cp(name):
+def get_best_gnn_cp(name, aug_data):
     score_file = f'{scores_path}/gnn_{name}.txt'
     with open(score_file, "r") as f:
         lines = f.read().splitlines()
@@ -124,7 +124,7 @@ def get_best_gnn_cp(name):
     for i in range(len(lines) // 4):
         line = lines[i * 4 + 3]
         line = eval(line.replace("nan", "0"))
-        score = line["test/fake_protein"]
+        score = line[f"test/fake_{aug_data}"]
         if score > best_score:
             best_score = score
             best_index = i

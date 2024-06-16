@@ -1,7 +1,7 @@
 import torch
 import os
 import subprocess
-
+from multiprocessing import Pool
 
 
 def get_default_args():
@@ -86,7 +86,7 @@ def get_args(node_emd, model_size, graph_emb, aug_data):
     fill_aug_data_args(args, aug_data)
     name = f"{node_emd}_{model_size}_{graph_emb}_{aug_data}"
     args['name'] = name
-    return args_to_str(args),name
+    return args_to_str(args), name
 
 
 num_gpus = torch.cuda.device_count()
@@ -94,16 +94,13 @@ max_concurrent_runs = 64
 counter = 0
 
 
+def run_cmd(cmd):
+    subprocess.run(cmd, shell=True)
+
+
 def run_commands(commands):
-    processes = []
-    for cmd in commands:
-        processes.append(subprocess.Popen(cmd, shell=True))
-        if len(processes) >= max_concurrent_runs:
-            for p in processes:
-                p.wait()
-            processes = []
-    for p in processes:
-        p.wait()
+    with Pool(max_concurrent_runs) as p:
+        p.map(run_cmd, commands)
 
 
 commands = []
@@ -122,7 +119,7 @@ for model_size in ["s", "m", "l"]:
     for aug_data in ["all", "protein", "molecule", "location"]:
         for graph_emb in ["reaction", "mean", "concat", "both"]:
             for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]:
-                args,name = get_args(node_emd, model_size, graph_emb, aug_data)
+                args, name = get_args(node_emd, model_size, graph_emb, aug_data)
                 rm_cmd = f'rm -rf model/gnn_{name}'
                 script = f"python model/train_gnn.py {args} && python model/eval_model.py {args} && {rm_cmd}"
                 counter += 1

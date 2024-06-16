@@ -144,7 +144,6 @@ class EdgeTypes:
 
 
 REAL = "real"
-FAKE_LOCATION_ALL = "fake_location_all"
-FAKE_LOCATION_SINGLE = "fake_location_single"
+FAKE_LOCATION_ALL = "fake_location"
 FAKE_PROTEIN = "fake_protein"
 FAKE_MOLECULE = "fake_molecule"
