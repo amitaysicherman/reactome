@@ -101,6 +101,7 @@ def run_commands(commands):
         if len(processes) >= max_concurrent_runs:
             for p in processes:
                 p.wait()
+            os.system("rm -rf data/models_checkpoints/gnn_")
             processes = []
     for p in processes:
         p.wait()
