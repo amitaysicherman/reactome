@@ -120,7 +120,7 @@ for model_size in ["s", "m", "l"]:
         for graph_emb in ["reaction", "mean", "concat", "both"]:
             for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]:
                 args, name = get_args(node_emd, model_size, graph_emb, aug_data)
-                rm_cmd = f'rm -rf model/gnn_{name}'
+                rm_cmd = f'rm -rf data/models_checkpoints/gnn_{name}'
                 script = f"python model/train_gnn.py {args} && python model/eval_model.py {args} && {rm_cmd}"
                 counter += 1
                 gpu_index = counter % num_gpus

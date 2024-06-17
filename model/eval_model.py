@@ -47,9 +47,9 @@ def clean_reaction(reactions: List[Reaction], node_index_manager: NodesIndexMana
     return reactions
 
 
-def get_all_model_names():
+def get_all_model_names(aug_data):
     model_names = [x.replace("gnn_") for x in os.listdir(model_path) if x.startswith("gnn_")]
-    best_models = [get_best_gnn_cp(name) for name in model_names]
+    best_models = [get_best_gnn_cp(name,aug_data) for name in model_names]
     return best_models
 
 
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     _, _, lines = get_reactions()
 
     if args.name == "all":
-        model_names = get_all_model_names()
+        model_names = get_all_model_names(args.data_aug)
     else:
         model_names = [get_best_gnn_cp(args.name, args.data_aug)]
     print(f"Model names: {model_names}")
