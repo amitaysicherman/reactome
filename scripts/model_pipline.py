@@ -149,7 +149,7 @@ def get_args(node_emd, model_size, graph_emb, aug_data):
 
 
 num_gpus = torch.cuda.device_count()
-max_concurrent_runs = 10
+max_concurrent_runs = 16
 counter = 0
 
 
