@@ -110,7 +110,7 @@ def fill_size_args(args, model_size):
     elif model_size == "m":
         args['gnn_hidden_channels'] = 256
     else:
-        args['gnn_hidden_channels'] = 1024
+        args['gnn_hidden_channels'] = 512
 
 
 def fill_graph_emb_args(args, graph_emb):
@@ -149,7 +149,7 @@ def get_args(node_emd, model_size, graph_emb, aug_data):
 
 
 num_gpus = torch.cuda.device_count()
-max_concurrent_runs = 32
+max_concurrent_runs = 10
 counter = 0
 
 
