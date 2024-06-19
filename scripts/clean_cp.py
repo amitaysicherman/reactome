@@ -14,8 +14,9 @@ for model_name in tqdm(os.listdir(model_path)):
     print(best_model)
     for cp in tqdm(glob.glob(f"{model_path}/gnn_{model_name}/model*")):
 
-        print(cp)
 
         if cp != best_model:
-            print("remove")
+            print("remove:",cp)
             # os.remove(cp)
+        else:
+            print("keep:",cp)
