@@ -112,7 +112,7 @@ for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-mol", "a
     fill_node_emd_args(args, name)
     args['name'] = name
     gpu_index = i % num_gpus
-    script = f"python model/contrastive_learning.py {args_to_str(args)}"
+    script = f"python3 model/contrastive_learning.py {args_to_str(args)}"
     cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}"'
     commands.append(cmd)
 run_commands(commands)
@@ -132,7 +132,7 @@ for node_emd in node_emd_list:
                 if name in skip_names:
                     continue
                 rm_cmd = f'rm -rf data/models_checkpoints/gnn_{name}'
-                script = f"python model/train_gnn.py {args} && python model/eval_model.py {args} && {rm_cmd}"
+                script = f"python3 model/train_gnn.py {args} && python model/eval_model.py {args} && {rm_cmd}"
                 counter += 1
                 gpu_index = counter % num_gpus
                 cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}"'
