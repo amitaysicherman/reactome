@@ -90,8 +90,8 @@ def get_args(node_emd, model_size, graph_emb, aug_data):
 
 
 num_gpus = torch.cuda.device_count() if torch.cuda.is_available() else 1
-max_concurrent_runs = 112
-counter = 64
+max_concurrent_runs = 32
+counter = 0
 
 
 def run_cmd(cmd):
@@ -115,7 +115,7 @@ for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-mol", "a
 run_commands(commands)
 
 commands = []
-for model_size in ["m"]:#['s', "m", "l"]:
+for model_size in ["l"]:#['s', "m", "l"]:
     for aug_data in ["all", "protein", "molecule", "location"]:
         for graph_emb in ["reaction", "mean", "concat", "both"]:
             for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]:
