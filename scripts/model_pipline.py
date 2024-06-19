@@ -3,65 +3,7 @@ import os
 import subprocess
 from multiprocessing import Pool
 
-skip_names = ['recon_s_mean_molecule', 'all-to-mol_s_both_molecule', 'all-to-mol_s_mean_molecule',
-              'fuse_s_reaction_molecule', 'all-to-prot_s_concat_molecule', 'all-to-all_s_concat_molecule',
-              'all-to-prot_s_reaction_molecule', 'pre_s_mean_molecule', 'recon_s_both_molecule', 'pre_s_both_molecule',
-              'no_s_concat_molecule', 'no_s_reaction_molecule', 'fuse_s_concat_molecule',
-              'all-to-all_s_reaction_molecule', 'no_s_concat_protein', 'pre_s_mean_protein', 'no_s_reaction_protein',
-              'all-to-all_s_reaction_protein', 'recon_s_both_protein', 'pre_s_both_protein', 'no_s_concat_location',
-              'pre_s_both_location', 'fuse_s_concat_protein', 'pre_s_mean_location', 'all-to-all_s_reaction_location',
-              'no_s_reaction_location', 'fuse_s_concat_location', 'recon_s_both_location', 'all-to-mol_s_mean_protein',
-              'all-to-all_s_concat_protein', 'recon_s_mean_protein', 'all-to-prot_s_reaction_protein',
-              'all-to-mol_s_both_protein', 'fuse_s_reaction_protein', 'all-to-mol_s_mean_location',
-              'all-to-prot_s_concat_protein', 'all-to-prot_s_reaction_location', 'all-to-all_s_concat_location',
-              'recon_s_mean_location', 'all-to-mol_s_both_location', 'fuse_s_reaction_location',
-              'all-to-prot_s_concat_location', 'all-to-prot_s_mean_molecule', 'all-to-all_s_both_molecule',
-              'all-to-all_s_mean_molecule', 'fuse_s_mean_molecule', 'all-to-mol_s_concat_molecule',
-              'no_s_both_molecule', 'recon_s_reaction_molecule', 'all-to-mol_s_reaction_molecule',
-              'all-to-prot_s_both_molecule', 'pre_s_reaction_molecule', 'recon_s_concat_molecule', 'no_s_mean_molecule',
-              'fuse_s_both_molecule', 'pre_s_concat_molecule', 'all-to-mol_s_mean_all', 'all-to-prot_s_reaction_all',
-              'no_s_mean_protein', 'pre_s_concat_protein', 'fuse_s_both_protein', 'fuse_s_reaction_all',
-              'no_s_mean_location', 'fuse_s_mean_protein', 'fuse_s_both_location', 'all-to-prot_s_both_protein',
-              'all-to-mol_m_mean_all', 'pre_s_concat_location', 'pre_s_reaction_protein', 'all-to-all_s_mean_protein',
-              'all-to-all_s_concat_all', 'no_s_both_protein', 'all-to-mol_s_reaction_protein', 'recon_s_concat_protein',
-              'all-to-prot_m_reaction_all', 'recon_m_mean_all', 'fuse_s_mean_location', 'all-to-all_s_mean_location',
-              'all-to-prot_s_mean_protein', 'no_s_both_location', 'all-to-all_s_both_protein',
-              'all-to-prot_s_both_location', 'pre_s_both_all', 'all-to-mol_s_reaction_location', 'fuse_m_reaction_all',
-              'recon_s_mean_all', 'recon_s_concat_location', 'recon_s_reaction_protein', 'pre_s_reaction_location',
-              'all-to-mol_s_concat_protein', 'all-to-prot_s_mean_location', 'all-to-all_s_both_location',
-              'all-to-mol_s_concat_location', 'all-to-mol_s_both_all', 'all-to-all_s_reaction_all',
-              'recon_s_reaction_location', 'all-to-prot_s_concat_all', 'all-to-all_m_reaction_all', 'no_s_concat_all',
-              'fuse_s_concat_all', 'no_m_concat_all', 'pre_s_mean_all', 'pre_m_mean_all', 'recon_s_both_all',
-              'no_s_reaction_all', 'no_m_reaction_all', 'no_m_reaction_protein', 'fuse_m_reaction_protein',
-              'pre_m_mean_protein', 'recon_m_mean_protein', 'all-to-all_m_reaction_protein',
-              'all-to-prot_m_reaction_protein', 'all-to-prot_m_reaction_molecule', 'all-to-all_m_reaction_molecule',
-              'all-to-mol_m_mean_molecule', 'all-to-mol_m_mean_protein', 'pre_m_both_molecule', 'no_m_concat_protein',
-              'no_m_concat_molecule', 'all-to-all_m_concat_molecule', 'fuse_m_concat_protein',
-              'all-to-prot_m_concat_protein', 'pre_m_mean_molecule', 'all-to-mol_m_both_protein',
-              'recon_m_mean_molecule', 'no_m_reaction_molecule', 'recon_m_both_protein', 'fuse_m_reaction_molecule',
-              'fuse_m_concat_molecule', 'all-to-mol_m_both_molecule', 'all-to-prot_m_concat_molecule',
-              'recon_m_both_molecule', 'fuse_m_reaction_location', 'recon_m_mean_location', 'pre_m_mean_location',
-              'no_m_reaction_location', 'pre_m_both_protein', 'all-to-all_m_concat_protein',
-              'all-to-all_m_reaction_location', 'all-to-prot_m_reaction_location', 'all-to-mol_m_mean_location',
-              'no_m_concat_location', 'all-to-all_m_concat_all', 'pre_m_both_all', 'all-to-prot_m_concat_all',
-              'fuse_m_concat_all', 'all-to-mol_m_both_all', 'recon_m_both_all', 'pre_m_reaction_protein',
-              'all-to-mol_m_reaction_molecule', 'all-to-all_m_mean_molecule', 'fuse_m_mean_protein',
-              'no_m_both_molecule', 'fuse_m_both_molecule', 'no_m_mean_molecule', 'recon_m_reaction_protein',
-              'pre_m_concat_molecule', 'all-to-all_s_mean_all', 'all-to-prot_m_mean_protein',
-              'all-to-mol_s_reaction_all', 'fuse_m_mean_molecule', 'all-to-all_m_mean_all', 'pre_m_reaction_molecule',
-              'recon_m_concat_molecule', 'all-to-prot_m_mean_molecule', 'all-to-prot_m_both_molecule',
-              'all-to-mol_m_reaction_protein', 'no_s_both_all', 'all-to-mol_m_reaction_all',
-              'recon_m_reaction_molecule', 'recon_m_concat_protein', 'all-to-all_m_mean_protein', 'no_m_mean_protein',
-              'all-to-prot_m_both_protein', 'all-to-all_m_both_molecule', 'all-to-mol_m_concat_molecule',
-              'recon_s_reaction_all', 'pre_m_concat_protein', 'all-to-all_m_both_protein', 'fuse_m_mean_location',
-              'all-to-mol_m_concat_protein', 'pre_m_reaction_location', 'fuse_s_both_all', 'all-to-prot_m_mean_all',
-              'all-to-prot_s_mean_all', 'no_s_mean_all', 'recon_m_reaction_location', 'all-to-prot_m_mean_location',
-              'recon_m_reaction_all', 'no_m_both_protein', 'fuse_m_both_protein', 'all-to-all_s_both_all',
-              'no_m_mean_all', 'no_m_mean_location', 'all-to-all_m_mean_location', 'all-to-mol_m_reaction_location',
-              'all-to-mol_s_concat_all', 'pre_s_concat_all', 'pre_m_concat_location', 'pre_m_concat_all',
-              'recon_s_concat_all', 'fuse_s_mean_all', 'fuse_m_mean_all', 'all-to-prot_s_both_all',
-              'pre_s_reaction_all', 'pre_m_reaction_all']
-
+skip_names = []
 
 def get_default_args():
     return {
@@ -148,8 +90,8 @@ def get_args(node_emd, model_size, graph_emb, aug_data):
     return args_to_str(args), name
 
 
-num_gpus = torch.cuda.device_count()
-max_concurrent_runs = 16
+num_gpus = torch.cuda.device_count() if torch.cuda.is_available() else 1
+max_concurrent_runs = 112
 counter = 0
 
 
@@ -174,7 +116,7 @@ for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-mol", "a
 run_commands(commands)
 
 commands = []
-for model_size in ["s", "m", "l"]:
+for model_size in ["s"]:#, "m", "l"]:
     for aug_data in ["all", "protein", "molecule", "location"]:
         for graph_emb in ["reaction", "mean", "concat", "both"]:
             for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]:
