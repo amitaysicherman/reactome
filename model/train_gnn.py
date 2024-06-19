@@ -21,7 +21,7 @@ REACTION = NodeTypes().reaction
 batch_size = 1
 
 
-def run_model(data, model, optimizer, scorer: Scorer, is_train=True):
+def run_model(data, model, optimizer, scorer, is_train=True):
     x_dict = {key: data.x_dict[key].to(device) for key in data.x_dict.keys()}
     y = data['tags'].to(device)
     augmentation_types = data['augmentation_type']
