@@ -125,9 +125,9 @@ args = parser.parse_args()
 node_emd_list = ["recon", "all-to-prot", "all-to-mol", "all-to-all", "no", "pre", "fuse"]
 node_emd_list = [node_emd_list[args.index]]
 for node_emd in node_emd_list:
-    for aug_data in ["all", "protein", "molecule", "location"]:
-        for graph_emb in ["reaction", "mean", "concat", "both"]:
-            for model_size in ["l" "m", "l"]:
+    for model_size in ["s", "m", "l"]:
+        for aug_data in ["protein", "molecule", "location", "all"]:
+            for graph_emb in ["reaction", "mean", "concat", "both"]:
                 args, name = get_args(node_emd, model_size, graph_emb, aug_data)
                 if name in skip_names:
                     continue
