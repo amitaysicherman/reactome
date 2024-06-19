@@ -5,4 +5,4 @@
 #SBATCH --mem=8G
 
 args=$(sed -n "$SLURM_ARRAY_TASK_ID"p scripts/all_fuse.txt)
-python python model/contrastive_learning.py "${args}"
+python3 model/contrastive_learning.py "${args}"
