@@ -2,8 +2,10 @@ import torch
 import os
 import subprocess
 from multiprocessing import Pool
+import argparse
 
 skip_names = []
+
 
 def get_default_args():
     return {
@@ -78,6 +80,7 @@ def args_to_str(args):
             args_str += f"--{key} {value} "
     return args_str.strip()
 
+
 def get_args(node_emd, model_size, graph_emb, aug_data):
     args = get_default_args()
     fill_node_emd_args(args, node_emd)
@@ -90,7 +93,7 @@ def get_args(node_emd, model_size, graph_emb, aug_data):
 
 
 num_gpus = torch.cuda.device_count() if torch.cuda.is_available() else 1
-max_concurrent_runs = 32
+max_concurrent_runs = 48
 counter = 0
 
 
@@ -115,10 +118,16 @@ for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-mol", "a
 run_commands(commands)
 
 commands = []
-for model_size in ["l"]:#['s', "m", "l"]:
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--index", type=int, default=0)
+args = parser.parse_args()
+node_emd_list = ["recon", "all-to-prot", "all-to-mol", "all-to-all", "no", "pre", "fuse"]
+node_emd_list = [node_emd_list[args.index]]
+for node_emd in node_emd_list:
     for aug_data in ["all", "protein", "molecule", "location"]:
         for graph_emb in ["reaction", "mean", "concat", "both"]:
-            for node_emd in ["no", "pre", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]:
+            for model_size in ["l" "m", "l"]:
                 args, name = get_args(node_emd, model_size, graph_emb, aug_data)
                 if name in skip_names:
                     continue
