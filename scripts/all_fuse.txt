@@ -1,0 +1,6 @@
+--name no --fuse_name no --fuse_recon 0 --gnn_train_all_emd 1 --gnn_hidden_channels 256 --gnn_pretrained_method 0 --data_aug all --gnn_last_or_concat 0 --gnn_reaction_or_mean 0
+--name fuse --fuse_name fuse --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --gnn_pretrained_method 2 --data_aug all --gnn_last_or_concat 0 --gnn_reaction_or_mean 0
+--name recon --fuse_name recon --fuse_recon 1 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --gnn_pretrained_method 2 --data_aug all --gnn_last_or_concat 0 --gnn_reaction_or_mean 0
+--name all-to-prot --fuse_name all-to-prot --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --fuse_all_to_one protein --gnn_pretrained_method 2 --data_aug all --gnn_last_or_concat 0 --gnn_reaction_or_mean 0
+--name all-to-mol --fuse_name all-to-mol --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --fuse_all_to_one molecule --gnn_pretrained_method 2 --data_aug all --gnn_last_or_concat 0 --gnn_reaction_or_mean 0
+--name all-to-all --fuse_name all-to-all --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --fuse_all_to_one all --gnn_pretrained_method 2 --data_aug all --gnn_last_or_concat 0 --gnn_reaction_or_mean 0
