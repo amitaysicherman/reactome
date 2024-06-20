@@ -48,15 +48,15 @@ def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
         train_score = Scorer("train", scores_tag_names)
         train_data = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
 
-        for data_index, data in tqdm(enumerate(train_data), total=len(train_dataset) // batch_size):
+        for data_index, data in enumerate(train_data):
             run_model(data, model, optimizer, train_score)
         log_func(train_score.get_log(), i)
         test_score = Scorer("test", scores_tag_names)
         test_data = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
-        for data_index, data in tqdm(enumerate(test_data), total=len(test_dataset) // batch_size):
+        for data_index, data in enumerate(test_data):
             run_model(data, model, optimizer, test_score, False)
         log_func(test_score.get_log(), i)
-
+        print("Finished epoch", i)
         name = f'{save_dir}/model_{i}.pt'
         torch.save(model.state_dict(), name)
         # torch.save(optimizer.state_dict(), name.replace("model_", "optimizer_"))
@@ -117,6 +117,6 @@ if __name__ == "__main__":
         scores_tag_names = tag_names
     node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name)
     train_dataset, test_dataset, _, pos_classes_weights = get_data(node_index_manager, sample=args.gnn_sample,
-                                                                   fake_task=args.gnn_fake_task,data_aug=args.data_aug)
+                                                                   fake_task=args.gnn_fake_task, data_aug=args.data_aug)
     pos_classes_weights = pos_classes_weights.to(device)
     run_with_args(args)

@@ -106,7 +106,7 @@ def run_commands(commands):
 
 
 commands = []
-for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-mol", "all-to-all"]):
+for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-all"]):
     args = get_default_args()
     fill_node_emd_args(args, name)
     args['name'] = name
