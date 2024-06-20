@@ -1,5 +1,5 @@
 import dataclasses
-
+import time
 from tqdm import tqdm
 import torch
 import torch.nn as nn
@@ -43,6 +43,7 @@ def run_model(data, model, optimizer, scorer, is_train=True):
 
 
 def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
+    prev_time = time.time()
     for i in range(epochs):
 
         train_score = Scorer("train", scores_tag_names)
@@ -56,7 +57,8 @@ def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
         for data_index, data in enumerate(test_data):
             run_model(data, model, optimizer, test_score, False)
         log_func(test_score.get_log(), i)
-        print("Finished epoch", i)
+        print("Finished epoch", i, "time:", (time.time() - prev_time) / 60, "minutes")
+        prev_time = time.time()
         name = f'{save_dir}/model_{i}.pt'
         torch.save(model.state_dict(), name)
         # torch.save(optimizer.state_dict(), name.replace("model_", "optimizer_"))
