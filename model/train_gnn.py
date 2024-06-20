@@ -1,5 +1,7 @@
 import dataclasses
 import time
+
+import pandas as pd
 from tqdm import tqdm
 import torch
 import torch.nn as nn
@@ -7,7 +9,7 @@ import os
 from common.scorer import Scorer
 from dataset.index_manger import NodesIndexManager
 from common.data_types import NodeTypes, REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, FAKE_MOLECULE
-from dataset.dataset_builder import get_data,data_to_batches
+from dataset.dataset_builder import get_data, data_to_batches
 from model.gnn_models import GnnModelConfig, HeteroGNN
 from tagging import ReactionTag
 from torch_geometric.loader import DataLoader
@@ -43,14 +45,13 @@ def run_model(data, model, optimizer, scorer, is_train=True):
         optimizer.step()
 
 
-
 def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
     prev_time = time.time()
     for i in range(epochs):
 
         train_score = Scorer("train", scores_tag_names)
         # train_data = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-        train_data = data_to_batches(train_dataset, batch_size,True)
+        train_data = data_to_batches(train_dataset, batch_size, True)
         for data_index, data in enumerate(train_data):
             run_model(data, model, optimizer, train_score)
         log_func(train_score.get_log(), i)
@@ -92,6 +93,29 @@ def args_to_config(args):
     )
 
 
+def print_best_results(results_file):
+    with open(results_file, "r") as f:
+        lines = f.readlines()
+    valid_results = pd.DataFrame(columns=['all', 'protein', 'molecule', 'location'])
+    test_results = pd.DataFrame(columns=['all', 'protein', 'molecule', 'location'])
+    for i in range(0, len(lines), 6):  # num,train,num,valid,num,test
+        valid_scores = eval(lines[i + 3].replace("nan", "0"))
+        valid_scores = {key.split("_"): valid_scores[key] for key in valid_scores if "_" in key}
+        test_scores = eval(lines[i + 5].replace("nan", "0"))
+        test_scores = {key.split("_"): test_scores[key] for key in test_scores if "_" in key}
+        valid_results.loc[i // 6] = valid_scores
+        test_results.loc[i // 6] = test_scores
+    print("Valid results")
+    print(valid_results)
+    print("Test results")
+    print(test_results)
+    # choose the best index for each columns based on the valid results
+    best_index = valid_results.idxmax()
+    for col in valid_results.columns:
+        print(f"Best model for {col}")
+        print(test_results.loc[best_index[col]])
+
+
 def run_with_args(args):
     save_dir = f"{model_path}/gnn_{args.name}/"
     if not os.path.exists(save_dir):
@@ -130,7 +154,9 @@ if __name__ == "__main__":
         tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
         scores_tag_names = tag_names
     node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name)
-    train_dataset, valid_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager, sample=args.gnn_sample,
-                                                                   fake_task=args.gnn_fake_task, data_aug=args.data_aug)
+    train_dataset, valid_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager,
+                                                                               sample=args.gnn_sample,
+                                                                               fake_task=args.gnn_fake_task,
+                                                                               data_aug=args.data_aug)
     pos_classes_weights = pos_classes_weights.to(device)
     run_with_args(args)
