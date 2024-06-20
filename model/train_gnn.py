@@ -66,14 +66,14 @@ def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
         test_score = Scorer("test", scores_tag_names)
         # test_data = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
         test_data = data_to_batches(test_dataset, batch_size, False)
-
         for data_index, data in enumerate(test_data):
             run_model(data, model, optimizer, test_score, False)
         log_func(test_score.get_log(), i)
+
         print("Finished epoch", i, "time:", (time.time() - prev_time) / 60, "minutes")
         prev_time = time.time()
-        name = f'{save_dir}/model_{i}.pt'
-        torch.save(model.state_dict(), name)
+        # name = f'{save_dir}/model_{i}.pt'
+        # torch.save(model.state_dict(), name)
         # torch.save(optimizer.state_dict(), name.replace("model_", "optimizer_"))
 
 
@@ -109,7 +109,7 @@ def print_best_results(results_file):
     print(valid_results)
     print("Test results")
     print(test_results)
-    # choose the best index for each columns based on the valid results
+    # choose the best index for each column based on the valid results
     best_index = valid_results.idxmax()
     for col in valid_results.columns:
         print(f"Best model for {col}")
