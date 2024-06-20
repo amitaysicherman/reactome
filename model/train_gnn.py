@@ -139,7 +139,7 @@ def run_with_args(args):
     optimizer = torch.optim.Adam(model.parameters(), lr=args.gnn_lr)
 
     train(model, optimizer, batch_size, save_to_file, args.gnn_epochs, save_dir=save_dir)
-
+    print_best_results(score_file)
 
 if __name__ == "__main__":
     from common.args_manager import get_args
