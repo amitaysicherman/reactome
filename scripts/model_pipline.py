@@ -137,6 +137,7 @@ for node_emd in node_emd_list:
                 gpu_index = counter % num_gpus
                 cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}"'
                 commands.append(cmd)
+print(commands)
 run_commands(commands)
 
 print(counter)

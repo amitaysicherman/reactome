@@ -67,7 +67,7 @@ def create_datasets(lines, node_index_manager: NodesIndexManager):
     skip_count = 0
     for reaction in lines:
         reaction_type = get_reaction_type(get_reaction_nodes(reaction, node_index_manager))
-        data = reaction_to_data(line, node_index_manager, True)
+        data = reaction_to_data(reaction, node_index_manager, True)
         if data is None:
             continue
         if reaction_type == "protein":
