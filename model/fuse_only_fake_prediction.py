@@ -96,10 +96,7 @@ def clean_reaction(reactions: List[Reaction], node_index_manager: NodesIndexMana
 
 if __name__ == '__main__':
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD_FUSE, fuse_name="all-recon")
-    train_lines, val_lines, test_lines = get_reactions()
-    train_reactions = [reaction_from_str(line) for line in train_lines]
-    # validation_reactions = [reaction_from_str(line) for line in test_lines]
-    test_reactions = [reaction_from_str(line) for line in test_lines]
+    train_reactions, _, test_reactions = get_reactions()
 
     train_reactions = [get_reaction_nodes(reaction, node_index_manager) for reaction in train_reactions]
     test_reactions = [get_reaction_nodes(reaction, node_index_manager) for reaction in test_reactions]

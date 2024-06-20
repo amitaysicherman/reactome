@@ -320,9 +320,7 @@ if __name__ == '__main__':
         args.fuse_batch_size = 2
     node_index_manager = NodesIndexManager()
 
-    train_lines, val_lines, test_lines = get_reactions()
-    train_reactions = [reaction_from_str(line) for line in train_lines]
-    validation_reactions = [reaction_from_str(line) for line in test_lines]
+    train_reactions, validation_reactions, test_lines = get_reactions()
 
     train_dataset = PairsDataset(train_reactions, node_index_manager,
                                  proteins_molecules_only=args.fuse_proteins_molecules_only)

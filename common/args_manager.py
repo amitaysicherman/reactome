@@ -17,7 +17,7 @@ def get_args():
     parser.add_argument("--fuse_hidden_dim", type=int, default=512)
     parser.add_argument("--fuse_recon", type=int, default=0)
     parser.add_argument("--fuse_all_to_one", type=str, default="")
-    parser.add_argument("--fuse_epochs", type=int, default=15)
+    parser.add_argument("--fuse_epochs", type=int, default=25)
     parser.add_argument("--fuse_name", type=str, default="")
 
     parser.add_argument("--gnn_learned_embedding_dim", type=int, default=256)

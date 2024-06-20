@@ -65,8 +65,7 @@ def create_datasets(lines, node_index_manager: NodesIndexManager):
     datasets = {x: [] for x in RESULTS_COLUMNS}
 
     skip_count = 0
-    for line in lines:
-        reaction = reaction_from_str(line)
+    for reaction in lines:
         reaction_type = get_reaction_type(get_reaction_nodes(reaction, node_index_manager))
         data = reaction_to_data(line, node_index_manager, True)
         if data is None:

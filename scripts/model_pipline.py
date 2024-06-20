@@ -1,5 +1,4 @@
 import torch
-import os
 import subprocess
 from multiprocessing import Pool
 import argparse
@@ -120,13 +119,14 @@ run_commands(commands)
 commands = []
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--index", type=int, default=0)
+parser.add_argument("--index", type=int, default=-1)
 args = parser.parse_args()
-node_emd_list = ["recon", "all-to-prot", "all-to-mol", "all-to-all", "no", "pre", "fuse"]
-node_emd_list = [node_emd_list[args.index]]
+node_emd_list = ["recon", "all-to-prot", "all-to-all", "no", "pre", "fuse"]
+if args.index != -1:
+    node_emd_list = [node_emd_list[args.index]]
 for node_emd in node_emd_list:
     for model_size in ["s", "m", "l"]:
-        for aug_data in ["protein", "molecule", "location", "all"]:
+        for aug_data in ["all"]:
             for graph_emb in ["reaction", "mean", "concat", "both"]:
                 args, name = get_args(node_emd, model_size, graph_emb, aug_data)
                 if name in skip_names:
@@ -137,8 +137,6 @@ for node_emd in node_emd_list:
                 gpu_index = counter % num_gpus
                 cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}"'
                 commands.append(cmd)
-
-# Run the second set of commands
 run_commands(commands)
 
 print(counter)

@@ -7,8 +7,7 @@ from dataset.dataset_builder import get_reactions
 from common.path_manager import figures_path
 
 
-def get_years(lines):
-    reactions = [reaction_from_str(line) for line in lines]
+def get_years(reactions):
     unknown_count = len([reaction.date.year for reaction in reactions if reaction.date.year == 1970])
     reactions = [reaction for reaction in reactions if reaction.date.year != 1970]
     years = [reaction.date.year for reaction in reactions]
@@ -27,8 +26,8 @@ train_years, unknown_train = get_years(train_lines)
 valid_years, unknown_valid = get_years(valid_lines)
 test_years, unknown_test = get_years(test_lines)
 unknown_counts = sum([unknown_train, unknown_valid, unknown_test])
-train_valid_cutoff = reaction_from_str(valid_lines[0]).date
-valid_test_cutoff = reaction_from_str(test_lines[0]).date
+train_valid_cutoff = valid_lines[0].date
+valid_test_cutoff = test_lines[0].date
 
 train_years_unique, train_counts = np.unique(train_years, return_counts=True)
 valid_years_unique, valid_counts = np.unique(valid_years, return_counts=True)

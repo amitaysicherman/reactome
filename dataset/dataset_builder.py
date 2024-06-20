@@ -93,10 +93,15 @@ def have_dna_nodes(reaction, node_index_manager: NodesIndexManager, check_output
     return False
 
 
-def reaction_to_data(reaction: str, node_index_manager: NodesIndexManager, fake_task: bool):
-    reaction = reaction_from_str(reaction)
-    if have_unkown_nodes(reaction, node_index_manager):
-        return None
+def have_no_seq_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
+    entitites = get_reaction_entities(reaction, check_output)
+    for e in entitites:
+        if not node_index_manager.name_to_node[e.get_db_identifier()].have_seq:
+            return True
+    return False
+
+
+def reaction_to_data(reaction, node_index_manager: NodesIndexManager, fake_task: bool):
     g = reaction_to_nx(reaction, node_index_manager)
     bp = node_index_manager.bp_name_to_index[
         reaction.biological_process[0]]  # TODO: handle more then one biological_process.
@@ -248,13 +253,13 @@ def apply_augmentation(data, node_index_manager: NodesIndexManager, augmentation
 
 class ReactionDataset:
 
-    def __init__(self, node_index_manager: NodesIndexManager, lines, augmentations_factors: AugmentationsFactors,
+    def __init__(self, node_index_manager: NodesIndexManager, reactions, augmentations_factors: AugmentationsFactors,
                  only_fake=False, one_per_sample=False, fake_task=True):
         self.node_index_manager = node_index_manager
         self.reactions = []
 
-        for line in tqdm(lines):
-            data = reaction_to_data(line, self.node_index_manager, fake_task)
+        for reaction in tqdm(reactions):
+            data = reaction_to_data(reaction, self.node_index_manager, fake_task)
             if data is not None and (fake_task or data.tags.sum().item() != 0):
                 new_data = []
                 if not only_fake:
@@ -295,15 +300,30 @@ def get_data(node_index_manager: NodesIndexManager, augmentations_factors: Augme
     return train_dataset, val_dataset, test_dataset, pos_classes_weights
 
 
-def get_reactions(sample_count=0):
+def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_no_seq=True):
     with open(reactions_file) as f:
         lines = f.readlines()
-    lines = sorted(lines, key=lambda x: reaction_from_str(x).date)
-    train_val_index = int(0.7 * len(lines))
-    val_test_index = int(0.85 * len(lines))
-    train_lines = lines[:train_val_index]
-    val_lines = lines[train_val_index:val_test_index]
-    test_lines = lines[val_test_index:]
+    reactions = [reaction_from_str(line) for line in lines]
+
+    print(f"Total reactions: {len(reactions)}")
+    node_index_manager = NodesIndexManager()
+    if filter_unknown:
+        reactions = [reaction for reaction in reactions if
+                     not have_unkown_nodes(reaction, node_index_manager, check_output=True)]
+    if filter_dna:
+        reactions = [reaction for reaction in reactions if
+                     not have_dna_nodes(reaction, node_index_manager, check_output=True)]
+    if filter_no_seq:
+        reactions = [reaction for reaction in reactions if
+                     not have_no_seq_nodes(reaction, node_index_manager, check_output=True)]
+    print(f"Filtered reactions: {len(reactions)}")
+
+    reactions = sorted(reactions, key=lambda x: x.date)
+    train_val_index = int(0.7 * len(reactions))
+    val_test_index = int(0.85 * len(reactions))
+    train_lines = reactions[:train_val_index]
+    val_lines = reactions[train_val_index:val_test_index]
+    test_lines = reactions[val_test_index:]
     if sample_count > 0:
         train_lines = train_lines[:sample_count]
         val_lines = val_lines[:sample_count]
@@ -313,8 +333,6 @@ def get_reactions(sample_count=0):
 
 if __name__ == "__main__":
     node_index_manager = NodesIndexManager()
-    train_dataset, val_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager, None, sample=10,
+    train_dataset, val_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager, AugmentationsFactors(
+        molecule_random_factor=0),
                                                                              fake_task=True)
-    for data in test_dataset:
-        print(data.edge_index_dict.keys())
-        edge_index_dict = {key: data.edge_index_dict[key] for key in data.edge_index_dict.keys()}

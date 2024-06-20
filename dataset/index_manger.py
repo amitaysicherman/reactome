@@ -8,6 +8,7 @@ from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, E
     DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS
 from model.models import apply_model
 from functools import lru_cache
+import os
 
 REACTION_NODE_ID = 0
 COMPLEX_NODE_ID = 1
@@ -22,12 +23,14 @@ pretrained_method_names = {
     PRETRAINED_EMD_FUSE: "pretrained_fuse",
 }
 
+
 class NodeData:
-    def __init__(self, index, name, type_, vec=None):
+    def __init__(self, index, name, type_, vec=None, have_seq=True):
         self.index = index
         self.name = name
         self.type = type_
         self.vec = vec
+        self.have_seq = have_seq
 
 
 class NodesIndexManager:
@@ -51,6 +54,7 @@ class NodesIndexManager:
             names_file = f'{item_path}/{dt}.txt'
             with open(names_file) as f:
                 lines = f.read().splitlines()
+
             if dt in EMBEDDING_DATA_TYPES:
                 if pretrained_method == NO_PRETRAINED_EMD:
                     random.seed(42)
@@ -64,9 +68,18 @@ class NodesIndexManager:
                 vectors = [np.zeros(TYPE_TO_VEC_DIM[PROTEIN]) for _ in range(len(lines))]
             else:
                 vectors = [None] * len(lines)
+
+            seq_file = f'{item_path}/{dt}_sequences.txt'
+            if not os.path.exists(seq_file):
+                seqs = [False] * len(lines)
+            else:
+                with open(seq_file) as f:
+                    seqs = f.read().splitlines()
+                    seqs = [True if len(seq) > 0 else False for seq in seqs]
+
             for i, line in enumerate(lines):
                 name = "@".join(line.split("@")[:-1])
-                node = NodeData(self.index_count, name, dt, vectors[i])
+                node = NodeData(self.index_count, name, dt, vectors[i], seqs[i])
                 self.nodes.append(node)
                 self.index_count += 1
                 if dt == LOCATION:
@@ -86,14 +99,21 @@ class NodesIndexManager:
         self.protein_indexes = [node.index for node in proteins]
         self.protein_array = np.array([node.vec for node in proteins])
 
+        texts = [node for node in self.nodes if node.type == NodeTypes.text]
+        self.text_indexes = [node.index for node in texts]
+        self.text_array = np.array([node.vec for node in texts])
+
     @lru_cache(maxsize=4000)
     def get_probs(self, what, index):
         node = self.index_to_node[index]
         if what == 'molecule':
             array_ = self.molecule_array
-        else:
+        elif what == 'protein':
             array_ = self.protein_array
-
+        elif what == 'text':
+            array_ = self.text_array
+        else:
+            raise ValueError(f'Unknown type {what}')
         distances = pairwise_distances(node.vec.reshape(1, -1), array_,
                                        metric='cosine').flatten()
 
@@ -103,19 +123,30 @@ class NodesIndexManager:
         return prob
 
     def sample_entity(self, index, how='similar', what='molecule', k_closest=15):
+
         if what == 'molecule':
             entities = self.molecule_indexes
-        else:
+        elif what == 'protein':
             entities = self.protein_indexes
-
-        if how == 'similar':
-            prob = self.get_probs(what=what, index=index)
-            closest_index = np.argsort(prob)[::-1][:k_closest]
-            closest_prob = prob[closest_index]
-            closest_prob = closest_prob / np.sum(closest_prob)
-            return random.choices(np.array(entities)[closest_index], closest_prob)[0]
+        elif what == 'text':
+            entities = self.text_indexes
         else:
-            return random.choice([x for x in entities if x != index])
+            raise ValueError(f'Unknown type {what}')
+        good_index = False
+        while not good_index:
+
+            if how == 'similar':
+                prob = self.get_probs(what=what, index=index)
+                closest_index = np.argsort(prob)[::-1][:k_closest]
+                closest_prob = prob[closest_index]
+                closest_prob = closest_prob / np.sum(closest_prob)
+                selected_index = random.choices(np.array(entities)[closest_index], closest_prob)[0]
+            else:
+                selected_index = random.choice([x for x in entities if x != index])
+
+            if self.index_to_node[selected_index].have_seq:
+                good_index = True
+        return selected_index
 
     def sample_random_locations_map(self):
         mapping = {}
