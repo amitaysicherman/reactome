@@ -100,9 +100,9 @@ def print_best_results(results_file):
     test_results = pd.DataFrame(columns=['all', 'protein', 'molecule', 'location'])
     for i in range(0, len(lines), 6):  # num,train,num,valid,num,test
         valid_scores = eval(lines[i + 3].replace("nan", "0"))
-        valid_scores = {key.split("_"): valid_scores[key] for key in valid_scores if "_" in key}
+        valid_scores = {key.split("_")[-1]: valid_scores[key] for key in valid_scores if "_" in key}
         test_scores = eval(lines[i + 5].replace("nan", "0"))
-        test_scores = {key.split("_"): test_scores[key] for key in test_scores if "_" in key}
+        test_scores = {key.split("_")[-1]: test_scores[key] for key in test_scores if "_" in key}
         valid_results.loc[i // 6] = valid_scores
         test_results.loc[i // 6] = test_scores
     print("Valid results")
