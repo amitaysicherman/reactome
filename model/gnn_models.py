@@ -22,7 +22,7 @@ class GnnModelConfig:
     fuse_name: str
     out_channels: int
     last_or_concat: int
-    reaction_or_mean: int
+    # reaction_or_mean: int
 
     def save_to_file(self, file_name):
         with open(file_name, "w") as f:
@@ -46,7 +46,7 @@ class GnnModelConfig:
                               fuse_name=data["fuse_name"],
                               out_channels=int(data["out_channels"]),
                               last_or_concat=int(data["last_or_concat"]),
-                              reaction_or_mean=int(data["reaction_or_mean"])
+                              # reaction_or_mean=int(data["reaction_or_mean"])
                               )
 
 
@@ -113,7 +113,7 @@ class HeteroGNN(torch.nn.Module):
         self.convs = torch.nn.ModuleList()
         self.save_activations = defaultdict(list)
         self.last_or_concat = config.last_or_concat
-        self.reaction_or_mean = config.reaction_or_mean
+        # self.reaction_or_mean = config.reaction_or_mean
 
         for i in range(config.num_layers):
             conv_per_edge = {}
@@ -136,16 +136,17 @@ class HeteroGNN(torch.nn.Module):
         for i, conv in enumerate(self.convs):
             x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
-            if self.reaction_or_mean:
-                nodes = []
-                for dtype in [NodeTypes.complex, NodeTypes.molecule, NodeTypes.protein, NodeTypes.dna]:
-                    if dtype in x_dict:
-                        nodes.append(x_dict[dtype])
-                nodes = torch.cat(nodes, dim=0)
-                nodes = nodes.mean(dim=0).unsqueeze(0)
+            # if self.reaction_or_mean:
+            #     nodes = []
+            #     for dtype in [NodeTypes.complex, NodeTypes.molecule, NodeTypes.protein, NodeTypes.dna]:
+            #         if dtype in x_dict:
+            #             nodes.append(x_dict[dtype])
+            #     nodes = torch.cat(nodes, dim=0)
+            #     nodes = nodes.mean(dim=0).unsqueeze(0)
 
-            else:
-                nodes = x_dict[REACTION]
+            # else:
+            nodes = x_dict[REACTION]
+
             all_emb.append(nodes)
         if self.last_or_concat:
             all_emb = torch.cat(all_emb, dim=-1)

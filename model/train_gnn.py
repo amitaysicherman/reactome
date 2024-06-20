@@ -7,18 +7,19 @@ import os
 from common.scorer import Scorer
 from dataset.index_manger import NodesIndexManager
 from common.data_types import NodeTypes, REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, FAKE_MOLECULE
-from dataset.dataset_builder import get_data
+from dataset.dataset_builder import get_data,data_to_batches
 from model.gnn_models import GnnModelConfig, HeteroGNN
 from tagging import ReactionTag
 from torch_geometric.loader import DataLoader
 import seaborn as sns
 from common.path_manager import scores_path, model_path
+import random
 
 sns.set()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 REACTION = NodeTypes().reaction
 
-batch_size = 1
+batch_size = 2048
 
 
 def run_model(data, model, optimizer, scorer, is_train=True):
@@ -42,18 +43,21 @@ def run_model(data, model, optimizer, scorer, is_train=True):
         optimizer.step()
 
 
+
 def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
     prev_time = time.time()
     for i in range(epochs):
 
         train_score = Scorer("train", scores_tag_names)
-        train_data = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-
+        # train_data = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
+        train_data = data_to_batches(train_dataset, batch_size,True)
         for data_index, data in enumerate(train_data):
             run_model(data, model, optimizer, train_score)
         log_func(train_score.get_log(), i)
         test_score = Scorer("test", scores_tag_names)
-        test_data = DataLoader(test_dataset, batch_size=batch_size, shuffle=True)
+        # test_data = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
+        test_data = data_to_batches(test_dataset, batch_size, False)
+
         for data_index, data in enumerate(test_data):
             run_model(data, model, optimizer, test_score, False)
         log_func(test_score.get_log(), i)
@@ -76,7 +80,7 @@ def args_to_config(args):
         fuse_name=args.fuse_name,
         out_channels=args.gnn_out_channels,
         last_or_concat=args.gnn_last_or_concat,
-        reaction_or_mean=args.gnn_reaction_or_mean
+        # reaction_or_mean=args.gnn_reaction_or_mean
     )
 
 

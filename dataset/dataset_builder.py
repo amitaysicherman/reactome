@@ -151,6 +151,43 @@ def nx_to_torch_geometric(G: nx.Graph, **kwargs):
         return None
 
 
+def data_to_batches(data_list, batch_size, shuffle=True):
+    if shuffle:
+        random.shuffle(data_list)
+    for i in range(0, len(data_list), batch_size):
+        batch_data = data_list[i:i + batch_size]
+        batch_nodes_dict = defaultdict()
+        batch_edges_dict = defaultdict()
+
+        for data in batch_data:
+            for key, value in data.edge_items():
+                value = value.edge_index.clone()
+                value[0, :] += len(batch_nodes_dict[key[0]]) if key[0] in batch_nodes_dict else 0
+                value[1, :] += len(batch_nodes_dict[key[2]]) if key[2] in batch_nodes_dict else 0
+                if key not in batch_edges_dict:
+                    batch_edges_dict[key] = value
+                else:
+                    batch_edges_dict[key] = torch.cat([batch_edges_dict[key], value], dim=-1)
+
+            for key, value in data.node_items():
+                value = value.x
+                if key not in batch_nodes_dict:
+                    batch_nodes_dict[key] = value
+                else:
+                    batch_nodes_dict[key] = torch.cat([batch_nodes_dict[key], value], dim=0)
+
+        batch_hereto_data = HeteroData()
+        for key, value in batch_nodes_dict.items():
+            batch_hereto_data[key].x = value
+        for key, value in batch_edges_dict.items():
+            batch_hereto_data[key].edge_index = value
+
+        batch_hereto_data.tags = torch.cat([data.tags for data in batch_data], dim=0)
+        batch_hereto_data.bp = torch.cat([data.bp for data in batch_data], dim=0)
+        batch_hereto_data.augmentation_type = [data.augmentation_type for data in batch_data]
+        yield batch_hereto_data
+
+
 def get_fake_tag(data):
     tags = torch.zeros_like(data.tags).to(torch.float32)
     tags[-1] = 1.0
@@ -234,7 +271,7 @@ def get_default_augmentation_factors(data_aug="protein"):
                                     molecule_random_factor=0,
                                     protein_similier_factor=0, protein_random_factor=0)
     else:
-        return AugmentationsFactors(location_augmentation_factor=2, molecule_random_factor=1, protein_random_factor=1)
+        return AugmentationsFactors(location_augmentation_factor=1, molecule_random_factor=1, protein_random_factor=1)
 
 
 def apply_augmentation(data, node_index_manager: NodesIndexManager, augmentation_type: str):
@@ -258,7 +295,7 @@ class ReactionDataset:
         self.node_index_manager = node_index_manager
         self.reactions = []
 
-        for reaction in tqdm(reactions):
+        for reaction in reactions:
             data = reaction_to_data(reaction, self.node_index_manager, fake_task)
             if data is not None and (fake_task or data.tags.sum().item() != 0):
                 new_data = []
@@ -334,5 +371,8 @@ def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_
 if __name__ == "__main__":
     node_index_manager = NodesIndexManager()
     train_dataset, val_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager, AugmentationsFactors(
-        molecule_random_factor=0),
-                                                                             fake_task=True)
+        molecule_random_factor=0), fake_task=True, sample=10)
+    # train_batchs=DataLoader(train_dataset, batch_size=4, shuffle=True)
+    # for batch in train_batchs:
+    #     print(batch)
+    #     break

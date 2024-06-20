@@ -32,7 +32,7 @@ def get_args():
     parser.add_argument("--gnn_epochs", type=int, default=15)
     parser.add_argument("--gnn_fuse_name", type=str, default="default")
     parser.add_argument("--gnn_last_or_concat", type=int, default=0)
-    parser.add_argument("--gnn_reaction_or_mean", type=int, default=0)
+    # parser.add_argument("--gnn_reaction_or_mean", type=int, default=0)
 
     parser.add_argument("--eval_n", type=int, default=10)
 
