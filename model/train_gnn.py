@@ -70,7 +70,7 @@ def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
             run_model(data, model, optimizer, test_score, False)
         log_func(test_score.get_log(), i)
 
-        print("Finished epoch", i, "time:", (time.time() - prev_time) / 60, "minutes")
+        print("Finished epoch", i, "time:", time.time() - prev_time, "seconds")
         prev_time = time.time()
         # name = f'{save_dir}/model_{i}.pt'
         # torch.save(model.state_dict(), name)
@@ -114,6 +114,14 @@ def print_best_results(results_file):
     for col in valid_results.columns:
         print(f"Best model for {col}")
         print(test_results.loc[best_index[col]])
+    name = os.path.basename(results_file).replace(".txt", "")
+    summary = [name] + list(test_results.loc[best_index['protein']].values)
+    summary = ",".join([str(x) for x in summary])
+    if not os.path.exists(f"{scores_path}/summary_gnn.csv"):
+        with open(f"{scores_path}/summary_gnn.csv", "w") as f:
+            f.write(",".join(["name"] + list(test_results.columns)) + "\n")
+    with open(f"{scores_path}/summary_gnn.csv", "a") as f:
+        f.write(summary + "\n")
 
 
 def run_with_args(args):
@@ -140,6 +148,7 @@ def run_with_args(args):
 
     train(model, optimizer, batch_size, save_to_file, args.gnn_epochs, save_dir=save_dir)
     print_best_results(score_file)
+
 
 if __name__ == "__main__":
     from common.args_manager import get_args

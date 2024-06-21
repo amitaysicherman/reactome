@@ -283,6 +283,7 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
     with open(output_file, "a") as f:
         f.write(msg + "\n")
     print(msg)
+    return auc
 
 
 if __name__ == '__main__':
@@ -292,7 +293,6 @@ if __name__ == '__main__':
     args = get_args()
 
     run_name = args.fuse_name
-
 
     save_dir = f"{model_path}/fuse_{run_name}"
     if not os.path.exists(save_dir):
@@ -307,7 +307,6 @@ if __name__ == '__main__':
     scores_file = f"{scores_path}/fuse_{run_name}.txt"
     if os.path.exists(scores_file):
         os.remove(scores_file)
-
 
     EPOCHS = args.fuse_epochs
 
@@ -336,7 +335,6 @@ if __name__ == '__main__':
         emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768}
     else:
         emb_dim = {NodeTypes.protein: 1024, NodeTypes.molecule: 768, NodeTypes.dna: 768, NodeTypes.text: 768}
-
 
     if args.fuse_all_to_one == "":
         names = EMBEDDING_DATA_TYPES
@@ -384,12 +382,16 @@ if __name__ == '__main__':
     reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
                                                 lr=args.fuse_lr)
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
-
+    best_test_auc = 0
     for epoch in range(EPOCHS):
-        run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch,
-                  args.fuse_recon, scores_file, is_train=True, all_to_one=args.fuse_all_to_one)
+        train_auc = run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader,
+                              contrastive_loss, epoch,
+                              args.fuse_recon, scores_file, is_train=True, all_to_one=args.fuse_all_to_one)
 
-        run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, test_loader, contrastive_loss,
-                  epoch, args.fuse_recon, scores_file, is_train=False, all_to_one=args.fuse_all_to_one)
+        test_auc = run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, test_loader,
+                             contrastive_loss,
+                             epoch, args.fuse_recon, scores_file, is_train=False, all_to_one=args.fuse_all_to_one)
 
-        save_fuse_model(model, reconstruction_model, save_dir, epoch)
+        if test_auc > best_test_auc:
+            best_test_auc = test_auc
+            save_fuse_model(model, reconstruction_model, save_dir, epoch)
