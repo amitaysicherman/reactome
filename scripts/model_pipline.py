@@ -111,6 +111,7 @@ for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-all"]):
     fill_node_emd_args(args, name)
     args['name'] = name
     gpu_index = i % num_gpus
+    print(args_to_str(args))
     script = f"python3 model/contrastive_learning.py {args_to_str(args)}"
     cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}"'
     commands.append(cmd)
