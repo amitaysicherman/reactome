@@ -205,10 +205,18 @@ def remove_vecs_files(run_name):
 
 
 def save_fuse_model(model: MiltyModalLinear, reconstruction_model: MiltyModalLinear, save_dir, epoch):
+    cp_to_remove = []
+    for file_name in os.listdir(save_dir):
+        if file_name.endswith(".pt"):
+            cp_to_remove.append(f"{save_dir}/{file_name}")
+
     output_file = f"{save_dir}/fuse_{epoch}.pt"
     torch.save(model.state_dict(), output_file)
     output_file = f"{save_dir}/fuse-recon_{epoch}.pt"
     torch.save(reconstruction_model.state_dict(), output_file)
+
+    for cp in cp_to_remove:
+        os.remove(cp)
 
 
 def weighted_mean_loss(loss, labels):
