@@ -6,5 +6,5 @@
 #SBATCH -c 4
 #SBATCH --requeue
 
-args=$(sed -n "$SLURM_ARRAY_TASK_ID"p scripts/all_fuse.txt)
+args=$(sed -n "$SLURM_ARRAY_TASK_ID"p scripts/all_gnn.txt)
 python3 model/train_gnn.py $args
