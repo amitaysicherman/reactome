@@ -15,9 +15,9 @@ def get_default_args():
         'gnn_hidden_channels': 256,
         'fuse_all_to_one': '',
         'gnn_pretrained_method': 1,
-        'data_aug': 'all',
-        'gnn_last_or_concat': 0,
-        'gnn_reaction_or_mean': 0,
+        # 'data_aug': 'all',
+        # 'gnn_last_or_concat': 0,
+        # 'gnn_reaction_or_mean': 0,
     }
 
 
@@ -84,9 +84,9 @@ def get_args(node_emd, model_size, graph_emb, aug_data):
     args = get_default_args()
     fill_node_emd_args(args, node_emd)
     fill_size_args(args, model_size)
-    fill_graph_emb_args(args, graph_emb)
-    fill_aug_data_args(args, aug_data)
-    name = f"{node_emd}_{model_size}_{graph_emb}_{aug_data}"
+    # fill_graph_emb_args(args, graph_emb)
+    # fill_aug_data_args(args, aug_data)
+    name = f"{node_emd}_{model_size}"#_{graph_emb}_{aug_data}"
     args['name'] = name
     return args_to_str(args), name
 
@@ -114,7 +114,7 @@ for i, name in enumerate(["no", "fuse", "recon", "all-to-prot", "all-to-all"]):
     script = f"python3 model/contrastive_learning.py {args_to_str(args)}"
     cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}"'
     commands.append(cmd)
-run_commands(commands)
+# run_commands(commands)
 
 commands = []
 
@@ -126,9 +126,12 @@ if args.index != -1:
     node_emd_list = [node_emd_list[args.index]]
 for node_emd in node_emd_list:
     for model_size in ["s", "m", "l"]:
-        for aug_data in ["all"]:
-            for graph_emb in ["reaction", "mean", "concat", "both"]:
+        # for aug_data in ["all"]:
+            # for graph_emb in ["reaction"]:#, "mean", "concat", "both"]:
+                graph_emb, aug_data = "reaction", "all"
+
                 args, name = get_args(node_emd, model_size, graph_emb, aug_data)
+                print(args)
                 if name in skip_names:
                     continue
                 rm_cmd = f'rm -rf data/models_checkpoints/gnn_{name}'
@@ -137,7 +140,7 @@ for node_emd in node_emd_list:
                 gpu_index = counter % num_gpus
                 cmd = f'CUDA_VISIBLE_DEVICES="{gpu_index}" bash -c "{script}"'
                 commands.append(cmd)
-print(commands)
-run_commands(commands)
+# print(commands)
+# run_commands(commands)
 
 print(counter)
