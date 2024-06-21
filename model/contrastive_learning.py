@@ -327,7 +327,7 @@ if __name__ == '__main__':
         args.fuse_batch_size = 2
     node_index_manager = NodesIndexManager()
 
-    train_reactions, validation_reactions, test_lines = get_reactions()
+    train_reactions, validation_reactions, test_reaction = get_reactions()
 
     train_dataset = PairsDataset(train_reactions, node_index_manager,
                                  proteins_molecules_only=args.fuse_proteins_molecules_only)
@@ -335,7 +335,12 @@ if __name__ == '__main__':
     sampler = SameNameBatchSampler(train_dataset, args.fuse_batch_size)
     loader = DataLoader(train_dataset, batch_sampler=sampler)
 
-    test_dataset = PairsDataset(validation_reactions, node_index_manager, split="test",
+    valid_dataset = PairsDataset(validation_reactions, node_index_manager, split="valid",
+                                 proteins_molecules_only=args.fuse_proteins_molecules_only)
+    valid_sampler = SameNameBatchSampler(valid_dataset, args.fuse_batch_size)
+    valid_loader = DataLoader(valid_dataset, batch_sampler=valid_sampler)
+
+    test_dataset = PairsDataset(test_reaction, node_index_manager, split="test",
                                 proteins_molecules_only=args.fuse_proteins_molecules_only)
     test_sampler = SameNameBatchSampler(test_dataset, args.fuse_batch_size)
     test_loader = DataLoader(test_dataset, batch_sampler=test_sampler)
@@ -390,16 +395,20 @@ if __name__ == '__main__':
     reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
                                                 lr=args.fuse_lr)
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
-    best_test_auc = 0
+    best_valid_auc = 0
     for epoch in range(EPOCHS):
         train_auc = run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader,
                               contrastive_loss, epoch,
                               args.fuse_recon, scores_file, is_train=True, all_to_one=args.fuse_all_to_one)
 
+        valid_auc = run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, valid_loader,
+                              contrastive_loss,
+                              epoch, args.fuse_recon, scores_file, is_train=False, all_to_one=args.fuse_all_to_one)
+
         test_auc = run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, test_loader,
                              contrastive_loss,
                              epoch, args.fuse_recon, scores_file, is_train=False, all_to_one=args.fuse_all_to_one)
 
-        if test_auc > best_test_auc:
-            best_test_auc = test_auc
+        if valid_auc > best_valid_auc:
+            best_valid_auc = valid_auc
             save_fuse_model(model, reconstruction_model, save_dir, epoch)
