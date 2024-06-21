@@ -233,7 +233,8 @@ def weighted_mean_loss(loss, labels):
 
 
 def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch, recon,
-              output_file, is_train=True, all_to_one=False):
+              output_file, part="train", all_to_one=False):
+    is_train = part == "train"
     if is_train:
         model.train()
     else:
@@ -286,7 +287,7 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
             reconstruction_optimizer.zero_grad()
     auc = roc_auc_score(all_labels, all_preds)
 
-    msg = f"Epoch {epoch} {'Train' if is_train else 'Test'} AUC {auc:.3f} (cont: {total_loss / len(loader):.3f}, " \
+    msg = f"Epoch {epoch} {part} AUC {auc:.3f} (cont: {total_loss / len(loader):.3f}, " \
           f"recon: {total_recon_loss / len(loader):.3f})"
     with open(output_file, "a") as f:
         f.write(msg + "\n")
@@ -399,15 +400,15 @@ if __name__ == '__main__':
     for epoch in range(EPOCHS):
         train_auc = run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader,
                               contrastive_loss, epoch,
-                              args.fuse_recon, scores_file, is_train=True, all_to_one=args.fuse_all_to_one)
+                              args.fuse_recon, scores_file, part="train", all_to_one=args.fuse_all_to_one)
 
         valid_auc = run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, valid_loader,
                               contrastive_loss,
-                              epoch, args.fuse_recon, scores_file, is_train=False, all_to_one=args.fuse_all_to_one)
+                              epoch, args.fuse_recon, scores_file, part="valid", all_to_one=args.fuse_all_to_one)
 
         test_auc = run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, test_loader,
                              contrastive_loss,
-                             epoch, args.fuse_recon, scores_file, is_train=False, all_to_one=args.fuse_all_to_one)
+                             epoch, args.fuse_recon, scores_file, part="test", all_to_one=args.fuse_all_to_one)
 
         if valid_auc > best_valid_auc:
             best_valid_auc = valid_auc
