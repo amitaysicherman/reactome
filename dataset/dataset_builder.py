@@ -307,8 +307,6 @@ class ReactionDataset:
         for reaction in reactions:
             data = reaction_to_data(reaction, self.node_index_manager, fake_task)
             if data is not None and (fake_task or data.tags.sum().item() != 0):
-                print(data.tags)
-
                 new_data = []
                 if not only_fake:
                     new_data.append(data)
