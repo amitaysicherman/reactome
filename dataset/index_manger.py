@@ -34,7 +34,7 @@ class NodesIndexManager:
         self.dtype_to_first_index = dict()
         self.dtype_to_last_index = dict()
         self.bp_name_to_index = {"": -1}
-        self.fuse_model = load_fuse_model(fuse_name)
+        self.fuse_model = load_fuse_model(fuse_name,fuse_pretrained_start)
         with open(f'{item_path}/{BIOLOGICAL_PROCESS}.txt') as f:
             lines = f.read().splitlines()
         for i, line in enumerate(lines):
