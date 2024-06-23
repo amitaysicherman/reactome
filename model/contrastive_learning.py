@@ -74,42 +74,47 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
         if not use_pretrain:
             data_1 = idx1.to(device)
             data_2 = idx2.to(device)
-            out1 = model(data_1)
-            out2 = model(data_2)
-        else:
+            _, type_1 = indexes_to_tensor(idx1, node_index_manager)
+            _, type_2 = indexes_to_tensor(idx2, node_index_manager)
 
+        else:
             data_1, type_1 = indexes_to_tensor(idx1, node_index_manager)
             data_2, type_2 = indexes_to_tensor(idx2, node_index_manager)
-
             data_1 = data_1.to(device).float()
             data_2 = data_2.to(device).float()
 
-            if all_to_one:
+        if all_to_one:
 
-                if all_to_one == "inv":
+            if all_to_one == "inv":
 
-                    if inv_epoch != type_1 or (first_epoch and inv_epoch == type_1 and inv_epoch == type_2):
-                        continue
-                    if first_epoch:
+                if inv_epoch != type_1 or (first_epoch and inv_epoch == type_1 and inv_epoch == type_2):
+                    continue
+                if first_epoch:
+                    if use_pretrain:
                         out2 = data_2
                     else:
                         out2 = model(data_2, type_2).detach()
-
                 else:
-                    if not model.have_type((type_1, type_2)):
-                        continue
-                    out2 = data_2
+                    out2 = model(data_2, type_2).detach()
 
-                model_type = type_1 if all_to_one == "inv" else (type_1, type_2)
-                out1 = model(data_1, model_type)
-
-                recon_1 = reconstruction_model(out1, model_type)
-                recon_2 = data_2
             else:
-                out1 = model(data_1, type_1)
-                out2 = model(data_2, type_2)
-                recon_1 = reconstruction_model(out1, type_1)
-                recon_2 = reconstruction_model(out2, type_2)
+                if not model.have_type((type_1, type_2)):
+                    continue
+                out2 = data_2
+
+            model_type = type_1 if all_to_one == "inv" else (type_1, type_2)
+            out1 = model(data_1, model_type)
+            if reconstruction_model is not None:
+                recon_1 = reconstruction_model(out1, model_type)
+            else:
+                recon_1 = data_1
+            recon_2 = data_2
+        else:
+            out1 = model(data_1, type_1)
+            out2 = model(data_2, type_2)
+
+            recon_1 = reconstruction_model(out1, type_1)
+            recon_2 = reconstruction_model(out2, type_2)
 
         all_labels.extend((label == 1).cpu().detach().numpy().astype(int).tolist())
         all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
@@ -225,7 +230,7 @@ if __name__ == '__main__':
                                                     lr=args.fuse_lr)
 
     else:
-        assert args.fuse_all_to_one == ""
+        assert args.fuse_all_to_one == "" or args.fuse_all_to_one == "inv"
         assert args.fuse_recon == 0
         model = build_no_pretrained_model(node_index_manager, args.fuse_output_dim)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.fuse_lr)

@@ -14,7 +14,7 @@ class EmbModel(nn.Module):
         super(EmbModel, self).__init__()
         self.emd = nn.Embedding(n, output_dim)
 
-    def forward(self, x):
+    def forward(self, x, _=""):
         return self.emd(x)
 
 
