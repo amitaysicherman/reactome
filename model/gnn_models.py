@@ -4,6 +4,7 @@ from collections import defaultdict
 import numpy as np
 import torch
 from torch import nn as nn
+
 from torch_geometric.nn import TransformerConv, SAGEConv, HeteroConv, Linear
 
 from common.data_types import NodeTypes, DATA_TYPES, EMBEDDING_DATA_TYPES, EdgeTypes, REACTION
@@ -140,6 +141,8 @@ class HeteroGNN(torch.nn.Module):
         for i, conv in enumerate(self.convs):
             x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
+            x_dict = {key: nn.functional.dropout(x, 0.5) for key, x in x_dict.items()}
+
             # if self.reaction_or_mean:
             #     nodes = []
             #     for dtype in [NodeTypes.complex, NodeTypes.molecule, NodeTypes.protein, NodeTypes.dna]:

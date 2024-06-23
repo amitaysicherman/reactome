@@ -306,6 +306,8 @@ class ReactionDataset:
         for reaction in reactions:
             data = reaction_to_data(reaction, self.node_index_manager, fake_task)
             if data is not None and (fake_task or data.tags.sum().item() != 0):
+                print(data.tags)
+
                 new_data = []
                 if not only_fake:
                     new_data.append(data)
@@ -317,6 +319,8 @@ class ReactionDataset:
                     import random
                     self.reactions.append(random.choice(new_data))
                 else:
+                    print([d['protein'] for d in new_data])
+                    3/0
                     self.reactions.extend(new_data)
 
     def __len__(self):
@@ -407,4 +411,6 @@ def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_
 
 
 if __name__ == "__main__":
-    get_reactions(filter_untrain=True)
+    node_index_manager = NodesIndexManager()
+    data=get_data(node_index_manager)
+    a=2
