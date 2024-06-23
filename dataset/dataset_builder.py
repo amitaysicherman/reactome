@@ -269,17 +269,17 @@ def get_default_augmentation_factors(data_aug="protein"):
     if data_aug == "protein":
         return AugmentationsFactors(location_augmentation_factor=0, molecule_similier_factor=0,
                                     molecule_random_factor=0,
-                                    protein_similier_factor=0, protein_random_factor=1)
+                                    protein_similier_factor=0, protein_random_factor=10)
     elif data_aug == "molecule":
         return AugmentationsFactors(location_augmentation_factor=0, molecule_similier_factor=0,
-                                    molecule_random_factor=1,
+                                    molecule_random_factor=10,
                                     protein_similier_factor=0, protein_random_factor=0)
     elif data_aug == "location":
-        return AugmentationsFactors(location_augmentation_factor=1, molecule_similier_factor=0,
+        return AugmentationsFactors(location_augmentation_factor=10, molecule_similier_factor=0,
                                     molecule_random_factor=0,
                                     protein_similier_factor=0, protein_random_factor=0)
     else:
-        return AugmentationsFactors(location_augmentation_factor=1, molecule_random_factor=1, protein_random_factor=1)
+        return AugmentationsFactors(location_augmentation_factor=10, molecule_random_factor=10, protein_random_factor=10)
 
 
 def apply_augmentation(data, node_index_manager: NodesIndexManager, augmentation_type: str):
