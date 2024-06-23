@@ -279,7 +279,8 @@ def get_default_augmentation_factors(data_aug="protein"):
                                     molecule_random_factor=0,
                                     protein_similier_factor=0, protein_random_factor=0)
     else:
-        return AugmentationsFactors(location_augmentation_factor=10, molecule_random_factor=10, protein_random_factor=10)
+        return AugmentationsFactors(location_augmentation_factor=10, molecule_random_factor=10,
+                                    protein_random_factor=10)
 
 
 def apply_augmentation(data, node_index_manager: NodesIndexManager, augmentation_type: str):
@@ -319,8 +320,6 @@ class ReactionDataset:
                     import random
                     self.reactions.append(random.choice(new_data))
                 else:
-                    print([d['protein'] for d in new_data])
-                    3/0
                     self.reactions.extend(new_data)
 
     def __len__(self):
@@ -412,5 +411,5 @@ def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_
 
 if __name__ == "__main__":
     node_index_manager = NodesIndexManager()
-    data=get_data(node_index_manager)
-    a=2
+    data = get_data(node_index_manager)
+    a = 2
