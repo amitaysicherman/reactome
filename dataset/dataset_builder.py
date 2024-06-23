@@ -5,7 +5,7 @@ from dataset.index_manger import NodesIndexManager, COMPLEX_NODE_ID
 from model.tagging import tag
 from collections import defaultdict
 from common.data_types import UNKNOWN_ENTITY_TYPE, NodeTypes, EdgeTypes, REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, \
-    FAKE_MOLECULE
+    FAKE_MOLECULE, FAKE_TEXT
 import networkx as nx
 import torch
 from torch_geometric.data import HeteroData
@@ -241,8 +241,10 @@ def replace_entity_augmentation(index_manager: NodesIndexManager, data: HeteroDa
     clone_data = clone_hetero_data(data, change_nodes_mapping)
     if dtype == NodeTypes.molecule:
         clone_data.augmentation_type = FAKE_MOLECULE
-    else:
+    elif dtype == NodeTypes.protein:
         clone_data.augmentation_type = FAKE_PROTEIN
+    else:
+        clone_data.augmentation_type = FAKE_TEXT
     return clone_data
 
 
@@ -258,30 +260,29 @@ class AugmentationsFactors:
     molecule_random_factor: int = 0
     protein_similier_factor: int = 0
     protein_random_factor: int = 0
+    text_similier_factor: int = 0
+    text_random_factor: int = 0
 
     def get_name_factors(self):
         return ["location"] * self.location_augmentation_factor + [
             "molecule_similier"] * self.molecule_similier_factor + ["molecule_random"] * self.molecule_random_factor + [
-            "protein_similier"] * self.protein_similier_factor + ["protein_random"] * self.protein_random_factor
+            "protein_similier"] * self.protein_similier_factor + ["protein_random"] * self.protein_random_factor + [
+            "text_similier"] * self.text_similier_factor + ["text_random"] * self.text_random_factor
 
 
 def get_default_augmentation_factors(data_aug="protein"):
+    augmentation_factors= AugmentationsFactors()
     if data_aug == "protein":
-        return AugmentationsFactors(location_augmentation_factor=0, molecule_similier_factor=0,
-                                    molecule_random_factor=0,
-                                    protein_similier_factor=0, protein_random_factor=10)
+        augmentation_factors.protein_random_factor = 10
     elif data_aug == "molecule":
-        return AugmentationsFactors(location_augmentation_factor=0, molecule_similier_factor=0,
-                                    molecule_random_factor=10,
-                                    protein_similier_factor=0, protein_random_factor=0)
-    elif data_aug == "location":
-        return AugmentationsFactors(location_augmentation_factor=10, molecule_similier_factor=0,
-                                    molecule_random_factor=0,
-                                    protein_similier_factor=0, protein_random_factor=0)
-    else:
-        return AugmentationsFactors(location_augmentation_factor=10, molecule_random_factor=10,
-                                    protein_random_factor=10)
-
+        augmentation_factors.molecule_random_factor = 10
+    # elif data_aug == "location":
+    #     augmentation_factors.location_augmentation_factor = 10
+    elif data_aug == "text":
+        augmentation_factors.text_random_factor = 10
+    elif data_aug == "all":
+        augmentation_factors = AugmentationsFactors(molecule_random_factor=10,protein_random_factor=10, text_random_factor=10)
+    return augmentation_factors
 
 def apply_augmentation(data, node_index_manager: NodesIndexManager, augmentation_type: str):
     if augmentation_type == "location":
@@ -294,6 +295,11 @@ def apply_augmentation(data, node_index_manager: NodesIndexManager, augmentation
         return replace_entity_augmentation(node_index_manager, data, NodeTypes.protein, "similar")
     if augmentation_type == "protein_random":
         return replace_entity_augmentation(node_index_manager, data, NodeTypes.protein, "random")
+    if augmentation_type == "text_similier":
+        return replace_entity_augmentation(node_index_manager, data, NodeTypes.text, "similar")
+    if augmentation_type == "text_random":
+        return replace_entity_augmentation(node_index_manager, data, NodeTypes.text, "random")
+
     return None
 
 

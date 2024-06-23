@@ -7,7 +7,7 @@ import torch.nn as nn
 import os
 from common.scorer import Scorer
 from dataset.index_manger import NodesIndexManager
-from common.data_types import NodeTypes, REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, FAKE_MOLECULE
+from common.data_types import NodeTypes, REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, FAKE_MOLECULE, FAKE_TEXT
 from common.utils import prepare_files
 from dataset.dataset_builder import get_data, data_to_batches
 from model.gnn_models import GnnModelConfig, HeteroGNN
@@ -145,7 +145,7 @@ if __name__ == "__main__":
     args.gnn_out_channels = 1 if args.gnn_fake_task else 6
     if args.gnn_fake_task:
         tag_names = ["fake"]
-        scores_tag_names = [REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, FAKE_MOLECULE]
+        scores_tag_names = [REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, FAKE_MOLECULE, FAKE_TEXT]
     else:
         tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
         scores_tag_names = tag_names
