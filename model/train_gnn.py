@@ -151,7 +151,10 @@ if __name__ == "__main__":
     else:
         tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
         scores_tag_names = tag_names
-    node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name)
+
+    node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name,
+                                           fuse_pretrained_start=args.fuse_pretrained_start)
+
     train_dataset, valid_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager,
                                                                                sample=args.gnn_sample,
                                                                                fake_task=args.gnn_fake_task,

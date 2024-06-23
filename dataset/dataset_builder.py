@@ -82,6 +82,8 @@ def get_reaction_entities_id_with_text(reaction, check_output):
     texts = sum([list(m.modifications) for m in entities if len(m.modifications)], [])
     entities = [e.get_db_identifier() for e in entities]
     texts += [c.activity for c in reaction.catalysis]
+    if len(entities+texts) == 1:
+        print(reaction.to_dict())
     return entities + texts
 
 
@@ -354,7 +356,8 @@ def filter_untrain_elements(trained_elements, reactions):
     return filter_lines
 
 
-def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_no_seq=True, filter_untrain=False):
+def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_no_seq=True, filter_untrain=False,
+                  filter_singal_entity=True):
     with open(reactions_file) as f:
         lines = f.readlines()
     reactions = [reaction_from_str(line) for line in lines]
@@ -370,6 +373,11 @@ def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_
     if filter_no_seq:
         reactions = [reaction for reaction in reactions if
                      not have_no_seq_nodes(reaction, node_index_manager, check_output=True)]
+
+    print(f"Filtered reactions: {len(reactions)}")
+    if filter_singal_entity:
+        reactions = [reaction for reaction in reactions if
+                     len(get_reaction_entities_id_with_text(reaction, check_output=False)) > 1]
     print(f"Filtered reactions: {len(reactions)}")
 
     reactions = sorted(reactions, key=lambda x: x.date)

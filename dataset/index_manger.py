@@ -25,7 +25,7 @@ class NodeData:
 
 
 class NodesIndexManager:
-    def __init__(self, pretrained_method=PRETRAINED_EMD, fuse_name=""):
+    def __init__(self, pretrained_method=PRETRAINED_EMD, fuse_name="", fuse_pretrained_start=True):
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
         self.nodes = [reaction_node, complex_node]
@@ -54,7 +54,11 @@ class NodesIndexManager:
                     pretrained_vec_file = f'{item_path}/{dt}_vec.npy'
                     vectors = np.load(pretrained_vec_file)
                     if pretrained_method == PRETRAINED_EMD_FUSE:
-                        vectors = apply_model(self.fuse_model, vectors, dt).detach().cpu().numpy()
+                        if fuse_pretrained_start:
+                            vectors = apply_model(self.fuse_model, vectors, dt).detach().cpu().numpy()
+                        else:
+                            vectors = self.fuse_model.emd.weight.detach().cpu().numpy()[
+                                      self.index_count:self.index_count + len(lines)]
             elif dt == UNKNOWN_ENTITY_TYPE:
                 vectors = [np.zeros(TYPE_TO_VEC_DIM[PROTEIN]) for _ in range(len(lines))]
             else:
