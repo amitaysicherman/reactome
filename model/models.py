@@ -84,7 +84,7 @@ class MiltyModalLinear(nn.Module):
         if isinstance(type_, tuple):
             type_ = "_".join(type_)
         if isinstance(x, np.ndarray):
-            x = torch.Tensor(x).float()
+            x = torch.Tensor(x).float().to(self.device)
         x = F.normalize(x, dim=-1)
         x = self.dropout(x)
         for layer in self.layers[:-1]:

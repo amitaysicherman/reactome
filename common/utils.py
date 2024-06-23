@@ -83,14 +83,13 @@ def load_fuse_model(name, fuse_pretrained_start):
     if len(model_cp) > 1:
         print(f"More than one model found for {name}")
     model_cp = model_cp[0]
+    cp_data = torch.load(model_cp, map_location=torch.device('cpu'))
 
     if fuse_pretrained_start:
         config_file = f'{model_path}/fuse_{name}/config.txt'
         config = MultiModalLinearConfig.load_from_file(config_file)
         model = MiltyModalLinear(config)
-        cp_data = torch.load(model_cp)
     else:
-        cp_data = torch.load(model_cp)
         x, y = cp_data['emd.weight'].shape
         model = EmbModel(x, y)
 

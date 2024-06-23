@@ -9,10 +9,13 @@ from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, E
 from model.models import apply_model
 from functools import lru_cache
 import os
+import torch
 
 REACTION_NODE_ID = 0
 COMPLEX_NODE_ID = 1
 UNKNOWN_ENTITY_TYPE = UNKNOWN_ENTITY_TYPE
+
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class NodeData:
@@ -34,7 +37,7 @@ class NodesIndexManager:
         self.dtype_to_first_index = dict()
         self.dtype_to_last_index = dict()
         self.bp_name_to_index = {"": -1}
-        self.fuse_model = load_fuse_model(fuse_name,fuse_pretrained_start)
+        self.fuse_model = load_fuse_model(fuse_name, fuse_pretrained_start).to(device)
         with open(f'{item_path}/{BIOLOGICAL_PROCESS}.txt') as f:
             lines = f.read().splitlines()
         for i, line in enumerate(lines):
