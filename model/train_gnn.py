@@ -87,7 +87,8 @@ def args_to_config(args):
         fuse_name=args.fuse_name,
         out_channels=args.gnn_out_channels,
         last_or_concat=args.gnn_last_or_concat,
-        # reaction_or_mean=args.gnn_reaction_or_mean
+        # reaction_or_mean=args.gnn_reaction_or_mean,
+        fuse_pretrained_start=args.fuse_pretrained_start
     )
 
 
@@ -129,6 +130,7 @@ def run_with_args(args):
         with open(score_file, "a") as f:
             f.write(f"{step}\n")
             f.write(f"{x}\n")
+
     config = args_to_config(args)
     config.save_to_file(f"{save_dir}/config.txt")
     model = HeteroGNN(args_to_config(args)).to(device)

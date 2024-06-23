@@ -22,6 +22,8 @@ class GnnModelConfig:
     fuse_name: str
     out_channels: int
     last_or_concat: int
+    fuse_pretrained_start: int
+
     # reaction_or_mean: int
 
     def save_to_file(self, file_name):
@@ -46,7 +48,8 @@ class GnnModelConfig:
                               fuse_name=data["fuse_name"],
                               out_channels=int(data["out_channels"]),
                               last_or_concat=int(data["last_or_concat"]),
-                              # reaction_or_mean=int(data["reaction_or_mean"])
+                              # reaction_or_mean=int(data["reaction_or_mean"]),
+                              fuse_pretrained_start=int(data["fuse_pretrained_start"])
                               )
 
 
@@ -107,7 +110,8 @@ class HeteroGNN(torch.nn.Module):
     def __init__(self, config: GnnModelConfig):
 
         super().__init__()
-        node_index_manager = NodesIndexManager(pretrained_method=config.pretrained_method, fuse_name=config.fuse_name)
+        node_index_manager = NodesIndexManager(pretrained_method=config.pretrained_method, fuse_name=config.fuse_name,
+                                               fuse_pretrained_start=config.fuse_pretrained_start)
 
         self.emb = PartialFixedEmbedding(node_index_manager, config.learned_embedding_dim, config.train_all_emd)
         self.convs = torch.nn.ModuleList()
