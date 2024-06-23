@@ -6,6 +6,7 @@ import torch
 from torch import nn as nn
 from torch.nn import functional as F
 
+device= 'cuda' if torch.cuda.is_available() else 'cpu'
 
 class EmbModel(nn.Module):
     def __init__(self, n, output_dim):
@@ -83,7 +84,7 @@ class MiltyModalLinear(nn.Module):
         if isinstance(type_, tuple):
             type_ = "_".join(type_)
         if isinstance(x, np.ndarray):
-            x = torch.Tensor(x).float().to(self.device)
+            x = torch.Tensor(x).float().to(device)
         x = F.normalize(x, dim=-1)
         x = self.dropout(x)
         for layer in self.layers[:-1]:
