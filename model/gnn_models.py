@@ -24,8 +24,8 @@ class GnnModelConfig:
     out_channels: int
     last_or_concat: int
     fuse_pretrained_start: int
-
     # reaction_or_mean: int
+    drop_out: float
 
     def save_to_file(self, file_name):
         with open(file_name, "w") as f:
@@ -50,7 +50,8 @@ class GnnModelConfig:
                               out_channels=int(data["out_channels"]),
                               last_or_concat=int(data["last_or_concat"]),
                               # reaction_or_mean=int(data["reaction_or_mean"]),
-                              fuse_pretrained_start=int(data["fuse_pretrained_start"])
+                              fuse_pretrained_start=int(data["fuse_pretrained_start"]),
+                              drop_out=float(data["drop_out"])
                               )
 
 
@@ -119,7 +120,7 @@ class HeteroGNN(torch.nn.Module):
         self.save_activations = defaultdict(list)
         self.last_or_concat = config.last_or_concat
         # self.reaction_or_mean = config.reaction_or_mean
-
+        self.drop_out = nn.Dropout(config.drop_out)
         for i in range(config.num_layers):
             conv_per_edge = {}
 
@@ -141,7 +142,7 @@ class HeteroGNN(torch.nn.Module):
         for i, conv in enumerate(self.convs):
             x_dict = conv(x_dict, edge_index_dict)
             x_dict = {key: x.relu() for key, x in x_dict.items()}
-            x_dict = {key: nn.functional.dropout(x, 0.5) for key, x in x_dict.items()}
+            x_dict = {key: self.drop_out(x) for key, x in x_dict.items()}
 
             # if self.reaction_or_mean:
             #     nodes = []

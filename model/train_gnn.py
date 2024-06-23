@@ -23,6 +23,10 @@ batch_size = 2048
 
 
 def run_model(data, model, optimizer, scorer, is_train=True):
+    if is_train:
+        model.train()
+    else:
+        model.eval()
     x_dict = {key: data.x_dict[key].to(device) for key in data.x_dict.keys()}
     y = data['tags'].to(device)
     augmentation_types = data['augmentation_type']
@@ -43,30 +47,21 @@ def run_model(data, model, optimizer, scorer, is_train=True):
         optimizer.step()
 
 
+def run_epoch(dataset, model, optimizer, name, scores_tag_names, batch_size, log_func, i):
+    scorer = Scorer(name, scores_tag_names)
+    # batch_data = DataLoader(dataset, batch_size=batch_size, shuffle=True)
+    batch_data = data_to_batches(dataset, batch_size, True if name == "train" else False)
+    for data_index, data in enumerate(batch_data):
+        run_model(data, model, optimizer, scorer, is_train=True if name == "train" else False)
+    log_func(scorer.get_log(), i)
+
+
 def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
     prev_time = time.time()
     for i in range(epochs):
-
-        train_score = Scorer("train", scores_tag_names)
-        # train_data = DataLoader(train_dataset, batch_size=batch_size, shuffle=True)
-        train_data = data_to_batches(train_dataset, batch_size, True)
-        for data_index, data in enumerate(train_data):
-            run_model(data, model, optimizer, train_score)
-        log_func(train_score.get_log(), i)
-
-        valid_score = Scorer("valid", scores_tag_names)
-        # valid_data = DataLoader(valid_dataset, batch_size=batch_size, shuffle=False)
-        valid_data = data_to_batches(valid_dataset, batch_size, False)
-        for data_index, data in enumerate(valid_data):
-            run_model(data, model, optimizer, valid_score, False)
-        log_func(valid_score.get_log(), i)
-
-        test_score = Scorer("test", scores_tag_names)
-        # test_data = DataLoader(test_dataset, batch_size=batch_size, shuffle=False)
-        test_data = data_to_batches(test_dataset, batch_size, False)
-        for data_index, data in enumerate(test_data):
-            run_model(data, model, optimizer, test_score, False)
-        log_func(test_score.get_log(), i)
+        run_epoch(train_dataset, model, optimizer, "train", scores_tag_names, batch_size, log_func, i)
+        run_epoch(valid_dataset, model, optimizer, "valid", scores_tag_names, batch_size, log_func, i)
+        run_epoch(test_dataset, model, optimizer, "test", scores_tag_names, batch_size, log_func, i)
 
         print("Finished epoch", i, "time:", time.time() - prev_time, "seconds")
         prev_time = time.time()
@@ -88,7 +83,8 @@ def args_to_config(args):
         out_channels=args.gnn_out_channels,
         last_or_concat=args.gnn_last_or_concat,
         # reaction_or_mean=args.gnn_reaction_or_mean,
-        fuse_pretrained_start=args.fuse_pretrained_start
+        fuse_pretrained_start=args.fuse_pretrained_start,
+        drop_out=args.gnn_drop_out
     )
 
 
