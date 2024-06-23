@@ -158,6 +158,7 @@ if __name__ == "__main__":
     train_dataset, valid_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager,
                                                                                sample=args.gnn_sample,
                                                                                fake_task=args.gnn_fake_task,
-                                                                               data_aug=args.data_aug)
+                                                                               data_aug=args.data_aug,
+                                                                               filter_untrain=not args.gnn_pretrained_method)
     pos_classes_weights = pos_classes_weights.to(device)
     run_with_args(args)

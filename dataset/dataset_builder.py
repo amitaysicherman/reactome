@@ -82,7 +82,7 @@ def get_reaction_entities_id_with_text(reaction, check_output):
     texts = sum([list(m.modifications) for m in entities if len(m.modifications)], [])
     entities = [e.get_db_identifier() for e in entities]
     texts += [c.activity for c in reaction.catalysis]
-    if len(entities+texts) == 1:
+    if len(entities + texts) == 1:
         print(reaction.to_dict())
     return entities + texts
 
@@ -329,10 +329,10 @@ class ReactionDataset:
 
 
 def get_data(node_index_manager: NodesIndexManager, augmentations_factors: AugmentationsFactors = None, sample=0,
-             fake_task=True, data_aug="protein"):
+             fake_task=True, data_aug="protein", filter_untrain=False):
     if augmentations_factors is None:
         augmentations_factors = get_default_augmentation_factors(data_aug)
-    train_lines, val_lines, test_lines = get_reactions(sample)
+    train_lines, val_lines, test_lines = get_reactions(sample, filter_untrain=filter_untrain)
     train_dataset = ReactionDataset(node_index_manager, train_lines, augmentations_factors,
                                     fake_task=fake_task).reactions
     val_dataset = ReactionDataset(node_index_manager, val_lines, augmentations_factors, fake_task=fake_task).reactions
