@@ -1,3 +1,7 @@
+--name inv-s --fuse_name inv --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 32 --gnn_pretrained_method 2 --fuse_pretrained_start 1
+
+
+
 --name no-emd_s --fuse_name no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 32 --gnn_pretrained_method 2 --fuse_pretrained_start 0
 --name all-to-prot_s --fuse_name all-to-prot --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 32 --fuse_all_to_one protein --gnn_pretrained_method 2
 --name all-to-all_s --fuse_name all-to-all --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 32 --fuse_all_to_one all --gnn_pretrained_method 2
