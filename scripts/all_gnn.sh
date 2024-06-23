@@ -1,6 +1,6 @@
 #!/bin/sh
 #SBATCH --time=0-3
-#SBATCH --array=1-1
+#SBATCH --array=1-21
 #SBATCH --gres=gpu:A40:1
 #SBATCH --mem=64G
 #SBATCH -c 4

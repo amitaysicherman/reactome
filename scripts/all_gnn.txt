@@ -1,5 +1,6 @@
 --name no-emd_s --fuse_name no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 32 --gnn_pretrained_method 2 --fuse_pretrained_start 0
-
+--name no-emd_m --fuse_name no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name no-emd_l --fuse_name no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 512 --gnn_pretrained_method 2 --fuse_pretrained_start 0
 --name recon_s --fuse_name recon --fuse_recon 1 --gnn_train_all_emd 0 --gnn_hidden_channels 32 --gnn_pretrained_method 2
 --name recon_m --fuse_name recon --fuse_recon 1 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --gnn_pretrained_method 2
 --name recon_l --fuse_name recon --fuse_recon 1 --gnn_train_all_emd 0 --gnn_hidden_channels 512 --gnn_pretrained_method 2
