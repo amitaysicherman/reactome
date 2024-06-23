@@ -82,8 +82,6 @@ def get_reaction_entities_id_with_text(reaction, check_output):
     texts = sum([list(m.modifications) for m in entities if len(m.modifications)], [])
     entities = [e.get_db_identifier() for e in entities]
     texts += [c.activity for c in reaction.catalysis]
-    if len(entities + texts) == 1:
-        print(reaction.to_dict())
     return entities + texts
 
 

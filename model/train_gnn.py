@@ -129,10 +129,9 @@ def run_with_args(args):
         with open(score_file, "a") as f:
             f.write(f"{step}\n")
             f.write(f"{x}\n")
-    if args.fuse_pretrained_start:
-        config = args_to_config(args)
-        config.save_to_file(f"{save_dir}/config.txt")
-        model = HeteroGNN(args_to_config(args)).to(device)
+    config = args_to_config(args)
+    config.save_to_file(f"{save_dir}/config.txt")
+    model = HeteroGNN(args_to_config(args)).to(device)
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.gnn_lr)
 
