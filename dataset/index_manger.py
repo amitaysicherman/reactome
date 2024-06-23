@@ -5,7 +5,7 @@ from typing import Dict
 from common.utils import TYPE_TO_VEC_DIM, load_fuse_model
 from common.path_manager import item_path
 from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, EMBEDDING_DATA_TYPES, LOCATION, \
-    DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS
+    DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS, NO_PRETRAINED_EMD, PRETRAINED_EMD, PRETRAINED_EMD_FUSE
 from model.models import apply_model
 from functools import lru_cache
 import os
@@ -13,15 +13,6 @@ import os
 REACTION_NODE_ID = 0
 COMPLEX_NODE_ID = 1
 UNKNOWN_ENTITY_TYPE = UNKNOWN_ENTITY_TYPE
-
-NO_PRETRAINED_EMD = 0
-PRETRAINED_EMD = 1
-PRETRAINED_EMD_FUSE = 2
-pretrained_method_names = {
-    NO_PRETRAINED_EMD: "no_pretrained",
-    PRETRAINED_EMD: "pretrained",
-    PRETRAINED_EMD_FUSE: "pretrained_fuse",
-}
 
 
 class NodeData:

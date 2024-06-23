@@ -2,20 +2,18 @@ import dataclasses
 import time
 
 import pandas as pd
-from tqdm import tqdm
 import torch
 import torch.nn as nn
 import os
 from common.scorer import Scorer
 from dataset.index_manger import NodesIndexManager
 from common.data_types import NodeTypes, REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, FAKE_MOLECULE
+from common.utils import prepare_files
 from dataset.dataset_builder import get_data, data_to_batches
 from model.gnn_models import GnnModelConfig, HeteroGNN
 from tagging import ReactionTag
-from torch_geometric.loader import DataLoader
 import seaborn as sns
 from common.path_manager import scores_path, model_path
-import random
 
 sns.set()
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -125,16 +123,7 @@ def print_best_results(results_file):
 
 
 def run_with_args(args):
-    save_dir = f"{model_path}/gnn_{args.name}/"
-    if not os.path.exists(save_dir):
-        os.makedirs(save_dir)
-    for file in os.listdir(save_dir):
-        if file.endswith(".pt"):
-            os.remove(f"{save_dir}/{file}")
-
-    score_file = f"{scores_path}/gnn_{args.name}.txt"
-    if os.path.exists(score_file):
-        os.remove(score_file)
+    save_dir, score_file = prepare_files(f'gnn_{args.name}')
 
     def save_to_file(x, step):
         with open(score_file, "a") as f:

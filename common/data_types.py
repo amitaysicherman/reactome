@@ -147,3 +147,6 @@ REAL = "real"
 FAKE_LOCATION_ALL = "fake_location"
 FAKE_PROTEIN = "fake_protein"
 FAKE_MOLECULE = "fake_molecule"
+NO_PRETRAINED_EMD = 0
+PRETRAINED_EMD = 1
+PRETRAINED_EMD_FUSE = 2

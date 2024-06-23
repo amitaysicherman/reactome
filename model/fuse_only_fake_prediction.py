@@ -6,10 +6,10 @@ from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
 
 from common.utils import reaction_from_str
-from common.data_types import Reaction, NodeTypes
+from common.data_types import Reaction, NodeTypes, PRETRAINED_EMD_FUSE
 from dataset.dataset_builder import get_reaction_entities
 from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes,get_reactions
-from dataset.index_manger import NodesIndexManager, PRETRAINED_EMD_FUSE, NodeData
+from dataset.index_manger import NodesIndexManager, NodeData
 DEBUG = True
 
 

@@ -77,6 +77,14 @@ def get_reaction_entities(reaction, check_output):
     return reaction.inputs + sum([c.entities for c in reaction.catalysis], [])
 
 
+def get_reaction_entities_id_with_text(reaction, check_output):
+    entities = get_reaction_entities(reaction, check_output)
+    texts = sum([list(m.modifications) for m in entities if len(m.modifications)], [])
+    entities = [e.get_db_identifier() for e in entities]
+    texts += [c.activity for c in reaction.catalysis]
+    return entities + texts
+
+
 def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
     entitites = get_reaction_entities(reaction, check_output)
     for e in entitites:
@@ -337,7 +345,16 @@ def get_data(node_index_manager: NodesIndexManager, augmentations_factors: Augme
     return train_dataset, val_dataset, test_dataset, pos_classes_weights
 
 
-def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_no_seq=True):
+def filter_untrain_elements(trained_elements, reactions):
+    filter_lines = []
+    for line in reactions:
+        line_elements = set(get_reaction_entities_id_with_text(line, check_output=False))
+        if len(line_elements.intersection(trained_elements)) == len(line_elements):
+            filter_lines.append(line)
+    return filter_lines
+
+
+def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_no_seq=True, filter_untrain=False):
     with open(reactions_file) as f:
         lines = f.readlines()
     reactions = [reaction_from_str(line) for line in lines]
@@ -361,6 +378,21 @@ def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_
     train_lines = reactions[:train_val_index]
     val_lines = reactions[train_val_index:val_test_index]
     test_lines = reactions[val_test_index:]
+    if filter_untrain:
+        print(f"Filter untrain elements")
+        trained_elements = set()
+        for line in train_lines:
+            trained_elements.update(get_reaction_entities_id_with_text(line, check_output=False))
+        print(f"Trained lines: {len(train_lines)}")
+        train_lines = filter_untrain_elements(trained_elements, train_lines)
+        print(f"Filter Train lines: {len(train_lines)}")
+        print(f"Val lines: {len(val_lines)}")
+        val_lines = filter_untrain_elements(trained_elements, val_lines)
+        print(f"Filter val lines {len(val_lines)}")
+        print(f"Test lines: {len(test_lines)}")
+        test_lines = filter_untrain_elements(trained_elements, test_lines)
+        print(f"Filter test lines {len(test_lines)}")
+
     if sample_count > 0:
         train_lines = train_lines[:sample_count]
         val_lines = val_lines[:sample_count]
@@ -369,10 +401,4 @@ def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_
 
 
 if __name__ == "__main__":
-    node_index_manager = NodesIndexManager()
-    train_dataset, val_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager, AugmentationsFactors(
-        molecule_random_factor=0), fake_task=True, sample=10)
-    # train_batchs=DataLoader(train_dataset, batch_size=4, shuffle=True)
-    # for batch in train_batchs:
-    #     print(batch)
-    #     break
+    get_reactions(filter_untrain=True)

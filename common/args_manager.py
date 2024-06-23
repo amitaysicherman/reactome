@@ -7,9 +7,9 @@ def get_args():
     parser.add_argument("--name", type=str, default="default")
     parser.add_argument("--skip_if_exists", type=int, default=1)
     parser.add_argument("--data_aug", type=str, default="all", choices=["all", "location", "protein", "molecule"])
+    parser.add_argument("--debug", type=int, default=0)
 
     parser.add_argument("--fuse_batch_size", type=int, default=8192)
-    parser.add_argument("--fuse_proteins_molecules_only", type=int, default=0)
     parser.add_argument("--fuse_output_dim", type=int, default=1024)
     parser.add_argument("--fuse_dropout", type=float, default=0.0)
     parser.add_argument("--fuse_lr", type=float, default=1e-4)
@@ -19,6 +19,7 @@ def get_args():
     parser.add_argument("--fuse_all_to_one", type=str, default="")
     parser.add_argument("--fuse_epochs", type=int, default=250)
     parser.add_argument("--fuse_name", type=str, default="")
+    parser.add_argument("--fuse_pretrained_start", type=int, default=1)
 
     parser.add_argument("--gnn_learned_embedding_dim", type=int, default=256)
     parser.add_argument("--gnn_hidden_channels", type=int, default=256)

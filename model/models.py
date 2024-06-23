@@ -7,6 +7,15 @@ from torch import nn as nn
 from torch.nn import functional as F
 
 
+class EmbModel(nn.Module):
+    def __init__(self, n, output_dim):
+        super(EmbModel, self).__init__()
+        self.emd = nn.Embedding(n, output_dim)
+
+    def forward(self, x):
+        return self.emd(x)
+
+
 @dataclasses.dataclass
 class MultiModalLinearConfig:
     embedding_dim: List[int]

@@ -140,3 +140,20 @@ def get_best_gnn_cp(name, aug_data):
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
+
+
+def prepare_files(run_name, skip_if_exists=False):
+    save_dir = f"{model_path}/{run_name}"
+    if not os.path.exists(save_dir):
+        os.makedirs(save_dir)
+    else:
+        if skip_if_exists:
+            print(f"Skip {run_name}")
+            exit(0)
+    for file_name in os.listdir(save_dir):
+        if file_name.endswith(".pt"):
+            os.remove(f"{save_dir}/{file_name}")
+    scores_file = f"{scores_path}/fuse_{run_name}.txt"
+    if os.path.exists(scores_file):
+        os.remove(scores_file)
+    return save_dir, scores_file
