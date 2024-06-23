@@ -11,7 +11,7 @@ def get_args():
 
     parser.add_argument("--fuse_batch_size", type=int, default=8192)
     parser.add_argument("--fuse_output_dim", type=int, default=1024)
-    parser.add_argument("--fuse_dropout", type=float, default=0.0)
+    parser.add_argument("--fuse_dropout", type=float, default=0.3)
     parser.add_argument("--fuse_lr", type=float, default=1e-3)
     parser.add_argument("--fuse_n_layers", type=int, default=1)
     parser.add_argument("--fuse_hidden_dim", type=int, default=512)

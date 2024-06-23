@@ -41,7 +41,7 @@ class CatalystOBJ:
 
 class Reaction:
     def __init__(self, name, inputs: List[Entity], outputs: List[Entity], catalysis: List[CatalystOBJ],
-                 date: datetime.date, reactome_id: str, biological_process:List[str]):
+                 date: datetime.date, reactome_id: str, biological_process: List[str]):
         self.name = name
         self.inputs = inputs
         self.outputs = outputs
@@ -69,10 +69,11 @@ DNA = "dna"
 PROTEIN = "protein"
 MOLECULE = "molecule"
 TEXT = "text"
-EMBEDDING_DATA_TYPES = [DNA, PROTEIN, MOLECULE, TEXT]
+EMBEDDING_DATA_TYPES = [PROTEIN, DNA, MOLECULE, TEXT]
 LOCATION = "location"
 DATA_TYPES = EMBEDDING_DATA_TYPES + [LOCATION] + [UNKNOWN_ENTITY_TYPE]
 BIOLOGICAL_PROCESS = "bp"
+
 
 @dataclasses.dataclass
 class NodeTypes:

@@ -57,6 +57,9 @@ def weighted_mean_loss(loss, labels):
 
 def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch, recon,
               output_file, part="train", all_to_one=False, use_pretrain=True):
+    if all_to_one == "inv":
+        inv_epoch = EMBEDDING_DATA_TYPES[epoch % len(EMBEDDING_DATA_TYPES)]
+    first_epoch = epoch == 0
     is_train = part == "train"
     if is_train:
         model.train()
@@ -82,11 +85,25 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
             data_2 = data_2.to(device).float()
 
             if all_to_one:
-                if not model.have_type((type_1, type_2)):
-                    continue
-                out1 = model(data_1, (type_1, type_2))
-                out2 = data_2
-                recon_1 = reconstruction_model(out1, (type_1, type_2))
+
+                if all_to_one == "inv":
+
+                    if inv_epoch != type_1 or (first_epoch and inv_epoch == type_1 and inv_epoch == type_2):
+                        continue
+                    if first_epoch:
+                        out2 = data_2
+                    else:
+                        out2 = model(data_2, type_2).detach()
+
+                else:
+                    if not model.have_type((type_1, type_2)):
+                        continue
+                    out2 = data_2
+
+                model_type = type_1 if all_to_one == "inv" else (type_1, type_2)
+                out1 = model(data_1, model_type)
+
+                recon_1 = reconstruction_model(out1, model_type)
                 recon_2 = data_2
             else:
                 out1 = model(data_1, type_1)
@@ -120,8 +137,11 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
 
     msg = f"Epoch {epoch} {part} AUC {auc:.3f} (cont: {total_loss / len(loader):.3f}, " \
           f"recon: {total_recon_loss / len(loader):.3f})"
+    if all_to_one == "inv":
+        msg += f" {inv_epoch}"
     with open(output_file, "a") as f:
         f.write(msg + "\n")
+
     print(msg)
     return auc
 
@@ -137,10 +157,11 @@ def build_no_pretrained_model(node_index_manager: NodesIndexManager, output_dim:
 
 
 def build_models(fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir):
-    if fuse_all_to_one == "":
+    if fuse_all_to_one == "" or fuse_all_to_one == "inv":
         names = EMBEDDING_DATA_TYPES
         src_dims = [TYPE_TO_VEC_DIM[x] for x in EMBEDDING_DATA_TYPES]
         dst_dim = [fuse_output_dim] * len(EMBEDDING_DATA_TYPES)
+
     else:
         names = []
         src_dims = []
@@ -160,7 +181,6 @@ def build_models(fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_di
         output_dim=dst_dim,
         dropout=fuse_dropout,
         normalize_last=1
-
     )
 
     model = MiltyModalLinear(model_config).to(device)

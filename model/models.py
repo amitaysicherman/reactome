@@ -6,7 +6,8 @@ import torch
 from torch import nn as nn
 from torch.nn import functional as F
 
-device= 'cuda' if torch.cuda.is_available() else 'cpu'
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
 
 class EmbModel(nn.Module):
     def __init__(self, n, output_dim):
@@ -80,6 +81,7 @@ class MiltyModalLinear(nn.Module):
         if isinstance(type_, tuple):
             type_ = "_".join(type_)
         return type_ in self.names
+
     def forward(self, x, type_):
         if isinstance(type_, tuple):
             type_ = "_".join(type_)
