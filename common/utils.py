@@ -154,7 +154,7 @@ def prepare_files(run_name, skip_if_exists=False):
     for file_name in os.listdir(save_dir):
         if file_name.endswith(".pt"):
             os.remove(f"{save_dir}/{file_name}")
-    scores_file = f"{scores_path}/fuse_{run_name}.txt"
+    scores_file = f"{scores_path}/{run_name}.txt"
     if os.path.exists(scores_file):
         os.remove(scores_file)
     return save_dir, scores_file
