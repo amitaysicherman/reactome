@@ -1,4 +1,4 @@
---name inv  --fuse_recon 0 --fuse_pretrained_start 0 --fuse_all_to_one inv --fuse_output_dim 768 --skip_if_exists 0
+--name inv-no-emd  --fuse_recon 0 --fuse_pretrained_start 0 --fuse_all_to_one inv --fuse_output_dim 768 --skip_if_exists 0
 
 --name no --fuse_name no --fuse_recon 0 --gnn_train_all_emd 1 --gnn_hidden_channels 256 --gnn_pretrained_method 0
 --name fuse --fuse_name fuse --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --gnn_pretrained_method 2
