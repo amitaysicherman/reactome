@@ -78,7 +78,7 @@ class MiltyModalLinear(nn.Module):
     def have_type(self, type_):
         if isinstance(type_, tuple):
             type_ = "_".join(type_)
-        return type_ in self.name
+        return type_ in self.names
     def forward(self, x, type_):
         if isinstance(type_, tuple):
             type_ = "_".join(type_)
