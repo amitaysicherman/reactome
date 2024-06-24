@@ -217,6 +217,7 @@ def clone_hetero_data(data: HeteroData, change_nodes_mapping=dict(), change_edge
         new_hetero_data[key].edge_index = torch.clone(value)
     new_hetero_data.tags = get_fake_tag(data)
     new_hetero_data.bp = data.bp.clone()
+    new_hetero_data.id_ = data.id_.clone()
     return new_hetero_data
 
 
