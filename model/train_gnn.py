@@ -6,7 +6,7 @@ import torch
 import torch.nn as nn
 import os
 from common.scorer import Scorer
-from dataset.index_manger import NodesIndexManager
+from dataset.index_manger import NodesIndexManager, get_from_args
 from common.data_types import NodeTypes, REAL, FAKE_LOCATION_ALL, FAKE_PROTEIN, FAKE_MOLECULE, FAKE_TEXT
 from common.utils import prepare_files
 from dataset.dataset_builder import get_data, data_to_batches
@@ -155,8 +155,7 @@ if __name__ == "__main__":
         tag_names = [x for x in dataclasses.asdict(ReactionTag()).keys() if x != "fake"]
         scores_tag_names = tag_names
 
-    node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name,
-                                           fuse_pretrained_start=args.fuse_pretrained_start)
+    node_index_manager: NodesIndexManager = get_from_args(args)
     filter_untrain = False
     if args.gnn_pretrained_method == 0:
         filter_untrain = True

@@ -155,6 +155,11 @@ class NodesIndexManager:
         return {l: random.choices(self.locations, self.locations_probs) for l in self.locations}
 
 
+def get_from_args(args):
+    return NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name,
+                             fuse_pretrained_start=args.fuse_pretrained_start)
+
+
 if __name__ == "__main__":
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD_FUSE, fuse_name="all_to_one")
     print(node_index_manager.index_to_node[10].vec.shape)

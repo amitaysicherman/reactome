@@ -1,12 +1,34 @@
 import dataclasses
-from typing import List
-
+from typing import List, Dict
+from common.data_types import PROTEIN, DNA, MOLECULE, TEXT, TYPE_TO_VEC_DIM
 import numpy as np
 import torch
 from torch import nn as nn
 from torch.nn import functional as F
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+
+class MultiModalSeq(nn.Module):
+    def __init__(self, emd_dim, output_dim):
+        super(MultiModalSeq, self).__init__()
+        self.d_types = [PROTEIN, MOLECULE, TEXT]
+        self.t = nn.ModuleDict({k: nn.Linear(TYPE_TO_VEC_DIM[k], emd_dim) for k in self.d_types})
+        self.last_lin = nn.Linear(emd_dim, output_dim)
+
+    def forward(self, batch_data: Dict[str, torch.Tensor], batch_mask: Dict[str, torch.Tensor]):
+        type_means = []
+        for dtype in self.d_types:
+            transformed_data = self.t[dtype](batch_data[dtype])
+            mask = batch_mask[dtype].unsqueeze(-1)  # make sure mask is of shape [batch_size, seq_length, 1]
+            masked_data = transformed_data * mask
+            sum_masked_data = masked_data.sum(dim=1)
+            count_masked_data = mask.sum(dim=1)
+            mean_masked_data = sum_masked_data / torch.clamp(count_masked_data, min=1.0)
+            type_means.append(mean_masked_data)
+        final_representation = torch.stack(type_means, dim=0).mean(dim=0)
+        output = self.last_lin(final_representation)
+        return output
 
 
 class EmbModel(nn.Module):

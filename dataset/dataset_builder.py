@@ -85,6 +85,8 @@ def get_reaction_entities_id_with_text(reaction, check_output):
     return entities + texts
 
 
+
+
 def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
     entitites = get_reaction_entities(reaction, check_output)
     for e in entitites:
@@ -366,12 +368,16 @@ def filter_untrain_elements(trained_elements, reactions):
 
 
 def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_no_seq=True, filter_untrain=False,
-                  filter_singal_entity=True):
+                  filter_singal_entity=True, filter_no_act=False):
     with open(reactions_file) as f:
         lines = f.readlines()
     reactions = [reaction_from_str(line) for line in lines]
 
     print(f"Total reactions: {len(reactions)}")
+    if filter_no_act:
+        reactions = [reaction for reaction in reactions if len(reaction.catalysis)]
+        print("Reactions with catalysis", len(reactions))
+
     node_index_manager = NodesIndexManager()
     if filter_unknown:
         reactions = [reaction for reaction in reactions if
@@ -418,6 +424,5 @@ def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_
 
 
 if __name__ == "__main__":
-    node_index_manager = NodesIndexManager()
-    data = get_data(node_index_manager)
+    get_reactions(filter_no_act=True)
     a = 2
