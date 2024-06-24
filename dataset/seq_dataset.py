@@ -192,7 +192,7 @@ if __name__ == "__main__":
     model = MultiModalSeq(emb_dim, 1).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / (protein_aug + text_aug + molecule_aug)]))
-    save_dir, score_file = prepare_files(f'gnn_{args.name}')
+    save_dir, score_file = prepare_files(f'seq_{args.name}')
 
     for epoch in range(epochs):
         run_epoch(model, optimizer, loss_fn, train_dataset, "train", score_file)
