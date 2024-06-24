@@ -56,7 +56,7 @@ class EpochScores:
         print(msg)
         if self.output_file:
             with open(self.output_file, "a") as f:
-                f.write(msg)
+                f.write(msg+"\n")
 
 
 def get_empty_dict():
