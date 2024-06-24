@@ -7,7 +7,7 @@ import torch.nn as nn
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
 
-from common.data_types import REAL, PROTEIN, TEXT, MOLECULE, TYPE_TO_VEC_DIM
+from common.data_types import REAL, PROTEIN, TEXT, MOLECULE
 from common.data_types import Reaction
 from common.utils import prepare_files
 from dataset.dataset_builder import get_reactions, add_if_not_none
@@ -176,14 +176,18 @@ if __name__ == "__main__":
 
     batch_size = 2048
     emb_dim = 512
-    lr = 0.001
+    lr = 0.0001
     protein_aug = 5
     molecule_aug = 1
     text_aug = 1
-    epochs = 100
+    epochs = 250
 
     args = get_args()
     node_index_manager: NodesIndexManager = get_from_args(args)
+
+    TYPE_TO_VEC_DIM = {PROTEIN: node_index_manager.index_to_node[node_index_manager.protein_indexes[0]].vec.shape[0],
+                       MOLECULE: node_index_manager.index_to_node[node_index_manager.molecule_indexes[0]].vec.shape[0],
+                       TEXT: node_index_manager.index_to_node[node_index_manager.text_indexes[0]].vec.shape[0]}
     train_lines, val_lines, test_lines = get_reactions(args.gnn_sample, filter_untrain=False, filter_dna=True,
                                                        filter_no_act=True)
     aug = dict(protein_aug=protein_aug, molecule_aug=molecule_aug, text_aug=text_aug)
@@ -192,7 +196,7 @@ if __name__ == "__main__":
     test_dataset = lines_to_dataset(test_lines, node_index_manager, batch_size, shuffle=False, **aug)
     print(len(train_lines), len(train_dataset))
 
-    model = MultiModalSeq(emb_dim, 1).to(device)
+    model = MultiModalSeq(emb_dim, 1, TYPE_TO_VEC_DIM).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / (protein_aug + text_aug + molecule_aug)]).to(device))
     save_dir, score_file = prepare_files(f'seq_{args.name}')

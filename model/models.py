@@ -1,6 +1,6 @@
 import dataclasses
 from typing import List, Dict
-from common.data_types import PROTEIN, DNA, MOLECULE, TEXT, TYPE_TO_VEC_DIM
+from common.data_types import PROTEIN, DNA, MOLECULE, TEXT
 import numpy as np
 import torch
 from torch import nn as nn
@@ -10,10 +10,10 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class MultiModalSeq(nn.Module):
-    def __init__(self, emd_dim, output_dim):
+    def __init__(self, emd_dim, output_dim, type_to_vec_dim: Dict[str, int]):
         super(MultiModalSeq, self).__init__()
         self.d_types = [PROTEIN, MOLECULE, TEXT]
-        self.t = nn.ModuleDict({k: nn.Linear(TYPE_TO_VEC_DIM[k], emd_dim) for k in self.d_types})
+        self.t = nn.ModuleDict({k: nn.Linear(type_to_vec_dim[k], emd_dim) for k in self.d_types})
         self.last_lin = nn.Linear(emd_dim, output_dim)
 
     def forward(self, batch_data: Dict[str, torch.Tensor], batch_mask: Dict[str, torch.Tensor]):
