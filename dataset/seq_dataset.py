@@ -1,17 +1,18 @@
-import numpy as np
-from common.utils import prepare_files
-
-from dataset.dataset_builder import get_reactions, add_if_not_none
-from dataset.index_manger import NodesIndexManager, NodeData, get_from_args
-from common.data_types import Reaction
-from common.data_types import REAL, PROTEIN, TEXT, MOLECULE, TYPE_TO_VEC_DIM
-from sklearn.metrics import roc_auc_score
 import random
 from typing import List
+
+import numpy as np
 import torch
-from model.models import MultiModalSeq
 import torch.nn as nn
+from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
+
+from common.data_types import REAL, PROTEIN, TEXT, MOLECULE, TYPE_TO_VEC_DIM
+from common.data_types import Reaction
+from common.utils import prepare_files
+from dataset.dataset_builder import get_reactions, add_if_not_none
+from dataset.index_manger import NodesIndexManager, NodeData, get_from_args
+from model.models import MultiModalSeq
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -193,7 +194,7 @@ if __name__ == "__main__":
 
     model = MultiModalSeq(emb_dim, 1).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / (protein_aug + text_aug + molecule_aug)]))
+    loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / (protein_aug + text_aug + molecule_aug)]).to(device))
     save_dir, score_file = prepare_files(f'seq_{args.name}')
 
     for epoch in range(epochs):
