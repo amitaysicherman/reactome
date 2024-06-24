@@ -163,7 +163,7 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file=""):
         batch_data = {k: v.to(device) for k, v in batch_data.items()}
         batch_mask = {k: v.to(device) for k, v in batch_mask.items()}
         output = model(batch_data, batch_mask)
-        loss = loss_fn(output, labels.float().unsqueeze(-1))
+        loss = loss_fn(output, labels.float().unsqueeze(-1).to(device))
         score.add(output, labels, loss, augmentations)
         if is_train:
             loss.backward()
