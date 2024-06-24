@@ -58,7 +58,7 @@ def reaction_from_dict(d: dict) -> Reaction:
     catalysis = [catalyst_from_dict(c) for c in d["catalysis"]]
     year, month, day = d["date"].split("_")
     date = datetime.date(int(year), int(month), int(day))
-    reactome_id = d["reactome_id"]
+    reactome_id = int(d["reactome_id"])
     biological_process = d["biological_process"].split("_")
     return Reaction(name, inputs, outputs, catalysis, date, reactome_id, biological_process)
 

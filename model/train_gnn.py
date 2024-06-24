@@ -47,21 +47,26 @@ def run_model(data, model, optimizer, scorer, is_train=True):
         optimizer.step()
 
 
-def run_epoch(dataset, model, optimizer, name, scores_tag_names, batch_size, log_func, i):
+def run_epoch(dataset, model, optimizer, name, scores_tag_names, batch_size, log_func, i, full_output_path=""):
     scorer = Scorer(name, scores_tag_names)
     # batch_data = DataLoader(dataset, batch_size=batch_size, shuffle=True)
     batch_data = data_to_batches(dataset, batch_size, True if name == "train" else False)
     for data_index, data in enumerate(batch_data):
         run_model(data, model, optimizer, scorer, is_train=True if name == "train" else False)
+    if full_output_path:
+        scorer.save_full_res(full_output_path)
     log_func(scorer.get_log(), i)
 
 
-def train(model, optimizer, batch_size, log_func, epochs, save_dir=""):
+def train(model, optimizer, batch_size, log_func, epochs, save_dir="", score_file=""):
     prev_time = time.time()
     for i in range(epochs):
-        run_epoch(train_dataset, model, optimizer, "train", scores_tag_names, batch_size, log_func, i)
-        run_epoch(valid_dataset, model, optimizer, "valid", scores_tag_names, batch_size, log_func, i)
-        run_epoch(test_dataset, model, optimizer, "test", scores_tag_names, batch_size, log_func, i)
+        output_file_prefix = f"{score_file.replace('.txt', '')}_{i}"
+        run_epoch(train_dataset, model, optimizer, "train", scores_tag_names, batch_size, log_func, i,
+                  output_file_prefix)
+        run_epoch(valid_dataset, model, optimizer, "valid", scores_tag_names, batch_size, log_func, i,
+                  output_file_prefix)
+        run_epoch(test_dataset, model, optimizer, "test", scores_tag_names, batch_size, log_func, i, output_file_prefix)
 
         print("Finished epoch", i, "time:", time.time() - prev_time, "seconds")
         prev_time = time.time()
@@ -91,8 +96,8 @@ def args_to_config(args):
 def print_best_results(results_file):
     with open(results_file, "r") as f:
         lines = f.readlines()
-    valid_results = pd.DataFrame(columns=['all', 'protein', 'molecule', 'location'])
-    test_results = pd.DataFrame(columns=['all', 'protein', 'molecule', 'location'])
+    valid_results = pd.DataFrame(columns=['all', 'protein', 'molecule', 'location', 'text'])
+    test_results = pd.DataFrame(columns=['all', 'protein', 'molecule', 'location', 'text'])
     for i in range(0, len(lines), 6):  # num,train,num,valid,num,test
         valid_scores = eval(lines[i + 3].replace("nan", "0"))
         valid_scores = {key.split("_")[-1]: valid_scores[key] for key in valid_scores if "_" in key}
@@ -133,7 +138,7 @@ def run_with_args(args):
 
     optimizer = torch.optim.Adam(model.parameters(), lr=args.gnn_lr)
 
-    train(model, optimizer, batch_size, save_to_file, args.gnn_epochs, save_dir=save_dir)
+    train(model, optimizer, batch_size, save_to_file, args.gnn_epochs, save_dir=save_dir, score_file=score_file)
     print_best_results(score_file)
 
 
@@ -152,11 +157,16 @@ if __name__ == "__main__":
 
     node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name,
                                            fuse_pretrained_start=args.fuse_pretrained_start)
+    filter_untrain = False
+    if args.gnn_pretrained_method == 0:
+        filter_untrain = True
+    if args.fuse_pretrained_start == 0:
+        filter_untrain = True
 
     train_dataset, valid_dataset, test_dataset, pos_classes_weights = get_data(node_index_manager,
                                                                                sample=args.gnn_sample,
                                                                                fake_task=args.gnn_fake_task,
                                                                                data_aug=args.data_aug,
-                                                                               filter_untrain=not args.fuse_pretrained_start)
+                                                                               filter_untrain=filter_untrain)
     pos_classes_weights = pos_classes_weights.to(device)
     run_with_args(args)

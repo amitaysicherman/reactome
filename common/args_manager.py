@@ -6,7 +6,7 @@ def get_args():
 
     parser.add_argument("--name", type=str, default="default")
     parser.add_argument("--skip_if_exists", type=int, default=1)
-    parser.add_argument("--data_aug", type=str, default="all", choices=["all", "location", "protein", "molecule"])
+    parser.add_argument("--data_aug", type=str, default="protein", choices=["all", "location", "protein", "molecule"])
     parser.add_argument("--debug", type=int, default=0)
 
     parser.add_argument("--fuse_batch_size", type=int, default=8192)

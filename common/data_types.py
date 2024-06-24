@@ -41,7 +41,7 @@ class CatalystOBJ:
 
 class Reaction:
     def __init__(self, name, inputs: List[Entity], outputs: List[Entity], catalysis: List[CatalystOBJ],
-                 date: datetime.date, reactome_id: str, biological_process: List[str]):
+                 date: datetime.date, reactome_id: int, biological_process: List[str]):
         self.name = name
         self.inputs = inputs
         self.outputs = outputs
@@ -57,7 +57,7 @@ class Reaction:
             "outputs": [e.to_dict() for e in self.outputs],
             "catalysis": [c.to_dict() for c in self.catalysis],
             "date": f'{self.date.year}_{self.date.month}_{self.date.day}',
-            "reactome_id": self.reactome_id,
+            "reactome_id": str(self.reactome_id),
             "biological_process": "_".join(self.biological_process)
         }
 

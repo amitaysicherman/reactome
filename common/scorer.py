@@ -22,18 +22,21 @@ class Scorer:
         self.index_to_class = {i: class_name for i, class_name in enumerate(self.class_names)}
         self.true_probs = {class_name: [] for class_name in self.class_names}  # New for true probs
         self.pred_probs = {class_name: [] for class_name in self.class_names}  # New for pred probs
+        self.ids = {class_name: [] for class_name in self.class_names}
         for class_name in self.class_names:
             setattr(self, f'{class_name}_auc', 0)
 
-    def add(self, y, pred, out, loss, class_names=None):
+    def add(self, y, pred, out, loss, class_names=None, id_list=None):
         self.count += len(y)
         self.batch_count += 1
         self.loss += loss
         if class_names:
             for i in range(len(y)):
                 class_name = class_names[i]
+                id_ = id_list[i] if id_list is not None else -1
                 self.true_probs[class_name].extend(y[i].tolist())
                 self.pred_probs[class_name].extend(sigmoid(out[i]).tolist())
+                self.ids[class_name].append(id_)
         else:
             for i, class_name in self.index_to_class.items():
                 self.true_probs[class_name].extend(y[:, i].tolist())
@@ -56,6 +59,13 @@ class Scorer:
                 auc_dict[class_name] = float('nan')
         auc_dict["all"] = np.mean(all_auc)
         return auc_dict
+
+    def save_full_res(self, output_path_prefix):
+        for class_name in self.class_names:
+            with open(f"{output_path_prefix}_{self.name}_{class_name}.txt", "w") as f:
+                for i in range(len(self.true_probs[class_name])):
+                    f.write(
+                        f"{self.ids[class_name][i]},{self.true_probs[class_name][i]:.3f},{self.pred_probs[class_name][i]:.3f}\n")
 
     def get_log(self):
         auc_dict = self.compute_auc_per_class()

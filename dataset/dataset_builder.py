@@ -113,13 +113,13 @@ def reaction_to_data(reaction, node_index_manager: NodesIndexManager, fake_task:
     g = reaction_to_nx(reaction, node_index_manager)
     bp = node_index_manager.bp_name_to_index[
         reaction.biological_process[0]]  # TODO: handle more then one biological_process.
-
+    id_ = torch.LongTensor([reaction.reactome_id])
     if fake_task:
         tags = torch.Tensor([0]).to(torch.float32)
     else:
         tags = tag(reaction)
         tags = torch.Tensor(dataclasses.astuple(tags)).to(torch.float32)
-    return nx_to_torch_geometric(g, tags=tags, augmentation_type=REAL, bp=torch.LongTensor([bp]))
+    return nx_to_torch_geometric(g, tags=tags, augmentation_type=REAL, bp=torch.LongTensor([bp]), id_=id_)
 
 
 def nx_to_torch_geometric(G: nx.Graph, **kwargs):
@@ -193,6 +193,7 @@ def data_to_batches(data_list, batch_size, shuffle=True):
         batch_hereto_data.tags = torch.cat([data.tags for data in batch_data], dim=0)
         batch_hereto_data.bp = torch.cat([data.bp for data in batch_data], dim=0)
         batch_hereto_data.augmentation_type = [data.augmentation_type for data in batch_data]
+        batch_hereto_data.id_ = torch.cat([data.id_ for data in batch_data], dim=0)
         yield batch_hereto_data
 
 
@@ -271,7 +272,7 @@ class AugmentationsFactors:
 
 
 def get_default_augmentation_factors(data_aug="protein"):
-    augmentation_factors= AugmentationsFactors()
+    augmentation_factors = AugmentationsFactors()
     if data_aug == "protein":
         augmentation_factors.protein_random_factor = 10
     elif data_aug == "molecule":
@@ -281,8 +282,10 @@ def get_default_augmentation_factors(data_aug="protein"):
     elif data_aug == "text":
         augmentation_factors.text_random_factor = 10
     elif data_aug == "all":
-        augmentation_factors = AugmentationsFactors(molecule_random_factor=10,protein_random_factor=10, text_random_factor=10)
+        augmentation_factors = AugmentationsFactors(molecule_random_factor=10, protein_random_factor=10,
+                                                    text_random_factor=10)
     return augmentation_factors
+
 
 def apply_augmentation(data, node_index_manager: NodesIndexManager, augmentation_type: str):
     if augmentation_type == "location":
