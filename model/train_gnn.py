@@ -40,7 +40,7 @@ def run_model(data, model, optimizer, scorer, is_train=True):
     fake_task = len(y[0]) == 1
 
     scorer.add(y.cpu().numpy(), pred.detach().cpu().numpy(), out.detach().cpu().numpy(), loss.item(),
-               class_names=augmentation_types if fake_task else None, id_list=data['id'].cpu().numpy().tolist())
+               class_names=augmentation_types if fake_task else None, id_list=data['id_'].cpu().numpy().tolist())
     if is_train:
         optimizer.zero_grad()
         loss.backward()
