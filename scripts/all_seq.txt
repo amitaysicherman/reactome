@@ -1,9 +1,9 @@
---name inv --fuse_name inv --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name inv-no-emd --fuse_name inv-no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name no-emd --fuse_name no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name all-to-prot --fuse_name all-to-prot --fuse_recon 0 --gnn_train_all_emd 0 --fuse_all_to_one protein --gnn_pretrained_method 2
---name all-to-all --fuse_name all-to-all --fuse_recon 0 --gnn_train_all_emd 0 --fuse_all_to_one all --gnn_pretrained_method 2
---name no --fuse_name no --fuse_recon 0 --gnn_train_all_emd 1 --gnn_pretrained_method 0
---name pre --fuse_name no --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 1
---name fuse --fuse_name fuse --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2
---name recon --fuse_name recon --fuse_recon 1 --gnn_train_all_emd 0 --gnn_pretrained_method 2
+--name trans_inv --fuse_name inv --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name trans_inv-no-emd --fuse_name inv-no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name trans_no-emd --fuse_name no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name trans_all-to-prot --fuse_name all-to-prot --fuse_recon 0 --gnn_train_all_emd 0 --fuse_all_to_one protein --gnn_pretrained_method 2
+--name trans_all-to-all --fuse_name all-to-all --fuse_recon 0 --gnn_train_all_emd 0 --fuse_all_to_one all --gnn_pretrained_method 2
+--name trans_no --fuse_name no --fuse_recon 0 --gnn_train_all_emd 1 --gnn_pretrained_method 0
+--name trans_pre --fuse_name no --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 1
+--name trans_fuse --fuse_name fuse --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2
+--name trans_recon --fuse_name recon --fuse_recon 1 --gnn_train_all_emd 0 --gnn_pretrained_method 2

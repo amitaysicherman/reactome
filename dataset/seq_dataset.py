@@ -214,8 +214,8 @@ if __name__ == "__main__":
     from common.args_manager import get_args
 
     batch_size = 2048
-    emb_dim = 512
-    lr = 0.0001
+    emb_dim = 64
+    lr = 0.001
     aug_factor = 5
     epochs = 250
 
@@ -232,7 +232,7 @@ if __name__ == "__main__":
     test_dataset = lines_to_dataset(test_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor)
     print(len(train_lines), len(train_dataset))
 
-    model = MultiModalSeq(emb_dim, 1, TYPE_TO_VEC_DIM).to(device)
+    model = MultiModalSeq(emb_dim, 1, TYPE_TO_VEC_DIM,use_trans=True).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / aug_factor]).to(device))
     save_dir, score_file = prepare_files(f'seq_{args.name}')

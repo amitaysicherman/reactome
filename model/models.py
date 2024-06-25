@@ -10,11 +10,15 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class MultiModalSeq(nn.Module):
-    def __init__(self, emd_dim, output_dim, type_to_vec_dim: Dict[str, int]):
+    def __init__(self, emd_dim, output_dim, type_to_vec_dim: Dict[str, int], use_trans=False):
         super(MultiModalSeq, self).__init__()
         self.d_types = [PROTEIN, MOLECULE, TEXT]
         self.t = nn.ModuleDict({k: nn.Linear(type_to_vec_dim[k], emd_dim) for k in self.d_types})
         self.last_lin = nn.Linear(emd_dim, output_dim)
+        self.use_trans = use_trans
+        if use_trans:
+            encoder_layer = nn.TransformerEncoderLayer(d_model=emd_dim, nhead=2, dim_feedforward=emd_dim * 2,batch_first=True)
+            self.trans = nn.TransformerEncoder(encoder_layer, num_layers=2)
 
     def forward(self, batch_data: Dict[str, torch.Tensor], batch_mask: Dict[str, torch.Tensor]):
         all_transformed_data = []
@@ -29,6 +33,10 @@ class MultiModalSeq(nn.Module):
         # Concatenate all transformed data and masks
         concatenated_data = torch.cat(all_transformed_data, dim=1)
         concatenated_mask = torch.cat(all_masks, dim=1)
+
+        if self.use_trans:
+            concatenated_data = self.trans(concatenated_data, src_key_padding_mask=concatenated_mask.squeeze(-1) == 0)
+
 
         # Apply mask
         masked_data = concatenated_data * concatenated_mask
