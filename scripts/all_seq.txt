@@ -1,9 +1,74 @@
---name trans_inv --fuse_name inv --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name trans_inv-no-emd --fuse_name inv-no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name trans_no-emd --fuse_name no-emd --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name trans_all-to-prot --fuse_name all-to-prot --fuse_recon 0 --gnn_train_all_emd 0 --fuse_all_to_one protein --gnn_pretrained_method 2
---name trans_all-to-all --fuse_name all-to-all --fuse_recon 0 --gnn_train_all_emd 0 --fuse_all_to_one all --gnn_pretrained_method 2
---name trans_no --fuse_name no --fuse_recon 0 --gnn_train_all_emd 1 --gnn_pretrained_method 0
---name trans_pre --fuse_name no --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 1
---name trans_fuse --fuse_name fuse --fuse_recon 0 --gnn_train_all_emd 0 --gnn_pretrained_method 2
---name trans_recon --fuse_name recon --fuse_recon 1 --gnn_train_all_emd 0 --gnn_pretrained_method 2
+--name inv-s-0 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name inv-s-1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name inv-m-0 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name inv-m-1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name inv-l-0 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name inv-l-1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name inv-no-emd-s-0 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name inv-no-emd-s-1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name inv-no-emd-m-0 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name inv-no-emd-m-1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name inv-no-emd-l-0 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name inv-no-emd-l-1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name no-emd-s-0 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name no-emd-s-1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name no-emd-m-0 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name no-emd-m-1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name no-emd-l-0 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name no-emd-l-1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
+--name all-to-prot-s-0 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-prot-s-1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-prot-m-0 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-prot-m-1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-prot-l-0 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-prot-l-1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-all-s-0 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-all-s-1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-all-m-0 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-all-m-1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-all-l-0 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name all-to-all-l-1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name no-s-0 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
+--name no-s-1 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
+--name no-m-0 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
+--name no-m-1 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
+--name no-l-0 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
+--name no-l-1 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
+--name pre-s-0 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
+--name pre-s-1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
+--name pre-m-0 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
+--name pre-m-1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
+--name pre-l-0 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
+--name pre-l-1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
+--name fuse-s-0 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name fuse-s-1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name fuse-m-0 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name fuse-m-1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name fuse-l-0 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name fuse-l-1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name recon-s-0 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name recon-s-1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name recon-m-0 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name recon-m-1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name recon-l-0 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name recon-l-1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
+
+confs=['inv','inv-no-emd','no-emd','all-to-prot','all-to-all','no','pre','fuse','recon']
+size=['s','m','l']
+trans=[0,1]
+for conf in confs:
+    for s in size:
+        for t in trans:
+            name=f'{conf}-{s}-{t}'
+            fuse_name=conf.replace("pre","no")
+            if conf=="no":
+                pre=0
+            elif conf=="pre":
+                pre=1
+            else:
+                pre=2
+            if "no-emd" in conf:
+                fuse_pre=0
+            else:
+                fuse_pre=1
+            print(f"--name {name} --fuse_name {fuse_name} --gnn_pretrained_method {pre} --fuse_pretrained_start {fuse_pre}")

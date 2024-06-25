@@ -38,6 +38,10 @@ def get_args():
 
     parser.add_argument("--eval_n", type=int, default=10)
 
+    parser.add_argument("--seq_use_trans", type=int, default=0)
+    parser.add_argument("--seq_size", type=str, default="s", choices=['s', 'm', 'l'])
+
+
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":
         args.fuse_name = args.name

@@ -10,17 +10,29 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class MultiModalSeq(nn.Module):
-    def __init__(self, emd_dim, output_dim, type_to_vec_dim: Dict[str, int], use_trans=False):
+    def __init__(self, size, type_to_vec_dim: Dict[str, int], use_trans):
         super(MultiModalSeq, self).__init__()
         self.d_types = [PROTEIN, MOLECULE, TEXT]
+        if size == 's':
+            emd_dim = 64
+            num_layers = 2
+        elif size == 'm':
+            emd_dim = 128
+            num_layers = 3
+        elif size == 'l':
+            emd_dim = 256
+            num_layers = 4
+        else:
+            raise ValueError(f"Invalid size: {size}")
         self.t = nn.ModuleDict({k: nn.Linear(type_to_vec_dim[k], emd_dim) for k in self.d_types})
-        self.last_lin = nn.Linear(emd_dim, output_dim)
+        self.last_lin = nn.Linear(emd_dim, 1)
         self.use_trans = use_trans
         if use_trans:
-            encoder_layer = nn.TransformerEncoderLayer(d_model=emd_dim, nhead=2, dim_feedforward=emd_dim * 2,batch_first=True)
-            self.trans = nn.TransformerEncoder(encoder_layer, num_layers=2)
+            encoder_layer = nn.TransformerEncoderLayer(d_model=emd_dim, nhead=2, dim_feedforward=emd_dim * 2,
+                                                       batch_first=True)
+            self.trans = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
-    def forward(self, batch_data: Dict[str, torch.Tensor], batch_mask: Dict[str, torch.Tensor]):
+    def forward(self, batch_data: Dict[str, torch.Tensor], batch_mask: Dict[str, torch.Tensor], return_emd=False):
         all_transformed_data = []
         all_masks = []
 
@@ -36,14 +48,13 @@ class MultiModalSeq(nn.Module):
 
         if self.use_trans:
             concatenated_data = self.trans(concatenated_data, src_key_padding_mask=concatenated_mask.squeeze(-1) == 0)
-
-
+        if return_emd:
+            return concatenated_data
         # Apply mask
         masked_data = concatenated_data * concatenated_mask
         sum_masked_data = masked_data.sum(dim=1)
         count_masked_data = concatenated_mask.sum(dim=1)
 
-        # Compute the mean
         mean_masked_data = sum_masked_data / torch.clamp(count_masked_data, min=1.0)
 
         output = self.last_lin(mean_masked_data)
