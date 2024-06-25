@@ -9,17 +9,22 @@ from tqdm import tqdm
 from common.data_types import Reaction
 from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
 from dataset.index_manger import NodesIndexManager
-from common.data_types import EMBEDDING_DATA_TYPES
+from common.data_types import EMBEDDING_DATA_TYPES, DNA
+
+EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
+
 
 def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager):
     elements = []
-    reaction_elements = reaction.inputs + reaction.outputs + sum([x.entities for x in reaction.catalysis], [])
+
+    reaction_elements = reaction.inputs + sum([x.entities for x in reaction.catalysis], [])  # + reaction.outputs
+
     for reaction_element in reaction_elements:
         node = nodes_index_manager.name_to_node[reaction_element.get_db_identifier()]
         elements.append(node.index)
-    for mod in sum([list(x.modifications) for x in reaction_elements], []):
-        node = nodes_index_manager.name_to_node["TEXT@" + mod]
-        elements.append(node.index)
+    # for mod in sum([list(x.modifications) for x in reaction_elements], []):
+    #     node = nodes_index_manager.name_to_node["TEXT@" + mod]
+    #     elements.append(node.index)
     for act in [x.activity for x in reaction.catalysis]:
         node = nodes_index_manager.name_to_node["GO@" + act]
         elements.append(node.index)

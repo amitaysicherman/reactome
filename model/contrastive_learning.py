@@ -3,7 +3,7 @@ import numpy as np
 from dataset.fuse_dataset import PairsDataset, SameNameBatchSampler
 from dataset.index_manger import NodesIndexManager
 import os
-from common.data_types import EMBEDDING_DATA_TYPES, PRETRAINED_EMD
+from common.data_types import EMBEDDING_DATA_TYPES, PRETRAINED_EMD, DNA
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -14,9 +14,9 @@ from itertools import chain
 from common.utils import prepare_files, TYPE_TO_VEC_DIM
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 
+EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Device: {device}")
-TEST_MODE = True
 
 
 def indexes_to_tensor(indexes, node_index_manager: NodesIndexManager, return_type=True):
@@ -216,7 +216,9 @@ if __name__ == '__main__':
     if args.debug:
         args.fuse_batch_size = 2
     node_index_manager = NodesIndexManager(PRETRAINED_EMD)
-    train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=not args.fuse_pretrained_start)
+    train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=not args.fuse_pretrained_start,
+                                                                         filter_dna=True,
+                                                                         filter_no_act=True)
 
     train_loader = get_loader(train_reactions, node_index_manager, args.fuse_batch_size, "train", debug=args.debug)
     valid_loader = get_loader(validation_reactions, node_index_manager, args.fuse_batch_size, "valid", debug=args.debug)
