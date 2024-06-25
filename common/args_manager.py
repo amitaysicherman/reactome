@@ -5,7 +5,7 @@ def get_args():
     parser = argparse.ArgumentParser()
 
     parser.add_argument("--name", type=str, default="default")
-    parser.add_argument("--skip_if_exists", type=int, default=1)
+    parser.add_argument("--skip_if_exists", type=int, default=0)
     parser.add_argument("--data_aug", type=str, default="protein", choices=["all", "location", "protein", "molecule"])
     parser.add_argument("--debug", type=int, default=0)
 
@@ -40,7 +40,6 @@ def get_args():
 
     parser.add_argument("--seq_use_trans", type=int, default=0)
     parser.add_argument("--seq_size", type=str, default="s", choices=['s', 'm', 'l'])
-
 
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":

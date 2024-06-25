@@ -1,7 +1,8 @@
---name inv-no-emd  --fuse_recon 0 --fuse_pretrained_start 0 --fuse_all_to_one inv --fuse_output_dim 768 --skip_if_exists 0
-
---name no --fuse_name no --fuse_recon 0 --gnn_train_all_emd 1 --gnn_hidden_channels 256 --gnn_pretrained_method 0
---name fuse --fuse_name fuse --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --gnn_pretrained_method 2
---name recon --fuse_name recon --fuse_recon 1 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --gnn_pretrained_method 2
---name all-to-prot --fuse_name all-to-prot --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --fuse_all_to_one protein --gnn_pretrained_method 2
---name all-to-all --fuse_name all-to-all --fuse_recon 0 --gnn_train_all_emd 0 --gnn_hidden_channels 256 --fuse_all_to_one all --gnn_pretrained_method 2
+--name inv --fuse_recon 0 --fuse_all_to_one inv --fuse_output_dim 768
+--name inv-no-emd  --fuse_recon 0 --fuse_pretrained_start 0 --fuse_all_to_one inv --fuse_output_dim 768
+--name no-emd --fuse_name no-emd  --fuse_recon 0 --fuse_pretrained_start 0
+--name all-to-prot --fuse_name all-to-prot --fuse_recon 0 --fuse_all_to_one protein
+--name all-to-all --fuse_name all-to-all --fuse_recon 0 --fuse_all_to_one all
+--name no --fuse_name no --fuse_recon 0
+--name fuse --fuse_name fuse --fuse_recon 0
+--name recon --fuse_name recon --fuse_recon 1
