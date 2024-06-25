@@ -6,13 +6,15 @@ import torch
 import torch.nn as nn
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
-
+import pandas as pd
 from common.data_types import REAL, PROTEIN, TEXT, MOLECULE
 from common.data_types import Reaction
 from common.utils import prepare_files
 from dataset.dataset_builder import get_reactions, add_if_not_none
 from dataset.index_manger import NodesIndexManager, NodeData, get_from_args
 from model.models import MultiModalSeq
+from common.path_manager import scores_path
+import os
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
@@ -52,11 +54,12 @@ class EpochScores:
     def log(self, i):
         # auc = roc_auc_score(self.y_real, self.y_pred)
         all_auc, prot_auc, mol_auc, text_auc = self.calculate_auc()
-        msg = f"{i} {self.name} loss: {sum(self.loss) / len(self.loss):.2f} all_auc: {all_auc * 100:.1f} prot_auc: {prot_auc * 100:.1f} mol_auc: {mol_auc * 100:.1f} text_auc: {text_auc * 100:.1f}"
+        loss = sum(self.loss) / len(self.loss)
+        msg = f'{i},{self.name},{loss},{all_auc},{prot_auc},{mol_auc},{text_auc}'
         print(msg)
         if self.output_file:
             with open(self.output_file, "a") as f:
-                f.write(msg+"\n")
+                f.write(msg + "\n")
 
 
 def get_empty_dict():
@@ -171,6 +174,41 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file=""):
     score.log(epoch)
 
 
+def print_best_results(results_file):
+    columns = ['all', 'protein', 'molecule', 'text']
+    with open(results_file, "r") as f:
+        lines = f.readlines()
+    train_results = pd.DataFrame(columns=columns)
+    valid_results = pd.DataFrame(columns=columns)
+    test_results = pd.DataFrame(columns=columns)
+    for i in range(0, len(lines), 3):  # num,train,num,valid,num,test
+        train_results.loc[i // 3] = [float(x) for x in lines[i].split(",")[2:]]
+        valid_results.loc[i // 3] = [float(x) for x in lines[i + 1].split(",")[2:]]
+        test_results.loc[i // 3] = [float(x) for x in lines[i + 2].split(",")[2:]]
+    print("Best Results")
+    print("Train results")
+    print(train_results.max())
+    print("Valid results")
+    print(valid_results.max())
+    print("Test results")
+    print(test_results.max())
+
+    # choose the best index for each column based on the valid results
+    best_index = valid_results.idxmax()
+    for col in valid_results.columns:
+        print(f"Best model for {col}")
+        print(test_results.loc[best_index[col]])
+    name = os.path.basename(results_file).replace(".txt", "")
+    summary = [name] + list(test_results.loc[best_index['protein']].values)
+    summary = ",".join([str(x) for x in summary])
+    output_summary_file = f"{scores_path}/summary_seq.csv"
+    if not os.path.exists(output_summary_file):
+        with open(output_summary_file, "w") as f:
+            f.write(",".join(["name"] + list(test_results.columns)) + "\n")
+    with open(output_summary_file, "a") as f:
+        f.write(summary + "\n")
+
+
 if __name__ == "__main__":
     from common.args_manager import get_args
 
@@ -205,3 +243,4 @@ if __name__ == "__main__":
         run_epoch(model, optimizer, loss_fn, train_dataset, "train", score_file)
         run_epoch(model, optimizer, loss_fn, val_dataset, "valid", score_file)
         run_epoch(model, optimizer, loss_fn, test_dataset, "test", score_file)
+    print_best_results(score_file)
