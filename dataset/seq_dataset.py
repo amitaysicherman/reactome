@@ -224,14 +224,21 @@ if __name__ == "__main__":
     TYPE_TO_VEC_DIM = {PROTEIN: node_index_manager.index_to_node[node_index_manager.protein_indexes[0]].vec.shape[0],
                        MOLECULE: node_index_manager.index_to_node[node_index_manager.molecule_indexes[0]].vec.shape[0],
                        TEXT: node_index_manager.index_to_node[node_index_manager.text_indexes[0]].vec.shape[0]}
-    train_lines, val_lines, test_lines = get_reactions(args.gnn_sample, filter_untrain=False, filter_dna=True,
+
+    filter_untrain = False
+    if args.gnn_pretrained_method == 0:
+        filter_untrain = True
+    if "no-emb" in args.fuse_name:
+        filter_untrain = True
+
+    train_lines, val_lines, test_lines = get_reactions(args.gnn_sample, filter_untrain=filter_untrain, filter_dna=True,
                                                        filter_no_act=True)
     train_dataset = lines_to_dataset(train_lines, node_index_manager, batch_size, shuffle=True, aug_factor=aug_factor)
     val_dataset = lines_to_dataset(val_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor)
     test_dataset = lines_to_dataset(test_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor)
     print(len(train_lines), len(train_dataset))
 
-    model = MultiModalSeq(args.seq_size, TYPE_TO_VEC_DIM,use_trans=args.seq_use_trans).to(device)
+    model = MultiModalSeq(args.seq_size, TYPE_TO_VEC_DIM, use_trans=args.seq_use_trans).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / aug_factor]).to(device))
     save_dir, score_file = prepare_files(f'seq_{args.name}')

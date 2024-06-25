@@ -170,5 +170,5 @@ def apply_model(model: MiltyModalLinear, x, type_):
     else:
         if not model.have_type(type_):
             print(f"Warning: model does not have type {type_}")
-            return x
+            return torch.Tensor(x)
         return model(x, type_)
