@@ -1,8 +1,8 @@
---name inv --fuse_recon 0 --fuse_all_to_one inv --fuse_output_dim 768
---name inv-no-emd  --fuse_recon 0 --fuse_pretrained_start 0 --fuse_all_to_one inv --fuse_output_dim 768
+--name inv -- --fuse_all_to_one inv --fuse_output_dim 768
+--name inv-no-emd  --fuse_all_to_one inv --fuse_output_dim 768 --fuse_pretrained_start 0
 --name no-emd --fuse_name no-emd  --fuse_recon 0 --fuse_pretrained_start 0
---name all-to-prot --fuse_name all-to-prot --fuse_recon 0 --fuse_all_to_one protein
---name all-to-all --fuse_name all-to-all --fuse_recon 0 --fuse_all_to_one all
---name no --fuse_name no --fuse_recon 0
---name fuse --fuse_name fuse --fuse_recon 0
+--name all-to-prot --fuse_name all-to-prot --fuse_all_to_one protein
+--name all-to-all --fuse_name all-to-all  --fuse_all_to_one all
+--name no --fuse_name no
+--name fuse --fuse_name fuse
 --name recon --fuse_name recon --fuse_recon 1

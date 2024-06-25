@@ -78,6 +78,7 @@ node_colors = {node_type: color_palette(i) for i, node_type in enumerate(get_nod
 
 def load_fuse_model(name, fuse_pretrained_start):
     model_cp = glob.glob(f'{model_path}/fuse_{name}/fuse_*.pt')
+    print(model_cp)
     if len(model_cp) == 0:
         return None
     if len(model_cp) > 1:
