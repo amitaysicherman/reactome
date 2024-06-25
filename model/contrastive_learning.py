@@ -243,7 +243,7 @@ if __name__ == '__main__':
     best_valid_auc = 0
 
     running_args = {"model": model, "reconstruction_model": reconstruction_model, "optimizer": optimizer,
-                    "reconstruction_optimizer": reconstruction_model, "contrastive_loss": contrastive_loss,
+                    "reconstruction_optimizer": reconstruction_optimizer, "contrastive_loss": contrastive_loss,
                     "recon": args.fuse_recon, "output_file": scores_file, "all_to_one": args.fuse_all_to_one,
                     "use_pretrain": args.fuse_pretrained_start}
 
