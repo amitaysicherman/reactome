@@ -112,9 +112,9 @@ def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, 
         else:
             out1 = model(data_1, type_1)
             out2 = model(data_2, type_2)
-
-            recon_1 = reconstruction_model(out1, type_1)
-            recon_2 = reconstruction_model(out2, type_2)
+            if recon:
+                recon_1 = reconstruction_model(out1, type_1)
+                recon_2 = reconstruction_model(out2, type_2)
 
         all_labels.extend((label == 1).cpu().detach().numpy().astype(int).tolist())
         all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
