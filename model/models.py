@@ -17,17 +17,28 @@ class MultiModalSeq(nn.Module):
         self.last_lin = nn.Linear(emd_dim, output_dim)
 
     def forward(self, batch_data: Dict[str, torch.Tensor], batch_mask: Dict[str, torch.Tensor]):
-        type_means = []
+        all_transformed_data = []
+        all_masks = []
+
         for dtype in self.d_types:
             transformed_data = self.t[dtype](batch_data[dtype])
             mask = batch_mask[dtype].unsqueeze(-1)  # make sure mask is of shape [batch_size, seq_length, 1]
-            masked_data = transformed_data * mask
-            sum_masked_data = masked_data.sum(dim=1)
-            count_masked_data = mask.sum(dim=1)
-            mean_masked_data = sum_masked_data / torch.clamp(count_masked_data, min=1.0)
-            type_means.append(mean_masked_data)
-        final_representation = torch.stack(type_means, dim=0).mean(dim=0)
-        output = self.last_lin(final_representation)
+            all_transformed_data.append(transformed_data)
+            all_masks.append(mask)
+
+        # Concatenate all transformed data and masks
+        concatenated_data = torch.cat(all_transformed_data, dim=1)
+        concatenated_mask = torch.cat(all_masks, dim=1)
+
+        # Apply mask
+        masked_data = concatenated_data * concatenated_mask
+        sum_masked_data = masked_data.sum(dim=1)
+        count_masked_data = concatenated_mask.sum(dim=1)
+
+        # Compute the mean
+        mean_masked_data = sum_masked_data / torch.clamp(count_masked_data, min=1.0)
+
+        output = self.last_lin(mean_masked_data)
         return output
 
 

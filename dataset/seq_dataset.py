@@ -88,7 +88,13 @@ class ReactionSeq:
             copy_data.data[type_] = self.data[type_][:]
         return copy_data
 
-    def get_augment_copy(self, node_index_manager: NodesIndexManager, type):
+    def get_augment_copy(self, node_index_manager: NodesIndexManager, type=""):
+        if type == "":
+            n = sum(len(self.data[type_]) for type_ in self.data)
+            p = [len(self.data[PROTEIN]) / n, len(self.data[MOLECULE]) / n, len(self.data[TEXT]) / n]
+
+            type = random.choices([PROTEIN, MOLECULE, TEXT], weights=p)[0]
+
         if type not in self.data or len(self.data[type]) == 0:
             return None
         fake_index = random.choice(range(len(self.data[type])))
@@ -132,19 +138,14 @@ def collate_fn(reaction_seqs: List[ReactionSeq]):
     return batch_data, batch_mask, torch.tensor(labels), augmentations
 
 
-def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, shuffle, protein_aug, molecule_aug,
-                     text_aug):
+def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, shuffle, aug_factor):
     dataset = []
     for reaction in tqdm(lines):
         nodes = reaction_to_nodes(reaction, node_index_manager)
         data = ReactionSeq(nodes)
         dataset.append(data)
-        for _ in range(protein_aug):
-            add_if_not_none(dataset, data.get_augment_copy(node_index_manager, PROTEIN))
-        for _ in range(molecule_aug):
-            add_if_not_none(dataset, data.get_augment_copy(node_index_manager, MOLECULE))
-        for _ in range(text_aug):
-            add_if_not_none(dataset, data.get_augment_copy(node_index_manager, TEXT))
+        for _ in range(aug_factor):
+            add_if_not_none(dataset, data.get_augment_copy(node_index_manager))
     if shuffle:
         random.shuffle(dataset)
     all_data = []
@@ -182,9 +183,9 @@ def print_best_results(results_file):
     valid_results = pd.DataFrame(columns=columns)
     test_results = pd.DataFrame(columns=columns)
     for i in range(0, len(lines), 3):  # num,train,num,valid,num,test
-        train_results.loc[i // 3] = [float(x) for x in lines[i].split(",")[2:]]
-        valid_results.loc[i // 3] = [float(x) for x in lines[i + 1].split(",")[2:]]
-        test_results.loc[i // 3] = [float(x) for x in lines[i + 2].split(",")[2:]]
+        train_results.loc[i // 3] = [float(x) for x in lines[i].split(",")[3:]]
+        valid_results.loc[i // 3] = [float(x) for x in lines[i + 1].split(",")[3:]]
+        test_results.loc[i // 3] = [float(x) for x in lines[i + 2].split(",")[3:]]
     print("Best Results")
     print("Train results")
     print(train_results.max())
@@ -215,9 +216,7 @@ if __name__ == "__main__":
     batch_size = 2048
     emb_dim = 512
     lr = 0.0001
-    protein_aug = 5
-    molecule_aug = 1
-    text_aug = 1
+    aug_factor = 5
     epochs = 250
 
     args = get_args()
@@ -228,18 +227,17 @@ if __name__ == "__main__":
                        TEXT: node_index_manager.index_to_node[node_index_manager.text_indexes[0]].vec.shape[0]}
     train_lines, val_lines, test_lines = get_reactions(args.gnn_sample, filter_untrain=False, filter_dna=True,
                                                        filter_no_act=True)
-    aug = dict(protein_aug=protein_aug, molecule_aug=molecule_aug, text_aug=text_aug)
-    train_dataset = lines_to_dataset(train_lines, node_index_manager, batch_size, shuffle=True, **aug)
-    val_dataset = lines_to_dataset(val_lines, node_index_manager, batch_size, shuffle=False, **aug)
-    test_dataset = lines_to_dataset(test_lines, node_index_manager, batch_size, shuffle=False, **aug)
+    train_dataset = lines_to_dataset(train_lines, node_index_manager, batch_size, shuffle=True, aug_factor=aug_factor)
+    val_dataset = lines_to_dataset(val_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor)
+    test_dataset = lines_to_dataset(test_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor)
     print(len(train_lines), len(train_dataset))
 
     model = MultiModalSeq(emb_dim, 1, TYPE_TO_VEC_DIM).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / (protein_aug + text_aug + molecule_aug)]).to(device))
+    loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / aug_factor]).to(device))
     save_dir, score_file = prepare_files(f'seq_{args.name}')
 
-    for epoch in range(epochs):
+    for epoch in range(args.gnn_epochs):
         run_epoch(model, optimizer, loss_fn, train_dataset, "train", score_file)
         run_epoch(model, optimizer, loss_fn, val_dataset, "valid", score_file)
         run_epoch(model, optimizer, loss_fn, test_dataset, "test", score_file)
