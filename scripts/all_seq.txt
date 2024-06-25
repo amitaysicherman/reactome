@@ -1,57 +1,58 @@
---name inv-s-0 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name inv-s-1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name inv-m-0 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name inv-m-1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name inv-l-0 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name inv-l-1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name inv-no-emd-s-0 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name inv-no-emd-s-1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name inv-no-emd-m-0 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name inv-no-emd-m-1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name inv-no-emd-l-0 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name inv-no-emd-l-1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name no-emd-s-0 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name no-emd-s-1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name no-emd-m-0 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name no-emd-m-1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name no-emd-l-0 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name no-emd-l-1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0
---name all-to-prot-s-0 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-prot-s-1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-prot-m-0 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-prot-m-1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-prot-l-0 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-prot-l-1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-all-s-0 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-all-s-1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-all-m-0 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-all-m-1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-all-l-0 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name all-to-all-l-1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name no-s-0 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
---name no-s-1 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
---name no-m-0 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
---name no-m-1 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
---name no-l-0 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
---name no-l-1 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1
---name pre-s-0 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
---name pre-s-1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
---name pre-m-0 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
---name pre-m-1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
---name pre-l-0 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
---name pre-l-1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1
---name fuse-s-0 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name fuse-s-1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name fuse-m-0 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name fuse-m-1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name fuse-l-0 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name fuse-l-1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name recon-s-0 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name recon-s-1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name recon-m-0 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name recon-m-1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name recon-l-0 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
---name recon-l-1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1
+--name inv-s-0 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size s
+--name inv-s-1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size s
+--name inv-m-0 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size m
+--name inv-m-1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name inv-l-0 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size l
+--name inv-l-1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size l
+--name inv-no-emd-s-0 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 0 --seq_size s
+--name inv-no-emd-s-1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 1 --seq_size s
+--name inv-no-emd-m-0 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 0 --seq_size m
+--name inv-no-emd-m-1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 1 --seq_size m
+--name inv-no-emd-l-0 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 0 --seq_size l
+--name inv-no-emd-l-1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 1 --seq_size l
+--name no-emd-s-0 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 0 --seq_size s
+--name no-emd-s-1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 1 --seq_size s
+--name no-emd-m-0 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 0 --seq_size m
+--name no-emd-m-1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 1 --seq_size m
+--name no-emd-l-0 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 0 --seq_size l
+--name no-emd-l-1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 1 --seq_size l
+--name all-to-prot-s-0 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size s
+--name all-to-prot-s-1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size s
+--name all-to-prot-m-0 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size m
+--name all-to-prot-m-1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name all-to-prot-l-0 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size l
+--name all-to-prot-l-1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size l
+--name all-to-all-s-0 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size s
+--name all-to-all-s-1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size s
+--name all-to-all-m-0 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size m
+--name all-to-all-m-1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name all-to-all-l-0 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size l
+--name all-to-all-l-1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size l
+--name no-s-0 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size s
+--name no-s-1 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size s
+--name no-m-0 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size m
+--name no-m-1 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name no-l-0 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size l
+--name no-l-1 --fuse_name no --gnn_pretrained_method 0 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size l
+--name pre-s-0 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size s
+--name pre-s-1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size s
+--name pre-m-0 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size m
+--name pre-m-1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name pre-l-0 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size l
+--name pre-l-1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size l
+--name fuse-s-0 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size s
+--name fuse-s-1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size s
+--name fuse-m-0 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size m
+--name fuse-m-1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name fuse-l-0 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size l
+--name fuse-l-1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size l
+--name recon-s-0 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size s
+--name recon-s-1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size s
+--name recon-m-0 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size m
+--name recon-m-1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name recon-l-0 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 0 --seq_size l
+--name recon-l-1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size l
+
 
 confs=['inv','inv-no-emd','no-emd','all-to-prot','all-to-all','no','pre','fuse','recon']
 size=['s','m','l']
@@ -71,4 +72,4 @@ for conf in confs:
                 fuse_pre=0
             else:
                 fuse_pre=1
-            print(f"--name {name} --fuse_name {fuse_name} --gnn_pretrained_method {pre} --fuse_pretrained_start {fuse_pre}")
+            print(f"--name {name} --fuse_name {fuse_name} --gnn_pretrained_method {pre} --fuse_pretrained_start {fuse_pre} --seq_use_trans {t} --seq_size {s}")
