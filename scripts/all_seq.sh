@@ -8,12 +8,3 @@
 
 args=$(sed -n "$SLURM_ARRAY_TASK_ID"p scripts/all_seq.txt)
 python3 dataset/seq_dataset.py $args
-python3 dataset/seq_dataset.py $args
-python3 dataset/seq_dataset.py $args
-python3 dataset/seq_dataset.py $args
-python3 dataset/seq_dataset.py $args
-python3 dataset/seq_dataset.py $args
-python3 dataset/seq_dataset.py $args
-python3 dataset/seq_dataset.py $args
-python3 dataset/seq_dataset.py $args
-python3 dataset/seq_dataset.py $args
