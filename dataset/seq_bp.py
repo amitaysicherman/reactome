@@ -133,19 +133,22 @@ def run_epoch(trans_model, model, optimizer, loss_fn, dataset, part, use_trans, 
         if is_train:
             loss.backward()
             optimizer.step()
-    real_labels = np.concatenate(real_labels)
-    pred_labels = np.concatenate(pred_labels)
-    mask_zero = real_labels.sum(axis=0) != 0
-    mask_one = real_labels.sum(axis=0) != len(real_labels)
-    mask = mask_zero & mask_one
-    real_labels = real_labels.T[mask].T
-    pred_labels = pred_labels.T[mask].T
-    if real_labels.shape[1] == 0:
-        print(f"No labels for {part}")
-        return 0
-    auc = roc_auc_score(real_labels, pred_labels, average="weighted")
-    auc_sample = roc_auc_score(real_labels, pred_labels, average="samples")
-    print(f"{part} AUC: {auc} AUC sample: {auc_sample}")
+        real_labels = np.concatenate(real_labels)
+        pred_labels = np.concatenate(pred_labels)
+        mask_zero = real_labels.sum(axis=0) != 0
+        mask_one = real_labels.sum(axis=0) != len(real_labels)
+        mask = mask_zero & mask_one
+        real_labels = real_labels.T[mask].T
+        pred_labels = pred_labels.T[mask].T
+        if real_labels.shape[1] == 0:
+            print(f"No labels for {part}")
+            return 0
+        auc = roc_auc_score(real_labels, pred_labels, average="weighted")
+        auc_sample = roc_auc_score(real_labels, pred_labels, average="samples")
+        print(f"{part} AUC: {auc} AUC sample: {auc_sample}")
+        real_labels = []
+        pred_labels = []
+
     return auc
 
 
