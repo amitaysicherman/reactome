@@ -137,8 +137,9 @@ def run_epoch(model, optimizer, loss_fn, X, y, part, output_file=""):
         return 0
     auc = roc_auc_score(real_labels, pred_labels, average="weighted")
     # auc_sample = roc_auc_score(real_labels, pred_labels, average="samples")
-    print(f"{part} Loss:{loss.item()} AUC: {auc}")# AUC sample: {auc_sample}")
-
+    print(f"{part} Loss:{loss.item()} AUC: {auc}")  # AUC sample: {auc_sample}")
+    with open(output_file, "a") as f:
+        f.write(f"{part} Loss:{loss.item()} AUC: {auc}\n")
     return auc
 
 
