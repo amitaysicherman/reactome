@@ -149,8 +149,11 @@ def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, s
     if shuffle:
         random.shuffle(dataset)
     all_data = []
+
     for i in range(0, len(dataset), batch_size):
         all_data.append(collate_fn(dataset[i:i + batch_size]))
+    if len(dataset) % batch_size != 0:
+        all_data.append(collate_fn(dataset[-(len(dataset) % batch_size):]))
     return all_data
 
 
