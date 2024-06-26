@@ -253,12 +253,12 @@ if __name__ == "__main__":
     for epoch in range(args.gnn_epochs):
         print(f"Epoch {epoch}")
         run_epoch(**epoch_args, X=X_train, y=y_train, part="train")
-        # epoch_score = run_epoch(**epoch_args, X=X_val, y=y_val, part="valid")
-        # run_epoch(**epoch_args, X=X_test, y=y_test, part="test")
-        #
-        # if epoch_score > best_score:
-        #     best_score = epoch_score
-        #     torch.save(model.state_dict(), f"{save_dir}/{epoch}.pt")
-        #     if best_prev_index != -1:
-        #         os.remove(f"{save_dir}/{best_prev_index}.pt")
-        #     best_prev_index = epoch
+        epoch_score = run_epoch(**epoch_args, X=X_val, y=y_val, part="valid")
+        run_epoch(**epoch_args, X=X_test, y=y_test, part="test")
+
+        if epoch_score > best_score:
+            best_score = epoch_score
+            torch.save(model.state_dict(), f"{save_dir}/{epoch}.pt")
+            if best_prev_index != -1:
+                os.remove(f"{save_dir}/{best_prev_index}.pt")
+            best_prev_index = epoch
