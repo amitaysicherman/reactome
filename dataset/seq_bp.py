@@ -183,7 +183,7 @@ if __name__ == "__main__":
     best_score = 0
     best_prev_index = -1
     epoch_args = dict(trans_model=trans_model, model=model, optimizer=optimizer, loss_fn=loss_fn,
-                      output_file=score_file, use_trans=args.seq_use_trans, node_index_manager=node_index_manager)
+                      output_file=score_file, use_trans=args.seq_use_trans)
     for epoch in range(args.gnn_epochs):
         print(f"Epoch {epoch}")
         run_epoch(**epoch_args, dataset=train_dataset, part="train")
