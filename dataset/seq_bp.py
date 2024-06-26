@@ -234,11 +234,11 @@ if __name__ == "__main__":
 
     else:
         input_dim = TYPE_TO_VEC_DIM[PROTEIN]
-        trans_model = None
         X_train, X_val, X_test, y_train, y_val, y_test = get_labels_per_protein(node_index_manager,
                                                                                 train_lines + val_lines + test_lines,
                                                                                 bp_mapping)
     print(X_train.shape, X_val.shape, X_test.shape)
+    print(y_train.shape, y_val.shape, y_test.shape)
 
     model = nn.Linear(input_dim, y_test.shape[-1]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
