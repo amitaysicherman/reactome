@@ -197,7 +197,7 @@ if __name__ == "__main__":
     from common.args_manager import get_args
 
     batch_size = 512
-    lr = 0.01
+    lr = 0.1
 
     args = get_args()
     node_index_manager: NodesIndexManager = get_from_args(args)
