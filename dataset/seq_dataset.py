@@ -203,7 +203,7 @@ def print_best_results(results_file):
         print(f"Best model for {col}")
         print(test_results.loc[best_index[col]])
     name = os.path.basename(results_file).replace(".txt", "")
-    summary = [name] + list(test_results.loc[best_index['protein']].values)
+    summary = [name] + list(test_results.loc[best_index['all']].values)
     summary = ",".join([str(x) for x in summary])
     output_summary_file = f"{scores_path}/summary_seq.csv"
     if not os.path.exists(output_summary_file):
