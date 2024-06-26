@@ -19,6 +19,7 @@ import os
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 random.seed(42)
 
+
 class EpochScores:
     def __init__(self, name, output_file=""):
         self.name = name
@@ -60,6 +61,7 @@ class EpochScores:
         if self.output_file:
             with open(self.output_file, "a") as f:
                 f.write(msg + "\n")
+        return all_auc
 
 
 def get_empty_dict():
@@ -175,7 +177,8 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file=""):
         if is_train:
             loss.backward()
             optimizer.step()
-    score.log(epoch)
+    auc = score.log(epoch)
+    return auc
 
 
 def print_best_results(results_file):
@@ -246,8 +249,12 @@ if __name__ == "__main__":
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / aug_factor]).to(device))
     save_dir, score_file = prepare_files(f'seq_{args.name}')
 
+    best_score = 0
     for epoch in range(args.gnn_epochs):
         run_epoch(model, optimizer, loss_fn, train_dataset, "train", score_file)
-        run_epoch(model, optimizer, loss_fn, val_dataset, "valid", score_file)
+        apoch_score = run_epoch(model, optimizer, loss_fn, val_dataset, "valid", score_file)
         run_epoch(model, optimizer, loss_fn, test_dataset, "test", score_file)
+        if apoch_score > best_score:
+            best_score = apoch_score
+            torch.save(model.state_dict(), f"{save_dir}/{epoch}.pt")
     print_best_results(score_file)
