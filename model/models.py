@@ -165,7 +165,8 @@ def concat_all_to_one_typs(model: MiltyModalLinear, x, src_type):
 
 
 def apply_model(model: MiltyModalLinear, x, type_):
-    print(type_)
+    if type_ == DNA:
+        return torch.Tensor(x)
     if "_" in model.names[0]:
         return concat_all_to_one_typs(model, x, type_)
     else:
