@@ -136,7 +136,7 @@ def run_epoch(model, optimizer, loss_fn, X, y, part, output_file=""):
         return 0
     auc = roc_auc_score(real_labels, pred_labels, average="weighted")
     auc_sample = roc_auc_score(real_labels, pred_labels, average="samples")
-    print(f"{part} AUC: {auc} AUC sample: {auc_sample}")
+    print(f"{part} Loss:{loss.item()} AUC: {auc} AUC sample: {auc_sample}")
 
     return auc
 
@@ -243,7 +243,7 @@ if __name__ == "__main__":
     model = nn.Linear(input_dim, y_test.shape[-1]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     # pos_weight = torch.tensor([bp_mapping.shape[0] / bp_mapping.sum().values]).to(device)
-    pos_weight  = y_train.shape[0] / y_train.sum()
+    pos_weight = y_train.shape[0] / y_train.sum()
     pos_weight = torch.tensor(pos_weight).to(device)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=pos_weight).to(device)
     save_dir, score_file = prepare_files(f'bp_{args.name}')
