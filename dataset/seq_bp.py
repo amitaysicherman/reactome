@@ -172,7 +172,7 @@ if __name__ == "__main__":
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     pos_weight = torch.tensor([bp_mapping.shape[0] / bp_mapping.sum().values]).to(device)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=pos_weight).to(device)
-    save_dir, score_file = prepare_files(f'seq_{args.name}')
+    save_dir, score_file = prepare_files(f'bp_{args.name}')
 
     best_score = 0
     best_prev_index = -1
@@ -181,12 +181,12 @@ if __name__ == "__main__":
     for epoch in range(args.gnn_epochs):
         print(f"Epoch {epoch}")
         run_epoch(**epoch_args, dataset=train_dataset, part="train")
-        # epoch_score = run_epoch(**epoch_args, dataset=val_dataset, part="valid")
-        # run_epoch(**epoch_args, dataset=test_dataset, part="test")
-        #
-        # if epoch_score > best_score:
-        #     best_score = epoch_score
-        #     torch.save(model.state_dict(), f"{save_dir}/{epoch}.pt")
-        #     if best_prev_index != -1:
-        #         os.remove(f"{save_dir}/{best_prev_index}.pt")
-        #     best_prev_index = epoch
+        epoch_score = run_epoch(**epoch_args, dataset=val_dataset, part="valid")
+        run_epoch(**epoch_args, dataset=test_dataset, part="test")
+
+        if epoch_score > best_score:
+            best_score = epoch_score
+            torch.save(model.state_dict(), f"{save_dir}/{epoch}.pt")
+            if best_prev_index != -1:
+                os.remove(f"{save_dir}/{best_prev_index}.pt")
+            best_prev_index = epoch
