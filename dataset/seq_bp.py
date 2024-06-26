@@ -17,7 +17,7 @@ from pybiopax.biopax.interaction import Catalysis
 import pybiopax
 import numpy as np
 from preprocessing.biopax_parser import get_reactome_id
-from common.path_manager import data_path, item_path
+from common.path_manager import data_path, item_path,model_path
 from sklearn.metrics import roc_auc_score
 from collections import defaultdict
 from sklearn.model_selection import train_test_split
@@ -222,7 +222,7 @@ if __name__ == "__main__":
 
     if args.seq_use_trans:
         trans_model = MultiModalSeq(args.seq_size, TYPE_TO_VEC_DIM, use_trans=args.seq_use_trans).to(device).eval()
-        trans_model.load_state_dict(torch.load(f"{item_path}/data/models_checkpoints/seq_all-to-prot_s_1/38.pt"))
+        trans_model.load_state_dict(torch.load(f"{model_path}/seq_all-to-prot_s_1/38.pt"))
         input_dim = trans_model.get_emb_size()
         train_dataset = lines_to_dataset(train_lines, node_index_manager, bp_mapping, batch_size, shuffle=True,
                                          type_to_vec_dim=TYPE_TO_VEC_DIM)
