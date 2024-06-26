@@ -242,7 +242,9 @@ if __name__ == "__main__":
 
     model = nn.Linear(input_dim, y_test.shape[-1]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    pos_weight = torch.tensor([bp_mapping.shape[0] / bp_mapping.sum().values]).to(device)
+    # pos_weight = torch.tensor([bp_mapping.shape[0] / bp_mapping.sum().values]).to(device)
+    pos_weight  = y_train.shape[0] / y_train.sum().values
+    pos_weight = torch.tensor(pos_weight).to(device)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=pos_weight).to(device)
     save_dir, score_file = prepare_files(f'bp_{args.name}')
 
