@@ -112,7 +112,16 @@ def run_epoch(trans_model, model, optimizer, loss_fn, dataset, part, use_trans, 
         optimizer.zero_grad()
         batch_data = {k: v.to(device) for k, v in batch_data.items()}
         batch_mask = {k: v.to(device) for k, v in batch_mask.items()}
-        emb = trans_model(batch_data, batch_mask, return_prot_emd=True)
+        if use_trans:
+            emb = trans_model(batch_data, batch_mask, return_prot_emd=True)
+        else:
+            emb = batch_data[PROTEIN]
+
+        emb = emb.reshape(-1, emb.shape[-1])
+        protein_mask = batch_mask[PROTEIN]
+        protein_mask = protein_mask.reshape(-1)
+        emb = emb[protein_mask == 1]
+
         output = model(emb)
         labels = torch.tensor(labels)[
             sum([[i] * int(x.item()) for i, x in zip(range(len(labels)), batch_mask[PROTEIN].sum(dim=1))], [])]
@@ -143,7 +152,7 @@ def run_epoch(trans_model, model, optimizer, loss_fn, dataset, part, use_trans, 
 if __name__ == "__main__":
     from common.args_manager import get_args
 
-    batch_size = 2048
+    batch_size = 512
     lr = 0.01
 
     args = get_args()
@@ -173,8 +182,12 @@ if __name__ == "__main__":
     print(len(train_lines), len(train_dataset))
 
     trans_model = MultiModalSeq(args.seq_size, TYPE_TO_VEC_DIM, use_trans=args.seq_use_trans).to(device).eval()
-    # if args.seq_use_trans:
-    model = nn.Linear(trans_model.get_emb_size(), bp_mapping.shape[1]).to(device)
+
+    if args.seq_use_trans:
+        input_dim = trans_model.get_emb_size()
+    else:
+        input_dim = TYPE_TO_VEC_DIM[PROTEIN]
+    model = nn.Linear(input_dim, bp_mapping.shape[1]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     pos_weight = torch.tensor([bp_mapping.shape[0] / bp_mapping.sum().values]).to(device)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=pos_weight).to(device)

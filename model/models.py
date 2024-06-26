@@ -53,11 +53,7 @@ class MultiModalSeq(nn.Module):
             assert self.d_types[0] == PROTEIN
             n_proteins = batch_data[PROTEIN].shape[1]
             proteins_emd = concatenated_data[:, :n_proteins, :]
-            proteins_emd = proteins_emd.reshape(-1, proteins_emd.shape[-1])
-            protein_mask = concatenated_mask[:, :n_proteins, :]
-            protein_mask = protein_mask.reshape(-1, protein_mask.shape[-1])
-            protein_emd_filtered = proteins_emd[protein_mask.squeeze(-1) == 1]
-            return protein_emd_filtered
+            return proteins_emd
 
         # Apply mask
         masked_data = concatenated_data * concatenated_mask
