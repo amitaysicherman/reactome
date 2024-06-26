@@ -1,7 +1,8 @@
 import random
 import torch
 import torch.nn as nn
-from common.data_types import PROTEIN, TEXT, MOLECULE
+from common.data_types import PROTEIN, TEXT, MOLECULE, Reaction
+from typing import List
 from common.utils import prepare_files
 from dataset.dataset_builder import get_reactions
 from dataset.index_manger import NodesIndexManager, get_from_args
@@ -18,6 +19,8 @@ import numpy as np
 from preprocessing.biopax_parser import get_reactome_id
 from common.path_manager import data_path, item_path
 from sklearn.metrics import roc_auc_score
+from collections import defaultdict
+from sklearn.model_selection import train_test_split
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 random.seed(42)
@@ -100,7 +103,7 @@ def filter_by_labels(bp_mapping, train_lines, val_lines, test_lines, min_per_lab
     return train_lines, val_lines, test_lines, bp_mapping
 
 
-def run_epoch(trans_model, model, optimizer, loss_fn, dataset, part, use_trans, output_file=""):
+def run_epoch(model, optimizer, loss_fn, X, y, part, output_file=""):
     is_train = part == "train"
     if is_train:
         model.train()
@@ -108,48 +111,86 @@ def run_epoch(trans_model, model, optimizer, loss_fn, dataset, part, use_trans, 
         model.eval()
     real_labels = []
     pred_labels = []
+    optimizer.zero_grad()
+
+    X = torch.tensor(X).to(device)
+    y = torch.tensor(y).to(device)
+    output = model(X)
+    loss = loss_fn(output, y.float())
+    real_labels.append(y.cpu().numpy())
+    pred_labels.append(output.sigmoid().detach().cpu().numpy())
+
+    # print(loss)
+    if is_train:
+        loss.backward()
+        optimizer.step()
+    real_labels = np.concatenate(real_labels)
+    pred_labels = np.concatenate(pred_labels)
+    mask_zero = real_labels.sum(axis=0) != 0
+    mask_one = real_labels.sum(axis=0) != len(real_labels)
+    mask = mask_zero & mask_one
+    real_labels = real_labels.T[mask].T
+    pred_labels = pred_labels.T[mask].T
+    if real_labels.shape[1] == 0:
+        print(f"No labels for {part}")
+        return 0
+    auc = roc_auc_score(real_labels, pred_labels, average="weighted")
+    auc_sample = roc_auc_score(real_labels, pred_labels, average="samples")
+    print(f"{part} AUC: {auc} AUC sample: {auc_sample}")
+
+    return auc
+
+
+def reaction_to_prots(reaction: Reaction, node_index_manager: NodesIndexManager):
+    catalysis_enetities_nodes = [node_index_manager.name_to_node[e.get_db_identifier()] for c in reaction.catalysis for
+                                 e in c.entities]
+    input_nodes = [node_index_manager.name_to_node[e.get_db_identifier()] for e in reaction.inputs]
+    reaction_nodes = catalysis_enetities_nodes + input_nodes
+    nodes_id = [x.index for x in reaction_nodes if x.type == PROTEIN]
+    return nodes_id
+
+
+def get_labels_per_protein(node_index_manager: NodesIndexManager, reactions: List[Reaction], mapping: pd.DataFrame,
+                           min_labels=3):
+    protein_to_reactions = defaultdict(list)
+    for reaction in reactions:
+        for id_ in reaction_to_prots(reaction, node_index_manager):
+            protein_to_reactions[id_].append(reaction.reactome_id)
+    X = []
+    Y = []
+    for id_, reaction_list in protein_to_reactions.items():
+        X.append(node_index_manager.index_to_node[id_].vec)
+        Y.append(mapping.loc[reaction_list].sum(axis=0).values.astype(bool).astype(int))
+    X = np.stack(X)
+    Y = np.stack(Y)
+    Y = Y[:, Y.sum(axis=0) > min_labels]
+    mask = Y.sum(axis=1) > 0
+    X = X[mask]
+    Y = Y[mask]
+    X_train_val, X_test, y_train_val, y_test = train_test_split(X, Y, test_size=0.3, random_state=42)
+    X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=0.5, random_state=42)
+
+    return X_train, X_val, X_test, y_train, y_val, y_test
+
+
+def trans_dataset_to_xy(dataset, trans_model):
+    X = []
+    Y = []
     for batch_data, batch_mask, labels in dataset:
-        optimizer.zero_grad()
         batch_data = {k: v.to(device) for k, v in batch_data.items()}
         batch_mask = {k: v.to(device) for k, v in batch_mask.items()}
-        if use_trans:
-            emb = trans_model(batch_data, batch_mask, return_prot_emd=True)
-        else:
-            emb = batch_data[PROTEIN]
-
+        emb = trans_model(batch_data, batch_mask, return_prot_emd=True)
         emb = emb.reshape(-1, emb.shape[-1])
         protein_mask = batch_mask[PROTEIN]
         protein_mask = protein_mask.reshape(-1)
         emb = emb[protein_mask == 1]
-
-        output = model(emb)
         labels = torch.tensor(labels)[
             sum([[i] * int(x.item()) for i, x in zip(range(len(labels)), batch_mask[PROTEIN].sum(dim=1))], [])]
-        loss = loss_fn(output, labels.float().to(device))
-        real_labels.append(labels.cpu().numpy())
-        pred_labels.append(output.sigmoid().detach().cpu().numpy())
-
-        print(loss)
-        if is_train:
-            loss.backward()
-            optimizer.step()
-        real_labels = np.concatenate(real_labels)
-        pred_labels = np.concatenate(pred_labels)
-        mask_zero = real_labels.sum(axis=0) != 0
-        mask_one = real_labels.sum(axis=0) != len(real_labels)
-        mask = mask_zero & mask_one
-        real_labels = real_labels.T[mask].T
-        pred_labels = pred_labels.T[mask].T
-        if real_labels.shape[1] == 0:
-            print(f"No labels for {part}")
-            return 0
-        auc = roc_auc_score(real_labels, pred_labels, average="weighted")
-        auc_sample = roc_auc_score(real_labels, pred_labels, average="samples")
-        print(f"{part} AUC: {auc} AUC sample: {auc_sample}")
-        real_labels = []
-        pred_labels = []
-
-    return auc
+        labels = labels.cpu().numpy()
+        emb = emb.detach().cpu().numpy()
+        X.append(emb)
+        Y.append(labels)
+    return np.concatenate(X), np.concatenate(Y)
 
 
 if __name__ == "__main__":
@@ -176,20 +217,29 @@ if __name__ == "__main__":
     train_lines, val_lines, test_lines = get_reactions(args.gnn_sample, filter_untrain=filter_untrain, filter_dna=True,
                                                        filter_no_act=True)
     train_lines, val_lines, test_lines, bp_mapping = filter_by_labels(bp_mapping, train_lines, val_lines, test_lines, 3)
-    train_dataset = lines_to_dataset(train_lines, node_index_manager, bp_mapping, batch_size, shuffle=True,
-                                     type_to_vec_dim=TYPE_TO_VEC_DIM)
-    val_dataset = lines_to_dataset(val_lines, node_index_manager, bp_mapping, batch_size, shuffle=False,
-                                   type_to_vec_dim=TYPE_TO_VEC_DIM)
-    test_dataset = lines_to_dataset(test_lines, node_index_manager, bp_mapping, batch_size, shuffle=False,
-                                    type_to_vec_dim=TYPE_TO_VEC_DIM)
-    print(len(train_lines), len(train_dataset))
-
-    trans_model = MultiModalSeq(args.seq_size, TYPE_TO_VEC_DIM, use_trans=args.seq_use_trans).to(device).eval()
 
     if args.seq_use_trans:
+        trans_model = MultiModalSeq(args.seq_size, TYPE_TO_VEC_DIM, use_trans=args.seq_use_trans).to(device).eval()
         input_dim = trans_model.get_emb_size()
+        train_dataset = lines_to_dataset(train_lines, node_index_manager, bp_mapping, batch_size, shuffle=True,
+                                         type_to_vec_dim=TYPE_TO_VEC_DIM)
+        val_dataset = lines_to_dataset(val_lines, node_index_manager, bp_mapping, batch_size, shuffle=False,
+                                       type_to_vec_dim=TYPE_TO_VEC_DIM)
+        test_dataset = lines_to_dataset(test_lines, node_index_manager, bp_mapping, batch_size, shuffle=False,
+                                        type_to_vec_dim=TYPE_TO_VEC_DIM)
+
+        X_train, y_train = trans_dataset_to_xy(train_dataset, trans_model)
+        X_val, y_val = trans_dataset_to_xy(val_dataset, trans_model)
+        X_test, y_test = trans_dataset_to_xy(test_dataset, trans_model)
+
     else:
         input_dim = TYPE_TO_VEC_DIM[PROTEIN]
+        trans_model = None
+        X_train, X_val, X_test, y_train, y_val, y_test = get_labels_per_protein(node_index_manager,
+                                                                                train_lines + val_lines + test_lines,
+                                                                                bp_mapping)
+    print(X_train.shape, X_val.shape, X_test.shape)
+
     model = nn.Linear(input_dim, bp_mapping.shape[1]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     pos_weight = torch.tensor([bp_mapping.shape[0] / bp_mapping.sum().values]).to(device)
@@ -198,17 +248,17 @@ if __name__ == "__main__":
 
     best_score = 0
     best_prev_index = -1
-    epoch_args = dict(trans_model=trans_model, model=model, optimizer=optimizer, loss_fn=loss_fn,
-                      output_file=score_file, use_trans=args.seq_use_trans)
+    epoch_args = dict(model=model, optimizer=optimizer, loss_fn=loss_fn,
+                      output_file=score_file)
     for epoch in range(args.gnn_epochs):
         print(f"Epoch {epoch}")
-        run_epoch(**epoch_args, dataset=train_dataset, part="train")
-        epoch_score = run_epoch(**epoch_args, dataset=val_dataset, part="valid")
-        run_epoch(**epoch_args, dataset=test_dataset, part="test")
-
-        if epoch_score > best_score:
-            best_score = epoch_score
-            torch.save(model.state_dict(), f"{save_dir}/{epoch}.pt")
-            if best_prev_index != -1:
-                os.remove(f"{save_dir}/{best_prev_index}.pt")
-            best_prev_index = epoch
+        run_epoch(**epoch_args, X=X_train, y=y_train, part="train")
+        # epoch_score = run_epoch(**epoch_args, X=X_val, y=y_val, part="valid")
+        # run_epoch(**epoch_args, X=X_test, y=y_test, part="test")
+        #
+        # if epoch_score > best_score:
+        #     best_score = epoch_score
+        #     torch.save(model.state_dict(), f"{save_dir}/{epoch}.pt")
+        #     if best_prev_index != -1:
+        #         os.remove(f"{save_dir}/{best_prev_index}.pt")
+        #     best_prev_index = epoch
