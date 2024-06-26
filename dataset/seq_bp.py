@@ -249,7 +249,7 @@ if __name__ == "__main__":
     pos_weight = torch.tensor(pos_weight).to(device)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=pos_weight).to(device)
     save_dir, score_file = prepare_files(f'bp_{args.name}')
-
+    score_file = score_file.replace("bp", f"bp_{args.seq_use_trans}")
     best_score = 0
     best_prev_index = -1
     epoch_args = dict(model=model, optimizer=optimizer, loss_fn=loss_fn,
