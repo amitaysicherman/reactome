@@ -78,16 +78,19 @@ def reaction_to_nodes(reaction: Reaction, node_index_manager: NodesIndexManager)
 
 
 class ReactionSeq:
-    def __init__(self, nodes: List[NodeData]):
+    def __init__(self, nodes: List[NodeData], bp=None):
         self.data = get_empty_dict()
         for node in nodes:
             self.data[node.type].append(node)
         self.aug = REAL
+        self.bp = bp
 
     def get_copy(self):
         copy_data = ReactionSeq([])
         for type_ in self.data:
             copy_data.data[type_] = self.data[type_][:]
+        copy_data.aug = self.aug
+        copy_data.bp = self.bp
         return copy_data
 
     def get_augment_copy(self, node_index_manager: NodesIndexManager, type=""):
@@ -114,21 +117,22 @@ class ReactionSeq:
         return vec_types.items()
 
 
-def collate_fn(reaction_seqs: List[ReactionSeq]):
+def collate_fn(reaction_seqs: List[ReactionSeq], type_to_vec_dim, return_bp=False):
     data_by_type = get_empty_dict()
     labels = []
     augmentations = []
-
+    bp_list = []
     for reaction_seq in reaction_seqs:
         labels.append(reaction_seq.aug != REAL)
         augmentations.append(reaction_seq.aug)
+        bp_list.append(reaction_seq.bp)
         for type_, vecs in reaction_seq.to_vecs_types():
             data_by_type[type_].append(vecs)
     batch_data = {}
     batch_mask = {}
     for type_, vecs in data_by_type.items():
         max_len = max(len(v) for v in vecs)
-        padded_vecs = torch.zeros(len(vecs), max_len, TYPE_TO_VEC_DIM[type_])
+        padded_vecs = torch.zeros(len(vecs), max_len, type_to_vec_dim[type_])
         mask = torch.zeros(len(vecs), max_len)
         for i, vec_list in enumerate(vecs):
             mask[i, :len(vec_list)] = 1
@@ -137,10 +141,12 @@ def collate_fn(reaction_seqs: List[ReactionSeq]):
 
         batch_data[type_] = padded_vecs
         batch_mask[type_] = mask
+    if return_bp:
+        return batch_data, batch_mask, bp_list
     return batch_data, batch_mask, torch.tensor(labels), augmentations
 
 
-def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, shuffle, aug_factor):
+def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, shuffle, aug_factor, type_to_vec_dim):
     dataset = []
     for reaction in tqdm(lines):
         nodes = reaction_to_nodes(reaction, node_index_manager)
@@ -153,9 +159,9 @@ def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, s
     all_data = []
 
     for i in range(0, len(dataset), batch_size):
-        all_data.append(collate_fn(dataset[i:i + batch_size]))
+        all_data.append(collate_fn(dataset[i:i + batch_size], type_to_vec_dim))
     if len(dataset) % batch_size != 0:
-        all_data.append(collate_fn(dataset[-(len(dataset) % batch_size):]))
+        all_data.append(collate_fn(dataset[-(len(dataset) % batch_size):], type_to_vec_dim))
     return all_data
 
 
@@ -222,7 +228,6 @@ if __name__ == "__main__":
     batch_size = 2048
     lr = 0.001
     aug_factor = 5
-    epochs = 250
 
     args = get_args()
     node_index_manager: NodesIndexManager = get_from_args(args)
@@ -239,9 +244,12 @@ if __name__ == "__main__":
 
     train_lines, val_lines, test_lines = get_reactions(args.gnn_sample, filter_untrain=filter_untrain, filter_dna=True,
                                                        filter_no_act=True)
-    train_dataset = lines_to_dataset(train_lines, node_index_manager, batch_size, shuffle=True, aug_factor=aug_factor)
-    val_dataset = lines_to_dataset(val_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor)
-    test_dataset = lines_to_dataset(test_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor)
+    train_dataset = lines_to_dataset(train_lines, node_index_manager, batch_size, shuffle=True, aug_factor=aug_factor,
+                                     type_to_vec_dim=TYPE_TO_VEC_DIM)
+    val_dataset = lines_to_dataset(val_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor,
+                                   type_to_vec_dim=TYPE_TO_VEC_DIM)
+    test_dataset = lines_to_dataset(test_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor,
+                                    type_to_vec_dim=TYPE_TO_VEC_DIM)
     print(len(train_lines), len(train_dataset))
 
     model = MultiModalSeq(args.seq_size, TYPE_TO_VEC_DIM, use_trans=args.seq_use_trans).to(device)
@@ -250,11 +258,15 @@ if __name__ == "__main__":
     save_dir, score_file = prepare_files(f'seq_{args.name}')
 
     best_score = 0
+    best_prev_index = -1
     for epoch in range(args.gnn_epochs):
         run_epoch(model, optimizer, loss_fn, train_dataset, "train", score_file)
-        apoch_score = run_epoch(model, optimizer, loss_fn, val_dataset, "valid", score_file)
+        epoch_score = run_epoch(model, optimizer, loss_fn, val_dataset, "valid", score_file)
         run_epoch(model, optimizer, loss_fn, test_dataset, "test", score_file)
-        if apoch_score > best_score:
-            best_score = apoch_score
+        if epoch_score > best_score:
+            best_score = epoch_score
             torch.save(model.state_dict(), f"{save_dir}/{epoch}.pt")
+            if best_prev_index != -1:
+                os.remove(f"{save_dir}/{best_prev_index}.pt")
+            best_prev_index = epoch
     print_best_results(score_file)

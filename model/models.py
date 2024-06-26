@@ -10,7 +10,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 class MultiModalSeq(nn.Module):
-    def __init__(self, size, type_to_vec_dim: Dict[str, int], use_trans):
+    def __init__(self, size, type_to_vec_dim: Dict[str, int], use_trans, output_dim=1):
         super(MultiModalSeq, self).__init__()
         self.d_types = [PROTEIN, MOLECULE, TEXT]
         if size == 's':
@@ -24,15 +24,16 @@ class MultiModalSeq(nn.Module):
             num_layers = 4
         else:
             raise ValueError(f"Invalid size: {size}")
+        self.emb_dim=emd_dim
         self.t = nn.ModuleDict({k: nn.Linear(type_to_vec_dim[k], emd_dim) for k in self.d_types})
-        self.last_lin = nn.Linear(emd_dim, 1)
+        self.last_lin = nn.Linear(emd_dim, output_dim)
         self.use_trans = use_trans
         if use_trans:
             encoder_layer = nn.TransformerEncoderLayer(d_model=emd_dim, nhead=2, dim_feedforward=emd_dim * 2,
                                                        batch_first=True)
             self.trans = nn.TransformerEncoder(encoder_layer, num_layers=num_layers)
 
-    def forward(self, batch_data: Dict[str, torch.Tensor], batch_mask: Dict[str, torch.Tensor], return_emd=False):
+    def forward(self, batch_data: Dict[str, torch.Tensor], batch_mask: Dict[str, torch.Tensor], return_prot_emd=False):
         all_transformed_data = []
         all_masks = []
 
@@ -48,8 +49,16 @@ class MultiModalSeq(nn.Module):
 
         if self.use_trans:
             concatenated_data = self.trans(concatenated_data, src_key_padding_mask=concatenated_mask.squeeze(-1) == 0)
-        if return_emd:
-            return concatenated_data
+        if return_prot_emd:
+            assert self.d_types[0] == PROTEIN
+            n_proteins = batch_data[PROTEIN].shape[1]
+            proteins_emd = concatenated_data[:, :n_proteins, :]
+            proteins_emd = proteins_emd.reshape(-1, proteins_emd.shape[-1])
+            protein_mask = concatenated_mask[:, :n_proteins, :]
+            protein_mask = protein_mask.reshape(-1, protein_mask.shape[-1])
+            protein_emd_filtered = proteins_emd[protein_mask.squeeze(-1) == 1]
+            return protein_emd_filtered
+
         # Apply mask
         masked_data = concatenated_data * concatenated_mask
         sum_masked_data = masked_data.sum(dim=1)
@@ -59,6 +68,9 @@ class MultiModalSeq(nn.Module):
 
         output = self.last_lin(mean_masked_data)
         return output
+
+    def get_emb_size(self):
+        return self.emb_dim
 
 
 class EmbModel(nn.Module):
