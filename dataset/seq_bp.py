@@ -84,6 +84,10 @@ def filter_part(mapping, lines):
 
 
 def filter_by_labels(bp_mapping, train_lines, val_lines, test_lines, min_per_label):
+    train_lines = [x for x in train_lines if x.reactome_id in bp_mapping.index]
+    val_lines = [x for x in val_lines if x.reactome_id in bp_mapping.index]
+    test_lines = [x for x in test_lines if x.reactome_id in bp_mapping.index]
+
     column_sums = bp_mapping.loc[[x.reactome_id for x in train_lines]].sum()
 
     filtered_columns = column_sums[column_sums >= min_per_label].index
@@ -96,7 +100,7 @@ def filter_by_labels(bp_mapping, train_lines, val_lines, test_lines, min_per_lab
     return train_lines, val_lines, test_lines, bp_mapping
 
 
-def run_epoch(trans_model, model, optimizer, loss_fn, dataset, part, output_file=""):
+def run_epoch(trans_model, model, optimizer, loss_fn, dataset, part, use_trans, output_file=""):
     is_train = part == "train"
     if is_train:
         model.train()
@@ -130,10 +134,11 @@ def run_epoch(trans_model, model, optimizer, loss_fn, dataset, part, output_file
     if real_labels.shape[1] == 0:
         print(f"No labels for {part}")
         return 0
-    auc=roc_auc_score(real_labels, pred_labels, average="weighted")
+    auc = roc_auc_score(real_labels, pred_labels, average="weighted")
     auc_sample = roc_auc_score(real_labels, pred_labels, average="samples")
     print(f"{part} AUC: {auc} AUC sample: {auc_sample}")
     return auc
+
 
 if __name__ == "__main__":
     from common.args_manager import get_args
@@ -168,6 +173,7 @@ if __name__ == "__main__":
     print(len(train_lines), len(train_dataset))
 
     trans_model = MultiModalSeq(args.seq_size, TYPE_TO_VEC_DIM, use_trans=args.seq_use_trans).to(device).eval()
+    # if args.seq_use_trans:
     model = nn.Linear(trans_model.get_emb_size(), bp_mapping.shape[1]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     pos_weight = torch.tensor([bp_mapping.shape[0] / bp_mapping.sum().values]).to(device)
@@ -177,7 +183,7 @@ if __name__ == "__main__":
     best_score = 0
     best_prev_index = -1
     epoch_args = dict(trans_model=trans_model, model=model, optimizer=optimizer, loss_fn=loss_fn,
-                      output_file=score_file)
+                      output_file=score_file, use_trans=args.seq_use_trans, node_index_manager=node_index_manager)
     for epoch in range(args.gnn_epochs):
         print(f"Epoch {epoch}")
         run_epoch(**epoch_args, dataset=train_dataset, part="train")
