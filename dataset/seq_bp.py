@@ -117,6 +117,7 @@ def run_epoch(model, optimizer, loss_fn, X, y, part, output_file=""):
     y = torch.tensor(y).to(device)
     output = model(X)
     loss = loss_fn(output, y.float())
+    print(loss.item())
     real_labels.append(y.cpu().numpy())
     pred_labels.append(output.sigmoid().detach().cpu().numpy())
 
@@ -167,8 +168,8 @@ def get_labels_per_protein(node_index_manager: NodesIndexManager, reactions: Lis
     mask = Y.sum(axis=1) > 0
     X = X[mask]
     Y = Y[mask]
-    X_train_val, X_test, y_train_val, y_test = train_test_split(X, Y, test_size=0.3, random_state=42)
-    X_train, X_val, y_train, y_val = train_test_split(X_train_val, y_train_val, test_size=0.5, random_state=42)
+    X_train, X_val_test, y_train, y_val_test = train_test_split(X, Y, test_size=0.3, random_state=42)
+    X_val, X_test, y_val, y_test = train_test_split(X_val_test, y_val_test, test_size=0.5, random_state=42)
 
     return X_train, X_val, X_test, y_train, y_val, y_test
 
