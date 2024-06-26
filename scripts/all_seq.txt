@@ -7,6 +7,14 @@
 --name fuse_s_1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size s
 --name recon_s_1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size s
 
+--name inv_m_1 --fuse_name inv --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name inv-no-emd_m_1 --fuse_name inv-no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 1 --seq_size m
+--name no-emd_m_1 --fuse_name no-emd --gnn_pretrained_method 2 --fuse_pretrained_start 0 --seq_use_trans 1 --seq_size m
+--name all-to-prot_m_1 --fuse_name all-to-prot --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name all-to-all_m_1 --fuse_name all-to-all --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name pre_m_1 --fuse_name no --gnn_pretrained_method 1 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name fuse_m_1 --fuse_name fuse --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
+--name recon_m_1 --fuse_name recon --gnn_pretrained_method 2 --fuse_pretrained_start 1 --seq_use_trans 1 --seq_size m
 
 confs=['inv','inv-no-emd','no-emd','all-to-prot','all-to-all','no','pre','fuse','recon']
 size=['s','m','l']
