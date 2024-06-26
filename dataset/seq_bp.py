@@ -240,7 +240,7 @@ if __name__ == "__main__":
                                                                                 bp_mapping)
     print(X_train.shape, X_val.shape, X_test.shape)
 
-    model = nn.Linear(input_dim, bp_mapping.shape[1]).to(device)
+    model = nn.Linear(input_dim, y_test.shape[-1]).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     pos_weight = torch.tensor([bp_mapping.shape[0] / bp_mapping.sum().values]).to(device)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=pos_weight).to(device)
