@@ -17,7 +17,7 @@ UNKNOWN_ENTITY_TYPE = UNKNOWN_ENTITY_TYPE
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
-
+random.seed(42)
 class NodeData:
     def __init__(self, index, name, type_, vec=None, have_seq=True):
         self.index = index
@@ -53,7 +53,6 @@ class NodesIndexManager:
 
             if dt in EMBEDDING_DATA_TYPES:
                 if pretrained_method == NO_PRETRAINED_EMD:
-                    random.seed(42)
                     vectors = np.stack([np.random.rand(TYPE_TO_VEC_DIM[dt]) for _ in range(len(lines))])
                 else:
                     pretrained_vec_file = f'{item_path}/{dt}_vec.npy'

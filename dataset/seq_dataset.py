@@ -17,7 +17,7 @@ from common.path_manager import scores_path
 import os
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-
+random.seed(42)
 
 class EpochScores:
     def __init__(self, name, output_file=""):
