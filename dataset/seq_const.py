@@ -178,12 +178,12 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file="", alpha=0.
         y_pred.extend(torch.sigmoid(output).detach().cpu().numpy().tolist())
 
         pair_loss = 0
-        for i in range(len(hidden_states[:-1])):
-            pair_loss += hidden_states_to_pairs(hidden_states[i], concatenated_mask, replace_indexes)
+        # for i in range(len(hidden_states[:-1])):
+        #     pair_loss += hidden_states_to_pairs(hidden_states[i], concatenated_mask, replace_indexes)
         loss = loss_fn(output, labels.float().unsqueeze(-1).to(device))
         total_loss = (1 - alpha) * loss + alpha * pair_loss
         all_auc = roc_auc_score(y_real, y_pred)
-        print(f"{part} AUC: {all_auc * 100:.2f} Loss: {total_loss.item():.3f} Loss: {loss.item():.3f} Pair Loss: {pair_loss.item():.3f}")
+        print(f"{part} AUC: {all_auc * 100:.2f} Loss: {total_loss.item():.3f} Loss: {loss.item():.3f} Pair Loss: {pair_loss}")
         if is_train:
             total_loss.backward()
             optimizer.step()
