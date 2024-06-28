@@ -17,6 +17,7 @@ from common.path_manager import scores_path
 from dataset.seq_dataset import reaction_to_nodes
 import os
 from typing import Dict
+import itertools
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 random.seed(42)
@@ -135,33 +136,35 @@ def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, s
     return all_data
 
 
-def hidden_states_to_pairs(emb, mask, replace_indexes):
+def hidden_states_to_pairs(emb, mask, replace_indexes, k=4):
     input1 = []
     input2 = []
     target = []
-    selected_samples = []
-    for i in range(len(emb)):
-        for j in range(emb.shape[1]):
-            if mask[i, j] == 0:
-                continue
-            for k in range(emb.shape[1]):
-                if mask[i, k] == 0:
-                    continue
-                selected_samples.append((i, j, k))
+    # selected_samples = []
+    mask = (mask == 1).squeeze(-1)
 
-    selected_samples = random.choices(selected_samples, k=len(emb)*3)
-    for i, j, k in selected_samples:
-        label = 0 if j in replace_indexes[i] or k in replace_indexes[i] else -1
-        input1.append(emb[i, j])
-        input2.append(emb[i, k])
-        target.append(label)
+    for index_in_batch, replace_index in enumerate(replace_indexes):
+
+        indexes_in_row = random.choices(range(mask[index_in_batch].sum().item()), k=k)
+        if len(replace_index) > 1:
+            replace_index = replace_index[0]  # TODO handle multiple replace indexes
+            if replace_index not in indexes_in_row:
+                indexes_in_row[0] = replace_index
+        emb_index = emb[index_in_batch, mask[index_in_batch]][indexes_in_row]
+        for i, j in itertools.combinations(range(k), 2):
+            if i == j:
+                continue
+            input1.append(emb_index[i])
+            input2.append(emb_index[j])
+            target.append(1 if i == replace_index or j == replace_index else 0)  # TODO handle multiple replace indexes
+
     input1 = torch.stack(input1)
     input2 = torch.stack(input2)
     target = torch.tensor(target).to(device)
     return nn.functional.cosine_embedding_loss(input1, input2, target)
 
 
-def run_epoch(model, optimizer, loss_fn, dataset, part, output_file="", alpha=0.5):
+def run_epoch(model, optimizer, loss_fn, dataset, part, output_file="", k=4, alpha=0.3, use_last_hidden=False):
     is_train = part == "train"
     y_real = []
     y_pred = []
@@ -178,25 +181,35 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file="", alpha=0.
         y_pred.extend(torch.sigmoid(output).detach().cpu().numpy().tolist())
 
         pair_loss = 0
-        # for i in range(len(hidden_states[:-1])):
-        #     pair_loss += hidden_states_to_pairs(hidden_states[i], concatenated_mask, replace_indexes)
+        if not use_last_hidden:
+            hidden_states = hidden_states[-1:]
+        for i in range(len(hidden_states)):
+            pair_loss += hidden_states_to_pairs(hidden_states[i], concatenated_mask, replace_indexes, k=k)
         loss = loss_fn(output, labels.float().unsqueeze(-1).to(device))
         total_loss = (1 - alpha) * loss + alpha * pair_loss
-        all_auc = roc_auc_score(y_real, y_pred)
-        print(f"{part} AUC: {all_auc * 100:.2f} Loss: {total_loss.item():.3f} Loss: {loss.item():.3f} Pair Loss: {pair_loss}")
+        print(f"Loss: {total_loss.item():.3f} Loss: {loss.item():.3f} Pair Loss: {pair_loss}")
         if is_train:
             total_loss.backward()
             optimizer.step()
-        return all_auc
+    all_auc = roc_auc_score(y_real, y_pred)
+    print(f"{part} AUC: {all_auc * 100:.2f}")
+    if output_file:
+        with open(output_file, "a") as f:
+            f.write(f"{part} AUC: {all_auc * 100:.2f}\n")
+    return all_auc
 
 
 if __name__ == "__main__":
     from common.args_manager import get_args
 
+    args = get_args()
+
     batch_size = 50
     lr = 0.001
-    aug_factor = 5
-    args = get_args()
+    aug_factor = args.seq_aug_factor
+    alpha = args.seq_a
+    use_last_hidden = args.seq_last
+    k = args.seq_k
     node_index_manager: NodesIndexManager = get_from_args(args)
 
     TYPE_TO_VEC_DIM = {PROTEIN: node_index_manager.index_to_node[node_index_manager.protein_indexes[0]].vec.shape[0],
@@ -222,12 +235,15 @@ if __name__ == "__main__":
     model = MultiModalSeqHidden(TYPE_TO_VEC_DIM).to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / aug_factor]).to(device))
-    save_dir, score_file = prepare_files(f'seq_{args.name}')
+    save_dir, score_file = prepare_files(f'seq_const_{args.name}')
 
     best_score = 0
     best_prev_index = -1
+    share_epoch_args = {"model": model, "optimizer": optimizer, "loss_fn": loss_fn, "k": k, "alpha": alpha,
+                        "use_last_hidden": use_last_hidden, "output_file": score_file}
     for epoch in range(args.gnn_epochs):
         print(epoch)
-        run_epoch(model, optimizer, loss_fn, train_dataset, "train", score_file)
-        run_epoch(model, optimizer, loss_fn, val_dataset, "val", score_file)
-        run_epoch(model, optimizer, loss_fn, test_dataset, "test", score_file)
+        run_epoch(**share_epoch_args, dataset=train_dataset, part="train")
+        with torch.no_grad():
+            score = run_epoch(**share_epoch_args, dataset=val_dataset, part="val")
+            run_epoch(**share_epoch_args, dataset=test_dataset, part="test")
