@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     args = get_args()
 
-    batch_size = 50
+    batch_size = 128
     lr = 0.001
     aug_factor = args.seq_aug_factor
     alpha = args.seq_a
