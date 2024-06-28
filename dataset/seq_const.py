@@ -188,7 +188,6 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file="", k=4, alp
             pair_loss += hidden_states_to_pairs(hidden_states[i], concatenated_mask, replace_indexes, k=k)
         loss = loss_fn(output, labels.float().unsqueeze(-1).to(device))
         total_loss = (1 - alpha) * loss + alpha * pair_loss
-        print(f"Loss: {total_loss.item():.3f} Loss: {loss.item():.3f} Pair Loss: {pair_loss}")
         if is_train:
             total_loss.backward()
             optimizer.step()
