@@ -210,7 +210,7 @@ if __name__ == "__main__":
     alphas = args.seq_a
     hiddens_bool = args.seq_hidden
     assert len(hiddens_bool) == 3
-    assert sum(hiddens_bool) == len(alphas)
+    assert sum(hiddens_bool) == len([x for x in alphas if x!=0])
     k = args.seq_k
     node_index_manager: NodesIndexManager = get_from_args(args)
 
