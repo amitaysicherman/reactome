@@ -77,6 +77,7 @@ class ReactionSeqInd:
         self.replace_indexes = []
 
     def get_augment_copy(self, node_index_manager: NodesIndexManager):
+        #TODO : if change to more then one replace index, need to change other parts of the code
         fake_index = random.choice(range(len(self.nodes)))
         entity_index = self.nodes[fake_index].index
         new_index = node_index_manager.sample_entity(entity_index, "random", self.nodes[fake_index].type)
