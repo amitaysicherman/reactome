@@ -1,0 +1,4 @@
+--name 11015  --seq_hidden 1 1 0 --seq_a 0.15 0.15
+--name 1111  --seq_hidden 1 1 0 --seq_a 0.1 0.1
+--name 103 --seq_hidden 1 0 0 --seq_a 0.3
+--name 0103 --seq_hidden 0 1 0 --seq_a 0.3

@@ -77,7 +77,7 @@ class ReactionSeqInd:
         self.replace_indexes = []
 
     def get_augment_copy(self, node_index_manager: NodesIndexManager):
-        #TODO : if change to more then one replace index, need to change other parts of the code
+        # TODO : if change to more then one replace index, need to change other parts of the code
         fake_index = random.choice(range(len(self.nodes)))
         entity_index = self.nodes[fake_index].index
         new_index = node_index_manager.sample_entity(entity_index, "random", self.nodes[fake_index].type)
@@ -165,7 +165,7 @@ def hidden_states_to_pairs(emb, mask, replace_indexes, k=4):
     return nn.functional.cosine_embedding_loss(input1, input2, target)
 
 
-def run_epoch(model, optimizer, loss_fn, dataset, part, output_file="", k=4, alpha=0.3, use_last_hidden=False):
+def run_epoch(model, optimizer, loss_fn, dataset, part, output_file, k, alphas, hiddens_bool):
     is_train = part == "train"
     y_real = []
     y_pred = []
@@ -182,12 +182,12 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file="", k=4, alp
         y_pred.extend(torch.sigmoid(output).detach().cpu().numpy().tolist())
 
         pair_loss = 0
-        if not use_last_hidden:
-            hidden_states = hidden_states[-1:]
-        for i in range(len(hidden_states)):
-            pair_loss += hidden_states_to_pairs(hidden_states[i], concatenated_mask, replace_indexes, k=k)
+        hidden_states = [hidden_states[i] for i in range(len(hidden_states)) if hiddens_bool[i]]
+        for alpha, hidden in zip(alphas, hidden_states):
+            pair_loss += alpha * hidden_states_to_pairs(hidden, concatenated_mask, replace_indexes, k=k)
         loss = loss_fn(output, labels.float().unsqueeze(-1).to(device))
-        total_loss = (1 - alpha) * loss + alpha * pair_loss
+        alpha_total = sum(alphas)
+        total_loss = (1 - alpha_total) * loss + pair_loss
         if is_train:
             total_loss.backward()
             optimizer.step()
@@ -207,8 +207,10 @@ if __name__ == "__main__":
     batch_size = 128
     lr = 0.001
     aug_factor = args.seq_aug_factor
-    alpha = args.seq_a
-    use_last_hidden = args.seq_last
+    alphas = args.seq_a
+    hiddens_bool = args.seq_hidden
+    assert len(hiddens_bool) == 3
+    assert sum(hiddens_bool) == len(alphas)
     k = args.seq_k
     node_index_manager: NodesIndexManager = get_from_args(args)
 
@@ -239,8 +241,8 @@ if __name__ == "__main__":
 
     best_score = 0
     best_prev_index = -1
-    share_epoch_args = {"model": model, "optimizer": optimizer, "loss_fn": loss_fn, "k": k, "alpha": alpha,
-                        "use_last_hidden": use_last_hidden, "output_file": score_file}
+    share_epoch_args = {"model": model, "optimizer": optimizer, "loss_fn": loss_fn, "k": k, "alphas": alphas,
+                        "hiddens_bool": hiddens_bool, "output_file": score_file}
     for epoch in range(args.gnn_epochs):
         print(epoch)
         run_epoch(**share_epoch_args, dataset=train_dataset, part="train")
