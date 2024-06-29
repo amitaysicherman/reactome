@@ -1,18 +1,14 @@
 import random
 from typing import List
 from collections import defaultdict
-import numpy as np
 import torch
 import torch.nn as nn
 from sklearn.metrics import roc_auc_score
 from tqdm import tqdm
-import pandas as pd
-from common.data_types import REAL, PROTEIN, TEXT, MOLECULE
-from common.data_types import Reaction
+from common.data_types import PROTEIN, TEXT, MOLECULE
 from common.utils import prepare_files
 from dataset.dataset_builder import get_reactions, add_if_not_none
 from dataset.index_manger import NodesIndexManager, NodeData, get_from_args
-from model.models import MultiModalSeq
 from common.path_manager import scores_path
 from dataset.seq_dataset import reaction_to_nodes
 import os
@@ -137,7 +133,7 @@ def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, s
     return all_data
 
 
-def hidden_states_to_pairs(emb, mask, replace_indexes, k=4):
+def hidden_states_to_pairs(emb, mask, replace_indexes, k, n_protein, all_to_prot=False):
     input1 = []
     input2 = []
     target = []
@@ -146,16 +142,27 @@ def hidden_states_to_pairs(emb, mask, replace_indexes, k=4):
 
     for index_in_batch, replace_index in enumerate(replace_indexes):
 
-        indexes_in_row = random.choices(range(mask[index_in_batch].sum().item()), k=k)
+        k = min(k, mask[index_in_batch].sum().item())
+        indexes_in_row = random.sample(range(mask[index_in_batch].sum().item()), k)
         if len(replace_index) > 1:
             replace_index = replace_index[0]  # TODO handle multiple replace indexes
             if replace_index not in indexes_in_row:
                 indexes_in_row[0] = replace_index
         emb_index = emb[index_in_batch, mask[index_in_batch]][indexes_in_row]
+
+        if all_to_prot:
+            proteins_in_row = mask[index_in_batch][:n_protein].nonzero().max().item()
+
         for i, j in itertools.combinations(range(k), 2):
+
             if i == j:
                 continue
-            input1.append(emb_index[i])
+            if all_to_prot:
+                if i >= proteins_in_row:
+                    continue
+                input1.append(emb_index[i].detach())  # all to protein proteins
+            else:
+                input1.append(emb_index[i])
             input2.append(emb_index[j])
             target.append(1 if i == replace_index or j == replace_index else 0)  # TODO handle multiple replace indexes
 
@@ -165,7 +172,7 @@ def hidden_states_to_pairs(emb, mask, replace_indexes, k=4):
     return nn.functional.cosine_embedding_loss(input1, input2, target)
 
 
-def run_epoch(model, optimizer, loss_fn, dataset, part, output_file, k, alphas):
+def run_epoch(model, optimizer, loss_fn, dataset, part, output_file, k, alphas, all_to_prot):
     is_train = part == "train"
     y_real = []
     y_pred = []
@@ -183,10 +190,11 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file, k, alphas):
 
         pair_loss = 0
         assert len(alphas) == len(hidden_states)
-
+        n_protein = batch_data[PROTEIN].shape[1]
         for alpha, hidden in zip(alphas, hidden_states):
             if alpha != 0:
-                pair_loss += alpha * hidden_states_to_pairs(hidden, concatenated_mask, replace_indexes, k=k)
+                pair_loss += alpha * hidden_states_to_pairs(hidden, concatenated_mask, replace_indexes, k=k,
+                                                            n_protein=n_protein, all_to_prot=all_to_prot)
         loss = loss_fn(output, labels.float().unsqueeze(-1).to(device))
         alpha_total = sum(alphas)
         total_loss = (1 - alpha_total) * loss + pair_loss
@@ -238,13 +246,23 @@ if __name__ == "__main__":
     loss_fn = nn.BCEWithLogitsLoss(pos_weight=torch.Tensor([1 / aug_factor]).to(device))
     save_dir, score_file = prepare_files(f'seq_const_{args.name}')
 
+    all_summery_file = os.path.join(scores_path, "seq_const_all.csv")
+
     best_score = 0
+    best_test_score = 0
     best_prev_index = -1
     share_epoch_args = {"model": model, "optimizer": optimizer, "loss_fn": loss_fn, "k": k, "alphas": alphas,
-                        "output_file": score_file}
+                        "output_file": score_file, "all_to_prot": args.all_to_prot}
     for epoch in range(args.gnn_epochs):
         print(epoch)
-        run_epoch(**share_epoch_args, dataset=train_dataset, part="train")
+        train_score = run_epoch(**share_epoch_args, dataset=train_dataset, part="train")
         with torch.no_grad():
-            score = run_epoch(**share_epoch_args, dataset=val_dataset, part="val")
-            run_epoch(**share_epoch_args, dataset=test_dataset, part="test")
+            val_score = run_epoch(**share_epoch_args, dataset=val_dataset, part="val")
+            test_score = run_epoch(**share_epoch_args, dataset=test_dataset, part="test")
+        if val_score > best_score:
+            best_score = val_score
+            best_test_score = test_score
+            best_prev_index = epoch
+            # torch.save(model.state_dict(), os.path.join(save_dir, "best_model"))
+        with open(all_summery_file, "a") as f:
+            f.write(f"{best_score * 100:.2f},{best_test_score * 100:.2f},{best_prev_index}\n")
