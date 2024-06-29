@@ -150,16 +150,16 @@ def hidden_states_to_pairs(emb, mask, replace_indexes, k, n_protein, all_to_prot
                 indexes_in_row[0] = replace_index
         emb_index = emb[index_in_batch, mask[index_in_batch]][indexes_in_row]
 
-        if all_to_prot:
-            proteins_in_row = mask[index_in_batch][:n_protein].nonzero().max().item()
+        # if all_to_prot:
+        #     proteins_in_row = mask[index_in_batch][:n_protein].nonzero().max().item()
 
         for i, j in itertools.combinations(range(k), 2):
 
             if i == j:
                 continue
             if all_to_prot:
-                if i >= proteins_in_row:
-                    continue
+                # if i >= proteins_in_row:
+                #     continue
                 input1.append(emb_index[i].detach())  # all to protein proteins
             else:
                 input1.append(emb_index[i])
