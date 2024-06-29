@@ -264,5 +264,5 @@ if __name__ == "__main__":
             best_test_score = test_score
             best_prev_index = epoch
             # torch.save(model.state_dict(), os.path.join(save_dir, "best_model"))
-        with open(all_summery_file, "a") as f:
-            f.write(f"{best_score * 100:.2f},{best_test_score * 100:.2f},{best_prev_index}\n")
+    with open(all_summery_file, "a") as f:
+        f.write(f"{best_score * 100:.2f},{best_test_score * 100:.2f},{best_prev_index}\n")
