@@ -41,8 +41,7 @@ def get_args():
     parser.add_argument("--seq_use_trans", type=int, default=0)
     parser.add_argument("--seq_size", type=str, default="s", choices=['s', 'm', 'l'])
 
-    parser.add_argument("--seq_a", type=float, default=[0.15, 0.15], nargs='+')
-    parser.add_argument("--seq_hidden", type=int, default=[1, 1, 0], nargs='+')
+    parser.add_argument("--seq_a", type=float, default=[0.15, 0.15,0], nargs='+')
     parser.add_argument("--seq_k", type=int, default=4)
     parser.add_argument("--seq_aug_factor", type=int, default=5)
 

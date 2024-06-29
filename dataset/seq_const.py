@@ -165,7 +165,7 @@ def hidden_states_to_pairs(emb, mask, replace_indexes, k=4):
     return nn.functional.cosine_embedding_loss(input1, input2, target)
 
 
-def run_epoch(model, optimizer, loss_fn, dataset, part, output_file, k, alphas, hiddens_bool):
+def run_epoch(model, optimizer, loss_fn, dataset, part, output_file, k, alphas):
     is_train = part == "train"
     y_real = []
     y_pred = []
@@ -182,9 +182,11 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file, k, alphas, 
         y_pred.extend(torch.sigmoid(output).detach().cpu().numpy().tolist())
 
         pair_loss = 0
-        hidden_states = [hidden_states[i] for i in range(len(hidden_states)) if hiddens_bool[i]]
+        assert len(alphas) == len(hidden_states)
+
         for alpha, hidden in zip(alphas, hidden_states):
-            pair_loss += alpha * hidden_states_to_pairs(hidden, concatenated_mask, replace_indexes, k=k)
+            if alpha != 0:
+                pair_loss += alpha * hidden_states_to_pairs(hidden, concatenated_mask, replace_indexes, k=k)
         loss = loss_fn(output, labels.float().unsqueeze(-1).to(device))
         alpha_total = sum(alphas)
         total_loss = (1 - alpha_total) * loss + pair_loss
@@ -208,9 +210,6 @@ if __name__ == "__main__":
     lr = 0.001
     aug_factor = args.seq_aug_factor
     alphas = args.seq_a
-    hiddens_bool = args.seq_hidden
-    assert len(hiddens_bool) == 3
-    assert sum(hiddens_bool) == len([x for x in alphas if x!=0])
     k = args.seq_k
     node_index_manager: NodesIndexManager = get_from_args(args)
 
@@ -242,7 +241,7 @@ if __name__ == "__main__":
     best_score = 0
     best_prev_index = -1
     share_epoch_args = {"model": model, "optimizer": optimizer, "loss_fn": loss_fn, "k": k, "alphas": alphas,
-                        "hiddens_bool": hiddens_bool, "output_file": score_file}
+                        "output_file": score_file}
     for epoch in range(args.gnn_epochs):
         print(epoch)
         run_epoch(**share_epoch_args, dataset=train_dataset, part="train")
