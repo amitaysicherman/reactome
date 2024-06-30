@@ -183,7 +183,7 @@ if __name__ == '__main__':
     from common.args_manager import get_args
 
     args = get_args()
-    save_dir, scores_file = prepare_files(f'fuse-trip_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
+    save_dir, scores_file = prepare_files(f'fuse_trip_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD, fuse_name="no")
     train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=False,
                                                                          filter_dna=True,
@@ -214,6 +214,6 @@ if __name__ == '__main__':
             best_valid_auc = valid_auc
             best_test_auc = test_auc
             best_index = epoch
-            torch.save(model.state_dict(), f"{save_dir}/model.pt")
-    with open(os.path.join(scores_path, "fuse_trip_all"), "a") as f:
+            torch.save(model.state_dict(), f"{save_dir}/fuse_trip_model.pt")
+    with open(os.path.join(scores_path, "fuse_trip_all.csv"), "a") as f:
         f.write(f"{best_valid_auc:.3f},{best_test_auc:.3f},{best_index}\n")
