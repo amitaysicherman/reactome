@@ -17,7 +17,7 @@ def get_args():
     parser.add_argument("--fuse_hidden_dim", type=int, default=512)
     parser.add_argument("--fuse_recon", type=int, default=0)
     parser.add_argument("--fuse_all_to_one", type=str, default="")
-    parser.add_argument("--fuse_self_move", type=str, default=0)
+    parser.add_argument("--fuse_self_move", type=str, default=1)
 
     parser.add_argument("--fuse_epochs", type=int, default=50)
     parser.add_argument("--fuse_name", type=str, default="")
