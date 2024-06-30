@@ -168,7 +168,7 @@ if __name__ == '__main__':
     from common.args_manager import get_args
 
     args = get_args()
-    save_dir, scores_file = prepare_files(f'fuse_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
+    save_dir, scores_file = prepare_files(f'fuse-trip_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD, fuse_name="no")
     train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=False,
                                                                          filter_dna=True,
