@@ -5,7 +5,7 @@ from typing import Dict
 from common.utils import TYPE_TO_VEC_DIM, load_fuse_model
 from common.path_manager import item_path
 from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, EMBEDDING_DATA_TYPES, LOCATION, \
-    DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS, NO_PRETRAINED_EMD, PRETRAINED_EMD, PRETRAINED_EMD_FUSE
+    DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS, NO_PRETRAINED_EMD, PRETRAINED_EMD, PRETRAINED_EMD_FUSE,MOLECULE,TEXT
 from model.models import apply_model
 from functools import lru_cache
 import os
@@ -101,6 +101,7 @@ class NodesIndexManager:
         texts = [node for node in self.nodes if node.type == NodeTypes.text]
         self.text_indexes = [node.index for node in texts]
         self.text_array = np.array([node.vec for node in texts])
+        self.type_to_indexes={PROTEIN: self.protein_indexes, MOLECULE: self.molecule_indexes, TEXT: self.text_indexes}
 
     @lru_cache(maxsize=4000)
     def get_probs(self, what, index):
