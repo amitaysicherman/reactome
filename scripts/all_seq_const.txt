@@ -7,3 +7,5 @@
 --name 5|0|0 --seq_a 5 0 0
 --name 0|5|0 --seq_a 0 5 0
 --name 0|0|5 --seq_a 0 0 5
+--name pre --seq_a 0 0 0
+--name pre-all-to-prot --seq_a 0 0 0 --fuse_name all-to-prot --gnn_pretrained_method 2
