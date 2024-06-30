@@ -102,7 +102,7 @@ class PairsDataset(Dataset):
             b_type = nodes_index_manager.index_to_node[b].type
             self.data.append((a, b, 1))
             self.data.append((b, a, 1))
-            for i in range(neg_count):
+            for j in range(neg_count):
                 self.data.append((*self.sample_neg_pair(a_=a, other_dtype=b_type), -1))
                 self.data.append((*self.sample_neg_pair(b_=b, other_dtype=a_type), -1))
                 self.data.append((*self.sample_neg_pair(a_=b, other_dtype=a_type), -1))
