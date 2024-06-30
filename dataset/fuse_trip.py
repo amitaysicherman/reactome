@@ -46,7 +46,6 @@ def triples_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexMan
     triples = []  # anchor, positive, negative
     types = []
     for e1, e2 in combinations(elements, 2):
-
         for i in range(per_sample_count):
             type_1 = nodes_index_manager.index_to_node[e1].type
             type_2 = nodes_index_manager.index_to_node[e2].type
@@ -100,8 +99,8 @@ class TriplesDataset:
             yield self[i]
 
 
-def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceLoss, output_file, part="train",
-              all_to_one=""):
+def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceLoss, output_file, part, all_to_one,
+              self_move):
     is_train = part == "train"
     if is_train:
         model.train()
@@ -115,14 +114,21 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
         anchors = torch.from_numpy(anchors).to(device).float()
         positives = torch.from_numpy(positives).to(device).float()
         negatives = torch.from_numpy(negatives).to(device).float()
-        if all_to_one == type1:
-            out1 = anchors.detach()
+        if all_to_one != "":
+            if (not self_move) and all_to_one == type1 and type1 == type2:
+                continue
+            if all_to_one == type1:
+                out1 = anchors.detach()
+                out2 = model(positives, type2)
+                out3 = model(negatives, type2)
+            elif all_to_one == type2:
+                out1 = model(anchors, type1)
+                out2 = positives.detach()
+                out3 = negatives.detach()
+            else:
+                continue
         else:
             out1 = model(anchors, type1)
-        if all_to_one == type2:
-            out2 = positives.detach()
-            out3 = negatives.detach()
-        else:
             out2 = model(positives, type2)
             out3 = model(negatives, type2)
 
@@ -168,7 +174,7 @@ if __name__ == '__main__':
     from common.args_manager import get_args
 
     args = get_args()
-    save_dir, scores_file = prepare_files(f'fuse-trip_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
+    save_dir, scores_file = prepare_files(f'fuse_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD, fuse_name="no")
     train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=False,
                                                                          filter_dna=True,
@@ -184,7 +190,7 @@ if __name__ == '__main__':
     loss_func = nn.TripletMarginWithDistanceLoss(distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y))
 
     running_args = {"model": model, "optimizer": optimizer, "loss_func": loss_func, "output_file": scores_file,
-                    "all_to_one": args.fuse_all_to_one}
+                    "all_to_one": args.fuse_all_to_one, "self_move": args.fuse_self_move}
 
     best_valid_auc = 0
     best_test_auc = 0
