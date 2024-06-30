@@ -150,16 +150,16 @@ def hidden_states_to_pairs(emb, mask, replace_indexes, k, n_protein, all_to_prot
                 indexes_in_row[0] = replace_index
         emb_index = emb[index_in_batch, mask[index_in_batch]][indexes_in_row]
 
-        # if all_to_prot:
-        #     proteins_in_row = mask[index_in_batch][:n_protein].nonzero().max().item()
+        if all_to_prot:
+            proteins_in_row = mask[index_in_batch][:n_protein].sum().item()
 
         for i, j in itertools.combinations(range(k), 2):
 
             if i == j:
                 continue
             if all_to_prot:
-                # if i >= proteins_in_row:
-                #     continue
+                if i >= proteins_in_row:
+                    continue
                 input1.append(emb_index[i].detach())  # all to protein proteins
             else:
                 input1.append(emb_index[i])
@@ -196,8 +196,7 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file, k, alphas, 
                 pair_loss += alpha * hidden_states_to_pairs(hidden, concatenated_mask, replace_indexes, k=k,
                                                             n_protein=n_protein, all_to_prot=all_to_prot)
         loss = loss_fn(output, labels.float().unsqueeze(-1).to(device))
-        alpha_total = sum(alphas)
-        total_loss = (1 - alpha_total) * loss + pair_loss
+        total_loss = loss + pair_loss
         if is_train:
             total_loss.backward()
             optimizer.step()
@@ -265,4 +264,4 @@ if __name__ == "__main__":
             best_prev_index = epoch
             # torch.save(model.state_dict(), os.path.join(save_dir, "best_model"))
     with open(all_summery_file, "a") as f:
-        f.write(f"{best_score * 100:.2f},{best_test_score * 100:.2f},{best_prev_index}\n")
+        f.write(f"{args.name},{best_score * 100:.2f},{best_test_score * 100:.2f},{best_prev_index}\n")
