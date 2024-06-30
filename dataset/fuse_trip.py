@@ -114,9 +114,14 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
         anchors = torch.from_numpy(anchors).to(device).float()
         positives = torch.from_numpy(positives).to(device).float()
         negatives = torch.from_numpy(negatives).to(device).float()
+        all_labels.extend([1] * len(anchors) + [0] * len(anchors))
+
         if all_to_one != "":
             if (not self_move) and all_to_one == type1 and type1 == type2:
+                all_preds.extend((0.5 * (1 + F.cosine_similarity(anchors, positives).cpu().detach().numpy())).tolist())
+                all_preds.extend((0.5 * (1 + F.cosine_similarity(anchors, negatives).cpu().detach().numpy())).tolist())
                 continue
+
             if all_to_one == type1:
                 out1 = anchors.detach()
                 out2 = model(positives, type2)
@@ -126,13 +131,17 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
                 out2 = positives.detach()
                 out3 = negatives.detach()
             else:
+                out1 = model(anchors, type1)
+                out2 = model(positives, type2)
+                out3 = model(negatives, type2)
+                all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
+                all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out3).cpu().detach().numpy())).tolist())
                 continue
         else:
             out1 = model(anchors, type1)
             out2 = model(positives, type2)
             out3 = model(negatives, type2)
 
-        all_labels.extend([1] * len(anchors) + [0] * len(anchors))
         all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
         all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out3).cpu().detach().numpy())).tolist())
 
