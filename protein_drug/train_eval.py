@@ -229,8 +229,6 @@ if __name__ == '__main__':
     parser.add_argument("--lr", type=float, default=1e-4)
 
     args = parser.parse_args()
-    print(args)
-    3/0
     fuse_base = args.fuse_base
     fuse_name = args.fuse_name
     m_fuse = bool(args.m_fuse)
