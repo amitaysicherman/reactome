@@ -54,40 +54,33 @@ def load_fuse_model(base_dir, cp_name):
     return model, dim
 
 
+def get_layers(dims):
+    layers = torch.nn.Sequential()
+    for i in range(len(dims) - 1):
+        layers.add_module(f"linear_{i}", torch.nn.Linear(dims[i], dims[i + 1]))
+        if i < len(dims) - 2:
+            layers.add_module(f"relu_{i}", torch.nn.ReLU())
+        layers.add_module(f"bn_{i}", torch.nn.BatchNorm1d(dims[i + 1]))
+    return layers
+
+
 class MoleculeProtModel(Module):
-    def __init__(self, fuse_base, fuse_name, molecule_dim=768, n_layers=5, use_fuse=True):
+    def __init__(self, fuse_base, fuse_name, molecule_dim=768, use_fuse=True):
         super().__init__()
         self.molecule_dim = molecule_dim
         self.mol_to_vec = MolToVec()
-        self.lin_dim = 1024
         if use_fuse:
             self.fuse_model, dim = load_fuse_model(fuse_base, fuse_name)
             self.molecule_dim += dim
-        else:
-            self.molecule_dim = molecule_dim
         self.use_fuse = use_fuse
-        self.relu = torch.nn.ReLU()
-        self.fc_m = torch.nn.Linear(self.molecule_dim, self.lin_dim)
-        self.lin_layers = torch.nn.ModuleList()
-        for i in range(n_layers):
-            self.lin_layers.append(torch.nn.Linear(self.lin_dim, self.lin_dim))
-        self.fc_last = torch.nn.Linear(self.lin_dim, 1)
-        self.batch_norm = torch.nn.BatchNorm1d(self.lin_dim)
+        self.layers = get_layers([self.molecule_dim, 1024, 512, 256, 128, 64, 1])
 
     def forward(self, molecule):
         molecule = self.mol_to_vec.to_vec(molecule)
         if self.use_fuse:
             molecule_f = self.fuse_model(molecule, "molecule_protein").detach()
             molecule = torch.cat([molecule, molecule_f], dim=1)
-        molecule = self.fc_m(molecule)
-        molecule = self.relu(molecule)
-        molecule = self.batch_norm(molecule)
-        for layer in self.lin_layers:
-            molecule = layer(molecule)
-            molecule = self.relu(molecule)
-            molecule = self.batch_norm(molecule)
-        x = self.fc_last(molecule)
-        return x
+        return self.layers(molecule)
 
 
 class DataIterator:
@@ -144,7 +137,7 @@ def run_epoch(model, criterion, optimizer, data_iter, mode='train'):
         preds.extend(torch.sigmoid(outputs).detach().cpu().numpy())
         if index % 100 == 0:
             plot_and_print(reals, preds)
-    return total_loss, roc_auc_score(reals, preds), average_precision_score(reals, preds)
+    return total_loss / len(reals), roc_auc_score(reals, preds), average_precision_score(reals, preds)
 
 
 def load_lasts(model, optimizer, dir):
@@ -178,7 +171,5 @@ for epoch in range(100):
     print(f"Epoch {epoch} train_loss: {train_loss}, train_auc: {train_auc}, train_ap: {train_ap}")
     with open("results.txt", "a") as f:
         f.write(f"Epoch {epoch} train_loss: {train_loss}, train_auc: {train_auc}, train_ap: {train_ap}\n")
-    os.remove("cp/last.pt")
-    os.remove("cp/last_opt.pt")
     torch.save(model.state_dict(), f"cp/last.pt")
     torch.save(optimizer.state_dict(), f"cp/last_opt.pt")

@@ -83,6 +83,14 @@ def get_layers(dims):
     return layers
 
 
+rand_map=dict()
+def tensor_to_random_with_memory(tensor):
+    hash_tensor = hash(tensor.numpy().tobytes())
+    if hash_tensor in rand_map:
+        return rand_map[hash_tensor]
+    rand_map[hash_tensor] = torch.randn_like(tensor)
+    return rand_map[hash_tensor]
+
 class ProteinDrugLinearModel(torch.nn.Module):
     def __init__(self, fuse_base, m_fuse=True, p_fuse=True,
                  m_model=True, p_model=True, only_rand=False, fuse_freeze=True):
@@ -130,8 +138,8 @@ class ProteinDrugLinearModel(torch.nn.Module):
             else:
                 protein = fuse_protein
         if self.only_rand:
-            molecule = torch.randn_like(molecule)
-            protein = torch.randn_like(protein)
+            molecule = tensor_to_random_with_memory(molecule)
+            protein = tensor_to_random_with_memory(protein)
         molecule = self.m_layers(molecule)
         protein = self.p_layers(protein)
         return -1 * F.cosine_similarity(molecule, protein).unsqueeze(1)
@@ -226,7 +234,7 @@ if __name__ == '__main__':
     parser.add_argument("--m_model", type=int, default=0)
     parser.add_argument("--p_model", type=int, default=0)
     parser.add_argument("--only_rand", type=int, default=0)
-    parser.add_argument("--fuse-freeze", type=int, default=1)
+    parser.add_argument("--fuse_freeze", type=int, default=1)
     parser.add_argument("--bs", type=int, default=32)
     parser.add_argument("--lr", type=float, default=1e-4)
 
@@ -240,6 +248,7 @@ if __name__ == '__main__':
     fuse_freeze = bool(args.fuse_freeze)
     bs = args.bs
     lr = args.lr
+
 
     np.random.seed(42)
     all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data()
