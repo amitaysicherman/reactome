@@ -232,7 +232,6 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     fuse_base = args.fuse_base
-    fuse_name = args.fuse_name
     m_fuse = bool(args.m_fuse)
     p_fuse = bool(args.p_fuse)
     m_model = bool(args.m_model)
@@ -282,7 +281,7 @@ if __name__ == '__main__':
         if val_auc[1] > best_val_auc:
             best_val_auc = val_auc[1]
             best_test_auc = test_auc[1]
-    msg = f"{fuse_name},{model_to_conf_name(model)},{best_val_auc},{best_test_auc},{best_train_all_auc}"
+    msg = f"{model_to_conf_name(model)},{best_val_auc},{best_test_auc},{best_train_all_auc}"
     print(msg)
     with open(f"{scores_path}/drug_bank.txt", "a") as f:
         f.write(msg + "\n")
