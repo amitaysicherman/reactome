@@ -85,7 +85,7 @@ def get_layers(dims):
 
 rand_map=dict()
 def tensor_to_random_with_memory(tensor):
-    hash_tensor = hash(tensor.numpy().tobytes())
+    hash_tensor = hash(tensor.detach().cpu().numpy().tobytes())
     if hash_tensor in rand_map:
         return rand_map[hash_tensor]
     rand_map[hash_tensor] = torch.randn_like(tensor)
