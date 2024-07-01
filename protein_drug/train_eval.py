@@ -93,7 +93,7 @@ class ProteinDrugLinearModel(torch.nn.Module):
         self.p_fuse = p_fuse
         self.m_model = m_model
         self.p_model = p_model
-
+        self.fuse_base = fuse_base
         self.fuse_freeze = fuse_freeze
         if m_fuse or p_fuse:
             self.fuse_model, dim = load_fuse_model(fuse_base)
@@ -194,19 +194,24 @@ def score_to_str(score_dict):
 
 
 def model_to_conf_name(model):
-    return f"{model.m_fuse},{model.p_fuse},{model.m_model},{model.p_model},{model.only_rand}"
+    fuse_name = model.fuse_base.split("/")[-1]
+    return f"{model.m_fuse},{model.p_fuse},{model.m_model},{model.p_model},{fuse_name}"
 
 
 def get_all_args_opt():
     conf = []
+
     for m_fuse in [0, 1]:
         for p_fuse in [0, 1]:
             for m_model in [0, 1]:
                 for p_model in [0, 1]:
-                    for only_rand in [0, 1]:
-                        for fuse_freeze in [0, 1]:
-                            conf.append(
-                                f"--m_fuse {m_fuse} --p_fuse {p_fuse} --m_model {m_model} --p_model {p_model} --only_rand {only_rand} --fuse-freeze {fuse_freeze}")
+                    for fuse in ["fuse_all-to-prot", "fuse_recon", "fuse_all-to-all", "fuse_inv", "fuse_fuse"]:
+                        if not m_fuse and not m_model:
+                            continue
+                        if not p_fuse and not p_model:
+                            continue
+                        conf.append(
+                            f"--m_fuse {m_fuse} --p_fuse {p_fuse} --m_model {m_model} --p_model {p_model} --fuse_base data/models_checkpoints/{fuse}")
     return conf
 
 
@@ -216,13 +221,12 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument("--fuse_base", type=str, default="data/models_checkpoints/fuse_all-to-prot")
-    parser.add_argument("--fuse_name", type=str, default="fuse_47.pt")
     parser.add_argument("--m_fuse", type=int, default=0)
     parser.add_argument("--p_fuse", type=int, default=0)
     parser.add_argument("--m_model", type=int, default=0)
     parser.add_argument("--p_model", type=int, default=0)
     parser.add_argument("--only_rand", type=int, default=0)
-    parser.add_argument("--fuse-freeze", type=int, default=0)
+    parser.add_argument("--fuse-freeze", type=int, default=1)
     parser.add_argument("--bs", type=int, default=32)
     parser.add_argument("--lr", type=float, default=1e-4)
 

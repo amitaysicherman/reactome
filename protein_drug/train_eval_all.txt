@@ -1,64 +1,45 @@
---m_fuse 0 --p_fuse 0 --m_model 0 --p_model 0 --only_rand 0 --fuse-freeze 0
---m_fuse 0 --p_fuse 0 --m_model 0 --p_model 0 --only_rand 0 --fuse-freeze 1
---m_fuse 0 --p_fuse 0 --m_model 0 --p_model 0 --only_rand 1 --fuse-freeze 0
---m_fuse 0 --p_fuse 0 --m_model 0 --p_model 0 --only_rand 1 --fuse-freeze 1
---m_fuse 0 --p_fuse 0 --m_model 0 --p_model 1 --only_rand 0 --fuse-freeze 0
---m_fuse 0 --p_fuse 0 --m_model 0 --p_model 1 --only_rand 0 --fuse-freeze 1
---m_fuse 0 --p_fuse 0 --m_model 0 --p_model 1 --only_rand 1 --fuse-freeze 0
---m_fuse 0 --p_fuse 0 --m_model 0 --p_model 1 --only_rand 1 --fuse-freeze 1
---m_fuse 0 --p_fuse 0 --m_model 1 --p_model 0 --only_rand 0 --fuse-freeze 0
---m_fuse 0 --p_fuse 0 --m_model 1 --p_model 0 --only_rand 0 --fuse-freeze 1
---m_fuse 0 --p_fuse 0 --m_model 1 --p_model 0 --only_rand 1 --fuse-freeze 0
---m_fuse 0 --p_fuse 0 --m_model 1 --p_model 0 --only_rand 1 --fuse-freeze 1
---m_fuse 0 --p_fuse 0 --m_model 1 --p_model 1 --only_rand 0 --fuse-freeze 0
---m_fuse 0 --p_fuse 0 --m_model 1 --p_model 1 --only_rand 0 --fuse-freeze 1
---m_fuse 0 --p_fuse 0 --m_model 1 --p_model 1 --only_rand 1 --fuse-freeze 0
---m_fuse 0 --p_fuse 0 --m_model 1 --p_model 1 --only_rand 1 --fuse-freeze 1
---m_fuse 0 --p_fuse 1 --m_model 0 --p_model 0 --only_rand 0 --fuse-freeze 0
---m_fuse 0 --p_fuse 1 --m_model 0 --p_model 0 --only_rand 0 --fuse-freeze 1
---m_fuse 0 --p_fuse 1 --m_model 0 --p_model 0 --only_rand 1 --fuse-freeze 0
---m_fuse 0 --p_fuse 1 --m_model 0 --p_model 0 --only_rand 1 --fuse-freeze 1
---m_fuse 0 --p_fuse 1 --m_model 0 --p_model 1 --only_rand 0 --fuse-freeze 0
---m_fuse 0 --p_fuse 1 --m_model 0 --p_model 1 --only_rand 0 --fuse-freeze 1
---m_fuse 0 --p_fuse 1 --m_model 0 --p_model 1 --only_rand 1 --fuse-freeze 0
---m_fuse 0 --p_fuse 1 --m_model 0 --p_model 1 --only_rand 1 --fuse-freeze 1
---m_fuse 0 --p_fuse 1 --m_model 1 --p_model 0 --only_rand 0 --fuse-freeze 0
---m_fuse 0 --p_fuse 1 --m_model 1 --p_model 0 --only_rand 0 --fuse-freeze 1
---m_fuse 0 --p_fuse 1 --m_model 1 --p_model 0 --only_rand 1 --fuse-freeze 0
---m_fuse 0 --p_fuse 1 --m_model 1 --p_model 0 --only_rand 1 --fuse-freeze 1
---m_fuse 0 --p_fuse 1 --m_model 1 --p_model 1 --only_rand 0 --fuse-freeze 0
---m_fuse 0 --p_fuse 1 --m_model 1 --p_model 1 --only_rand 0 --fuse-freeze 1
---m_fuse 0 --p_fuse 1 --m_model 1 --p_model 1 --only_rand 1 --fuse-freeze 0
---m_fuse 0 --p_fuse 1 --m_model 1 --p_model 1 --only_rand 1 --fuse-freeze 1
---m_fuse 1 --p_fuse 0 --m_model 0 --p_model 0 --only_rand 0 --fuse-freeze 0
---m_fuse 1 --p_fuse 0 --m_model 0 --p_model 0 --only_rand 0 --fuse-freeze 1
---m_fuse 1 --p_fuse 0 --m_model 0 --p_model 0 --only_rand 1 --fuse-freeze 0
---m_fuse 1 --p_fuse 0 --m_model 0 --p_model 0 --only_rand 1 --fuse-freeze 1
---m_fuse 1 --p_fuse 0 --m_model 0 --p_model 1 --only_rand 0 --fuse-freeze 0
---m_fuse 1 --p_fuse 0 --m_model 0 --p_model 1 --only_rand 0 --fuse-freeze 1
---m_fuse 1 --p_fuse 0 --m_model 0 --p_model 1 --only_rand 1 --fuse-freeze 0
---m_fuse 1 --p_fuse 0 --m_model 0 --p_model 1 --only_rand 1 --fuse-freeze 1
---m_fuse 1 --p_fuse 0 --m_model 1 --p_model 0 --only_rand 0 --fuse-freeze 0
---m_fuse 1 --p_fuse 0 --m_model 1 --p_model 0 --only_rand 0 --fuse-freeze 1
---m_fuse 1 --p_fuse 0 --m_model 1 --p_model 0 --only_rand 1 --fuse-freeze 0
---m_fuse 1 --p_fuse 0 --m_model 1 --p_model 0 --only_rand 1 --fuse-freeze 1
---m_fuse 1 --p_fuse 0 --m_model 1 --p_model 1 --only_rand 0 --fuse-freeze 0
---m_fuse 1 --p_fuse 0 --m_model 1 --p_model 1 --only_rand 0 --fuse-freeze 1
---m_fuse 1 --p_fuse 0 --m_model 1 --p_model 1 --only_rand 1 --fuse-freeze 0
---m_fuse 1 --p_fuse 0 --m_model 1 --p_model 1 --only_rand 1 --fuse-freeze 1
---m_fuse 1 --p_fuse 1 --m_model 0 --p_model 0 --only_rand 0 --fuse-freeze 0
---m_fuse 1 --p_fuse 1 --m_model 0 --p_model 0 --only_rand 0 --fuse-freeze 1
---m_fuse 1 --p_fuse 1 --m_model 0 --p_model 0 --only_rand 1 --fuse-freeze 0
---m_fuse 1 --p_fuse 1 --m_model 0 --p_model 0 --only_rand 1 --fuse-freeze 1
---m_fuse 1 --p_fuse 1 --m_model 0 --p_model 1 --only_rand 0 --fuse-freeze 0
---m_fuse 1 --p_fuse 1 --m_model 0 --p_model 1 --only_rand 0 --fuse-freeze 1
---m_fuse 1 --p_fuse 1 --m_model 0 --p_model 1 --only_rand 1 --fuse-freeze 0
---m_fuse 1 --p_fuse 1 --m_model 0 --p_model 1 --only_rand 1 --fuse-freeze 1
---m_fuse 1 --p_fuse 1 --m_model 1 --p_model 0 --only_rand 0 --fuse-freeze 0
---m_fuse 1 --p_fuse 1 --m_model 1 --p_model 0 --only_rand 0 --fuse-freeze 1
---m_fuse 1 --p_fuse 1 --m_model 1 --p_model 0 --only_rand 1 --fuse-freeze 0
---m_fuse 1 --p_fuse 1 --m_model 1 --p_model 0 --only_rand 1 --fuse-freeze 1
---m_fuse 1 --p_fuse 1 --m_model 1 --p_model 1 --only_rand 0 --fuse-freeze 0
---m_fuse 1 --p_fuse 1 --m_model 1 --p_model 1 --only_rand 0 --fuse-freeze 1
---m_fuse 1 --p_fuse 1 --m_model 1 --p_model 1 --only_rand 1 --fuse-freeze 0
---m_fuse 1 --p_fuse 1 --m_model 1 --p_model 1 --only_rand 1 --fuse-freeze 1
+--m_fuse 0 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-prot
+--m_fuse 0 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_recon
+--m_fuse 0 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-all
+--m_fuse 0 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_inv
+--m_fuse 0 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_fuse
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_all-to-prot
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_recon
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_all-to-all
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_inv
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_fuse
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-prot
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_recon
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-all
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_inv
+--m_fuse 0 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_fuse
+--m_fuse 1 --p_fuse 0 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-prot
+--m_fuse 1 --p_fuse 0 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_recon
+--m_fuse 1 --p_fuse 0 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-all
+--m_fuse 1 --p_fuse 0 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_inv
+--m_fuse 1 --p_fuse 0 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_fuse
+--m_fuse 1 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-prot
+--m_fuse 1 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_recon
+--m_fuse 1 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-all
+--m_fuse 1 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_inv
+--m_fuse 1 --p_fuse 0 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_fuse
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 0 --fuse_base data/models_checkpoints/fuse_all-to-prot
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 0 --fuse_base data/models_checkpoints/fuse_recon
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 0 --fuse_base data/models_checkpoints/fuse_all-to-all
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 0 --fuse_base data/models_checkpoints/fuse_inv
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 0 --fuse_base data/models_checkpoints/fuse_fuse
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-prot
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_recon
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-all
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_inv
+--m_fuse 1 --p_fuse 1 --m_model 0 --p_model 1 --fuse_base data/models_checkpoints/fuse_fuse
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_all-to-prot
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_recon
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_all-to-all
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_inv
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 0 --fuse_base data/models_checkpoints/fuse_fuse
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-prot
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_recon
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_all-to-all
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_inv
+--m_fuse 1 --p_fuse 1 --m_model 1 --p_model 1 --fuse_base data/models_checkpoints/fuse_fuse
