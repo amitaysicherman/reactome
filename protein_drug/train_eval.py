@@ -1,3 +1,8 @@
+import sys
+import os
+
+sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
+
 from common.path_manager import data_path
 import os
 import numpy as np
@@ -9,6 +14,9 @@ from sklearn.metrics import roc_auc_score
 from collections import defaultdict
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+MOL_DIM = 768
+PROT_DIM = 1024
 
 
 def load_data():
@@ -50,7 +58,9 @@ class ProteinDrugDataset(Dataset):
         return self.molecules[idx], self.proteins[idx], self.labels[idx], self.e_types[idx]
 
 
-def load_fuse_model(base_dir, cp_name):
+def load_fuse_model(base_dir):
+    cp_names = os.listdir(base_dir)
+    cp_name = [x for x in cp_names if x.endswith(".pt")][0]
     cp_data = torch.load(f"{base_dir}/{cp_name}", map_location=torch.device('cpu'))
     config_file = os.path.join(base_dir, 'config.txt')
     config = MultiModalLinearConfig.load_from_file(config_file)
@@ -66,41 +76,68 @@ def data_to_loader(molecules, proteins, labels, e_types, batch_size, shuffle=Tru
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
 
-class ProteinDrugLinearModel(torch.nn.Module):
-    def __init__(self, fuse_base, fuse_name, molecule_dim=768, protein_dim=1024, use_fuse=True, use_model=True):
-        super().__init__()
-        if use_fuse:
-            self.fuse_model, dim = load_fuse_model(fuse_base, fuse_name)
-            self.molecule_dim = dim
-            self.protein_dim = dim
-        else:
-            self.molecule_dim = molecule_dim
-            self.protein_dim = protein_dim
-        self.use_fuse = use_fuse
-        self.use_model = use_model
+def get_layers(dims):
+    layers = torch.nn.Sequential()
+    for i in range(len(dims) - 1):
+        layers.add_module(f"linear_{i}", torch.nn.Linear(dims[i], dims[i + 1]))
+        if i < len(dims) - 2:
+            layers.add_module(f"relu_{i}", torch.nn.ReLU())
+        layers.add_module(f"bn_{i}", torch.nn.BatchNorm1d(dims[i + 1]))
+    return layers
 
-        self.fc_m = torch.nn.Linear(1024 + 768, 1024)
-        self.fc_p = torch.nn.Linear(1024 + 1024, 1024)
-        self.relu = torch.nn.ReLU()
-        # self.fc_last = torch.nn.Linear(1024, 1)
+
+class ProteinDrugLinearModel(torch.nn.Module):
+    def __init__(self, fuse_base, m_fuse=True, p_fuse=True,
+                 m_model=True, p_model=True, only_rand=False, fuse_freeze=True):
+        super().__init__()
+        self.molecule_dim = 0
+        self.protein_dim = 0
+        self.m_fuse = m_fuse
+        self.p_fuse = p_fuse
+        self.m_model = m_model
+        self.p_model = p_model
+
+        self.fuse_freeze = fuse_freeze
+        if m_fuse or p_fuse:
+            self.fuse_model, dim = load_fuse_model(fuse_base)
+            self.m_type = "molecule_protein" if "molecule_protein" in self.fuse_model.names else "molecule"
+            self.p_type = "protein_protein" if "protein_protein" in self.fuse_model.names else "protein"
+            if m_fuse:
+                self.molecule_dim += dim
+            if p_fuse:
+                self.protein_dim += dim
+
+        if m_model:
+            self.molecule_dim += MOL_DIM
+        if p_model:
+            self.protein_dim += PROT_DIM
+        self.only_rand = only_rand
+        self.m_layers = get_layers([self.molecule_dim, 1024, 512, 256, 128])
+        self.p_layers = get_layers([self.protein_dim, 1024, 512, 256, 128])
 
     def forward(self, molecule, protein):
-
-        if self.use_fuse:
-            molecule_f = self.fuse_model(molecule, "molecule_protein").detach()
-            protein_f = self.fuse_model(protein, "protein_protein").detach()
-            molecule = torch.cat([molecule, molecule_f], dim=1)
-            protein = torch.cat([protein, protein_f], dim=1)
-            if not self.use_model:
-                return -1 * F.cosine_similarity(molecule_f, protein_f).unsqueeze(1)
-        molecule = self.fc_m(molecule)
-        molecule = self.relu(molecule)
-        protein = self.fc_p(protein)
-        protein = self.relu(protein)
+        if self.m_fuse:
+            fuse_molecule = self.fuse_model(molecule, self.m_type)
+            if self.fuse_freeze:
+                fuse_molecule = fuse_molecule.detach()
+            if self.m_model:
+                molecule = torch.cat([fuse_molecule, molecule], dim=1)
+            else:
+                molecule = fuse_molecule
+        if self.p_fuse:
+            fuse_protein = self.fuse_model(protein, self.p_type)
+            if self.fuse_freeze:
+                fuse_protein = fuse_protein.detach()
+            if self.p_model:
+                protein = torch.cat([fuse_protein, protein], dim=1)
+            else:
+                protein = fuse_protein
+        if self.only_rand:
+            molecule = torch.randn_like(molecule)
+            protein = torch.randn_like(protein)
+        molecule = self.m_layers(molecule)
+        protein = self.p_layers(protein)
         return -1 * F.cosine_similarity(molecule, protein).unsqueeze(1)
-        # x = m + p
-        # x = self.fc_last(x)
-        # return x
 
 
 def run_epoch(model, loader, optimizer, criterion, part):
@@ -159,7 +196,52 @@ def score_to_str(score_dict):
     # return " ".join([f"{k}:{v * 100:.1f}" for k, v in score_dict.items()])
 
 
-if __name__ == "__main__":
+def model_to_conf_name(model):
+    return f"{model.m_fuse},{model.p_fuse},{model.m_model},{model.p_model},{model.only_rand}"
+
+
+def get_all_args_opt():
+    conf = []
+    for m_fuse in [0, 1]:
+        for p_fuse in [0, 1]:
+            for m_model in [0, 1]:
+                for p_model in [0, 1]:
+                    for only_rand in [0, 1]:
+                        for fuse_freeze in [0, 1]:
+                                    conf.append(
+                                        f"--m_fuse {m_fuse} --p_fuse {p_fuse} --m_model {m_model} --p_model {p_model} --only_rand {only_rand} --fuse-freeze {fuse_freeze}")
+    return conf
+
+if __name__ == '__main__':
+
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--fuse_base", type=str, default="data/models_checkpoints/fuse_all-to-prot")
+    parser.add_argument("--fuse_name", type=str, default="fuse_47.pt")
+    parser.add_argument("--m_fuse", type=int, default=0)
+    parser.add_argument("--p_fuse", type=int, default=0)
+    parser.add_argument("--m_model", type=int, default=0)
+    parser.add_argument("--p_model", type=int, default=0)
+    parser.add_argument("--only_rand", type=int, default=0)
+    parser.add_argument("--fuse-freeze", type=int, default=0)
+    parser.add_argument("--bs", type=int, default=32)
+    parser.add_argument("--lr", type=float, default=1e-4)
+
+    args = parser.parse_args()
+    print(args)
+    3/0
+    fuse_base = args.fuse_base
+    fuse_name = args.fuse_name
+    m_fuse = bool(args.m_fuse)
+    p_fuse = bool(args.p_fuse)
+    m_model = bool(args.m_model)
+    p_model = bool(args.p_model)
+    only_rand = bool(args.only_rand)
+    fuse_freeze = bool(args.fuse_freeze)
+    bs = args.bs
+    lr = args.lr
+
     np.random.seed(42)
     all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data()
     shuffle_index = np.random.permutation(len(all_molecules))
@@ -178,14 +260,17 @@ if __name__ == "__main__":
     val_e_types = get_test_e_type(train_p_names, val_p_names, train_m_names, val_m_names)
     test_e_types = get_test_e_type(train_p_names, test_p_names, train_m_names, test_m_names)
 
-    train_loader = data_to_loader(train_molecules, train_proteins, train_labels, None, batch_size=32, shuffle=True)
-    val_loader = data_to_loader(val_molecules, val_proteins, val_labels, val_e_types, batch_size=32, shuffle=False)
-    test_loader = data_to_loader(test_molecules, test_proteins, test_labels, test_e_types, batch_size=32, shuffle=False)
-
-    model = ProteinDrugLinearModel("data/models_checkpoints/fuse_all-to-prot", "fuse_47.pt", use_fuse=True,
-                                   use_model=True).to(device)
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001)
+    train_loader = data_to_loader(train_molecules, train_proteins, train_labels, None, batch_size=bs, shuffle=True)
+    val_loader = data_to_loader(val_molecules, val_proteins, val_labels, val_e_types, batch_size=bs, shuffle=False)
+    test_loader = data_to_loader(test_molecules, test_proteins, test_labels, test_e_types, batch_size=bs, shuffle=False)
+    model = ProteinDrugLinearModel(fuse_base, m_fuse=m_fuse, p_fuse=p_fuse, m_model=m_model, p_model=p_model,
+                                   only_rand=only_rand, fuse_freeze=fuse_freeze).to(device)
+    print(model)
+    optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_func = torch.nn.BCEWithLogitsLoss()
+    best_val_auc = 0
+    best_test_auc = 0
+    best_train_all_auc = 0
     for epoch in range(100):
         train_auc = run_epoch(model, train_loader, optimizer, loss_func, "train")
         with torch.no_grad():
@@ -193,3 +278,11 @@ if __name__ == "__main__":
             test_auc = run_epoch(model, test_loader, optimizer, loss_func, "test")
         print(
             f"Epoch {epoch}: train: {score_to_str(train_auc)}, val: {score_to_str(val_auc)} test {score_to_str(test_auc)}")
+        best_train_all_auc = max(best_train_all_auc, train_auc[0])
+        if val_auc[1] > best_val_auc:
+            best_val_auc = val_auc[1]
+            best_test_auc = test_auc[1]
+    msg = f"{fuse_name},{model_to_conf_name(model)},{best_val_auc},{best_test_auc},{best_train_all_auc}"
+    print(msg)
+    with open("results.txt", "a") as f:
+        f.write(msg + "\n")
