@@ -284,5 +284,5 @@ if __name__ == '__main__':
             best_test_auc = test_auc[1]
     msg = f"{fuse_name},{model_to_conf_name(model)},{best_val_auc},{best_test_auc},{best_train_all_auc}"
     print(msg)
-    with open(f"{scores_path}/results.txt", "a") as f:
+    with open(f"{scores_path}/drug_bank.txt", "a") as f:
         f.write(msg + "\n")
