@@ -6,5 +6,5 @@
 #SBATCH -c 4
 #SBATCH --requeue
 
-args=$(sed -n "$SLURM_ARRAY_TASK_ID"p train_eval_all.txt)
-python3 train_eval.py $args
+args=$(sed -n "$SLURM_ARRAY_TASK_ID"p protein_drug/train_eval_all.txt)
+python3 protein_drug/train_eval.py $args

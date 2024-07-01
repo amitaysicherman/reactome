@@ -1,9 +1,6 @@
 import sys
 import os
-
-sys.path.append(os.path.join(os.path.dirname(__file__), ".."))
-
-from common.path_manager import data_path
+from common.path_manager import data_path, scores_path
 import os
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
@@ -208,9 +205,10 @@ def get_all_args_opt():
                 for p_model in [0, 1]:
                     for only_rand in [0, 1]:
                         for fuse_freeze in [0, 1]:
-                                    conf.append(
-                                        f"--m_fuse {m_fuse} --p_fuse {p_fuse} --m_model {m_model} --p_model {p_model} --only_rand {only_rand} --fuse-freeze {fuse_freeze}")
+                            conf.append(
+                                f"--m_fuse {m_fuse} --p_fuse {p_fuse} --m_model {m_model} --p_model {p_model} --only_rand {only_rand} --fuse-freeze {fuse_freeze}")
     return conf
+
 
 if __name__ == '__main__':
 
@@ -282,5 +280,5 @@ if __name__ == '__main__':
             best_test_auc = test_auc[1]
     msg = f"{fuse_name},{model_to_conf_name(model)},{best_val_auc},{best_test_auc},{best_train_all_auc}"
     print(msg)
-    with open("results.txt", "a") as f:
+    with open(f"{scores_path}/results.txt", "a") as f:
         f.write(msg + "\n")
