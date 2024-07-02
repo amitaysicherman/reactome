@@ -161,3 +161,4 @@ def prepare_files(run_name, skip_if_exists=False):
     if os.path.exists(scores_file):
         os.remove(scores_file)
     return save_dir, scores_file
+

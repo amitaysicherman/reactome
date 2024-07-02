@@ -85,8 +85,6 @@ def get_reaction_entities_id_with_text(reaction, check_output):
     return entities + texts
 
 
-
-
 def have_unkown_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
     entitites = get_reaction_entities(reaction, check_output)
     for e in entitites:
@@ -99,6 +97,14 @@ def have_dna_nodes(reaction, node_index_manager: NodesIndexManager, check_output
     entitites = get_reaction_entities(reaction, check_output)
     for e in entitites:
         if node_index_manager.name_to_node[e.get_db_identifier()].type == NT.dna:
+            return True
+    return False
+
+
+def have_mol_nodes(reaction, node_index_manager: NodesIndexManager, check_output=False):
+    entitites = get_reaction_entities(reaction, check_output)
+    for e in entitites:
+        if node_index_manager.name_to_node[e.get_db_identifier()].type == NT.molecule:
             return True
     return False
 
@@ -368,32 +374,41 @@ def filter_untrain_elements(trained_elements, reactions):
 
 
 def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_no_seq=True, filter_untrain=False,
-                  filter_singal_entity=True, filter_no_act=False):
+                  filter_singal_entity=True, filter_no_act=False, filter_no_mol=False):
     with open(reactions_file) as f:
         lines = f.readlines()
     reactions = [reaction_from_str(line) for line in lines]
+    node_index_manager = NodesIndexManager()
 
     print(f"Total reactions: {len(reactions)}")
-    if filter_no_act:
-        reactions = [reaction for reaction in reactions if len(reaction.catalysis)]
-        print("Reactions with catalysis", len(reactions))
-
-    node_index_manager = NodesIndexManager()
-    if filter_unknown:
-        reactions = [reaction for reaction in reactions if
-                     not have_unkown_nodes(reaction, node_index_manager, check_output=True)]
-    if filter_dna:
-        reactions = [reaction for reaction in reactions if
-                     not have_dna_nodes(reaction, node_index_manager, check_output=True)]
     if filter_no_seq:
         reactions = [reaction for reaction in reactions if
                      not have_no_seq_nodes(reaction, node_index_manager, check_output=True)]
+        print("Reactions with seq", len(reactions))
 
-    print(f"Filtered reactions: {len(reactions)}")
+    if filter_unknown:
+        reactions = [reaction for reaction in reactions if
+                     not have_unkown_nodes(reaction, node_index_manager, check_output=True)]
+        print("Reactions with known only", len(reactions))
+
+    if filter_no_act:
+        reactions = [reaction for reaction in reactions if len(reaction.catalysis)]
+        print("Reactions with catalysis", len(reactions))
+    if filter_no_mol:
+        reactions = [reaction for reaction in reactions if
+                     have_mol_nodes(reaction, node_index_manager, check_output=False)]
+        print("Reactions with Molecule", len(reactions))
+
+    if filter_dna:
+        reactions = [reaction for reaction in reactions if
+                     not have_dna_nodes(reaction, node_index_manager, check_output=True)]
+        print("Reactions without DNA", len(reactions))
+
+
     if filter_singal_entity:
         reactions = [reaction for reaction in reactions if
                      len(get_reaction_entities_id_with_text(reaction, check_output=False)) > 1]
-    print(f"Filtered reactions: {len(reactions)}")
+        print("Reactions without single entity", len(reactions))
 
     reactions = sorted(reactions, key=lambda x: x.date)
     train_val_index = int(0.7 * len(reactions))
@@ -424,5 +439,4 @@ def get_reactions(sample_count=0, filter_unknown=True, filter_dna=False, filter_
 
 
 if __name__ == "__main__":
-    get_reactions(filter_no_act=True)
-    a = 2
+    print(len(get_reactions(filter_no_act=False,filter_no_mol=True,filter_dna=True)))

@@ -220,9 +220,13 @@ if __name__ == '__main__':
     node_index_manager = NodesIndexManager(PRETRAINED_EMD)
     train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=not args.fuse_pretrained_start,
                                                                          filter_dna=True,
-                                                                         filter_no_act=True,
+                                                                         # filter_no_act=True,
                                                                          sample_count=args.gnn_sample)
 
+    if args.fuse_train_all:
+        train_reactions = train_reactions + validation_reactions + test_reaction
+        validation_reactions = []
+        test_reaction = []
     train_loader = get_loader(train_reactions, node_index_manager, args.fuse_batch_size, "train", debug=args.debug)
     valid_loader = get_loader(validation_reactions, node_index_manager, args.fuse_batch_size, "valid", debug=args.debug)
     test_loader = get_loader(test_reaction, node_index_manager, args.fuse_batch_size, "test", debug=args.debug)
@@ -242,7 +246,7 @@ if __name__ == '__main__':
         reconstruction_model = None
         reconstruction_optimizer = None
     print(model)
-    print(sum(p.numel() for p in model.parameters() if p.requires_grad) , "parameters")
+    print(sum(p.numel() for p in model.parameters() if p.requires_grad), "parameters")
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
     best_valid_auc = 0
 

@@ -59,7 +59,8 @@ class NodesIndexManager:
                     vectors = np.load(pretrained_vec_file)
                     if pretrained_method == PRETRAINED_EMD_FUSE:
                         if fuse_pretrained_start:
-                            vectors = apply_model(self.fuse_model, vectors, dt).detach().cpu().numpy()
+                            with torch.no_grad():
+                                vectors = apply_model(self.fuse_model, vectors, dt).detach().cpu().numpy()
                         else:
                             vectors = self.fuse_model.emd.weight.detach().cpu().numpy()[
                                       self.index_count:self.index_count + len(lines)]
