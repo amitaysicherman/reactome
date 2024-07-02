@@ -256,6 +256,7 @@ def main(args):
         running_args["epoch"] = epoch
         train_auc = run_epoch(**running_args, loader=train_loader, part="train")
         if args.fuse_train_all:
+            save_fuse_model(model, reconstruction_model, save_dir, epoch)
             valid_auc, test_auc = protein_drug_main(args)
             print(f"Drug-Protein Valid AUC: {valid_auc:.3f}, Test AUC: {test_auc:.3f}")
         else:

@@ -8,6 +8,8 @@ def get_args():
     parser.add_argument("--skip_if_exists", type=int, default=0)
     parser.add_argument("--data_aug", type=str, default="protein", choices=["all", "location", "protein", "molecule"])
     parser.add_argument("--debug", type=int, default=0)
+    parser.add_argument("--max_no_improve", type=int, default=5)
+
 
     parser.add_argument("--fuse_batch_size", type=int, default=8192)
     parser.add_argument("--fuse_output_dim", type=int, default=1024)
@@ -48,6 +50,17 @@ def get_args():
     parser.add_argument("--seq_k", type=int, default=16)
     parser.add_argument("--seq_aug_factor", type=int, default=10)
     parser.add_argument("--all_to_prot", type=int, default=1)
+
+    #drug protein args
+    parser.add_argument("--dp_fuse_base", type=str, default="data/models_checkpoints/fuse_all-to-prot")
+    parser.add_argument("--dp_m_fuse", type=int, default=0)
+    parser.add_argument("--dp_p_fuse", type=int, default=0)
+    parser.add_argument("--dp_m_model", type=int, default=0)
+    parser.add_argument("--dp_p_model", type=int, default=0)
+    parser.add_argument("--dp_only_rand", type=int, default=0)
+    parser.add_argument("--dp_fuse_freeze", type=int, default=1)
+    parser.add_argument("--dp_bs", type=int, default=32)
+    parser.add_argument("--dp_lr", type=float, default=1e-4)
 
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":

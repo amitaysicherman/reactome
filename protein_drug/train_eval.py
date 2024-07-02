@@ -228,32 +228,16 @@ def get_all_args_opt():
                             f"--m_fuse {m_fuse} --p_fuse {p_fuse} --m_model {m_model} --p_model {p_model} --fuse_base data/models_checkpoints/{fuse}")
     return conf
 
-
-if __name__ == '__main__':
-
-    import argparse
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--fuse_base", type=str, default="data/models_checkpoints/fuse_all-to-prot")
-    parser.add_argument("--m_fuse", type=int, default=0)
-    parser.add_argument("--p_fuse", type=int, default=0)
-    parser.add_argument("--m_model", type=int, default=0)
-    parser.add_argument("--p_model", type=int, default=0)
-    parser.add_argument("--only_rand", type=int, default=0)
-    parser.add_argument("--fuse_freeze", type=int, default=1)
-    parser.add_argument("--bs", type=int, default=32)
-    parser.add_argument("--lr", type=float, default=1e-4)
-
-    args = parser.parse_args()
-    fuse_base = args.fuse_base
-    m_fuse = bool(args.m_fuse)
-    p_fuse = bool(args.p_fuse)
-    m_model = bool(args.m_model)
-    p_model = bool(args.p_model)
-    only_rand = bool(args.only_rand)
-    fuse_freeze = bool(args.fuse_freeze)
-    bs = args.bs
-    lr = args.lr
+def main(args):
+    fuse_base = args.dp_fuse_base
+    m_fuse = bool(args.dp_m_fuse)
+    p_fuse = bool(args.dp_p_fuse)
+    m_model = bool(args.dp_m_model)
+    p_model = bool(args.dp_p_model)
+    only_rand = bool(args.dp_only_rand)
+    fuse_freeze = bool(args.dp_fuse_freeze)
+    bs = args.dp_bs
+    lr = args.dp_lr
 
     np.random.seed(42)
     all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data()
@@ -294,6 +278,7 @@ if __name__ == '__main__':
     best_val_auc = 0
     best_test_auc = 0
     best_train_all_auc = 0
+    no_improve = 0
     for epoch in range(100):
         train_auc = run_epoch(model, train_loader, optimizer, loss_func, "train")
         with torch.no_grad():
@@ -305,7 +290,21 @@ if __name__ == '__main__':
         if val_auc[1] > best_val_auc:
             best_val_auc = val_auc[1]
             best_test_auc = test_auc[1]
+            no_improve = 0
+        else:
+            no_improve += 1
+            if no_improve > args.max_no_improve:
+                break
     msg = f"{model_to_conf_name(model)},{best_val_auc},{best_test_auc},{best_train_all_auc}"
     print(msg)
     with open(f"{scores_path}/drug_bank.txt", "a") as f:
         f.write(msg + "\n")
+    return best_val_auc, best_test_auc
+
+
+
+if __name__ == '__main__':
+
+    from common.args_manager import get_args
+
+    main(get_args())
