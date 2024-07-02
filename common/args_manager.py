@@ -14,7 +14,7 @@ def get_args():
     parser.add_argument("--fuse_dropout", type=float, default=0.3)
     parser.add_argument("--fuse_lr", type=float, default=1e-3)
     parser.add_argument("--fuse_n_layers", type=int, default=1)
-    parser.add_argument("--fuse_output_dim", type=int, default=512)
+    parser.add_argument("--fuse_hidden_dim", type=int, default=512)
     parser.add_argument("--fuse_recon", type=int, default=0)
     parser.add_argument("--fuse_all_to_one", type=str, default="")
     parser.add_argument("--fuse_self_move", type=str, default=1)
