@@ -57,6 +57,8 @@ def weighted_mean_loss(loss, labels):
 
 def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch, recon,
               output_file, part="train", all_to_one=False, use_pretrain=True):
+    if len(loader) == 0:
+        return 0
     if all_to_one == "inv":
         inv_epoch = EMBEDDING_DATA_TYPES[epoch % len(EMBEDDING_DATA_TYPES)]
     first_epoch = epoch == 0
@@ -211,14 +213,15 @@ if __name__ == '__main__':
     from common.args_manager import get_args
 
     args = get_args()
-    save_dir, scores_file = prepare_files(f'fuse_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
+    save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
 
     if args.debug:
         args.fuse_batch_size = 2
     node_index_manager = NodesIndexManager(PRETRAINED_EMD)
     train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=not args.fuse_pretrained_start,
                                                                          filter_dna=True,
-                                                                         filter_no_act=True)
+                                                                         filter_no_act=True,
+                                                                         sample_count=args.gnn_sample)
 
     train_loader = get_loader(train_reactions, node_index_manager, args.fuse_batch_size, "train", debug=args.debug)
     valid_loader = get_loader(validation_reactions, node_index_manager, args.fuse_batch_size, "valid", debug=args.debug)

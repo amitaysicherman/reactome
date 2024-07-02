@@ -24,7 +24,7 @@ class MultiModalSeq(nn.Module):
             num_layers = 4
         else:
             raise ValueError(f"Invalid size: {size}")
-        self.emb_dim=emd_dim
+        self.emb_dim = emd_dim
         self.t = nn.ModuleDict({k: nn.Linear(type_to_vec_dim[k], emd_dim) for k in self.d_types})
         self.last_lin = nn.Linear(emd_dim, output_dim)
         self.use_trans = use_trans
@@ -115,27 +115,29 @@ class MultiModalLinearConfig:
                                       normalize_last=int(data["normalize_last"]))
 
 
+def get_layers(dims, dropout=0.0):
+    layers = torch.nn.Sequential()
+    for i in range(len(dims) - 1):
+        layers.add_module(f"linear_{i}", torch.nn.Linear(dims[i], dims[i + 1]))
+        if i < len(dims) - 2:
+            layers.add_module(f"relu_{i}", torch.nn.ReLU())
+        layers.add_module(f"bn_{i}", torch.nn.BatchNorm1d(dims[i + 1]))
+        if dropout > 0:
+            layers.add_module(f"dropout_{i}", torch.nn.Dropout(dropout))
+    return layers
+
+
 class MiltyModalLinear(nn.Module):
     def __init__(self, config: MultiModalLinearConfig):
         super(MiltyModalLinear, self).__init__()
         self.names = ["_".join(x) if isinstance(x, tuple) else x for x in config.names]
         self.normalize_last = config.normalize_last
-        self.dropout = nn.Dropout(config.dropout)
         if config.n_layers < 1:
             raise ValueError("n_layers must be at least 1")
-        self.layers = nn.ModuleList()
-        embedding_dim = {k: v for k, v in zip(self.names, config.embedding_dim)}
-        output_dim = {k: v for k, v in zip(self.names, config.output_dim)}
-        if config.n_layers == 1:
-            self.layers.append(nn.ModuleDict({k: nn.Linear(v, output_dim[k]) for k, v in embedding_dim.items()}))
-        else:
-            self.layers.append(nn.ModuleDict({k: nn.Linear(v, config.hidden_dim) for k, v in embedding_dim.items()}))
-            for _ in range(config.n_layers - 2):
-                self.layers.append(
-                    nn.ModuleDict(
-                        {k: nn.Linear(config.hidden_dim, config.hidden_dim) for k, v in embedding_dim.items()}))
-            self.layers.append(
-                nn.ModuleDict({k: nn.Linear(config.hidden_dim, output_dim[k]) for k, v in embedding_dim.items()}))
+        self.layers_dict = nn.ModuleDict()
+        for name, input_dim, output_dim in zip(self.names, config.embedding_dim, config.output_dim):
+            dims= [input_dim] + [config.hidden_dim] * (config.n_layers - 1) + [output_dim]
+            self.layers_dict[name] = get_layers(dims, config.dropout)
 
     def have_type(self, type_):
         if isinstance(type_, tuple):
@@ -147,12 +149,7 @@ class MiltyModalLinear(nn.Module):
             type_ = "_".join(type_)
         if isinstance(x, np.ndarray):
             x = torch.Tensor(x).float().to(device)
-        x = F.normalize(x, dim=-1)
-        x = self.dropout(x)
-        for layer in self.layers[:-1]:
-            x = F.relu(layer[type_](x))
-            x = self.dropout(x)
-        x = self.layers[-1][type_](x)
+        x = self.layers_dict[type_](x)
         if self.normalize_last:
             return F.normalize(x, dim=-1)
         else:
