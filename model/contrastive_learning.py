@@ -241,7 +241,7 @@ if __name__ == '__main__':
         optimizer = torch.optim.Adam(model.parameters(), lr=args.fuse_lr)
         reconstruction_model = None
         reconstruction_optimizer = None
-
+    print(model)
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
     best_valid_auc = 0
 
@@ -253,8 +253,9 @@ if __name__ == '__main__':
     for epoch in range(args.fuse_epochs):
         running_args["epoch"] = epoch
         train_auc = run_epoch(**running_args, loader=train_loader, part="train")
-        valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
-        test_auc = run_epoch(**running_args, loader=test_loader, part="test")
+        with torch.no_grad():
+            valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
+            test_auc = run_epoch(**running_args, loader=test_loader, part="test")
 
         if valid_auc > best_valid_auc:
             best_valid_auc = valid_auc
