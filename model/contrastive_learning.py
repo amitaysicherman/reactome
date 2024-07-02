@@ -242,6 +242,7 @@ if __name__ == '__main__':
         reconstruction_model = None
         reconstruction_optimizer = None
     print(model)
+    print(sum(p.numel() for p in model.parameters() if p.requires_grad) , "parameters")
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
     best_valid_auc = 0
 
