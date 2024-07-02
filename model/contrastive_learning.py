@@ -14,6 +14,7 @@ from itertools import chain
 from common.utils import prepare_files, TYPE_TO_VEC_DIM
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 from protein_drug.train_eval import main as protein_drug_main
+from common.path_manager import scores_path
 
 EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -247,6 +248,7 @@ def main(args):
     print(sum(p.numel() for p in model.parameters() if p.requires_grad), "parameters")
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
     best_valid_auc = 0
+    best_test_auc = 0
     running_args = {"model": model, "reconstruction_model": reconstruction_model, "optimizer": optimizer,
                     "reconstruction_optimizer": reconstruction_optimizer, "contrastive_loss": contrastive_loss,
                     "recon": args.fuse_recon, "output_file": scores_file, "all_to_one": args.fuse_all_to_one,
@@ -266,12 +268,15 @@ def main(args):
 
         if valid_auc > best_valid_auc or args.fuse_train_all:
             best_valid_auc = valid_auc
+            best_test_auc = test_auc
             save_fuse_model(model, reconstruction_model, save_dir, epoch)
             no_improve_count = 0
         else:
             no_improve_count += 1
             if no_improve_count >= args.max_no_improve:
                 break
+    with open(f'{scores_path}/all_fuse_dp.csv', "a") as f:
+        f.write(f"{args.fuse_name},{best_valid_auc * 100:.1f},{best_test_auc * 100:.1f}\n")
     return best_valid_auc
 
 
