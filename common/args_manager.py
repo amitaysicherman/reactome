@@ -53,13 +53,13 @@ def get_args():
 
     #drug protein args
     parser.add_argument("--dp_fuse_base", type=str, default="data/models_checkpoints/fuse_all-to-prot")
-    parser.add_argument("--dp_m_fuse", type=int, default=0)
-    parser.add_argument("--dp_p_fuse", type=int, default=0)
+    parser.add_argument("--dp_m_fuse", type=int, default=1)
+    parser.add_argument("--dp_p_fuse", type=int, default=1)
     parser.add_argument("--dp_m_model", type=int, default=0)
     parser.add_argument("--dp_p_model", type=int, default=0)
     parser.add_argument("--dp_only_rand", type=int, default=0)
     parser.add_argument("--dp_fuse_freeze", type=int, default=1)
-    parser.add_argument("--dp_bs", type=int, default=32)
+    parser.add_argument("--dp_bs", type=int, default=1024)
     parser.add_argument("--dp_lr", type=float, default=1e-4)
 
     args = parser.parse_args()
