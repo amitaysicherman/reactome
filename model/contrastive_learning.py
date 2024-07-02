@@ -13,6 +13,7 @@ from sklearn.metrics import roc_auc_score
 from itertools import chain
 from common.utils import prepare_files, TYPE_TO_VEC_DIM
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
+from protein_drug.train_eval import main as protein_drug_main
 
 EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -55,7 +56,8 @@ def weighted_mean_loss(loss, labels):
     return (positive_loss + negative_loss) / (pos_weight + neg_weight)
 
 
-def run_epoch(model, reconstruction_model, optimizer, reconstruction_optimizer, loader, contrastive_loss, epoch, recon,
+def run_epoch(model, node_index_manager, reconstruction_model, optimizer, reconstruction_optimizer, loader,
+              contrastive_loss, epoch, recon,
               output_file, part="train", all_to_one=False, use_pretrain=True):
     if len(loader) == 0:
         return 0
@@ -163,7 +165,7 @@ def build_no_pretrained_model(node_index_manager: NodesIndexManager, output_dim:
     return EmbModel(len(node_index_manager.index_to_node), output_dim).to(device)
 
 
-def build_models(fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir):
+def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir):
     if fuse_all_to_one == "" or fuse_all_to_one == "inv":
         names = EMBEDDING_DATA_TYPES
         src_dims = [TYPE_TO_VEC_DIM[x] for x in EMBEDDING_DATA_TYPES]
@@ -208,11 +210,7 @@ def build_models(fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_di
     return model, reconstruction_model
 
 
-if __name__ == '__main__':
-
-    from common.args_manager import get_args
-
-    args = get_args()
+def main(args):
     save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
 
     if args.debug:
@@ -232,7 +230,7 @@ if __name__ == '__main__':
     test_loader = get_loader(test_reaction, node_index_manager, args.fuse_batch_size, "test", debug=args.debug)
 
     if args.fuse_pretrained_start:
-        model, reconstruction_model = build_models(args.fuse_all_to_one, args.fuse_output_dim, args.fuse_n_layers,
+        model, reconstruction_model = build_models(args, args.fuse_all_to_one, args.fuse_output_dim, args.fuse_n_layers,
                                                    args.fuse_hidden_dim, args.fuse_dropout, save_dir)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.fuse_lr)
         reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
@@ -249,19 +247,34 @@ if __name__ == '__main__':
     print(sum(p.numel() for p in model.parameters() if p.requires_grad), "parameters")
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
     best_valid_auc = 0
-
     running_args = {"model": model, "reconstruction_model": reconstruction_model, "optimizer": optimizer,
                     "reconstruction_optimizer": reconstruction_optimizer, "contrastive_loss": contrastive_loss,
                     "recon": args.fuse_recon, "output_file": scores_file, "all_to_one": args.fuse_all_to_one,
-                    "use_pretrain": args.fuse_pretrained_start}
-
+                    "use_pretrain": args.fuse_pretrained_start, "node_index_manager": node_index_manager}
+    no_improve_count = 0
     for epoch in range(args.fuse_epochs):
         running_args["epoch"] = epoch
         train_auc = run_epoch(**running_args, loader=train_loader, part="train")
-        with torch.no_grad():
-            valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
-            test_auc = run_epoch(**running_args, loader=test_loader, part="test")
+        if args.fuse_train_all:
+            valid_auc, test_auc = protein_drug_main(args)
+            print(f"Drug-Protein Valid AUC: {valid_auc:.3f}, Test AUC: {test_auc:.3f}")
+        else:
+            with torch.no_grad():
+                valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
+                test_auc = run_epoch(**running_args, loader=test_loader, part="test")
 
         if valid_auc > best_valid_auc or args.fuse_train_all:
             best_valid_auc = valid_auc
             save_fuse_model(model, reconstruction_model, save_dir, epoch)
+            no_improve_count = 0
+        else:
+            no_improve_count += 1
+            if no_improve_count >= args.max_no_improve:
+                break
+    return best_valid_auc
+
+
+if __name__ == '__main__':
+    from common.args_manager import get_args
+
+    main(get_args())
