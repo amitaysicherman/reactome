@@ -262,6 +262,6 @@ if __name__ == '__main__':
             valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
             test_auc = run_epoch(**running_args, loader=test_loader, part="test")
 
-        if valid_auc > best_valid_auc:
+        if valid_auc > best_valid_auc or args.fuse_train_all:
             best_valid_auc = valid_auc
             save_fuse_model(model, reconstruction_model, save_dir, epoch)
