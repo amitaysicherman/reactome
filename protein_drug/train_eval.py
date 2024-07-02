@@ -247,7 +247,8 @@ def main(args):
     all_labels = all_labels[shuffle_index]
     molecules_names = molecules_names[shuffle_index]
     proteins_names = proteins_names[shuffle_index]
-    print(all_molecules.shape, all_proteins.shape, all_labels.shape)
+    if args.dp_print:
+        print(all_molecules.shape, all_proteins.shape, all_labels.shape)
     train_molecules, val_molecules, test_molecules = split_train_val_test(all_molecules)
     train_proteins, val_proteins, test_proteins = split_train_val_test(all_proteins)
     train_labels, val_labels, test_labels = split_train_val_test(all_labels)
@@ -272,7 +273,8 @@ def main(args):
                                  proteins_names=test_proteins_names)
     model = ProteinDrugLinearModel(fuse_base, m_fuse=m_fuse, p_fuse=p_fuse, m_model=m_model, p_model=p_model,
                                    only_rand=only_rand, fuse_freeze=fuse_freeze).to(device)
-    print(model)
+    if args.dp_print:
+        print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     loss_func = torch.nn.BCEWithLogitsLoss()
     best_val_auc = 0
@@ -284,8 +286,9 @@ def main(args):
         with torch.no_grad():
             val_auc = run_epoch(model, val_loader, optimizer, loss_func, "val")
             test_auc = run_epoch(model, test_loader, optimizer, loss_func, "test")
-        print(
-            f"Epoch {epoch}: train: {score_to_str(train_auc)}, val: {score_to_str(val_auc)} test {score_to_str(test_auc)}")
+        if args.dp_print:
+            print(
+                f"Epoch {epoch}: train: {score_to_str(train_auc)}, val: {score_to_str(val_auc)} test {score_to_str(test_auc)}")
         best_train_all_auc = max(best_train_all_auc, train_auc[0])
         if val_auc[1] > best_val_auc:
             best_val_auc = val_auc[1]
@@ -296,9 +299,10 @@ def main(args):
             if no_improve > args.max_no_improve:
                 break
     msg = f"{model_to_conf_name(model)},{best_val_auc},{best_test_auc},{best_train_all_auc}"
-    print(msg)
-    with open(f"{scores_path}/drug_bank.txt", "a") as f:
-        f.write(msg + "\n")
+    if args.dp_print:
+        print(msg)
+        with open(f"{scores_path}/drug_bank.txt", "a") as f:
+            f.write(msg + "\n")
     return best_val_auc, best_test_auc
 
 

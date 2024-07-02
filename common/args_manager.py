@@ -61,6 +61,8 @@ def get_args():
     parser.add_argument("--dp_fuse_freeze", type=int, default=1)
     parser.add_argument("--dp_bs", type=int, default=1024)
     parser.add_argument("--dp_lr", type=float, default=1e-4)
+    parser.add_argument("--dp_print", type=int, default=1)
+
 
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":
