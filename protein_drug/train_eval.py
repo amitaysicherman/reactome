@@ -41,10 +41,25 @@ def split_train_val_test(data, val_size=0.16, test_size=0.20):
     return train_data, val_data, test_data
 
 
+rand_memories = {}
+
+
+def entity_to_rand(entity, dim):
+    if entity in rand_memories:
+        return rand_memories[entity]
+    rand_memories[entity] = np.random.randn(dim)
+    return rand_memories[entity]
+
+
 class ProteinDrugDataset(Dataset):
-    def __init__(self, molecules, proteins, labels, e_types=None):
+    def __init__(self, molecules, proteins, labels, e_types=None, only_rand=False, molecules_names=None,
+                 proteins_names=None):
         self.molecules = molecules
+        if only_rand:
+            self.molecules = np.stack([entity_to_rand(m, self.molecules.shape[1]) for m in molecules_names])
         self.proteins = proteins
+        if only_rand:
+            self.proteins = np.stack([entity_to_rand(p, self.proteins.shape[1]) for p in proteins_names])
         self.labels = labels
         self.e_types = e_types if e_types is not None else [0] * len(molecules)
 
@@ -68,8 +83,10 @@ def load_fuse_model(base_dir):
     return model, dim
 
 
-def data_to_loader(molecules, proteins, labels, e_types, batch_size, shuffle=True):
-    dataset = ProteinDrugDataset(molecules, proteins, labels, e_types)
+def data_to_loader(molecules, proteins, labels, e_types, batch_size, shuffle=True, only_rand=False,
+                   molecules_names=None,
+                   proteins_names=None):
+    dataset = ProteinDrugDataset(molecules, proteins, labels, e_types, only_rand, molecules_names, proteins_names)
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
 
@@ -82,14 +99,6 @@ def get_layers(dims):
         layers.add_module(f"bn_{i}", torch.nn.BatchNorm1d(dims[i + 1]))
     return layers
 
-
-rand_map=dict()
-def tensor_to_random_with_memory(tensor):
-    hash_tensor = hash(tensor.detach().cpu().numpy().tobytes())
-    if hash_tensor in rand_map:
-        return rand_map[hash_tensor]
-    rand_map[hash_tensor] = torch.randn_like(tensor)
-    return rand_map[hash_tensor]
 
 class ProteinDrugLinearModel(torch.nn.Module):
     def __init__(self, fuse_base, m_fuse=True, p_fuse=True,
@@ -137,9 +146,6 @@ class ProteinDrugLinearModel(torch.nn.Module):
                 protein = torch.cat([fuse_protein, protein], dim=1)
             else:
                 protein = fuse_protein
-        if self.only_rand:
-            molecule = tensor_to_random_with_memory(molecule)
-            protein = tensor_to_random_with_memory(protein)
         molecule = self.m_layers(molecule)
         protein = self.p_layers(protein)
         return -1 * F.cosine_similarity(molecule, protein).unsqueeze(1)
@@ -154,8 +160,8 @@ def run_epoch(model, loader, optimizer, criterion, part):
     preds = defaultdict(list)
     total_loss = 0
     for molecules, proteins, labels, e_type in loader:
-        molecules = molecules.to(device)
-        proteins = proteins.to(device)
+        molecules = molecules.to(device).float()
+        proteins = proteins.to(device).float()
         labels = labels.to(device)
 
         optimizer.zero_grad()
@@ -249,7 +255,6 @@ if __name__ == '__main__':
     bs = args.bs
     lr = args.lr
 
-
     np.random.seed(42)
     all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data()
     shuffle_index = np.random.permutation(len(all_molecules))
@@ -262,15 +267,25 @@ if __name__ == '__main__':
     train_molecules, val_molecules, test_molecules = split_train_val_test(all_molecules)
     train_proteins, val_proteins, test_proteins = split_train_val_test(all_proteins)
     train_labels, val_labels, test_labels = split_train_val_test(all_labels)
+    train_molecules_names, val_molecules_names, test_molecules_names = split_train_val_test(molecules_names)
+    train_proteins_names, val_proteins_names, test_proteins_names = split_train_val_test(proteins_names)
+
     train_m_names, val_m_names, test_m_names = split_train_val_test(molecules_names)
     train_p_names, val_p_names, test_p_names = split_train_val_test(proteins_names)
 
     val_e_types = get_test_e_type(train_p_names, val_p_names, train_m_names, val_m_names)
     test_e_types = get_test_e_type(train_p_names, test_p_names, train_m_names, test_m_names)
 
-    train_loader = data_to_loader(train_molecules, train_proteins, train_labels, None, batch_size=bs, shuffle=True)
-    val_loader = data_to_loader(val_molecules, val_proteins, val_labels, val_e_types, batch_size=bs, shuffle=False)
-    test_loader = data_to_loader(test_molecules, test_proteins, test_labels, test_e_types, batch_size=bs, shuffle=False)
+    train_loader = data_to_loader(train_molecules, train_proteins, train_labels, None, batch_size=bs, shuffle=True,
+                                  only_rand=only_rand, molecules_names=train_molecules_names,
+                                  proteins_names=train_proteins_names)
+
+    val_loader = data_to_loader(val_molecules, val_proteins, val_labels, val_e_types, batch_size=bs, shuffle=False,
+                                only_rand=only_rand, molecules_names=val_molecules_names,
+                                proteins_names=val_proteins_names)
+    test_loader = data_to_loader(test_molecules, test_proteins, test_labels, test_e_types, batch_size=bs, shuffle=False,
+                                 only_rand=only_rand, molecules_names=test_molecules_names,
+                                 proteins_names=test_proteins_names)
     model = ProteinDrugLinearModel(fuse_base, m_fuse=m_fuse, p_fuse=p_fuse, m_model=m_model, p_model=p_model,
                                    only_rand=only_rand, fuse_freeze=fuse_freeze).to(device)
     print(model)
