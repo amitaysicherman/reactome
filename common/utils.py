@@ -86,7 +86,7 @@ def load_fuse_model(name, fuse_pretrained_start):
     cp_data = torch.load(model_cp, map_location=torch.device('cpu'))
 
     if fuse_pretrained_start:
-        config_file = f'{model_path}/fuse_{name}/config.txt'
+        config_file = f'{model_path}/fuse2_{name}/config.txt'
         config = MultiModalLinearConfig.load_from_file(config_file)
         model = MiltyModalLinear(config)
     else:
