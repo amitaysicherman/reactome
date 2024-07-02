@@ -52,7 +52,7 @@ def get_args():
     parser.add_argument("--all_to_prot", type=int, default=1)
 
     #drug protein args
-    parser.add_argument("--dp_fuse_base", type=str, default="data/models_checkpoints/fuse_all-to-prot")
+    parser.add_argument("--dp_fuse_base", type=str, default="data/models_checkpoints/fuse2_all-to-prot")
     parser.add_argument("--dp_m_fuse", type=int, default=1)
     parser.add_argument("--dp_p_fuse", type=int, default=1)
     parser.add_argument("--dp_m_model", type=int, default=0)
