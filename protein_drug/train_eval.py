@@ -114,8 +114,22 @@ class ProteinDrugLinearModel(torch.nn.Module):
         self.fuse_freeze = fuse_freeze
         if m_fuse or p_fuse:
             self.fuse_model, dim = load_fuse_model(fuse_base)
-            self.m_type = "molecule_protein" if "molecule_protein" in self.fuse_model.names else "molecule"
-            self.p_type = "protein_protein" if "protein_protein" in self.fuse_model.names else "protein"
+            if "molecule_protein" in self.fuse_model.names:
+                self.m_type = "molecule_protein"
+            elif "molecule" in self.fuse_model.names:
+                self.m_type = "molecule"
+            elif "molecule_molecule" in self.fuse_model.names:
+                self.m_type = "molecule_molecule"
+            else:
+                raise ValueError("No molecule type in the model")
+            if "protein_protein" in self.fuse_model.names:
+                self.p_type = "protein_protein"
+            elif "protein" in self.fuse_model.names:
+                self.p_type = "protein"
+            elif "molecule_protein" in self.fuse_model.names:
+                self.p_type = "molecule_protein"
+            else:
+                raise ValueError("No protein type in the model")
             if m_fuse:
                 self.molecule_dim += dim
             if p_fuse:
