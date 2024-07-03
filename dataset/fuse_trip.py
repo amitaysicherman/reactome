@@ -231,3 +231,4 @@ if __name__ == '__main__':
     from common.args_manager import get_args
 
     args = get_args()
+    main(args)
