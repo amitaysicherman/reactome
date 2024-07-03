@@ -99,9 +99,7 @@ def run_epoch(model, node_index_manager, reconstruction_model, optimizer, recons
             data_1 = data_1.to(device).float()
             data_2 = data_2.to(device).float()
         if (not self_move) and type_1 == type_2:
-            print(f"Skip {type_1} {type_2}")
             continue
-        print(f"NO Skip {type_1} {type_2}")
 
         if all_to_one:
 
