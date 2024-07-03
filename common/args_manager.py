@@ -9,7 +9,7 @@ def get_args():
     parser.add_argument("--data_aug", type=str, default="protein", choices=["all", "location", "protein", "molecule"])
     parser.add_argument("--debug", type=int, default=0)
     parser.add_argument("--max_no_improve", type=int, default=5)
-
+    parser.add_argument("--random_seed", type=int, default=42)
 
     parser.add_argument("--fuse_batch_size", type=int, default=8192)
     parser.add_argument("--fuse_output_dim", type=int, default=1024)

@@ -11,11 +11,27 @@ from sklearn.metrics import roc_auc_score
 from collections import defaultdict
 from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, precision_recall_curve, \
     auc as area_under_curve
+from dataclasses import dataclass
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 MOL_DIM = 768
 PROT_DIM = 1024
+
+
+class Score:
+    def __init__(self, epoch: int, part: str, auc: float, accuracy: float, precision: float, recall: float,
+                 aupr: float):
+        self.epoch = epoch
+        self.part = part
+        self.auc = auc
+        self.accuracy = accuracy
+        self.precision = precision
+        self.recall = recall
+        self.aupr = aupr
+
+    def to_string(self):
+        return f"{self.epoch},{self.part},{self.auc},{self.accuracy},{self.precision},{self.recall},{self.aupr}"
 
 
 def load_data(dataset):
@@ -187,13 +203,13 @@ class ProteinDrugLinearModel(torch.nn.Module):
         return -1 * F.cosine_similarity(molecule, protein).unsqueeze(1)
 
 
-def run_epoch(model, loader, optimizer, criterion, part):
+def run_epoch(model, loader, optimizer, criterion, part, epoch):
     if part == "train":
         model.train()
     else:
         model.eval()
-    reals = defaultdict(list)
-    preds = defaultdict(list)
+    reals = []
+    preds = []
     total_loss = 0
     for molecules, proteins, labels, e_type in loader:
         molecules = molecules.to(device).float()
@@ -208,18 +224,17 @@ def run_epoch(model, loader, optimizer, criterion, part):
             optimizer.step()
         total_loss += loss.item()
         for e, r, p in zip(e_type, labels, outputs):
-            reals[e.item()].append(r.item())
-            preds[e.item()].append(torch.sigmoid(p).item())
+            if (e.item() == 0 and part == "train") or (e.item() == 1 and part != "train"):
+                reals.append(r.item())
+                preds.append(torch.sigmoid(p).item())
 
-    auc = defaultdict(float)
-    key = 0 if part == "train" else 1
-    real, pred = np.array(reals[key]), np.array(preds[key])
-    auc[key] = roc_auc_score(real, pred)
+    real, pred = np.array(reals), np.array(preds)
     precision, recall, thresholds = precision_recall_curve(real, pred)
-    print(
-        f"{part} AUC: {auc[key] * 100:.1f} accuracy: {accuracy_score(real, pred > 0.5) * 100:.1f} precision: {precision_score(real, pred > 0.5) * 100:.1f} recall: {recall_score(real, pred > 0.5) * 100:.1f} AUPR: {area_under_curve(recall, precision) * 100:.1f}")
+    score = Score(auc=roc_auc_score(real, pred), epoch=epoch, part=part, accuracy=accuracy_score(real, pred > 0.5),
+                  precision=precision_score(real, pred > 0.5), recall=recall_score(real, pred > 0.5),
+                  aupr=area_under_curve(recall, precision))
 
-    return auc
+    return score
 
 
 def get_test_e_type(train_proteins_names, test_proteins_names, train_molecules_names, test_molecules_names):
@@ -279,8 +294,9 @@ def main(args):
     bs = args.dp_bs
     lr = args.dp_lr
     dataset = args.db_dataset
+    seed = args.random_seed
+    np.random.seed(seed)
 
-    np.random.seed(42)
     all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data(dataset)
     shuffle_index = np.random.permutation(len(all_molecules))
     all_molecules = all_molecules[shuffle_index]
@@ -320,30 +336,34 @@ def main(args):
     loss_func = torch.nn.BCEWithLogitsLoss()
     best_val_auc = 0
     best_test_auc = 0
+    best_test_score = None
     best_train_all_auc = 0
     no_improve = 0
     for epoch in range(100):
-        train_auc = run_epoch(model, train_loader, optimizer, loss_func, "train")
+        train_score = run_epoch(model, train_loader, optimizer, loss_func, "train", epoch)
         with torch.no_grad():
-            val_auc = run_epoch(model, val_loader, optimizer, loss_func, "val")
-            test_auc = run_epoch(model, test_loader, optimizer, loss_func, "test")
+            val_score = run_epoch(model, val_loader, optimizer, loss_func, "val", epoch)
+            test_score = run_epoch(model, test_loader, optimizer, loss_func, "test", epoch)
+
         if args.dp_print:
-            print(
-                f"Epoch {epoch}: train: {score_to_str(train_auc)}, val: {score_to_str(val_auc)} test {score_to_str(test_auc)}")
-        best_train_all_auc = max(best_train_all_auc, train_auc[0])
-        if val_auc[1] > best_val_auc:
-            best_val_auc = val_auc[1]
-            best_test_auc = test_auc[1]
+            print(train_score.to_string())
+            print(val_score.to_string())
+            print(test_score.to_string())
+        best_train_all_auc = max(best_train_all_auc, train_score.auc)
+        if val_score.auc > best_val_auc:
+            best_val_auc = val_score.auc
+            best_test_auc = test_score.auc
+            best_test_score = test_score
             no_improve = 0
         else:
             no_improve += 1
             if no_improve > args.max_no_improve:
                 break
-    msg = f"{model_to_conf_name(model)},{best_val_auc},{best_test_auc},{best_train_all_auc}"
+
     if args.dp_print:
-        print(msg)
-        with open(f"{scores_path}/drug_bank.txt", "a") as f:
-            f.write(msg + "\n")
+        print("Best Test scores\n", best_test_score.to_string())
+    with open(f"{scores_path}/drug_protein_{dataset}.txt", "a") as f:
+        f.write(best_test_score.to_string() + "\n")
     return best_val_auc, best_test_auc
 
 
