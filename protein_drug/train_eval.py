@@ -18,15 +18,15 @@ MOL_DIM = 768
 PROT_DIM = 1024
 
 
-def load_data():
+def load_data(dataset):
     base_dir = os.path.join(data_path, "protein_drug")
-    molecules = np.load(os.path.join(base_dir, "molecules.npy"))[:, 0, :]
-    proteins = np.load(os.path.join(base_dir, "proteins.npy"))[:, 0, :]
-    with open(os.path.join(base_dir, "molecules.txt")) as f:
+    molecules = np.load(os.path.join(base_dir, f"{dataset}_molecules.npy"))[:, 0, :]
+    proteins = np.load(os.path.join(base_dir, f"{dataset}_proteins.npy"))[:, 0, :]
+    with open(os.path.join(base_dir, f"{dataset}_molecules.txt")) as f:
         molecules_names = f.read().splitlines()
-    with open(os.path.join(base_dir, "proteins.txt")) as f:
+    with open(os.path.join(base_dir, f"{dataset}_proteins.txt")) as f:
         proteins_names = f.read().splitlines()
-    with open(os.path.join(base_dir, "labels.txt")) as f:
+    with open(os.path.join(base_dir, f"{dataset}_labels.txt")) as f:
         labels = f.read().splitlines()
     molecules_names = np.array(molecules_names)
     proteins_names = np.array(proteins_names)
@@ -212,11 +212,12 @@ def run_epoch(model, loader, optimizer, criterion, part):
             preds[e.item()].append(torch.sigmoid(p).item())
 
     auc = defaultdict(float)
-    key=0 if part=="train" else 1
+    key = 0 if part == "train" else 1
     real, pred = np.array(reals[key]), np.array(preds[key])
     auc[key] = roc_auc_score(real, pred)
     precision, recall, thresholds = precision_recall_curve(real, pred)
-    print(f"{part} AUC: {auc[key]*100:.1f} accuracy: {accuracy_score(real, pred > 0.5)*100:.1f} precision: {precision_score(real, pred > 0.5)*100:.1f} recall: {recall_score(real, pred > 0.5)*100:.1f} AUPR: {area_under_curve(recall, precision)*100:.1f}")
+    print(
+        f"{part} AUC: {auc[key] * 100:.1f} accuracy: {accuracy_score(real, pred > 0.5) * 100:.1f} precision: {precision_score(real, pred > 0.5) * 100:.1f} recall: {recall_score(real, pred > 0.5) * 100:.1f} AUPR: {area_under_curve(recall, precision) * 100:.1f}")
 
     return auc
 
@@ -277,6 +278,7 @@ def main(args):
     fuse_freeze = bool(args.dp_fuse_freeze)
     bs = args.dp_bs
     lr = args.dp_lr
+    dataset = args.db_dataset
 
     np.random.seed(42)
     all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data()

@@ -24,7 +24,12 @@ if __name__ == "__main__":
     labels = []
 
     for line in tqdm(lines):
-        mol_name, protein_name, smiles, fasta, label = line.split(" ")
+        if dataset == "human":
+            smiles, fasta, label = line.split(" ")
+            mol_name = smiles
+            protein_name = fasta
+        else:
+            mol_name, protein_name, smiles, fasta, label = line.split(" ")
         molecules.append(mol_name)
         proteins.append(protein_name)
         labels.append(label)
