@@ -62,6 +62,7 @@ def get_args():
     parser.add_argument("--dp_bs", type=int, default=1024)
     parser.add_argument("--dp_lr", type=float, default=1e-4)
     parser.add_argument("--dp_print", type=int, default=1)
+    parser.add_argument("--db_dataset", type=str, default="DrugBank", choices=["Davis", "DrugBank", "KIBA"])
 
 
     args = parser.parse_args()

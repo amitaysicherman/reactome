@@ -4,11 +4,15 @@ import os
 from tqdm import tqdm
 from common.data_types import PROTEIN, MOLECULE
 import numpy as np
+from common.args_manager import get_args
 
 if __name__ == "__main__":
+
+    args = get_args()
+    dataset = args.db_dataset
     seq2vec = Seq2Vec()
     base_dir = os.path.join(data_path, "protein_drug")
-    input_file = os.path.join(base_dir, "DrugBank.txt")
+    input_file = os.path.join(base_dir, f"{dataset}.txt")
     with open(input_file) as f:
         lines = f.read().splitlines()
     molecules = []
@@ -27,12 +31,12 @@ if __name__ == "__main__":
         molecules_vec.append(seq2vec.to_vec(smiles, MOLECULE))
         proteins_vec.append(seq2vec.to_vec(fasta, PROTEIN))
 
-    with open(os.path.join(base_dir, "molecules.txt"), "w") as f:
+    with open(os.path.join(base_dir, f"{dataset}_molecules.txt"), "w") as f:
         f.write("\n".join(molecules))
-    with open(os.path.join(base_dir, "proteins.txt"), "w") as f:
+    with open(os.path.join(base_dir, f"{dataset}_proteins.txt"), "w") as f:
         f.write("\n".join(proteins))
-    with open(os.path.join(base_dir, "labels.txt"), "w") as f:
+    with open(os.path.join(base_dir, f"{dataset}_labels.txt"), "w") as f:
         f.write("\n".join(labels))
 
-    np.save(os.path.join(base_dir, "molecules.npy"), np.array(molecules_vec))
-    np.save(os.path.join(base_dir, "proteins.npy"), np.array(proteins_vec))
+    np.save(os.path.join(base_dir, f"{dataset}_molecules.npy"), np.array(molecules_vec))
+    np.save(os.path.join(base_dir, f"{dataset}_proteins.npy"), np.array(proteins_vec))
