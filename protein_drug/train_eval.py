@@ -281,7 +281,7 @@ def main(args):
     dataset = args.db_dataset
 
     np.random.seed(42)
-    all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data()
+    all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data(dataset)
     shuffle_index = np.random.permutation(len(all_molecules))
     all_molecules = all_molecules[shuffle_index]
     all_proteins = all_proteins[shuffle_index]
