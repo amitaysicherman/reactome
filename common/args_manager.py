@@ -51,8 +51,8 @@ def get_args():
     parser.add_argument("--seq_aug_factor", type=int, default=10)
     parser.add_argument("--all_to_prot", type=int, default=1)
 
-    #drug protein args
-    parser.add_argument("--dp_fuse_base", type=str, default="data/models_checkpoints/fuse2_all-to-prot")
+    # drug protein args
+    parser.add_argument("--dp_fuse_base", type=str, default="data/models_checkpoints/fuse2_all-to-prot_best")
     parser.add_argument("--dp_m_fuse", type=int, default=1)
     parser.add_argument("--dp_p_fuse", type=int, default=1)
     parser.add_argument("--dp_m_model", type=int, default=1)
@@ -62,8 +62,7 @@ def get_args():
     parser.add_argument("--dp_bs", type=int, default=1024)
     parser.add_argument("--dp_lr", type=float, default=1e-4)
     parser.add_argument("--dp_print", type=int, default=1)
-    parser.add_argument("--db_dataset", type=str, default="DrugBank", choices=["Davis", "DrugBank", "KIBA","human"])
-
+    parser.add_argument("--db_dataset", type=str, default="DrugBank", choices=["Davis", "DrugBank", "KIBA", "human"])
 
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":

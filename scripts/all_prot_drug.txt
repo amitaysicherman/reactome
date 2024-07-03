@@ -1,0 +1,7 @@
+--dp_m_fuse 1 --dp_p_fuse 1 --dp_m_model 1 --dp_p_model 1
+--dp_m_fuse 1 --dp_p_fuse 1 --dp_m_model 0 --dp_p_model 0
+--dp_m_fuse 0 --dp_p_fuse 0 --dp_m_model 1 --dp_p_model 1
+--dp_m_fuse 1 --dp_p_fuse 1 --dp_m_model 0 --dp_p_model 1
+--dp_m_fuse 1 --dp_p_fuse 1 --dp_m_model 1 --dp_p_model 0
+--dp_m_fuse 0 --dp_p_fuse 1 --dp_m_model 1 --dp_p_model 1
+--dp_m_fuse 1 --dp_p_fuse 1 --dp_m_model 1 --dp_p_model 1

@@ -261,8 +261,7 @@ def score_to_str(score_dict):
 
 
 def model_to_conf_name(model):
-    fuse_name = model.fuse_base.split("/")[-1]
-    return f"{model.m_fuse},{model.p_fuse},{model.m_model},{model.p_model},{fuse_name}"
+    return f"{model.m_fuse},{model.p_fuse},{model.m_model},{model.p_model}"
 
 
 def get_all_args_opt():
@@ -363,10 +362,12 @@ def main(args):
         print("Best Test scores\n", best_test_score.to_string())
     output_file = f"{scores_path}/drug_protein_{dataset}.csv"
     if not os.path.exists(output_file):
+        names = "m_fuse,p_fuse,m_model,p_model,"
+
         with open(output_file, "w") as f:
-            f.write(Score.get_header() + "\n")
+            f.write(names + Score.get_header() + "\n")
     with open(output_file, "a") as f:
-        f.write(best_test_score.to_string() + "\n")
+        f.write(model_to_conf_name(model) + best_test_score.to_string() + "\n")
     return best_val_auc, best_test_auc
 
 
