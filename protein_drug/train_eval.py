@@ -321,7 +321,7 @@ def main(args):
     best_test_score = None
     best_train_all_auc = 0
     no_improve = 0
-    for epoch in range(100):
+    for epoch in range(250):
         train_score = run_epoch(model, train_loader, optimizer, loss_func, "train", epoch)
         with torch.no_grad():
             val_score = run_epoch(model, val_loader, optimizer, loss_func, "val", epoch)
