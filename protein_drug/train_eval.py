@@ -114,26 +114,29 @@ class ProteinDrugLinearModel(torch.nn.Module):
         self.fuse_freeze = fuse_freeze
         if m_fuse or p_fuse:
             self.fuse_model, dim = load_fuse_model(fuse_base)
-            if "molecule_protein" in self.fuse_model.names:
-                self.m_type = "molecule_protein"
-            elif "molecule" in self.fuse_model.names:
-                self.m_type = "molecule"
-            elif "molecule_molecule" in self.fuse_model.names:
-                self.m_type = "molecule_molecule"
-            else:
-                raise ValueError("No molecule type in the model")
-            if "protein_protein" in self.fuse_model.names:
-                self.p_type = "protein_protein"
-            elif "protein" in self.fuse_model.names:
-                self.p_type = "protein"
-            elif "molecule_protein" in self.fuse_model.names:
-                self.p_type = "molecule_protein"
-            else:
-                raise ValueError("No protein type in the model")
             if m_fuse:
+                if "molecule_protein" in self.fuse_model.names:
+                    self.m_type = "molecule_protein"
+                elif "molecule" in self.fuse_model.names:
+                    self.m_type = "molecule"
+                elif "molecule_molecule" in self.fuse_model.names:
+                    self.m_type = "molecule_molecule"
+                else:
+                    raise ValueError("No molecule type in the model")
+
                 self.molecule_dim += dim
             if p_fuse:
+                if "protein_protein" in self.fuse_model.names:
+                    self.p_type = "protein_protein"
+                elif "protein" in self.fuse_model.names:
+                    self.p_type = "protein"
+                elif "molecule_protein" in self.fuse_model.names:
+                    self.p_type = "molecule_protein"
+                else:
+                    raise ValueError("No protein type in the model")
+
                 self.protein_dim += dim
+
 
         if m_model:
             self.molecule_dim += MOL_DIM
