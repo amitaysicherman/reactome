@@ -234,7 +234,7 @@ def main(args):
 
     if args.fuse_pretrained_start:
         model, reconstruction_model = build_models(args, args.fuse_all_to_one, args.fuse_output_dim, args.fuse_n_layers,
-                                                   args.fuse_hidden_dim, args.fuse_dropout, save_dir)
+                                                   args.fuse_hidden_dim, args.fuse_dropout, save_dir, args.fuse_self_move)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.fuse_lr)
         reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
                                                     lr=args.fuse_lr)
