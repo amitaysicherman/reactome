@@ -9,6 +9,8 @@ from model.models import MultiModalLinearConfig, MiltyModalLinear
 import torch.nn.functional as F
 from sklearn.metrics import roc_auc_score
 from collections import defaultdict
+from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, precision_recall_curve, \
+    auc as area_under_curve
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -103,7 +105,7 @@ def get_layers(dims):
 
 class ProteinDrugLinearModel(torch.nn.Module):
     def __init__(self, fuse_base, m_fuse=True, p_fuse=True,
-                 m_model=True, p_model=True, only_rand=False, fuse_freeze=True, use_transformer=False, trans_dim=256):
+                 m_model=True, p_model=True, only_rand=False, fuse_freeze=True, use_transformer=True, trans_dim=256):
         super().__init__()
         self.molecule_dim = 0
         self.protein_dim = 0
@@ -177,7 +179,8 @@ class ProteinDrugLinearModel(torch.nn.Module):
         if self.use_transformer:
             molecule = self.m_layers(molecule)
             protein = self.p_layers(protein)
-            mol_protein = torch.cat([molecule, protein], dim=1)
+            mol_protein = torch.stack((molecule, protein), dim=1).mean(dim=1)
+
             return self.trans(mol_protein)
         molecule = self.m_layers(molecule)
         protein = self.p_layers(protein)
@@ -212,7 +215,16 @@ def run_epoch(model, loader, optimizer, criterion, part):
     for key in reals.keys():
         if len(reals[key]) < 100:
             continue
-        auc[key] = roc_auc_score(reals[key], preds[key])
+        real, pred = np.array(reals[key]), np.array(preds[key])
+        auc[key] = roc_auc_score(real, pred)
+        print(f"{part} {key} AUC: {auc[key]}")
+        print(f"{part} {key} accuracy: {accuracy_score(real, pred > 0.5)}")
+        print(f"{part} {key} precision: {precision_score(real, pred > 0.5)}")
+        print(f"{part} {key} recall: {recall_score(real, pred > 0.5)}")
+        print(f"{part} {key} precision_recall_curve: {precision_recall_curve(real, pred)}")
+        precision, recall, thresholds = precision_recall_curve(real, pred)
+        print(f"{part} {key} auc: {area_under_curve(recall, precision)}")
+
     return auc
 
 
