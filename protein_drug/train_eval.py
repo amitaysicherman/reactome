@@ -131,7 +131,7 @@ class ProteinDrugLinearModel(torch.nn.Module):
                 elif "protein" in self.fuse_model.names:
                     self.p_type = "protein"
                 elif "protein_molecule" in self.fuse_model.names:
-                    self.p_type = "molecule_protein"
+                    self.p_type = "protein_molecule"
                 else:
                     raise ValueError("No protein type in the model")
 
