@@ -73,6 +73,7 @@ class ProteinDrugDataset(Dataset):
 def load_fuse_model(base_dir):
     cp_names = os.listdir(base_dir)
     cp_name = [x for x in cp_names if x.endswith(".pt")][0]
+    print(f"Load model {base_dir}/{cp_name}")
     cp_data = torch.load(f"{base_dir}/{cp_name}", map_location=torch.device('cpu'))
     config_file = os.path.join(base_dir, 'config.txt')
     config = MultiModalLinearConfig.load_from_file(config_file)
