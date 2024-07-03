@@ -229,6 +229,8 @@ def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hid
 
 def main(args):
     save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
+    save_dir_best = f"{save_dir}_best"
+    os.makedirs(save_dir_best, exist_ok=True)
 
     if args.debug:
         args.fuse_batch_size = 2
@@ -284,10 +286,10 @@ def main(args):
                 valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
                 test_auc = run_epoch(**running_args, loader=test_loader, part="test")
 
-        if valid_auc > best_valid_auc or args.fuse_train_all:
+        if valid_auc > best_valid_auc:
             best_valid_auc = valid_auc
             best_test_auc = test_auc
-            save_fuse_model(model, reconstruction_model, save_dir, epoch)
+            save_fuse_model(model, reconstruction_model, save_dir_best, epoch)
             no_improve_count = 0
         else:
             no_improve_count += 1
