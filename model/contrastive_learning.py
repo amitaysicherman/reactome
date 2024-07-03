@@ -57,9 +57,20 @@ def weighted_mean_loss(loss, labels):
     return (positive_loss + negative_loss) / (pos_weight + neg_weight)
 
 
+def print_auc_each_type(all_labels, all_preds, types):
+    all_preds = np.array(all_preds)
+    all_labels = np.array(all_labels)
+    types = np.array(types)
+    for t in np.unique(types):
+        mask = types == t
+        auc = roc_auc_score(all_labels[mask], all_preds[mask])
+        print(f"{t}: {auc:.3f}")
+
+
 def run_epoch(model, node_index_manager, reconstruction_model, optimizer, reconstruction_optimizer, loader,
               contrastive_loss, epoch, recon,
-              output_file, part="train", all_to_one=False, use_pretrain=True):
+              output_file, part="train", all_to_one=False, use_pretrain=True, self_move=True):
+    print(f"Epoch {epoch} {part} {self_move}")
     if len(loader) == 0:
         return 0
     if all_to_one == "inv":
@@ -74,7 +85,7 @@ def run_epoch(model, node_index_manager, reconstruction_model, optimizer, recons
     total_recon_loss = 0
     all_labels = []
     all_preds = []
-
+    types = []
     for i, (idx1, idx2, label) in enumerate(loader):
         if not use_pretrain:
             data_1 = idx1.to(device)
@@ -87,6 +98,10 @@ def run_epoch(model, node_index_manager, reconstruction_model, optimizer, recons
             data_2, type_2 = indexes_to_tensor(idx2, node_index_manager)
             data_1 = data_1.to(device).float()
             data_2 = data_2.to(device).float()
+        if (not self_move) and type_1 == type_2:
+            print(f"Skip {type_1} {type_2}")
+            continue
+        print(f"NO Skip {type_1} {type_2}")
 
         if all_to_one:
 
@@ -123,7 +138,7 @@ def run_epoch(model, node_index_manager, reconstruction_model, optimizer, recons
 
         all_labels.extend((label == 1).cpu().detach().numpy().astype(int).tolist())
         all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
-
+        types.extend([f"{type_1}_{type_2}"] * len(label))
         cont_loss = contrastive_loss(out1, out2, label.to(device))
         total_loss += cont_loss.mean().item()
 
@@ -144,7 +159,7 @@ def run_epoch(model, node_index_manager, reconstruction_model, optimizer, recons
             optimizer.zero_grad()
 
     auc = roc_auc_score(all_labels, all_preds)
-
+    print_auc_each_type(all_labels, all_preds, types)
     msg = f"Epoch {epoch} {part} AUC {auc:.3f} (cont: {total_loss / len(loader):.3f}, " \
           f"recon: {total_recon_loss / len(loader):.3f})"
     if all_to_one == "inv":
@@ -166,7 +181,8 @@ def build_no_pretrained_model(node_index_manager: NodesIndexManager, output_dim:
     return EmbModel(len(node_index_manager.index_to_node), output_dim).to(device)
 
 
-def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir,self_move=True):
+def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir,
+                 self_move=True):
     if fuse_all_to_one == "" or fuse_all_to_one == "inv":
         names = EMBEDDING_DATA_TYPES
         src_dims = [TYPE_TO_VEC_DIM[x] for x in EMBEDDING_DATA_TYPES]
@@ -234,7 +250,8 @@ def main(args):
 
     if args.fuse_pretrained_start:
         model, reconstruction_model = build_models(args, args.fuse_all_to_one, args.fuse_output_dim, args.fuse_n_layers,
-                                                   args.fuse_hidden_dim, args.fuse_dropout, save_dir, args.fuse_self_move)
+                                                   args.fuse_hidden_dim, args.fuse_dropout, save_dir,
+                                                   args.fuse_self_move)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.fuse_lr)
         reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
                                                     lr=args.fuse_lr)
@@ -254,7 +271,8 @@ def main(args):
     running_args = {"model": model, "reconstruction_model": reconstruction_model, "optimizer": optimizer,
                     "reconstruction_optimizer": reconstruction_optimizer, "contrastive_loss": contrastive_loss,
                     "recon": args.fuse_recon, "output_file": scores_file, "all_to_one": args.fuse_all_to_one,
-                    "use_pretrain": args.fuse_pretrained_start, "node_index_manager": node_index_manager}
+                    "use_pretrain": args.fuse_pretrained_start, "node_index_manager": node_index_manager,
+                    "self_move": args.fuse_self_move}
     no_improve_count = 0
     for epoch in range(args.fuse_epochs):
         running_args["epoch"] = epoch
