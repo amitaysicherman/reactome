@@ -120,10 +120,8 @@ def get_layers(dims):
 
 class ProteinDrugLinearModel(torch.nn.Module):
     def __init__(self, fuse_base, m_fuse=True, p_fuse=True,
-                 m_model=True, p_model=True, only_rand=False, fuse_freeze=True, use_transformer=True, trans_dim=256):
+                 m_model=True, p_model=True, fuse_freeze=True, trans_dim=256):
         super().__init__()
-        self.molecule_dim = 0
-        self.protein_dim = 0
         self.m_fuse = m_fuse
         self.p_fuse = p_fuse
         self.m_model = m_model
@@ -133,6 +131,7 @@ class ProteinDrugLinearModel(torch.nn.Module):
         if m_fuse or p_fuse:
             self.fuse_model, dim = load_fuse_model(fuse_base)
             if m_fuse:
+                self.m_fuse_linear = torch.nn.Linear(dim, trans_dim)
                 if "molecule_protein" in self.fuse_model.names:
                     self.m_type = "molecule_protein"
                 elif "molecule" in self.fuse_model.names:
@@ -141,9 +140,8 @@ class ProteinDrugLinearModel(torch.nn.Module):
                     self.m_type = "molecule_molecule"
                 else:
                     raise ValueError("No molecule type in the model")
-
-                self.molecule_dim += dim
             if p_fuse:
+                self.p_fuse_linear = torch.nn.Linear(dim, trans_dim)
                 if "protein_protein" in self.fuse_model.names:
                     self.p_type = "protein_protein"
                 elif "protein" in self.fuse_model.names:
@@ -153,53 +151,39 @@ class ProteinDrugLinearModel(torch.nn.Module):
                 else:
                     raise ValueError("No protein type in the model")
 
-                self.protein_dim += dim
-
         if m_model:
-            self.molecule_dim += MOL_DIM
+            self.m_model_linear = torch.nn.Linear(MOL_DIM, trans_dim)
         if p_model:
-            self.protein_dim += PROT_DIM
-        self.only_rand = only_rand
-        self.use_transformer = use_transformer
-        if not self.use_transformer:
-            self.m_layers = get_layers([self.molecule_dim, 1024, 512, 256, 128])
-            self.p_layers = get_layers([self.protein_dim, 1024, 512, 256, 128])
-        else:
-            self.m_layers = get_layers([self.molecule_dim, trans_dim])
-            self.p_layers = get_layers([self.protein_dim, trans_dim])
-            encoder_layer = torch.nn.TransformerEncoderLayer(d_model=trans_dim, nhead=2, dim_feedforward=trans_dim * 2,
-                                                             batch_first=True)
-            self.trans = torch.nn.Sequential(
-                torch.nn.TransformerEncoder(encoder_layer, num_layers=2),
-                torch.nn.Linear(trans_dim, 1)
-            )
+            self.p_model_linear = torch.nn.Linear(PROT_DIM, trans_dim)
+        encoder_layer = torch.nn.TransformerEncoderLayer(d_model=trans_dim, nhead=2, dim_feedforward=trans_dim * 2,
+                                                         batch_first=True, dropout=0.5)
+        self.trans = torch.nn.Sequential(
+            torch.nn.TransformerEncoder(encoder_layer, num_layers=2),
+            torch.nn.Linear(trans_dim, 1)
+        )
 
     def forward(self, molecule, protein):
+        x = []
         if self.m_fuse:
             fuse_molecule = self.fuse_model(molecule, self.m_type)
             if self.fuse_freeze:
                 fuse_molecule = fuse_molecule.detach()
-            if self.m_model:
-                molecule = torch.cat([fuse_molecule, molecule], dim=1)
-            else:
-                molecule = fuse_molecule
+            fuse_molecule = self.m_fuse_linear(fuse_molecule)
+            x.append(fuse_molecule)
+        if self.m_model:
+            molecule = self.m_model_linear(molecule)
+            x.append(molecule)
         if self.p_fuse:
             fuse_protein = self.fuse_model(protein, self.p_type)
             if self.fuse_freeze:
                 fuse_protein = fuse_protein.detach()
-            if self.p_model:
-                protein = torch.cat([fuse_protein, protein], dim=1)
-            else:
-                protein = fuse_protein
-        if self.use_transformer:
-            molecule = self.m_layers(molecule)
-            protein = self.p_layers(protein)
-            mol_protein = torch.stack((molecule, protein), dim=1).mean(dim=1)
-
-            return self.trans(mol_protein)
-        molecule = self.m_layers(molecule)
-        protein = self.p_layers(protein)
-        return -1 * F.cosine_similarity(molecule, protein).unsqueeze(1)
+            fuse_protein = self.p_fuse_linear(fuse_protein)
+            x.append(fuse_protein)
+        if self.p_model:
+            protein = self.p_model_linear(protein)
+            x.append(protein)
+        mol_protein = torch.stack(x, dim=1)
+        return self.trans(mol_protein).mean(dim=1)
 
 
 def run_epoch(model, loader, optimizer, criterion, part, epoch):
@@ -327,7 +311,7 @@ def main(args):
                                  only_rand=only_rand, molecules_names=test_molecules_names,
                                  proteins_names=test_proteins_names)
     model = ProteinDrugLinearModel(fuse_base, m_fuse=m_fuse, p_fuse=p_fuse, m_model=m_model, p_model=p_model,
-                                   only_rand=only_rand, fuse_freeze=fuse_freeze).to(device)
+                                   fuse_freeze=fuse_freeze).to(device)
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
