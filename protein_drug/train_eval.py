@@ -217,13 +217,12 @@ def run_epoch(model, loader, optimizer, criterion, part):
             continue
         real, pred = np.array(reals[key]), np.array(preds[key])
         auc[key] = roc_auc_score(real, pred)
-        print(f"{part} {key} AUC: {auc[key]}")
-        print(f"{part} {key} accuracy: {accuracy_score(real, pred > 0.5)}")
-        print(f"{part} {key} precision: {precision_score(real, pred > 0.5)}")
-        print(f"{part} {key} recall: {recall_score(real, pred > 0.5)}")
-        print(f"{part} {key} precision_recall_curve: {precision_recall_curve(real, pred)}")
+        print(f"{key} AUC: {auc[key]}")
+        print(f"{key} accuracy: {accuracy_score(real, pred > 0.5)}")
+        print(f"{key} precision: {precision_score(real, pred > 0.5)}")
+        print(f"{key} recall: {recall_score(real, pred > 0.5)}")
         precision, recall, thresholds = precision_recall_curve(real, pred)
-        print(f"{part} {key} auc: {area_under_curve(recall, precision)}")
+        print(f"{key} AUPR: {area_under_curve(recall, precision)}")
 
     return auc
 
