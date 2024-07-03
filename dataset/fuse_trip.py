@@ -6,7 +6,7 @@ from tqdm import tqdm
 
 from common.data_types import Reaction
 import numpy as np
-
+from protein_drug.train_eval import main as protein_drug_main
 from dataset.fuse_dataset import PairsDataset, SameNameBatchSampler
 from dataset.index_manger import NodesIndexManager, get_from_args
 import os
@@ -101,6 +101,8 @@ class TriplesDataset:
 
 def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceLoss, output_file, part, all_to_one,
               self_move):
+    if len(loader) == 0:
+        return 0
     is_train = part == "train"
     if is_train:
         model.train()
@@ -177,18 +179,18 @@ def build_models(fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, 
     model_config.save_to_file(f"{save_dir}/config.txt")
     return model
 
-
-if __name__ == '__main__':
-
-    from common.args_manager import get_args
-
-    args = get_args()
+def main(args):
     save_dir, scores_file = prepare_files(f'fuse_trip_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD, fuse_name="no")
     train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=False,
                                                                          filter_dna=True,
-                                                                         filter_no_act=True,
+                                                                         # filter_no_act=True,
                                                                          sample_count=args.gnn_sample)
+    if args.fuse_train_all:
+        train_reactions = train_reactions + validation_reactions + test_reaction
+        validation_reactions = []
+        test_reaction = []
+
     ds_args = {"nodes_index_manager": node_index_manager, "batch_size": args.fuse_batch_size, "per_sample_count": 3}
     train_loader = TriplesDataset(train_reactions, **ds_args, shuffle=True)
     valid_loader = TriplesDataset(validation_reactions, **ds_args, shuffle=False)
@@ -206,9 +208,14 @@ if __name__ == '__main__':
     best_index = 0
     for epoch in range(args.fuse_epochs):
         train_auc = run_epoch(**running_args, loader=train_loader, part="train")
-        with torch.no_grad():
-            valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
-            test_auc = run_epoch(**running_args, loader=test_loader, part="test")
+        if args.fuse_train_all:
+            torch.save(model.state_dict(), f"{save_dir}/fuse_trip_model.pt")
+            valid_auc, test_auc = protein_drug_main(args)
+            print(f"Drug-Protein Valid AUC: {valid_auc:.3f}, Test AUC: {test_auc:.3f}")
+        else:
+            with torch.no_grad():
+                valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
+                test_auc = run_epoch(**running_args, loader=test_loader, part="test")
 
         if valid_auc > best_valid_auc:
             best_valid_auc = valid_auc
@@ -217,3 +224,10 @@ if __name__ == '__main__':
             torch.save(model.state_dict(), f"{save_dir}/fuse_trip_model.pt")
     with open(os.path.join(scores_path, "fuse_trip_all.csv"), "a") as f:
         f.write(f"{best_valid_auc:.3f},{best_test_auc:.3f},{best_index}\n")
+
+
+if __name__ == '__main__':
+
+    from common.args_manager import get_args
+
+    args = get_args()
