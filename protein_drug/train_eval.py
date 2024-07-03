@@ -261,7 +261,7 @@ def score_to_str(score_dict):
 
 
 def model_to_conf_name(model):
-    return f"{model.m_fuse},{model.p_fuse},{model.m_model},{model.p_model}"
+    return f"{model.m_fuse},{model.p_fuse},{model.m_model},{model.p_model},"
 
 
 def get_all_args_opt():
