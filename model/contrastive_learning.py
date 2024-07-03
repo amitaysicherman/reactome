@@ -15,6 +15,7 @@ from common.utils import prepare_files, TYPE_TO_VEC_DIM
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 from protein_drug.train_eval import main as protein_drug_main
 from common.path_manager import scores_path
+import shutil
 
 EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -180,7 +181,7 @@ def build_no_pretrained_model(node_index_manager: NodesIndexManager, output_dim:
 
 
 def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir,
-                 self_move=True):
+                 self_move=True, save_best=""):
     if fuse_all_to_one == "" or fuse_all_to_one == "inv":
         names = EMBEDDING_DATA_TYPES
         src_dims = [TYPE_TO_VEC_DIM[x] for x in EMBEDDING_DATA_TYPES]
@@ -224,13 +225,17 @@ def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hid
     )
     recons_config.save_to_file(f"{save_dir}/config-recon.txt")
     reconstruction_model = MiltyModalLinear(recons_config).to(device)
+    if save_best:
+        model_config.save_to_file(f"{save_best}/config.txt")
+        recons_config.save_to_file(f"{save_best}/config-recon.txt")
     return model, reconstruction_model
 
 
 def main(args):
     save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
-    save_dir_best = f"{save_dir}_best"
-    os.makedirs(save_dir_best, exist_ok=True)
+    if args.fuse_train_all:
+        save_dir_best = f"{save_dir}_best"
+        os.makedirs(save_dir_best, exist_ok=True)
 
     if args.debug:
         args.fuse_batch_size = 2
@@ -251,7 +256,7 @@ def main(args):
     if args.fuse_pretrained_start:
         model, reconstruction_model = build_models(args, args.fuse_all_to_one, args.fuse_output_dim, args.fuse_n_layers,
                                                    args.fuse_hidden_dim, args.fuse_dropout, save_dir,
-                                                   args.fuse_self_move)
+                                                   args.fuse_self_move, save_best=save_dir_best)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.fuse_lr)
         reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
                                                     lr=args.fuse_lr)
