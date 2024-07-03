@@ -212,14 +212,13 @@ def run_epoch(model, loader, optimizer, criterion, part):
             preds[e.item()].append(torch.sigmoid(p).item())
 
     auc = defaultdict(float)
-    for key in reals.keys():
-        if len(reals[key]) < 100:
-            continue
-        real, pred = np.array(reals[key]), np.array(preds[key])
-        auc[key] = roc_auc_score(real, pred)
-        auc=roc_auc_score(real, pred)
-        precision, recall, thresholds = precision_recall_curve(real, pred)
-        print(f"{part} AUC: {auc*100:.1f} accuracy: {accuracy_score(real, pred > 0.5)*100:.1f} precision: {precision_score(real, pred > 0.5)*100:.1f} recall: {recall_score(real, pred > 0.5)*100:.1f} AUPR: {area_under_curve(recall, precision)*100:.1f")
+    key=0 if part=="train" else 1
+
+    real, pred = np.array(reals[key]), np.array(preds[key])
+    auc[key] = roc_auc_score(real, pred)
+    auc=roc_auc_score(real, pred)
+    precision, recall, thresholds = precision_recall_curve(real, pred)
+    print(f"{part} AUC: {auc*100:.1f} accuracy: {accuracy_score(real, pred > 0.5)*100:.1f} precision: {precision_score(real, pred > 0.5)*100:.1f} recall: {recall_score(real, pred > 0.5)*100:.1f} AUPR: {area_under_curve(recall, precision)*100:.1f")
 
     return auc
 
