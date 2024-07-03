@@ -29,7 +29,7 @@ device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Device: {device}")
 
 
-def triples_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager, per_sample_count):
+def triples_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager, all_pairs, per_sample_count):
     elements = []
 
     reaction_elements = reaction.inputs + sum([x.entities for x in reaction.catalysis], [])  # + reaction.outputs
@@ -51,11 +51,11 @@ def triples_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexMan
             type_2 = nodes_index_manager.index_to_node[e2].type
             while True:
                 fake_e1 = random.choice(nodes_index_manager.type_to_indexes[type_1])
-                if fake_e1 not in elements_set:
+                if fake_e1 not in elements_set or (e2, fake_e1) not in all_pairs:
                     break
             while True:
                 fake_e2 = random.choice(nodes_index_manager.type_to_indexes[type_2])
-                if fake_e2 not in elements_set:
+                if fake_e2 not in elements_set and (e1, fake_e2) not in all_pairs:
                     break
             triples.append((e1, e2, fake_e2))
             types.append((type_1, type_2))
@@ -65,12 +65,27 @@ def triples_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexMan
     return types, triples
 
 
+def all_reactions_pairs(reactions, nodes_index_manager: NodesIndexManager):
+    all_pairs = set()
+    for reaction in tqdm(reactions):
+        reaction_elements = reaction.inputs + sum([x.entities for x in reaction.catalysis], [])  # + reaction.outputs
+        ids = [x.get_db_identifier() for x in reaction_elements]
+        ids += [f"GO@{x.activity}" for x in reaction.catalysis]
+        ids = [nodes_index_manager.name_to_node[x].index for x in ids]
+        ids_pairs = [(x[0], x[1]) for x in (combinations(ids, 2))] + [(x[1], x[0]) for x in (combinations(ids, 2))]
+        all_pairs.update(ids_pairs)
+    return all_pairs
+
+
 class TriplesDataset:
     def __init__(self, reactions, nodes_index_manager: NodesIndexManager, per_sample_count, batch_size, shuffle=False):
         self.nodes_index_manager = nodes_index_manager
         self.data = defaultdict(list)
+        self.all_pairs = all_reactions_pairs(reactions, nodes_index_manager)
+        print("All pairs:", len(self.all_pairs),self.all_pairs)
         for reaction in tqdm(reactions):
-            types, triples = triples_from_reaction(reaction, nodes_index_manager, per_sample_count=per_sample_count)
+            types, triples = triples_from_reaction(reaction, nodes_index_manager, self.all_pairs,
+                                                   per_sample_count=per_sample_count)
             for i in range(len(triples)):
                 self.data[types[i]].append(triples[i])
         self.batch_size = batch_size
@@ -98,6 +113,7 @@ class TriplesDataset:
         for i in range(len(self)):
             yield self[i]
 
+
 def print_auc_each_type(all_labels, all_preds, types):
     all_preds = np.array(all_preds)
     all_labels = np.array(all_labels)
@@ -106,6 +122,7 @@ def print_auc_each_type(all_labels, all_preds, types):
         mask = types == t
         auc = roc_auc_score(all_labels[mask], all_preds[mask])
         print(f"{t}: {auc:.3f}")
+
 
 def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceLoss, output_file, part, all_to_one,
               self_move):
@@ -119,7 +136,7 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
     total_loss = 0
     all_labels = []
     all_preds = []
-    all_types= []
+    all_types = []
     for (type1, type2), (anchors, positives, negatives) in loader:
         anchors = torch.from_numpy(anchors).to(device).float()
         positives = torch.from_numpy(positives).to(device).float()
@@ -191,6 +208,7 @@ def build_models(fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, 
     model_config.save_to_file(f"{save_dir}/config.txt")
     return model
 
+
 def main(args):
     save_dir, scores_file = prepare_files(f'fuse_trip_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD, fuse_name="no")
@@ -239,7 +257,6 @@ def main(args):
 
 
 if __name__ == '__main__':
-
     from common.args_manager import get_args
 
     args = get_args()
