@@ -1,5 +1,3 @@
-import sys
-import os
 from common.path_manager import data_path, scores_path
 import os
 import numpy as np
@@ -7,11 +5,8 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 from model.models import MultiModalLinearConfig, MiltyModalLinear
 import torch.nn.functional as F
-from sklearn.metrics import roc_auc_score
-from collections import defaultdict
 from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, precision_recall_curve, \
     auc as area_under_curve
-from dataclasses import dataclass
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -32,6 +27,10 @@ class Score:
 
     def to_string(self):
         return f"{self.epoch},{self.part},{self.auc},{self.accuracy},{self.precision},{self.recall},{self.aupr}"
+
+    @staticmethod
+    def get_header():
+        return "epoch,part,auc,accuracy,precision,recall,aupr"
 
 
 def load_data(dataset):
@@ -362,7 +361,11 @@ def main(args):
 
     if args.dp_print:
         print("Best Test scores\n", best_test_score.to_string())
-    with open(f"{scores_path}/drug_protein_{dataset}.txt", "a") as f:
+    output_file = f"{scores_path}/drug_protein_{dataset}.csv"
+    if not os.path.exists(output_file):
+        with open(output_file, "w") as f:
+            f.write(Score.get_header() + "\n")
+    with open(output_file, "a") as f:
         f.write(best_test_score.to_string() + "\n")
     return best_val_auc, best_test_auc
 
