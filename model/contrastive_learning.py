@@ -166,7 +166,7 @@ def build_no_pretrained_model(node_index_manager: NodesIndexManager, output_dim:
     return EmbModel(len(node_index_manager.index_to_node), output_dim).to(device)
 
 
-def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir):
+def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir,self_move=True):
     if fuse_all_to_one == "" or fuse_all_to_one == "inv":
         names = EMBEDDING_DATA_TYPES
         src_dims = [TYPE_TO_VEC_DIM[x] for x in EMBEDDING_DATA_TYPES]
@@ -179,6 +179,8 @@ def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hid
         for src in EMBEDDING_DATA_TYPES:
             for dst in EMBEDDING_DATA_TYPES:
                 if fuse_all_to_one == "all" or dst == fuse_all_to_one:
+                    if (not self_move) and src == dst:
+                        continue
                     src_dims.append(TYPE_TO_VEC_DIM[src])
                     names.append((src, dst))
                     dst_dim.append(TYPE_TO_VEC_DIM[dst])
