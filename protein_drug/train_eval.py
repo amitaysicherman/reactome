@@ -103,7 +103,7 @@ def get_layers(dims):
 
 class ProteinDrugLinearModel(torch.nn.Module):
     def __init__(self, fuse_base, m_fuse=True, p_fuse=True,
-                 m_model=True, p_model=True, only_rand=False, fuse_freeze=True):
+                 m_model=True, p_model=True, only_rand=False, fuse_freeze=True, use_transformer=False, trans_dim=256):
         super().__init__()
         self.molecule_dim = 0
         self.protein_dim = 0
@@ -138,14 +138,24 @@ class ProteinDrugLinearModel(torch.nn.Module):
 
                 self.protein_dim += dim
 
-
         if m_model:
             self.molecule_dim += MOL_DIM
         if p_model:
             self.protein_dim += PROT_DIM
         self.only_rand = only_rand
-        self.m_layers = get_layers([self.molecule_dim, 1024, 512, 256, 128])
-        self.p_layers = get_layers([self.protein_dim, 1024, 512, 256, 128])
+        self.use_transformer = use_transformer
+        if not self.use_transformer:
+            self.m_layers = get_layers([self.molecule_dim, 1024, 512, 256, 128])
+            self.p_layers = get_layers([self.protein_dim, 1024, 512, 256, 128])
+        else:
+            self.m_layers = get_layers([self.molecule_dim, trans_dim])
+            self.p_layers = get_layers([self.protein_dim, trans_dim])
+            encoder_layer = torch.nn.TransformerEncoderLayer(d_model=trans_dim, nhead=2, dim_feedforward=trans_dim * 2,
+                                                             batch_first=True)
+            self.trans = torch.nn.Sequential(
+                torch.nn.TransformerEncoder(encoder_layer, num_layers=2),
+                torch.nn.Linear(trans_dim, 1)
+            )
 
     def forward(self, molecule, protein):
         if self.m_fuse:
@@ -164,6 +174,11 @@ class ProteinDrugLinearModel(torch.nn.Module):
                 protein = torch.cat([fuse_protein, protein], dim=1)
             else:
                 protein = fuse_protein
+        if self.use_transformer:
+            molecule = self.m_layers(molecule)
+            protein = self.p_layers(protein)
+            mol_protein = torch.cat([molecule, protein], dim=1)
+            return self.trans(mol_protein)
         molecule = self.m_layers(molecule)
         protein = self.p_layers(protein)
         return -1 * F.cosine_similarity(molecule, protein).unsqueeze(1)
@@ -246,6 +261,7 @@ def get_all_args_opt():
                             f"--m_fuse {m_fuse} --p_fuse {p_fuse} --m_model {m_model} --p_model {p_model} --fuse_base data/models_checkpoints/{fuse}")
     return conf
 
+
 def main(args):
     fuse_base = args.dp_fuse_base
     m_fuse = bool(args.dp_m_fuse)
@@ -324,9 +340,7 @@ def main(args):
     return best_val_auc, best_test_auc
 
 
-
 if __name__ == '__main__':
-
     from common.args_manager import get_args
 
     main(get_args())

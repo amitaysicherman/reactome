@@ -86,7 +86,7 @@ class PairsDataset(Dataset):
             self.all_elements.extend(elements)
             self.all_pairs.extend(pairs)
         self.pairs_unique = set(self.all_pairs)
-        self.all_pairs = list(self.pairs_unique)
+        self.all_pairs = list(self.pairs_unique) #TODO : REMOVE ?
         elements_unique, elements_count = np.unique(self.all_elements, return_counts=True)
         self.elements_unique = elements_unique
         for dtype in EMBEDDING_DATA_TYPES:
