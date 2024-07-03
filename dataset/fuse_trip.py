@@ -82,7 +82,7 @@ class TriplesDataset:
         self.nodes_index_manager = nodes_index_manager
         self.data = defaultdict(list)
         self.all_pairs = all_reactions_pairs(reactions, nodes_index_manager)
-        print("All pairs:", len(self.all_pairs),self.all_pairs)
+        print("All pairs:", len(self.all_pairs))
         for reaction in tqdm(reactions):
             types, triples = triples_from_reaction(reaction, nodes_index_manager, self.all_pairs,
                                                    per_sample_count=per_sample_count)
