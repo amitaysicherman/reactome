@@ -98,6 +98,14 @@ class TriplesDataset:
         for i in range(len(self)):
             yield self[i]
 
+def print_auc_each_type(all_labels, all_preds, types):
+    all_preds = np.array(all_preds)
+    all_labels = np.array(all_labels)
+    types = np.array(types)
+    for t in np.unique(types):
+        mask = types == t
+        auc = roc_auc_score(all_labels[mask], all_preds[mask])
+        print(f"{t}: {auc:.3f}")
 
 def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceLoss, output_file, part, all_to_one,
               self_move):
@@ -111,7 +119,7 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
     total_loss = 0
     all_labels = []
     all_preds = []
-
+    all_types= []
     for (type1, type2), (anchors, positives, negatives) in loader:
         anchors = torch.from_numpy(anchors).to(device).float()
         positives = torch.from_numpy(positives).to(device).float()
@@ -122,6 +130,7 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
             if (not self_move) and all_to_one == type1 and type1 == type2:
                 all_preds.extend((0.5 * (1 + F.cosine_similarity(anchors, positives).cpu().detach().numpy())).tolist())
                 all_preds.extend((0.5 * (1 + F.cosine_similarity(anchors, negatives).cpu().detach().numpy())).tolist())
+                all_types.extend([f'{type1}_{type2}'] * len(anchors) * 2)
                 continue
 
             if all_to_one == type1:
@@ -138,6 +147,8 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
                 out3 = model(negatives, type2)
                 all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
                 all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out3).cpu().detach().numpy())).tolist())
+                all_types.extend([f'{type1}_{type2}'] * len(anchors) * 2)
+
                 continue
         else:
             out1 = model(anchors, type1)
@@ -146,6 +157,7 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
 
         all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
         all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out3).cpu().detach().numpy())).tolist())
+        all_types.extend([f'{type1}_{type2}'] * len(anchors) * 2)
 
         loss = loss_func(out1, out2, out3)
         total_loss += loss.item()
@@ -156,7 +168,7 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
-
+    print_auc_each_type(all_labels, all_preds, all_types)
     auc = roc_auc_score(all_labels, all_preds)
     msg = f"{part} AUC {auc:.3f} LOSS {total_loss / len(loader):.3f}"
     with open(output_file, "a") as f:
