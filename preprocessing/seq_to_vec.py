@@ -211,6 +211,8 @@ if __name__ == "__main__":
         suf = ""
         if dt == PROTEIN:
             suf = f"_{protein_emd}"
+        elif dt == MOLECULE:
+            suf = f"_{mol_emd}"
         input_file = f'{item_path}/{dt}_sequences.txt'
         output_file_name = f'{item_path}/{dt}{suf}_vec.npy'
         read_seq_write_vec(seq2vec, input_file, output_file_name, dt)
