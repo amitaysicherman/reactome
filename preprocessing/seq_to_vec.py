@@ -95,7 +95,9 @@ class Prot2vec(ABCSeq2Vec):
 
     def to_vec(self, seq: str):
         if self.name == ESM_3:
-            torch.cuda.empty_cache()
+            if len(seq)>2595: #TODO : is it better sulution?
+                seq=seq[:2595]
+
             protein = ESMProtein(sequence=seq)
             with torch.no_grad():
                 protein = self.model.encode(protein)
