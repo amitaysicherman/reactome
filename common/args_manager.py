@@ -7,10 +7,9 @@ def get_args():
     # preproccecing args
 
     parser.add_argument("--self_token", type=str, default="")
-    parser.add_argument("--protein_emd", type=str, default="Rostlab/prot_t5_xl_half_uniref50-enc")
+    parser.add_argument("--protein_emd", type=str, default="ProtBertT5-xl")
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
                         choices=["all", "protein", "molecule", "text", 'dna'])
-    parser.add_argument("--prep_reactome_name", type=str, default="t5_xl")
 
     parser.add_argument("--name", type=str, default="default")
     parser.add_argument("--skip_if_exists", type=int, default=0)
