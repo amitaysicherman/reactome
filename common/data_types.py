@@ -163,3 +163,7 @@ P_T5_XL = "ProtBertT5-xl"
 ESM_1B = "ESM-1B"
 ESM_2 = "ESM2"
 ESM_3 = "ESM3"
+
+PEBCHEM10M = "pebchem10m"
+ROBERTA = "roberta"
+CHEMBERTA = "chemberta"

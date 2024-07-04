@@ -8,6 +8,7 @@ def get_args():
 
     parser.add_argument("--self_token", type=str, default="")
     parser.add_argument("--protein_emd", type=str, default="ProtBertT5-xl")
+    parser.add_argument("--mol_emd", type=str, default="pebchem10m")
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
                         choices=["all", "protein", "molecule", "text", 'dna'])
 

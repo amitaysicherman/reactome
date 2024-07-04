@@ -16,7 +16,8 @@ from esm.models.esm3 import ESM3
 from esm.sdk.api import ESMProtein
 
 from common.utils import get_type_to_vec_dim
-from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES, P_BFD, P_T5_XL, ESM_1B, ESM_2, ESM_3
+from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES, P_BFD, P_T5_XL, ESM_1B, ESM_2, ESM_3, \
+    PEBCHEM10M, ROBERTA, CHEMBERTA
 from common.args_manager import get_args
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
@@ -29,6 +30,12 @@ protein_name_to_cp = {
     ESM_1B: 'facebook/esm1b_t33_650M_UR50S',
     ESM_2: 'facebook/esm2_t12_35M_UR50D',
     ESM_3: 'esm3'
+}
+
+mol_name_to_cp = {
+    PEBCHEM10M: "seyonec/PubChem10M_SMILES_BPE_450k",
+    ROBERTA: "entropy/roberta_zinc_480m",
+    CHEMBERTA: "seyonec/ChemBERTa-zinc-base-v1",
 }
 
 
@@ -131,11 +138,10 @@ class DNA2Vec(ABCSeq2Vec):
 
 
 class Mol2Vec(ABCSeq2Vec):
-    def __init__(self):
+    def __init__(self, name):
         super().__init__()
-        self.model = AutoModelForMaskedLM.from_pretrained("seyonec/PubChem10M_SMILES_BPE_450k").base_model.eval().to(
-            device)
-        self.tokenizer = AutoTokenizer.from_pretrained("seyonec/PubChem10M_SMILES_BPE_450k")
+        self.model = AutoModelForMaskedLM.from_pretrained(mol_name_to_cp[name]).base_model.eval().to(device)
+        self.tokenizer = AutoTokenizer.from_pretrained(mol_name_to_cp[name])
 
 
 class BioText2Vec(ABCSeq2Vec):
@@ -148,10 +154,10 @@ class BioText2Vec(ABCSeq2Vec):
 
 
 class Seq2Vec:
-    def __init__(self, self_token, protein_name=P_T5_XL):
+    def __init__(self, self_token, protein_name=P_T5_XL, mol_name=PEBCHEM10M):
         self.prot2vec = Prot2vec(self_token, protein_name)
         self.dna2vec = DNA2Vec()
-        self.mol2vec = Mol2Vec()
+        self.mol2vec = Mol2Vec(mol_name)
         self.text2vec = BioText2Vec()
         self.type_to_vec_dim = get_type_to_vec_dim(protein_name)
 
@@ -195,9 +201,10 @@ if __name__ == "__main__":
     args = get_args()
     self_token = args.self_token
     protein_emd = args.protein_emd
+    mol_emd = args.mol_emd
     assert protein_emd in protein_name_to_cp, f"Unknown protein embedding: {protein_emd}"
     data_type = args.prep_reactome_dtype
-    seq2vec = Seq2Vec(self_token, protein_emd)
+    seq2vec = Seq2Vec(self_token, protein_name=protein_emd, mol_name=mol_emd)
     dtypes = [data_type] if data_type != "all" else EMBEDDING_DATA_TYPES
 
     for dt in dtypes:
