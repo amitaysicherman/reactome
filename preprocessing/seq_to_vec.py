@@ -161,7 +161,8 @@ class Seq2Vec:
     def to_vec(self, seq: str, seq_type: str):
         zeros = np.zeros((1, TYPE_TO_VEC_DIM[seq_type]))
         if seq_type == PROTEIN:
-            zeros = np.zeros((1, self.prot2vec.prot_dim))
+            if self.prot2vec.prot_dim is None:
+                zeros = np.zeros((1, self.prot2vec.prot_dim))
             vec = self.prot2vec.to_vec(seq)
         elif seq_type == DNA:
             vec = self.dna2vec.to_vec(seq)
