@@ -6,6 +6,7 @@ def args_to_string(args):
     res = ""
     for arg in vars(args):
         res += f"--{arg} {getattr(args, arg)} "
+    return res
 
 
 args = get_args()
