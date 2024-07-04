@@ -60,7 +60,8 @@ class NodesIndexManager:
                 if pretrained_method == NO_PRETRAINED_EMD:
                     vectors = np.stack([np.random.rand(self.type_to_vec_dim[dt]) for _ in range(len(lines))])
                 else:
-                    pretrained_vec_file = f'{item_path}/{dt}_{prot_emd_type}_vec.npy'
+                    prefix=f"{prot_emd_type}_" if dt == PROTEIN else ""
+                    pretrained_vec_file = f'{item_path}/{dt}_{prefix}vec.npy'
                     vectors = np.load(pretrained_vec_file)
                     if pretrained_method == PRETRAINED_EMD_FUSE:
                         if fuse_pretrained_start:
