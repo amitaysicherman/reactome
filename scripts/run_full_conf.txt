@@ -1,0 +1,15 @@
+-name ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0
+-name ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0
+-name ESM-1B_pebchem10m --dp_fuse_base fuse2_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0
+-name ESM2_pebchem10m --dp_fuse_base fuse2_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0
+-name ESM3_pebchem10m --dp_fuse_base fuse2_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0
+-name ProtBert-BFD_roberta --dp_fuse_base fuse2_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
+-name ProtBertT5-xl_roberta --dp_fuse_base fuse2_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0
+-name ESM-1B_roberta --dp_fuse_base fuse2_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0
+-name ESM2_roberta --dp_fuse_base fuse2_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0
+-name ESM3_roberta --dp_fuse_base fuse2_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0
+-name ProtBert-BFD_chemberta --dp_fuse_base fuse2_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0
+-name ProtBertT5-xl_chemberta --dp_fuse_base fuse2_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0
+-name ESM-1B_chemberta --dp_fuse_base fuse2_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0
+-name ESM2_chemberta --dp_fuse_base fuse2_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0
+-name ESM3_chemberta --dp_fuse_base fuse2_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0
