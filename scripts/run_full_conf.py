@@ -5,9 +5,14 @@ import os
 def args_to_string(args):
     res = ""
     for arg in vars(args):
-        if getattr(args, arg) == "":
+        val = getattr(args, arg)
+        if val == "":
             continue
-        res += f"--{arg} {getattr(args, arg)} "
+        if type(val) == list:
+            res += f"--{arg} {' '.join(val)} "
+        else:
+            res += f"--{arg} {val} "
+
     return res
 
 
