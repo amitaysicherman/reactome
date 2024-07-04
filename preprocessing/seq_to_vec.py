@@ -31,7 +31,7 @@ ESM_3 = "ESM3"
 
 protein_name_to_cp = {
     P_BFD: 'Rostlab/prot_bert_bfd',
-    P_T5_XL: 'prot_t5_xl_half_uniref50-enc',
+    P_T5_XL: 'Rostlab/prot_t5_xl_half_uniref50-enc',
     ESM_1B: 'facebook/esm1b_t33_650M_UR50S',
     ESM_2: 'facebook/esm2_t12_35M_UR50D',
     ESM_3: 'esm3'
