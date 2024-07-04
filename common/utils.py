@@ -12,7 +12,7 @@ from common.data_types import CatalystOBJ, Entity, Reaction, UNKNOWN_ENTITY_TYPE
 from common.path_manager import model_path, scores_path
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 
-def get_to_to_vec_dim(prot_emd_type=P_T5_XL):
+def get_type_to_vec_dim(prot_emd_type=P_T5_XL):
     type_to_dim = {DNA: 768,
                    MOLECULE: 768,
                    TEXT: 768

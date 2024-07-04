@@ -2,16 +2,14 @@ from common.path_manager import data_path, scores_path
 import os
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
+from common.utils import get_type_to_vec_dim
+from common.data_types import MOLECULE, PROTEIN
 import torch
 from model.models import MultiModalLinearConfig, MiltyModalLinear
 from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, precision_recall_curve, \
     auc as area_under_curve
-from common.data_types import P_T5_XL
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
-
-MOL_DIM = 768
-PROT_DIM = 1024
 
 
 class Score:
@@ -119,7 +117,7 @@ def get_layers(dims):
 
 
 class ProteinDrugLinearModel(torch.nn.Module):
-    def __init__(self, fuse_base, m_fuse=True, p_fuse=True,
+    def __init__(self, fuse_base, type_to_vec_dim, m_fuse=True, p_fuse=True,
                  m_model=True, p_model=True, fuse_freeze=True, trans_dim=256):
         super().__init__()
         self.m_fuse = m_fuse
@@ -152,9 +150,9 @@ class ProteinDrugLinearModel(torch.nn.Module):
                     raise ValueError("No protein type in the model")
 
         if m_model:
-            self.m_model_linear = torch.nn.Linear(MOL_DIM, trans_dim)
+            self.m_model_linear = torch.nn.Linear(type_to_vec_dim[MOLECULE], trans_dim)
         if p_model:
-            self.p_model_linear = torch.nn.Linear(PROT_DIM, trans_dim)
+            self.p_model_linear = torch.nn.Linear(type_to_vec_dim[PROTEIN], trans_dim)
         encoder_layer = torch.nn.TransformerEncoderLayer(d_model=trans_dim, nhead=2, dim_feedforward=trans_dim * 2,
                                                          batch_first=True, dropout=0.5)
         self.trans = torch.nn.Sequential(
@@ -279,7 +277,7 @@ def main(args):
     dataset = args.db_dataset
     seed = args.random_seed
     np.random.seed(seed)
-
+    type_to_vec_dim = get_type_to_vec_dim(prot_emd_type)
     all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data(dataset, prot_emd_type)
     shuffle_index = np.random.permutation(len(all_molecules))
     all_molecules = all_molecules[shuffle_index]
@@ -311,7 +309,8 @@ def main(args):
     test_loader = data_to_loader(test_molecules, test_proteins, test_labels, test_e_types, batch_size=bs, shuffle=False,
                                  only_rand=only_rand, molecules_names=test_molecules_names,
                                  proteins_names=test_proteins_names)
-    model = ProteinDrugLinearModel(fuse_base, m_fuse=m_fuse, p_fuse=p_fuse, m_model=m_model, p_model=p_model,
+    model = ProteinDrugLinearModel(fuse_base, type_to_vec_dim, m_fuse=m_fuse, p_fuse=p_fuse, m_model=m_model,
+                                   p_model=p_model,
                                    fuse_freeze=fuse_freeze).to(device)
     if args.dp_print:
         print(model)

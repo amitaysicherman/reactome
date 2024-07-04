@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 from dataset.dataset_builder import get_reactions
 from sklearn.metrics import roc_auc_score
 from itertools import chain
-from common.utils import prepare_files, get_to_to_vec_dim
+from common.utils import prepare_files, get_type_to_vec_dim
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 from torch.utils.data import Dataset
 from common.path_manager import scores_path
@@ -210,7 +210,7 @@ def build_models(fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, 
 
 
 def main(args):
-    TYPE_TO_VEC_DIM = get_to_to_vec_dim(args.protein_emd)
+    TYPE_TO_VEC_DIM = get_type_to_vec_dim(args.protein_emd)
 
     save_dir, scores_file = prepare_files(f'fuse_trip_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD, fuse_name="no")

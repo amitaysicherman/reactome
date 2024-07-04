@@ -15,7 +15,7 @@ from huggingface_hub import login
 from esm.models.esm3 import ESM3
 from esm.sdk.api import ESMProtein
 
-from common.utils import get_to_to_vec_dim
+from common.utils import get_type_to_vec_dim
 from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES, P_BFD, P_T5_XL, ESM_1B, ESM_2, ESM_3
 from common.args_manager import get_args
 
@@ -153,7 +153,7 @@ class Seq2Vec:
         self.dna2vec = DNA2Vec()
         self.mol2vec = Mol2Vec()
         self.text2vec = BioText2Vec()
-        self.type_to_vec_dim = get_to_to_vec_dim(protein_name)
+        self.type_to_vec_dim = get_type_to_vec_dim(protein_name)
 
     def to_vec(self, seq: str, seq_type: str):
         zeros = np.zeros((1, self.type_to_vec_dim[seq_type]))

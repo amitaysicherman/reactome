@@ -11,7 +11,7 @@ from torch.utils.data import DataLoader
 from dataset.dataset_builder import get_reactions
 from sklearn.metrics import roc_auc_score
 from itertools import chain
-from common.utils import prepare_files, get_to_to_vec_dim
+from common.utils import prepare_files, get_type_to_vec_dim
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 from protein_drug.train_eval import main as protein_drug_main
 from common.path_manager import scores_path
@@ -182,7 +182,7 @@ def build_no_pretrained_model(node_index_manager: NodesIndexManager, output_dim:
 
 def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir,
                  self_move=True, save_best=""):
-    TYPE_TO_VEC_DIM = get_to_to_vec_dim(args.protein_emd)
+    TYPE_TO_VEC_DIM = get_type_to_vec_dim(args.protein_emd)
     if fuse_all_to_one == "" or fuse_all_to_one == "inv":
         names = EMBEDDING_DATA_TYPES
         src_dims = [TYPE_TO_VEC_DIM[x] for x in EMBEDDING_DATA_TYPES]

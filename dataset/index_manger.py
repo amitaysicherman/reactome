@@ -2,7 +2,7 @@ import numpy as np
 from sklearn.metrics import pairwise_distances
 import random
 from typing import Dict
-from common.utils import get_to_to_vec_dim, load_fuse_model
+from common.utils import get_type_to_vec_dim, load_fuse_model
 from common.path_manager import item_path
 from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, EMBEDDING_DATA_TYPES, LOCATION, \
     DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS, NO_PRETRAINED_EMD, PRETRAINED_EMD, PRETRAINED_EMD_FUSE, MOLECULE, TEXT, \
@@ -40,7 +40,7 @@ class NodesIndexManager:
         self.index_count = 2
         self.dtype_to_first_index = dict()
         self.dtype_to_last_index = dict()
-        self.type_to_vec_dim = get_to_to_vec_dim(prot_emd_type)
+        self.type_to_vec_dim = get_type_to_vec_dim(prot_emd_type)
         self.bp_name_to_index = {"": -1}
         self.fuse_model = load_fuse_model(fuse_name, fuse_pretrained_start)
         if self.fuse_model is not None:
