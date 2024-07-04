@@ -1,4 +1,4 @@
-from preprocessing.seq_to_vec import Seq2Vec, protein_name_to_cp
+from preprocessing.seq_to_vec import Seq2Vec
 from common.path_manager import data_path
 import os
 from tqdm import tqdm
