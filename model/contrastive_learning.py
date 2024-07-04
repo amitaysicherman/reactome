@@ -300,7 +300,7 @@ def main(args):
             no_improve_count = 0
         else:
             no_improve_count += 1
-            if no_improve_count >= args.max_no_improve:
+            if no_improve_count >= args.fuse_max_no_improve:
                 break
     with open(f'{scores_path}/all_fuse_dp.csv', "a") as f:
         f.write(f"{args.fuse_name},{best_valid_auc * 100:.1f},{best_test_auc * 100:.1f}\n")

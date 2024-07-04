@@ -33,9 +33,9 @@ configs = [{"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
            {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 0},
            {"dp_m_fuse": 0, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
            {"dp_m_fuse": 1, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1}]
-for config in configs:
-    for random_seed in range(42, 52):
-        args.random_seed = random_seed
+for random_seed in range(42, 52):
+    args.random_seed = random_seed
+    for config in configs:
         for key, value in config.items():
             setattr(args, key, value)
         cmd = f"python protein_drug/train_eval.py {args_to_string(args)}"

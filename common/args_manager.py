@@ -16,7 +16,7 @@ def get_args():
     parser.add_argument("--skip_if_exists", type=int, default=0)
     parser.add_argument("--data_aug", type=str, default="protein", choices=["all", "location", "protein", "molecule"])
     parser.add_argument("--debug", type=int, default=0)
-    parser.add_argument("--max_no_improve", type=int, default=5)
+    parser.add_argument("--max_no_improve", type=int, default=15)
     parser.add_argument("--random_seed", type=int, default=42)
 
     parser.add_argument("--fuse_batch_size", type=int, default=8192)
@@ -29,6 +29,7 @@ def get_args():
     parser.add_argument("--fuse_all_to_one", type=str, default="protein")
     parser.add_argument("--fuse_self_move", type=int, default=1)
     parser.add_argument("--fuse_train_all", type=int, default=1)
+    parser.add_argument("--fuse_max_no_improve", type=int, default=5)
 
     parser.add_argument("--fuse_epochs", type=int, default=50)
     parser.add_argument("--fuse_name", type=str, default="")
