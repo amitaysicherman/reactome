@@ -5,7 +5,7 @@ import os
 def args_to_string(args):
     res = ""
     for arg in vars(args):
-        if len(getattr(args, arg)) == "":
+        if getattr(args, arg) == "":
             continue
         res += f"--{arg} {getattr(args, arg)} "
     return res
