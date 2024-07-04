@@ -1,8 +1,9 @@
-from common.path_manager import data_path, scores_path
+from common.path_manager import data_path, scores_path, model_path
 import os
 import numpy as np
 from torch.utils.data import Dataset, DataLoader
 from common.utils import get_type_to_vec_dim
+
 from common.data_types import MOLECULE, PROTEIN
 import torch
 from model.models import MultiModalLinearConfig, MiltyModalLinear
@@ -86,6 +87,7 @@ class ProteinDrugDataset(Dataset):
 
 
 def load_fuse_model(base_dir):
+    base_dir = str(os.path.join(model_path, base_dir))
     cp_names = os.listdir(base_dir)
     cp_name = [x for x in cp_names if x.endswith(".pt")][0]
     print(f"Load model {base_dir}/{cp_name}")

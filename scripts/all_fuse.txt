@@ -1,24 +1,5 @@
---name all-to-prot --fuse_name all-to-prot --fuse_all_to_one protein --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_all-to-prot
---name all-to-all --fuse_name all-to-all  --fuse_all_to_one all --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_all-to-all
---name no --fuse_name no  --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_no
---name fuse --fuse_name fuse  --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_fuse
---name recon --fuse_name recon --fuse_recon 1 --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_recon
---name inv --fuse_name inv --fuse_all_to_one inv --fuse_output_dim 768 --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_inv
---name all-to-prot --fuse_name all-to-prot2 --fuse_all_to_one protein --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_all-to-prot2
---name all-to-all --fuse_name all-to-all2  --fuse_all_to_one all --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_all-to-all2
---name no --fuse_name no2  --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_no2
---name fuse --fuse_name fuse2  --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_fuse2
---name recon --fuse_name recon2 --fuse_recon 1 --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_recon2
---name inv --fuse_name inv2 --fuse_all_to_one inv --fuse_output_dim 768 --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_inv2
---name all-to-prot --fuse_name all-to-prot-m --fuse_all_to_one protein --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_all-to-prot-m --dp_m_model 1 --dp_p_model 1
---name all-to-all --fuse_name all-to-all-m  --fuse_all_to_one all --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_all-to-all-m --dp_m_model 1 --dp_p_model 1
---name no --fuse_name no-m  --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_no-m --dp_m_model 1 --dp_p_model 1
---name fuse --fuse_name fuse-m  --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_fuse-m --dp_m_model 1 --dp_p_model 1
---name recon --fuse_name recon-m --fuse_recon 1 --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_recon-m --dp_m_model 1 --dp_p_model 1
---name inv --fuse_name inv-m --fuse_all_to_one inv --fuse_output_dim 768 --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_inv-m --dp_m_model 1 --dp_p_model 1
---name all-to-prot --fuse_name all-to-prot2-m --fuse_all_to_one protein --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_all-to-prot2-m --dp_m_model 1 --dp_p_model 1
---name all-to-all --fuse_name all-to-all2-m  --fuse_all_to_one all --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_all-to-all2-m --dp_m_model 1 --dp_p_model 1
---name no --fuse_name no2-m  --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_no2-m --dp_m_model 1 --dp_p_model 1
---name fuse --fuse_name fuse2-m  --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_fuse2-m --dp_m_model 1 --dp_p_model 1
---name recon --fuse_name recon2-m --fuse_recon 1 --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_recon2-m --dp_m_model 1 --dp_p_model 1
---name inv --fuse_name inv2-m --fuse_all_to_one inv --fuse_output_dim 768 --fuse_train_all 1 --dp_print 0 --dp_fuse_base data/models_checkpoints/fuse2_inv2-m --dp_m_model 1 --dp_p_model 1
+--name ESM-1B --dp_fuse_base fuse2_ESM-1B --protein_emd ESM-1B --dp_print 0
+--name ESM2 --dp_fuse_base fuse2_ESM2 --protein_emd ESM2 --dp_print 0
+--name ESM3 --dp_fuse_base fuse2_ESM3 --protein_emd ESM3 --dp_print 0
+--name ProtBert-BFD --dp_fuse_base fuse2_ProtBert-BFD --protein_emd ProtBert-BFD --dp_print 0
+--name ProtBertT5-xl --dp_fuse_base fuse2_ProtBertT5-xl --protein_emd ProtBertT5-xl --dp_print 0
