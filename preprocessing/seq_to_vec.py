@@ -6,14 +6,37 @@ import numpy as np
 import torch
 from npy_append_array import NpyAppendArray
 from tqdm import tqdm
-from transformers import T5Tokenizer, T5EncoderModel, AutoModel, AutoModelForMaskedLM, AutoTokenizer, BertConfig
+from transformers import T5Tokenizer, T5EncoderModel, AutoModel, AutoModelForMaskedLM, AutoTokenizer, BertConfig, \
+    EsmModel
+
+from transformers import BertForMaskedLM, BertTokenizer
+
+from huggingface_hub import login
+from esm.models.esm3 import ESM3
+from esm.sdk.api import ESMProtein
 
 from common.utils import TYPE_TO_VEC_DIM
 from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES
+from common.args_manager import get_args
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 MAX_LEN = 510
 PROTEIN_MAX_LEN = 1024
+
+P_BFD = "ProtBert-BFD"
+P_T5_XL = "ProtBertT5-xl"
+ESM_1B = "ESM-1B"
+ESM_2 = "ESM2"
+ESM_3 = "ESM3"
+
+protein_name_to_cp = {
+    P_BFD: 'Rostlab/prot_bert_bfd',
+    P_T5_XL: 'prot_t5_xl_half_uniref50-enc',
+    ESM_1B: 'facebook/esm1b_t33_650M_UR50S',
+    ESM_2: 'facebook/esm2_t12_35M_UR50D',
+    ESM_3: 'esm3'
+}
+
 
 def clip_to_max_len(x: torch.Tensor, max_len: int = MAX_LEN):
     if x.shape[1] <= max_len:
@@ -43,26 +66,55 @@ class ABCSeq2Vec(ABC):
 
 
 class Prot2vec(ABCSeq2Vec):
-    def __init__(self):
+    def __init__(self, token="", name=""):
         super().__init__()
-        self.tokenizer = T5Tokenizer.from_pretrained('Rostlab/prot_t5_xl_half_uniref50-enc', do_lower_case=False)
-        self.model = T5EncoderModel.from_pretrained("Rostlab/prot_t5_xl_half_uniref50-enc").eval().to(device)
+        self.cp_name = protein_name_to_cp[name]
+        self.name = name
+        self.token = token
+
+    def get_model_tokenizer(self):
+        if self.name == P_BFD:
+            self.tokenizer = BertTokenizer.from_pretrained(self.cp_name, do_lower_case=False)
+            self.model = BertForMaskedLM.from_pretrained(self.cp_name).eval().to(device)
+        elif self.name == ESM_3:
+            login(token=self.token)
+            self.model = ESM3.from_pretrained("esm3_sm_open_v1", device=device)
+        elif self.name == ESM_1B or self.name == ESM_2:
+            self.tokenizer = AutoTokenizer.from_pretrained(self.cp_name)
+            self.model = EsmModel.from_pretrained(self.cp_name).eval().to(device)
+        elif self.name == P_T5_XL:
+            self.tokenizer = T5Tokenizer.from_pretrained(self.cp_name, do_lower_case=False)
+            self.model = T5EncoderModel.from_pretrained(self.cp_name).eval().to(device)
+        else:
+            raise ValueError(f"Unknown protein embedding: {self.name}")
         if device == torch.device("cpu"):
             self.model.to(torch.float32)
 
     def to_vec(self, seq: str):
-        # replace all rare/ambiguous amino acids by X and introduce white-space between all amino acids
-        seq = [" ".join(list(re.sub(r"[UZOB]", "X", seq)))]
-        ids = self.tokenizer(seq, add_special_tokens=True, padding="longest")
+        if self.name == ESM_3:
+            protein = ESMProtein(sequence=seq)
+            with torch.no_grad():
+                protein = self.model.encode(protein)
+                vec = self.model.forward(sequence_tokens=protein.sequence.unsqueeze(0).cuda()).embeddings[0].mean(dim=0)
+        elif self.name in [ESM_1B, ESM_2]:
+            inputs = self.tokenizer(seq, return_tensors='pt')["input_ids"].to(device)
+            inputs = clip_to_max_len(inputs)
+            with torch.no_grad():
+                vec = self.model(inputs)['pooler_output'][0]
+        else:
+            seq = [" ".join(list(re.sub(r"[UZOB]", "X", seq)))]
+            ids = self.tokenizer(seq, add_special_tokens=True, padding="longest")
+            input_ids = torch.tensor(ids['input_ids']).to(device)
+            input_ids = clip_to_max_len(input_ids, PROTEIN_MAX_LEN)
+            attention_mask = torch.tensor(ids['attention_mask']).to(device)
+            attention_mask = clip_to_max_len(attention_mask, PROTEIN_MAX_LEN)
 
-        input_ids = torch.tensor(ids['input_ids']).to(device)
-        input_ids = clip_to_max_len(input_ids,PROTEIN_MAX_LEN)
-        attention_mask = torch.tensor(ids['attention_mask']).to(device)
-        attention_mask = clip_to_max_len(attention_mask,PROTEIN_MAX_LEN)
-
-        with torch.no_grad():
-            embedding_repr = self.model(input_ids=input_ids, attention_mask=attention_mask)
-        vec = embedding_repr.last_hidden_state[0].mean(dim=0)
+            with torch.no_grad():
+                embedding_repr = self.model(input_ids=input_ids, attention_mask=attention_mask)
+            if name == P_BFD:
+                vec = embedding_repr[0][0].mean(dim=1)
+            else:
+                vec = embedding_repr.last_hidden_state[0].mean(dim=0)
         return self.post_process(vec)
 
 
@@ -95,8 +147,8 @@ class BioText2Vec(ABCSeq2Vec):
 
 
 class Seq2Vec:
-    def __init__(self):
-        self.prot2vec = Prot2vec()
+    def __init__(self, self_token, protein_name=P_T5_XL):
+        self.prot2vec = Prot2vec(self_token, protein_name)
         self.dna2vec = DNA2Vec()
         self.mol2vec = Mol2Vec()
         self.text2vec = BioText2Vec()
@@ -138,6 +190,18 @@ def read_seq_write_vec(seq2vec, input_file_name, output_file_name, seq_type):
 if __name__ == "__main__":
     from common.path_manager import item_path
 
-    seq2vec = Seq2Vec()
+    args = get_args()
+    self_token = args.self_token
+    protein_emd = args.protein_emd
+    assert protein_emd in protein_name_to_cp, f"Unknown protein embedding: {protein_emd}"
+    data_type = args.prep_reactome_dtype
+    seq2vec = Seq2Vec(self_token, protein_emd)
+    dtypes = [data_type] if data_type != "all" else EMBEDDING_DATA_TYPES
+
     for dt in EMBEDDING_DATA_TYPES:
-        read_seq_write_vec(seq2vec, f'{item_path}/{dt}_sequences.txt', f'{item_path}/{dt}_vec.npy', dt)
+        suf = ""
+        if dt == PROTEIN:
+            suf = f"_{protein_emd}"
+        input_file = f'{item_path}/{dt}_sequences.txt'
+        output_file_name = f'{item_path}/{dt}{suf}_vec.npy'
+        read_seq_write_vec(seq2vec, input_file, output_file_name, dt)
