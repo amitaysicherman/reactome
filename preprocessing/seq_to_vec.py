@@ -207,7 +207,7 @@ if __name__ == "__main__":
     seq2vec = Seq2Vec(self_token, protein_emd)
     dtypes = [data_type] if data_type != "all" else EMBEDDING_DATA_TYPES
 
-    for dt in EMBEDDING_DATA_TYPES:
+    for dt in dtypes:
         suf = ""
         if dt == PROTEIN:
             suf = f"_{protein_emd}"
