@@ -233,15 +233,16 @@ def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hid
 
 
 def main(args):
-
     save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     if args.fuse_train_all:
         save_dir_best = f"{save_dir}_best"
         os.makedirs(save_dir_best, exist_ok=True)
-
+        for file_name in os.listdir(save_dir_best):
+            if file_name.endswith(".pt"):
+                os.remove(f"{save_dir_best}/{file_name}")
     if args.debug:
         args.fuse_batch_size = 2
-    node_index_manager = NodesIndexManager(PRETRAINED_EMD,prot_emd_type=args.protein_emd, mol_emd_type=args.mol_emd)
+    node_index_manager = NodesIndexManager(PRETRAINED_EMD, prot_emd_type=args.protein_emd, mol_emd_type=args.mol_emd)
     train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=not args.fuse_pretrained_start,
                                                                          filter_dna=True,
                                                                          # filter_no_act=True,
