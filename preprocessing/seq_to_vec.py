@@ -38,7 +38,6 @@ protein_name_to_cp = {
 }
 
 
-
 def clip_to_max_len(x: torch.Tensor, max_len: int = MAX_LEN):
     if x.shape[1] <= max_len:
         return x
@@ -62,8 +61,9 @@ class ABCSeq2Vec(ABC):
         return self.post_process(vec)
 
     def post_process(self, vec):
-        vec = vec.detach().cpu().numpy().flatten()
-        return vec.reshape(1, -1)
+        vec_flat = vec.detach().cpu().numpy().flatten()
+        del vec
+        return vec_flat.reshape(1, -1)
 
 
 class Prot2vec(ABCSeq2Vec):
@@ -73,8 +73,7 @@ class Prot2vec(ABCSeq2Vec):
         self.name = name
         self.token = token
         self.get_model_tokenizer()
-        self.prot_dim=None
-
+        self.prot_dim = None
 
     def get_model_tokenizer(self):
         if self.name == P_BFD:
@@ -96,6 +95,7 @@ class Prot2vec(ABCSeq2Vec):
 
     def to_vec(self, seq: str):
         if self.name == ESM_3:
+            torch.cuda.empty_cache()
             protein = ESMProtein(sequence=seq)
             with torch.no_grad():
                 protein = self.model.encode(protein)
@@ -119,7 +119,7 @@ class Prot2vec(ABCSeq2Vec):
                 vec = embedding_repr[0][0].mean(dim=1)
             else:
                 vec = embedding_repr.last_hidden_state[0].mean(dim=0)
-        self.prot_dim=vec.shape[-1]
+        self.prot_dim = vec.shape[-1]
         return self.post_process(vec)
 
 
