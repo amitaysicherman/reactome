@@ -9,7 +9,7 @@ def args_to_string(args):
         if val == "":
             continue
         if type(val) == list:
-            res += f"--{arg} {' '.join(val)} "
+            res += f"--{arg} {' '.join([str(v) for v in val])} "
         else:
             res += f"--{arg} {val} "
 
