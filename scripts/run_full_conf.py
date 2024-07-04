@@ -12,8 +12,6 @@ def args_to_string(args):
 
 
 args = get_args()
-print(args_to_string(args))
-4/0
 
 # run fusing
 cmd = f"python3 model/contrastive_learning.py {args_to_string(args)}"
