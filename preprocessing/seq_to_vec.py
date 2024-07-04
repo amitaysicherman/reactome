@@ -71,6 +71,7 @@ class Prot2vec(ABCSeq2Vec):
         self.cp_name = protein_name_to_cp[name]
         self.name = name
         self.token = token
+        self.get_model_tokenizer()
 
     def get_model_tokenizer(self):
         if self.name == P_BFD:
