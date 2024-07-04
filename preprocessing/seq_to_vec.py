@@ -38,6 +38,7 @@ protein_name_to_cp = {
 }
 
 
+
 def clip_to_max_len(x: torch.Tensor, max_len: int = MAX_LEN):
     if x.shape[1] <= max_len:
         return x
@@ -72,6 +73,8 @@ class Prot2vec(ABCSeq2Vec):
         self.name = name
         self.token = token
         self.get_model_tokenizer()
+        self.prot_dim=None
+
 
     def get_model_tokenizer(self):
         if self.name == P_BFD:
@@ -116,6 +119,7 @@ class Prot2vec(ABCSeq2Vec):
                 vec = embedding_repr[0][0].mean(dim=1)
             else:
                 vec = embedding_repr.last_hidden_state[0].mean(dim=0)
+        self.prot_dim=vec.shape[-1]
         return self.post_process(vec)
 
 
@@ -157,6 +161,7 @@ class Seq2Vec:
     def to_vec(self, seq: str, seq_type: str):
         zeros = np.zeros((1, TYPE_TO_VEC_DIM[seq_type]))
         if seq_type == PROTEIN:
+            zeros = np.zeros((1, self.prot2vec.prot_dim))
             vec = self.prot2vec.to_vec(seq)
         elif seq_type == DNA:
             vec = self.dna2vec.to_vec(seq)
