@@ -4,9 +4,9 @@ import numpy as np
 from torch.utils.data import Dataset, DataLoader
 import torch
 from model.models import MultiModalLinearConfig, MiltyModalLinear
-import torch.nn.functional as F
 from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, precision_recall_curve, \
     auc as area_under_curve
+from common.data_types import P_T5_XL
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -33,13 +33,13 @@ class Score:
         return "epoch,part,auc,accuracy,precision,recall,aupr"
 
 
-def load_data(dataset):
+def load_data(dataset, prot_emd_type):
     base_dir = os.path.join(data_path, "protein_drug")
     molecules = np.load(os.path.join(base_dir, f"{dataset}_molecules.npy"))[:, 0, :]
-    proteins = np.load(os.path.join(base_dir, f"{dataset}_proteins.npy"))[:, 0, :]
+    proteins = np.load(os.path.join(base_dir, f"{dataset}_{prot_emd_type}_proteins.npy"))[:, 0, :]
     with open(os.path.join(base_dir, f"{dataset}_molecules.txt")) as f:
         molecules_names = f.read().splitlines()
-    with open(os.path.join(base_dir, f"{dataset}_proteins.txt")) as f:
+    with open(os.path.join(base_dir, f"{dataset}_{prot_emd_type}_proteins.txt")) as f:
         proteins_names = f.read().splitlines()
     with open(os.path.join(base_dir, f"{dataset}_labels.txt")) as f:
         labels = f.read().splitlines()
@@ -275,11 +275,12 @@ def main(args):
     fuse_freeze = bool(args.dp_fuse_freeze)
     bs = args.dp_bs
     lr = args.dp_lr
+    prot_emd_type = args.protein_emd
     dataset = args.db_dataset
     seed = args.random_seed
     np.random.seed(seed)
 
-    all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data(dataset)
+    all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data(dataset, prot_emd_type)
     shuffle_index = np.random.permutation(len(all_molecules))
     all_molecules = all_molecules[shuffle_index]
     all_proteins = all_proteins[shuffle_index]

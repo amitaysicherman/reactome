@@ -8,16 +8,28 @@ import torch
 from matplotlib import pyplot as plt
 
 from common.data_types import CatalystOBJ, Entity, Reaction, UNKNOWN_ENTITY_TYPE, DNA, PROTEIN, MOLECULE, TEXT, \
-    NodeTypes
+    NodeTypes, P_T5_XL, P_BFD, ESM_1B, ESM_2, ESM_3
 from common.path_manager import model_path, scores_path
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 
-TYPE_TO_VEC_DIM = {
-    PROTEIN: 1024,
-    DNA: 768,
-    MOLECULE: 768,
-    TEXT: 768
-}
+def get_to_to_vec_dim(prot_emd_type=P_T5_XL):
+    type_to_dim = {DNA: 768,
+                   MOLECULE: 768,
+                   TEXT: 768
+                   }
+    if prot_emd_type == P_T5_XL:
+        type_to_dim[PROTEIN] = 1024
+    elif prot_emd_type == P_BFD:
+        type_to_dim[PROTEIN] = 1024
+    elif prot_emd_type == ESM_1B:
+        type_to_dim[PROTEIN] = 1280
+    elif prot_emd_type == ESM_2:
+        type_to_dim[PROTEIN] = 480
+    elif prot_emd_type == ESM_3:
+        type_to_dim[PROTEIN] = 1536
+    return type_to_dim
+
+
 
 
 def db_to_type(db_name):
@@ -77,7 +89,6 @@ node_colors = {node_type: color_palette(i) for i, node_type in enumerate(get_nod
 
 
 def load_fuse_model(name, fuse_pretrained_start):
-
     model_cp = glob.glob(f'{model_path}/fuse2_{name}/fuse_*.pt')
     print(f"{model_path}/fuse2_{name}/fuse_*.pt")
     print(f"Found {len(model_cp)} models for {name}")
@@ -161,4 +172,3 @@ def prepare_files(run_name, skip_if_exists=False):
     if os.path.exists(scores_file):
         os.remove(scores_file)
     return save_dir, scores_file
-

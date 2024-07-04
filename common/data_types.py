@@ -158,3 +158,8 @@ TYPE_TO_VEC_DIM = {
     MOLECULE: 768,
     TEXT: 768
 }
+P_BFD = "ProtBert-BFD"
+P_T5_XL = "ProtBertT5-xl"
+ESM_1B = "ESM-1B"
+ESM_2 = "ESM2"
+ESM_3 = "ESM3"

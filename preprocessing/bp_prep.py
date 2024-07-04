@@ -2,7 +2,7 @@ from common.path_manager import item_path
 import requests
 from tqdm import tqdm
 from preprocessing.seq_to_vec import BioText2Vec
-from common.utils import TYPE_TO_VEC_DIM, TEXT
+from common.utils import get_to_to_vec_dim, TEXT
 import os
 from npy_append_array import NpyAppendArray
 
@@ -15,7 +15,7 @@ if os.path.exists(bp_seq):
 bp_vec = f"{item_path}/bp_vec.npy"
 if os.path.exists(bp_vec):
     os.remove(bp_vec)
-
+TYPE_TO_VEC_DIM=get_to_to_vec_dim()
 vec_dim = TYPE_TO_VEC_DIM[TEXT]
 
 

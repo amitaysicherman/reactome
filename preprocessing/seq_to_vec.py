@@ -15,19 +15,13 @@ from huggingface_hub import login
 from esm.models.esm3 import ESM3
 from esm.sdk.api import ESMProtein
 
-from common.utils import TYPE_TO_VEC_DIM
-from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES
+from common.utils import get_to_to_vec_dim
+from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES, P_BFD, P_T5_XL, ESM_1B, ESM_2, ESM_3
 from common.args_manager import get_args
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 MAX_LEN = 510
 PROTEIN_MAX_LEN = 1023
-
-P_BFD = "ProtBert-BFD"
-P_T5_XL = "ProtBertT5-xl"
-ESM_1B = "ESM-1B"
-ESM_2 = "ESM2"
-ESM_3 = "ESM3"
 
 protein_name_to_cp = {
     P_BFD: 'Rostlab/prot_bert_bfd',
@@ -95,8 +89,8 @@ class Prot2vec(ABCSeq2Vec):
 
     def to_vec(self, seq: str):
         if self.name == ESM_3:
-            if len(seq)>2595: #TODO : is it better sulution?
-                seq=seq[:2595]
+            if len(seq) > 2595:  # TODO : is it better sulution?
+                seq = seq[:2595]
 
             protein = ESMProtein(sequence=seq)
             with torch.no_grad():
@@ -159,12 +153,11 @@ class Seq2Vec:
         self.dna2vec = DNA2Vec()
         self.mol2vec = Mol2Vec()
         self.text2vec = BioText2Vec()
+        self.type_to_vec_dim = get_to_to_vec_dim(protein_name)
 
     def to_vec(self, seq: str, seq_type: str):
-        zeros = np.zeros((1, TYPE_TO_VEC_DIM[seq_type]))
+        zeros = np.zeros((1, self.type_to_vec_dim[seq_type]))
         if seq_type == PROTEIN:
-            if self.prot2vec.prot_dim is not None:
-                zeros = np.zeros((1, self.prot2vec.prot_dim))
             vec = self.prot2vec.to_vec(seq)
         elif seq_type == DNA:
             vec = self.dna2vec.to_vec(seq)

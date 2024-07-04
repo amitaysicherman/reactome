@@ -18,7 +18,7 @@ from torch.utils.data import DataLoader
 from dataset.dataset_builder import get_reactions
 from sklearn.metrics import roc_auc_score
 from itertools import chain
-from common.utils import prepare_files, TYPE_TO_VEC_DIM
+from common.utils import prepare_files, get_to_to_vec_dim
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 from torch.utils.data import Dataset
 from common.path_manager import scores_path
@@ -194,7 +194,7 @@ def run_epoch(model, optimizer, loader, loss_func: nn.TripletMarginWithDistanceL
     return auc
 
 
-def build_models(fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir):
+def build_models(fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, save_dir, TYPE_TO_VEC_DIM):
     model_config = MultiModalLinearConfig(
         embedding_dim=[TYPE_TO_VEC_DIM[x] for x in EMBEDDING_DATA_TYPES],
         n_layers=fuse_n_layers,
@@ -210,6 +210,8 @@ def build_models(fuse_output_dim, fuse_n_layers, fuse_hidden_dim, fuse_dropout, 
 
 
 def main(args):
+    TYPE_TO_VEC_DIM = get_to_to_vec_dim(args.protein_emd)
+
     save_dir, scores_file = prepare_files(f'fuse_trip_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     node_index_manager = NodesIndexManager(pretrained_method=PRETRAINED_EMD, fuse_name="no")
     train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=False,
@@ -226,7 +228,8 @@ def main(args):
     valid_loader = TriplesDataset(validation_reactions, **ds_args, shuffle=False)
     test_loader = TriplesDataset(test_reaction, **ds_args, shuffle=False)
 
-    model = build_models(args.fuse_output_dim, args.fuse_n_layers, args.fuse_hidden_dim, args.fuse_dropout, save_dir)
+    model = build_models(args.fuse_output_dim, args.fuse_n_layers, args.fuse_hidden_dim, args.fuse_dropout, save_dir,
+                         TYPE_TO_VEC_DIM)
     optimizer = torch.optim.Adam(model.parameters(), lr=args.fuse_lr)
     loss_func = nn.TripletMarginWithDistanceLoss(distance_function=lambda x, y: 1.0 - F.cosine_similarity(x, y))
 
@@ -260,4 +263,5 @@ if __name__ == '__main__':
     from common.args_manager import get_args
 
     args = get_args()
+
     main(args)
