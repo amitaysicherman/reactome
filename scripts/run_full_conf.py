@@ -5,11 +5,15 @@ import os
 def args_to_string(args):
     res = ""
     for arg in vars(args):
+        if len(getattr(args, arg)) == 0:
+            continue
         res += f"--{arg} {getattr(args, arg)} "
     return res
 
 
 args = get_args()
+print(args_to_string(args))
+4/0
 
 # run fusing
 cmd = f"python3 model/contrastive_learning.py {args_to_string(args)}"
