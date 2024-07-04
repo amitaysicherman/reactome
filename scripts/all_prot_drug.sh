@@ -7,6 +7,7 @@
 #SBATCH --requeue
 
 args=$(sed -n "$SLURM_ARRAY_TASK_ID"p scripts/all_prot_drug.txt)
+
 python protein_drug/train_eval.py $args --random_seed 42
 python protein_drug/train_eval.py $args --random_seed 43
 python protein_drug/train_eval.py $args --random_seed 44
