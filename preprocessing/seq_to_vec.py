@@ -111,7 +111,7 @@ class Prot2vec(ABCSeq2Vec):
 
             with torch.no_grad():
                 embedding_repr = self.model(input_ids=input_ids, attention_mask=attention_mask)
-            if name == P_BFD:
+            if self.name == P_BFD:
                 vec = embedding_repr[0][0].mean(dim=1)
             else:
                 vec = embedding_repr.last_hidden_state[0].mean(dim=0)
