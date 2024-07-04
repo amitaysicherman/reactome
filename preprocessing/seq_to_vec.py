@@ -21,7 +21,7 @@ from common.args_manager import get_args
 
 device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
 MAX_LEN = 510
-PROTEIN_MAX_LEN = 1024
+PROTEIN_MAX_LEN = 1023
 
 P_BFD = "ProtBert-BFD"
 P_T5_XL = "ProtBertT5-xl"
@@ -78,7 +78,7 @@ class Prot2vec(ABCSeq2Vec):
     def get_model_tokenizer(self):
         if self.name == P_BFD:
             self.tokenizer = BertTokenizer.from_pretrained(self.cp_name, do_lower_case=False)
-            self.model = BertForMaskedLM.from_pretrained(self.cp_name).eval().to(device)
+            self.model = BertForMaskedLM.from_pretrained(self.cp_name, output_hidden_states=True).eval().to(device)
         elif self.name == ESM_3:
             login(token=self.token)
             self.model = ESM3.from_pretrained("esm3_sm_open_v1", device=device)
@@ -116,7 +116,7 @@ class Prot2vec(ABCSeq2Vec):
             with torch.no_grad():
                 embedding_repr = self.model(input_ids=input_ids, attention_mask=attention_mask)
             if self.name == P_BFD:
-                vec = embedding_repr[0][0].mean(dim=1)
+                vec = embedding_repr.hidden_states[0].mean(dim=0)
             else:
                 vec = embedding_repr.last_hidden_state[0].mean(dim=0)
         self.prot_dim = vec.shape[-1]
