@@ -6,7 +6,7 @@ from common.utils import get_type_to_vec_dim, load_fuse_model
 from common.path_manager import item_path
 from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, EMBEDDING_DATA_TYPES, LOCATION, \
     DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS, NO_PRETRAINED_EMD, PRETRAINED_EMD, PRETRAINED_EMD_FUSE, MOLECULE, TEXT, \
-    P_T5_XL
+    P_T5_XL, PEBCHEM10M
 from model.models import apply_model
 from functools import lru_cache
 import os
@@ -32,7 +32,7 @@ class NodeData:
 
 class NodesIndexManager:
     def __init__(self, pretrained_method=PRETRAINED_EMD, fuse_name="", fuse_pretrained_start=True,
-                 prot_emd_type=P_T5_XL):
+                 prot_emd_type=P_T5_XL, mol_emd_type=PEBCHEM10M):
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
         self.nodes = [reaction_node, complex_node]
@@ -60,7 +60,11 @@ class NodesIndexManager:
                 if pretrained_method == NO_PRETRAINED_EMD:
                     vectors = np.stack([np.random.rand(self.type_to_vec_dim[dt]) for _ in range(len(lines))])
                 else:
-                    prefix=f"{prot_emd_type}_" if dt == PROTEIN else ""
+                    prefix = ""
+                    if dt == PROTEIN:
+                        prefix = f"{prot_emd_type}_"
+                    if dt == MOLECULE:
+                        prefix = f"{mol_emd_type}_"
                     pretrained_vec_file = f'{item_path}/{dt}_{prefix}vec.npy'
                     vectors = np.load(pretrained_vec_file)
                     if pretrained_method == PRETRAINED_EMD_FUSE:
@@ -164,7 +168,8 @@ class NodesIndexManager:
 
 def get_from_args(args):
     return NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name,
-                             fuse_pretrained_start=args.fuse_pretrained_start, prot_emd_type=args.protein_emd)
+                             fuse_pretrained_start=args.fuse_pretrained_start, prot_emd_type=args.protein_emd,
+                             mol_emd_type=args.mol_emd)
 
 
 if __name__ == "__main__":

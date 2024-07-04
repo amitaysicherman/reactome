@@ -32,11 +32,11 @@ class Score:
         return "epoch,part,auc,accuracy,precision,recall,aupr"
 
 
-def load_data(dataset, prot_emd_type):
+def load_data(dataset, prot_emd_type, mol_emd_type):
     base_dir = os.path.join(data_path, "protein_drug")
-    molecules = np.load(os.path.join(base_dir, f"{dataset}_molecules.npy"))[:, 0, :]
+    molecules = np.load(os.path.join(base_dir, f"{dataset}_{mol_emd_type}_molecules.npy"))[:, 0, :]
     proteins = np.load(os.path.join(base_dir, f"{dataset}_{prot_emd_type}_proteins.npy"))[:, 0, :]
-    with open(os.path.join(base_dir, f"{dataset}_molecules.txt")) as f:
+    with open(os.path.join(base_dir, f"{dataset}_{mol_emd_type}_molecules.txt")) as f:
         molecules_names = f.read().splitlines()
     with open(os.path.join(base_dir, f"{dataset}_{prot_emd_type}_proteins.txt")) as f:
         proteins_names = f.read().splitlines()
@@ -276,11 +276,13 @@ def main(args):
     bs = args.dp_bs
     lr = args.dp_lr
     prot_emd_type = args.protein_emd
+    mol_emd_type = args.mol_emd
     dataset = args.db_dataset
     seed = args.random_seed
     np.random.seed(seed)
     type_to_vec_dim = get_type_to_vec_dim(prot_emd_type)
-    all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data(dataset, prot_emd_type)
+    all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data(dataset, prot_emd_type,
+                                                                                         mol_emd_type)
     shuffle_index = np.random.permutation(len(all_molecules))
     all_molecules = all_molecules[shuffle_index]
     all_proteins = all_proteins[shuffle_index]

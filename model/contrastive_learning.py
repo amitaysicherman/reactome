@@ -241,7 +241,7 @@ def main(args):
 
     if args.debug:
         args.fuse_batch_size = 2
-    node_index_manager = NodesIndexManager(PRETRAINED_EMD,prot_emd_type=args.protein_emd)
+    node_index_manager = NodesIndexManager(PRETRAINED_EMD,prot_emd_type=args.protein_emd, mol_emd_type=args.mol_emd)
     train_reactions, validation_reactions, test_reaction = get_reactions(filter_untrain=not args.fuse_pretrained_start,
                                                                          filter_dna=True,
                                                                          # filter_no_act=True,
