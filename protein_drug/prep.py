@@ -11,13 +11,25 @@ if __name__ == "__main__":
     self_token = args.self_token
     protein_emd = args.protein_emd
     mol_emd = args.mol_emd
-
-    data_type = args.prep_reactome_dtype
-    seq2vec = Seq2Vec(self_token, protein_name=protein_emd, mol_name=mol_emd)
-
+    skip_if_exists = args.skip_if_exists
     dataset = args.db_dataset
 
+    data_type = args.prep_reactome_dtype
+
     base_dir = os.path.join(data_path, "protein_drug")
+
+    protein_output_file = os.path.join(base_dir, f"{dataset}_{protein_emd}_proteins.npy")
+    if skip_if_exists and os.path.exists(protein_output_file):
+        print(f"Skipping {protein_output_file}")
+        exit(0)
+
+    mol_output_file = os.path.join(base_dir, f"{dataset}_{mol_emd}_molecules.npy")
+    if skip_if_exists and os.path.exists(mol_output_file):
+        print(f"Skipping {mol_output_file}")
+        exit(0)
+
+    seq2vec = Seq2Vec(self_token, protein_name=protein_emd, mol_name=mol_emd)
+
     input_file = os.path.join(base_dir, f"{dataset}.txt")
     with open(input_file) as f:
         lines = f.read().splitlines()
@@ -46,13 +58,14 @@ if __name__ == "__main__":
             labels.append(label)
 
     if len(molecules):
-        with open(os.path.join(base_dir, f"{dataset}_{mol_emd}_molecules.txt"), "w") as f:
+        with open(mol_output_file.replace("npy", "txt"), "w") as f:
             f.write("\n".join(molecules))
-        np.save(os.path.join(base_dir, f"{dataset}_{mol_emd}_molecules.npy"), np.array(molecules_vec))
+        np.save(mol_output_file, np.array(molecules_vec))
+
     if len(proteins):
-        with open(os.path.join(base_dir, f"{dataset}_{protein_emd}_proteins.txt"), "w") as f:
+        with open(protein_output_file.replace("npy", "txt"), "w") as f:
             f.write("\n".join(proteins))
-        np.save(os.path.join(base_dir, f"{dataset}_{protein_emd}_proteins.npy"), np.array(proteins_vec))
+        np.save(protein_output_file, np.array(proteins_vec))
     if len(labels):
         with open(os.path.join(base_dir, f"{dataset}_labels.txt"), "w") as f:
             f.write("\n".join(labels))
