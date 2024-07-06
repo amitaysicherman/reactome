@@ -319,7 +319,12 @@ def main(args):
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-    loss_func = torch.nn.BCEWithLogitsLoss()
+
+    positive_sample_weight = train_labels.sum() / len(train_labels)
+    negative_sample_weight = 1 - positive_sample_weight
+    pos_weight = negative_sample_weight / positive_sample_weight
+    loss_func = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor(pos_weight).to(device))
+
     best_val_auc = 0
     best_test_auc = 0
     best_test_score = None
