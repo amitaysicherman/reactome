@@ -3,9 +3,9 @@ from torchdrug import data, datasets
 from argparse import ArgumentParser
 
 parser = ArgumentParser()
-parser.add_argument("--index", type=int, default=0)
+parser.add_argument("--index", type=int, default=1)
 args = parser.parse_args()
-index = args.index
+index = args.index-1
 
 if index == 0:
     datasets.SubcellularLocalization("data/torch_drug/")
