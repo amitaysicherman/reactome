@@ -237,12 +237,6 @@ def main(args):
     downstream_task = args.downstream_task
     save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     downstream_func = protein_drug_main if downstream_task == "pd" else localization_main
-    if args.fuse_train_all:
-        save_dir_best = f"{save_dir}_best"
-        os.makedirs(save_dir_best, exist_ok=True)
-        for file_name in os.listdir(save_dir_best):
-            if file_name.endswith(".pt"):
-                os.remove(f"{save_dir_best}/{file_name}")
     if args.debug:
         args.fuse_batch_size = 2
     node_index_manager = NodesIndexManager(PRETRAINED_EMD, prot_emd_type=args.protein_emd, mol_emd_type=args.mol_emd)
@@ -262,7 +256,7 @@ def main(args):
     if args.fuse_pretrained_start:
         model, reconstruction_model = build_models(args, args.fuse_all_to_one, args.fuse_output_dim, args.fuse_n_layers,
                                                    args.fuse_hidden_dim, args.fuse_dropout, save_dir,
-                                                   args.fuse_self_move, save_best=save_dir_best)
+                                                   args.fuse_self_move)
         optimizer = torch.optim.Adam(model.parameters(), lr=args.fuse_lr)
         reconstruction_optimizer = torch.optim.Adam(chain(model.parameters(), reconstruction_model.parameters()),
                                                     lr=args.fuse_lr)
@@ -289,8 +283,7 @@ def main(args):
         running_args["epoch"] = epoch
         train_auc = run_epoch(**running_args, loader=train_loader, part="train")
         if args.fuse_train_all:
-            save_fuse_model(model, reconstruction_model, save_dir, epoch)
-            valid_auc, test_auc = downstream_func(args)
+            valid_auc, test_auc = downstream_func(args, model)
             print(f"Drug-Protein Valid AUC: {valid_auc:.3f}, Test AUC: {test_auc:.3f}")
         else:
             with torch.no_grad():
@@ -300,7 +293,7 @@ def main(args):
         if valid_auc > best_valid_auc:
             best_valid_auc = valid_auc
             best_test_auc = test_auc
-            save_fuse_model(model, reconstruction_model, save_dir_best, epoch)
+            save_fuse_model(model, reconstruction_model, save_dir, epoch)
             no_improve_count = 0
         else:
             no_improve_count += 1

@@ -120,7 +120,8 @@ def get_layers(dims):
 
 class ProteinDrugLinearModel(torch.nn.Module):
     def __init__(self, fuse_base, type_to_vec_dim, m_fuse=True, p_fuse=True,
-                 m_model=True, p_model=True, fuse_freeze=True, trans_dim=256):
+                 m_model=True, p_model=True, fuse_freeze=True, trans_dim=256,
+                 fuse_model=None):
         super().__init__()
         self.m_fuse = m_fuse
         self.p_fuse = p_fuse
@@ -129,7 +130,11 @@ class ProteinDrugLinearModel(torch.nn.Module):
         self.fuse_base = fuse_base
         self.fuse_freeze = fuse_freeze
         if m_fuse or p_fuse:
-            self.fuse_model, dim = load_fuse_model(fuse_base)
+            if fuse_model is None:
+                self.fuse_model, dim = load_fuse_model(fuse_base)
+            else:
+                self.fuse_model = fuse_model
+                dim = fuse_model.output_dim
             if m_fuse:
                 self.m_fuse_linear = torch.nn.Linear(dim, trans_dim)
                 if "molecule_protein" in self.fuse_model.names:
@@ -265,7 +270,7 @@ def get_all_args_opt():
     return conf
 
 
-def main(args):
+def main(args, fuse_model=None):
     fuse_base = args.dp_fuse_base
     m_fuse = bool(args.dp_m_fuse)
     p_fuse = bool(args.dp_p_fuse)
@@ -315,7 +320,7 @@ def main(args):
                                  proteins_names=test_proteins_names)
     model = ProteinDrugLinearModel(fuse_base, type_to_vec_dim, m_fuse=m_fuse, p_fuse=p_fuse, m_model=m_model,
                                    p_model=p_model,
-                                   fuse_freeze=fuse_freeze).to(device)
+                                   fuse_freeze=fuse_freeze, fuse_model=fuse_model).to(device)
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)

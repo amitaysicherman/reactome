@@ -78,7 +78,7 @@ def get_layers(dims):
 
 
 class ProteinLabelModel(torch.nn.Module):
-    def __init__(self, fuse_base, protein_dim, use_fuse, use_model, output_dim=10, fuse_freeze=True):
+    def __init__(self, fuse_base, protein_dim, use_fuse, use_model, output_dim=10, fuse_freeze=True, fuse_model=None):
         super().__init__()
         self.input_dim = 0
         self.use_fuse = use_fuse
@@ -86,7 +86,11 @@ class ProteinLabelModel(torch.nn.Module):
         self.fuse_freeze = fuse_freeze
 
         if self.use_fuse:
-            self.fuse_model, dim = load_fuse_model(fuse_base)
+            if fuse_model is None:
+                self.fuse_model, dim = load_fuse_model(fuse_base)
+            else:
+                self.fuse_model = fuse_model
+                dim = fuse_model.output_dim
             self.input_dim += dim
             if "protein_protein" in self.fuse_model.names:
                 self.p_type = "protein_protein"
@@ -144,7 +148,7 @@ def model_to_conf_name(model: ProteinLabelModel):
     return f"{model.use_fuse},{model.use_model},"
 
 
-def main(args):
+def main(args, fuse_model=None):
     fuse_base = args.dp_fuse_base
     use_fuse = bool(args.cafa_use_fuse)
     use_model = bool(args.cafa_use_model)
@@ -169,7 +173,7 @@ def main(args):
     val_loader = data_to_loader(val_proteins, val_labels, batch_size=bs, shuffle=False)
     test_loader = data_to_loader(test_proteins, test_labels, batch_size=bs, shuffle=False)
 
-    model = ProteinLabelModel(fuse_base, type_to_vec_dim[PROTEIN], use_fuse, use_model, 10, fuse_freeze).to(device)
+    model = ProteinLabelModel(fuse_base, type_to_vec_dim[PROTEIN], use_fuse, use_model, 10, fuse_freeze,fuse_model=fuse_model).to(device)
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -187,7 +191,7 @@ def main(args):
 
         if args.dp_print:
             # print(train_score.to_string())
-            print(epoch,train_score, val_score, test_score)
+            print(epoch, train_score, val_score, test_score)
         if val_score > best_val_acc:
             best_val_acc = val_score
             best_test_acc = test_score

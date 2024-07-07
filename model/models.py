@@ -135,8 +135,9 @@ class MiltyModalLinear(nn.Module):
         if config.n_layers < 1:
             raise ValueError("n_layers must be at least 1")
         self.layers_dict = nn.ModuleDict()
+        self.output_dim = config.output_dim
         for name, input_dim, output_dim in zip(self.names, config.embedding_dim, config.output_dim):
-            dims= [input_dim] + [config.hidden_dim] * (config.n_layers - 1) + [output_dim]
+            dims = [input_dim] + [config.hidden_dim] * (config.n_layers - 1) + [output_dim]
             self.layers_dict[name] = get_layers(dims, config.dropout)
 
     def have_type(self, type_):
