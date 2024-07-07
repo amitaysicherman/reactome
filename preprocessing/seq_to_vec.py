@@ -11,10 +11,6 @@ from transformers import T5Tokenizer, T5EncoderModel, AutoModel, AutoModelForMas
 
 from transformers import BertForMaskedLM, BertTokenizer
 
-from huggingface_hub import login
-from esm.models.esm3 import ESM3
-from esm.sdk.api import ESMProtein
-
 from common.utils import get_type_to_vec_dim
 from common.data_types import DNA, PROTEIN, MOLECULE, TEXT, EMBEDDING_DATA_TYPES, P_BFD, P_T5_XL, ESM_1B, ESM_2, ESM_3, \
     PEBCHEM10M, ROBERTA, CHEMBERTA
@@ -81,6 +77,8 @@ class Prot2vec(ABCSeq2Vec):
             self.tokenizer = BertTokenizer.from_pretrained(self.cp_name, do_lower_case=False)
             self.model = BertForMaskedLM.from_pretrained(self.cp_name, output_hidden_states=True).eval().to(device)
         elif self.name == ESM_3:
+            from huggingface_hub import login
+            from esm.models.esm3 import ESM3
             login(token=self.token)
             self.model = ESM3.from_pretrained("esm3_sm_open_v1", device=device)
         elif self.name == ESM_1B or self.name == ESM_2:
@@ -98,6 +96,7 @@ class Prot2vec(ABCSeq2Vec):
         if self.name == ESM_3:
             if len(seq) > 2595:  # TODO : is it better sulution?
                 seq = seq[:2595]
+            from esm.sdk.api import ESMProtein
 
             protein = ESMProtein(sequence=seq)
             with torch.no_grad():

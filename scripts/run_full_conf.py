@@ -41,3 +41,4 @@ for random_seed in range(42, 52):
         cmd = f"python protein_drug/train_eval.py {args_to_string(args)}"
         print("Running command: ", cmd)
         os.system(cmd)
+
