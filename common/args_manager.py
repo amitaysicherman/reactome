@@ -12,6 +12,8 @@ def get_args():
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
                         choices=["all", "protein", "molecule", "text", 'dna', "label"])
 
+    parser.add_argument("--downstream_task", type=str, default="pd", choices=["pd", "loc"])
+
     parser.add_argument("--name", type=str, default="default")
     parser.add_argument("--skip_if_exists", type=int, default=0)
     parser.add_argument("--data_aug", type=str, default="protein", choices=["all", "location", "protein", "molecule"])

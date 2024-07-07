@@ -15,9 +15,9 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def load_data(prot_emd_type, is_bin):
     if is_bin:
-        dir = "subcellular_localization"
-    else:
         dir = "subcellular_localization_2"
+    else:
+        dir = "subcellular_localization"
     loc_dir = "localization"
     protein_file = pjoin(data_path, loc_dir, f"{dir}_{prot_emd_type}.npy")
     target_file = pjoin(data_path, loc_dir, f"{dir}_target.npy")
@@ -199,7 +199,7 @@ def main(args):
 
     if args.dp_print:
         print("Best Test scores\n", best_test_acc)
-        output_file = f"{scores_path}/loc{is_bin}_{task}.csv"
+        output_file = f"{scores_path}/loc{is_bin}.csv"
         if not os.path.exists(output_file):
             names = "name,use_fuse,use_model,"
             with open(output_file, "w") as f:

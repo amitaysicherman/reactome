@@ -14,6 +14,7 @@ from itertools import chain
 from common.utils import prepare_files, get_type_to_vec_dim
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 from protein_drug.train_eval import main as protein_drug_main
+from localization.train_eval import main as localization_main
 from common.path_manager import scores_path
 import shutil
 
@@ -233,7 +234,9 @@ def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hid
 
 
 def main(args):
+    downstream_task = args.downstream_task
     save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
+    downstream_func = protein_drug_main if downstream_task == "pd" else localization_main
     if args.fuse_train_all:
         save_dir_best = f"{save_dir}_best"
         os.makedirs(save_dir_best, exist_ok=True)
@@ -287,7 +290,7 @@ def main(args):
         train_auc = run_epoch(**running_args, loader=train_loader, part="train")
         if args.fuse_train_all:
             save_fuse_model(model, reconstruction_model, save_dir, epoch)
-            valid_auc, test_auc = protein_drug_main(args)
+            valid_auc, test_auc = downstream_func(args)
             print(f"Drug-Protein Valid AUC: {valid_auc:.3f}, Test AUC: {test_auc:.3f}")
         else:
             with torch.no_grad():
