@@ -4,7 +4,7 @@ lmdb==1.5.1
 matplotlib==3.8.3
 networkx==3.2.1
 npy_append_array==0.9.16
-numpy==2.0.0
+numpy
 pandas==2.2.2
 pybiopax==0.1.4
 Requests==2.32.3
