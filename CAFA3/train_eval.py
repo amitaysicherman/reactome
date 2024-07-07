@@ -34,48 +34,44 @@ class Score:
 
 
 def load_data(task, prot_emd_type):
-    train_seq_file = os.path.join(data_path, "CAFA3", f"train_protein_{task}.npy")
-    test_seq_file = os.path.join(data_path, "CAFA3", f"test_protein_{task}.npy")
-    train_label_file = os.path.join(data_path, "CAFA3", f"train_label_{task}.txt")
-    test_label_file = os.path.join(data_path, "CAFA3", f"test_label_{task}.txt")
+    train_proteins = np.load(f"{data_path}/CAFA3/preprocessed/train_protein_{task}_{prot_emd_type}.npy")
+    test_proteins = np.load(f"{data_path}/CAFA3/preprocessed/test_protein_{task}_{prot_emd_type}.npy")
+    with open(f"{data_path}/CAFA3/preprocessed/train_label_{task}_{prot_emd_type}.txt") as f:
+        train_labels = f.read().split("\n")
+    with open(f"{data_path}/CAFA3/preprocessed/test_label_{task}_{prot_emd_type}.txt") as f:
+        test_labels = f.read().split("\n")
+    train_labels = [[int(i) for i in l.split()] for l in train_labels]
+    test_labels = [[int(i) for i in l.split()] for l in test_labels]
+    max_label = max([max(l) for l in train_labels + test_labels])
+
+    train_labels = np.zeros((len(train_labels), max_label + 1))
+    for i, l in enumerate(train_labels):
+        for j in l:
+            train_labels[i, j] = 1
+    test_labels = np.zeros((len(test_labels), max_label + 1))
+    for i, l in enumerate(test_labels):
+        for j in l:
+            test_labels[i, j] = 1
+    return train_proteins, test_proteins, train_labels, test_labels
 
 
-def split_train_val_test(data, val_size=0.16, test_size=0.20):
-    train_val_index = int((1 - val_size - test_size) * len(data))
-    val_test_index = int((1 - test_size) * len(data))
+def split_train_val(data, val_size=0.16):
+    train_val_index = int((1 - val_size) * len(data))
     train_data = data[:train_val_index]
-    val_data = data[train_val_index:val_test_index]
-    test_data = data[val_test_index:]
-    return train_data, val_data, test_data
+    val_data = data[train_val_index:]
+    return train_data, val_data
 
 
-rand_memories = {}
-
-
-def entity_to_rand(entity, dim):
-    if entity in rand_memories:
-        return rand_memories[entity]
-    rand_memories[entity] = np.random.randn(dim)
-    return rand_memories[entity]
-
-
-class ProteinDrugDataset(Dataset):
-    def __init__(self, molecules, proteins, labels, e_types=None, only_rand=False, molecules_names=None,
-                 proteins_names=None):
-        self.molecules = molecules
-        if only_rand:
-            self.molecules = np.stack([entity_to_rand(m, self.molecules.shape[1]) for m in molecules_names])
+class ProteinMultiLabelDataset(Dataset):
+    def __init__(self, proteins, labels):
         self.proteins = proteins
-        if only_rand:
-            self.proteins = np.stack([entity_to_rand(p, self.proteins.shape[1]) for p in proteins_names])
         self.labels = labels
-        self.e_types = e_types if e_types is not None else [0] * len(molecules)
 
     def __len__(self):
         return len(self.labels)
 
     def __getitem__(self, idx):
-        return self.molecules[idx], self.proteins[idx], self.labels[idx], self.e_types[idx]
+        return self.proteins[idx], self.labels[idx]
 
 
 def load_fuse_model(base_dir):
@@ -93,10 +89,8 @@ def load_fuse_model(base_dir):
     return model, dim
 
 
-def data_to_loader(molecules, proteins, labels, e_types, batch_size, shuffle=True, only_rand=False,
-                   molecules_names=None,
-                   proteins_names=None):
-    dataset = ProteinDrugDataset(molecules, proteins, labels, e_types, only_rand, molecules_names, proteins_names)
+def data_to_loader(proteins, labels, batch_size, shuffle=True):
+    dataset = ProteinMultiLabelDataset(proteins, labels)
     return DataLoader(dataset, batch_size=batch_size, shuffle=shuffle)
 
 
@@ -110,72 +104,43 @@ def get_layers(dims):
     return layers
 
 
-class ProteinDrugLinearModel(torch.nn.Module):
-    def __init__(self, fuse_base, type_to_vec_dim, m_fuse=True, p_fuse=True,
-                 m_model=True, p_model=True, fuse_freeze=True, trans_dim=256):
+class ProteinMiltilabelModel(torch.nn.Module):
+    def __init__(self, fuse_base, protein_dim, use_fuse, use_model, fuse_freeze=True):
         super().__init__()
-        self.m_fuse = m_fuse
-        self.p_fuse = p_fuse
-        self.m_model = m_model
-        self.p_model = p_model
-        self.fuse_base = fuse_base
+        self.input_dim = 0
+        self.use_fuse = use_fuse
+        self.use_model = use_model
         self.fuse_freeze = fuse_freeze
-        if m_fuse or p_fuse:
+
+        if self.use_fuse:
             self.fuse_model, dim = load_fuse_model(fuse_base)
-            if m_fuse:
-                self.m_fuse_linear = torch.nn.Linear(dim, trans_dim)
-                if "molecule_protein" in self.fuse_model.names:
-                    self.m_type = "molecule_protein"
-                elif "molecule" in self.fuse_model.names:
-                    self.m_type = "molecule"
-                elif "molecule_molecule" in self.fuse_model.names:
-                    self.m_type = "molecule_molecule"
-                else:
-                    raise ValueError("No molecule type in the model")
-            if p_fuse:
-                self.p_fuse_linear = torch.nn.Linear(dim, trans_dim)
-                if "protein_protein" in self.fuse_model.names:
-                    self.p_type = "protein_protein"
-                elif "protein" in self.fuse_model.names:
-                    self.p_type = "protein"
-                elif "protein_molecule" in self.fuse_model.names:
-                    self.p_type = "protein_molecule"
-                else:
-                    raise ValueError("No protein type in the model")
+            self.input_dim += dim
+            if "protein_protein" in self.fuse_model.names:
+                self.p_type = "protein_protein"
+            elif "protein" in self.fuse_model.names:
+                self.p_type = "protein"
+            elif "protein_molecule" in self.fuse_model.names:
+                self.p_type = "protein_molecule"
+            else:
+                raise ValueError("No protein type in the model")
+        if use_model:
+            self.input_dim += protein_dim
 
-        if m_model:
-            self.m_model_linear = torch.nn.Linear(type_to_vec_dim[MOLECULE], trans_dim)
-        if p_model:
-            self.p_model_linear = torch.nn.Linear(type_to_vec_dim[PROTEIN], trans_dim)
-        encoder_layer = torch.nn.TransformerEncoderLayer(d_model=trans_dim, nhead=2, dim_feedforward=trans_dim * 2,
-                                                         batch_first=True, dropout=0.5)
-        self.trans = torch.nn.Sequential(
-            torch.nn.TransformerEncoder(encoder_layer, num_layers=2),
-            torch.nn.Linear(trans_dim, 1)
-        )
+        self.layers = get_layers([self.input_dim, 512, 128, 1])
 
-    def forward(self, molecule, protein):
+    def forward(self, protein):
         x = []
-        if self.m_fuse:
-            fuse_molecule = self.fuse_model(molecule, self.m_type)
-            if self.fuse_freeze:
-                fuse_molecule = fuse_molecule.detach()
-            fuse_molecule = self.m_fuse_linear(fuse_molecule)
-            x.append(fuse_molecule)
-        if self.m_model:
-            molecule = self.m_model_linear(molecule)
-            x.append(molecule)
-        if self.p_fuse:
+        if self.use_fuse:
             fuse_protein = self.fuse_model(protein, self.p_type)
             if self.fuse_freeze:
                 fuse_protein = fuse_protein.detach()
             fuse_protein = self.p_fuse_linear(fuse_protein)
             x.append(fuse_protein)
-        if self.p_model:
+        if self.use_model:
             protein = self.p_model_linear(protein)
             x.append(protein)
         mol_protein = torch.stack(x, dim=1)
-        return self.trans(mol_protein).mean(dim=1)
+        return self.layers(mol_protein)
 
 
 def run_epoch(model, loader, optimizer, criterion, part, epoch):
@@ -186,22 +151,18 @@ def run_epoch(model, loader, optimizer, criterion, part, epoch):
     reals = []
     preds = []
     total_loss = 0
-    for molecules, proteins, labels, e_type in loader:
-        molecules = molecules.to(device).float()
+    for proteins, labels in loader:
         proteins = proteins.to(device).float()
         labels = labels.to(device)
-
         optimizer.zero_grad()
-        outputs = model(molecules, proteins)
-        loss = criterion(outputs, labels.unsqueeze(1))
+        outputs = model(proteins)
+        loss = criterion(outputs, labels)
         if part == "train":
             loss.backward()
             optimizer.step()
         total_loss += loss.item()
-        for e, r, p in zip(e_type, labels, outputs):
-            if (e.item() == 0 and part == "train") or (e.item() == 1 and part != "train"):
-                reals.append(r.item())
-                preds.append(torch.sigmoid(p).item())
+        reals.extend(labels.detach().cpu().numpy().flatten().tolist())
+        preds.extend(torch.sigmoid(outputs).detach().cpu().numpy().flatten().tolist())
 
     real, pred = np.array(reals), np.array(preds)
     precision, recall, thresholds = precision_recall_curve(real, pred)
@@ -212,102 +173,36 @@ def run_epoch(model, loader, optimizer, criterion, part, epoch):
     return score
 
 
-def get_test_e_type(train_proteins_names, test_proteins_names, train_molecules_names, test_molecules_names):
-    train_p_set = set(train_proteins_names)
-    train_m_set = set(train_molecules_names)
-    test_types = []
-    for p, m in zip(test_proteins_names, test_molecules_names):
-        if p in train_p_set and m in train_m_set:
-            test_types.append(1)
-        elif p in train_p_set:
-            test_types.append(2)
-        elif m in train_m_set:
-            test_types.append(3)
-        else:
-            test_types.append(4)
-    return test_types
-
-
-def score_to_str(score_dict):
-    if 0 in score_dict:
-        return f'{score_dict[0] * 100:.2f}'
-    else:
-        return f'{score_dict[1] * 100:.2f}'
-    # return " ".join([f"{k}:{v * 100:.1f}" for k, v in score_dict.items()])
-
-
-def model_to_conf_name(model):
-    return f"{model.m_fuse},{model.p_fuse},{model.m_model},{model.p_model},"
-
-
-def get_all_args_opt():
-    conf = []
-
-    for m_fuse in [0, 1]:
-        for p_fuse in [0, 1]:
-            for m_model in [0, 1]:
-                for p_model in [0, 1]:
-                    for fuse in ["fuse_all-to-prot", "fuse_recon", "fuse_all-to-all", "fuse_inv", "fuse_fuse"]:
-                        if not m_fuse and not m_model:
-                            continue
-                        if not p_fuse and not p_model:
-                            continue
-                        conf.append(
-                            f"--m_fuse {m_fuse} --p_fuse {p_fuse} --m_model {m_model} --p_model {p_model} --fuse_base data/models_checkpoints/{fuse}")
-    return conf
+def model_to_conf_name(model: ProteinMiltilabelModel):
+    return f"{model.use_fuse},{model.use_model},"
 
 
 def main(args):
     fuse_base = args.dp_fuse_base
-    m_fuse = bool(args.dp_m_fuse)
-    p_fuse = bool(args.dp_p_fuse)
-    m_model = bool(args.dp_m_model)
-    p_model = bool(args.dp_p_model)
-    only_rand = bool(args.dp_only_rand)
-    fuse_freeze = bool(args.dp_fuse_freeze)
+    use_fuse = bool(args.cafa_use_fuse)
+    use_model = bool(args.cafa_use_model)
+    fuse_freeze = bool(args.cafa_fuse_freeze)
+    task = args.cafa_task
     bs = args.dp_bs
     lr = args.dp_lr
     prot_emd_type = args.protein_emd
-    mol_emd_type = args.mol_emd
-    dataset = args.db_dataset
     seed = args.random_seed
     np.random.seed(seed)
     type_to_vec_dim = get_type_to_vec_dim(prot_emd_type)
-    all_molecules, all_proteins, all_labels, molecules_names, proteins_names = load_data(dataset, prot_emd_type,
-                                                                                         mol_emd_type)
-    shuffle_index = np.random.permutation(len(all_molecules))
-    all_molecules = all_molecules[shuffle_index]
-    all_proteins = all_proteins[shuffle_index]
-    all_labels = all_labels[shuffle_index]
-    molecules_names = molecules_names[shuffle_index]
-    proteins_names = proteins_names[shuffle_index]
+    train_proteins, test_proteins, train_labels, test_labels = load_data(task, prot_emd_type)
+    shuffle_index = np.random.permutation(len(train_proteins))
+    train_proteins = train_proteins[shuffle_index]
+    train_labels = train_labels[shuffle_index]
     if args.dp_print:
-        print(all_molecules.shape, all_proteins.shape, all_labels.shape)
-    train_molecules, val_molecules, test_molecules = split_train_val_test(all_molecules)
-    train_proteins, val_proteins, test_proteins = split_train_val_test(all_proteins)
-    train_labels, val_labels, test_labels = split_train_val_test(all_labels)
-    train_molecules_names, val_molecules_names, test_molecules_names = split_train_val_test(molecules_names)
-    train_proteins_names, val_proteins_names, test_proteins_names = split_train_val_test(proteins_names)
+        print(train_proteins.shape, train_labels.shape, train_labels.shape)
+    train_proteins, val_proteins = split_train_val(train_proteins)
+    train_labels, val_labels = split_train_val(train_labels)
 
-    train_m_names, val_m_names, test_m_names = split_train_val_test(molecules_names)
-    train_p_names, val_p_names, test_p_names = split_train_val_test(proteins_names)
+    train_loader = data_to_loader(train_proteins, train_labels, batch_size=bs, shuffle=True)
+    val_loader = data_to_loader(val_proteins, val_labels, batch_size=bs, shuffle=False)
+    test_loader = data_to_loader(test_proteins, test_labels, batch_size=bs, shuffle=False)
 
-    val_e_types = get_test_e_type(train_p_names, val_p_names, train_m_names, val_m_names)
-    test_e_types = get_test_e_type(train_p_names, test_p_names, train_m_names, test_m_names)
-
-    train_loader = data_to_loader(train_molecules, train_proteins, train_labels, None, batch_size=bs, shuffle=True,
-                                  only_rand=only_rand, molecules_names=train_molecules_names,
-                                  proteins_names=train_proteins_names)
-
-    val_loader = data_to_loader(val_molecules, val_proteins, val_labels, val_e_types, batch_size=bs, shuffle=False,
-                                only_rand=only_rand, molecules_names=val_molecules_names,
-                                proteins_names=val_proteins_names)
-    test_loader = data_to_loader(test_molecules, test_proteins, test_labels, test_e_types, batch_size=bs, shuffle=False,
-                                 only_rand=only_rand, molecules_names=test_molecules_names,
-                                 proteins_names=test_proteins_names)
-    model = ProteinDrugLinearModel(fuse_base, type_to_vec_dim, m_fuse=m_fuse, p_fuse=p_fuse, m_model=m_model,
-                                   p_model=p_model,
-                                   fuse_freeze=fuse_freeze).to(device)
+    model = ProteinMiltilabelModel(fuse_base, type_to_vec_dim[PROTEIN], use_fuse, use_model, fuse_freeze).to(device)
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -345,10 +240,9 @@ def main(args):
 
     if args.dp_print:
         print("Best Test scores\n", best_test_score.to_string())
-        output_file = f"{scores_path}/drug_protein_{dataset}.csv"
+        output_file = f"{scores_path}/cafa_{task}.csv"
         if not os.path.exists(output_file):
             names = "name,m_fuse,p_fuse,m_model,p_model,"
-
             with open(output_file, "w") as f:
                 f.write(names + Score.get_header() + "\n")
         with open(output_file, "a") as f:

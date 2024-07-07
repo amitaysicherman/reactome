@@ -10,7 +10,7 @@ def get_args():
     parser.add_argument("--protein_emd", type=str, default="ProtBertT5-xl")
     parser.add_argument("--mol_emd", type=str, default="pebchem10m")
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
-                        choices=["all", "protein", "molecule", "text", 'dna',"label"])
+                        choices=["all", "protein", "molecule", "text", 'dna', "label"])
 
     parser.add_argument("--name", type=str, default="default")
     parser.add_argument("--skip_if_exists", type=int, default=0)
@@ -72,6 +72,12 @@ def get_args():
     parser.add_argument("--dp_lr", type=float, default=1e-4)
     parser.add_argument("--dp_print", type=int, default=1)
     parser.add_argument("--db_dataset", type=str, default="DrugBank", choices=["Davis", "DrugBank", "KIBA", "human"])
+
+    # cafa args
+    parser.add_argument("--cafa_use_fuse", type=int, default=1)
+    parser.add_argument("--cafa_use_model", type=int, default=1)
+    parser.add_argument("--cafa_fuse_freeze", type=int, default=1)
+    parser.add_argument("--cafa_task", type=str, default="mf", choices=["mf", "bp", "cc"])
 
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":
