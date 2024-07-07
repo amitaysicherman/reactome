@@ -10,11 +10,11 @@ def get_args():
     parser.add_argument("--protein_emd", type=str, default="ProtBertT5-xl")
     parser.add_argument("--mol_emd", type=str, default="pebchem10m")
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
-                        choices=["all", "protein", "molecule", "text", 'dna'])
+                        choices=["all", "protein", "molecule", "text", 'dna',"label"])
 
     parser.add_argument("--name", type=str, default="default")
     parser.add_argument("--skip_if_exists", type=int, default=0)
-    parser.add_argument("--data_aug", type=str, default="protein", choices=["all", "location", "protein", "molecule","label"])
+    parser.add_argument("--data_aug", type=str, default="protein", choices=["all", "location", "protein", "molecule"])
     parser.add_argument("--debug", type=int, default=0)
     parser.add_argument("--max_no_improve", type=int, default=15)
     parser.add_argument("--random_seed", type=int, default=42)
