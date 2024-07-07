@@ -23,7 +23,7 @@ if __name__ == "__main__":
     args = get_args()
     self_token = args.self_token
     protein_emd = args.protein_emd
-    seq2vec = Seq2Vec(self_token, protein_name=protein_emd)
+    seq2vec = Seq2Vec(self_token, protein_name=protein_emd,use_cache=True)
 
     output_dir = pjoin(data_path, "CAFA3", "preprocessed")
     os.makedirs(output_dir, exist_ok=True)
