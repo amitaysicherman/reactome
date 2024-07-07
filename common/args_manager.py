@@ -79,6 +79,9 @@ def get_args():
     parser.add_argument("--cafa_fuse_freeze", type=int, default=1)
     parser.add_argument("--cafa_task", type=str, default="mf", choices=["mf", "bp", "cc"])
 
+    # localization args
+    parser.add_argument("--loc_bin", type=int, default=0)
+
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":
         args.fuse_name = args.name
