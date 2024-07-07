@@ -34,8 +34,8 @@ class Score:
 
 
 def load_data(task, prot_emd_type):
-    train_proteins = np.load(f"{data_path}/CAFA3/preprocessed/train_protein_{task}_{prot_emd_type}.npy")
-    test_proteins = np.load(f"{data_path}/CAFA3/preprocessed/test_protein_{task}_{prot_emd_type}.npy")
+    train_proteins = np.load(f"{data_path}/CAFA3/preprocessed/train_protein_{task}_{prot_emd_type}.npy")[:, 0, :]
+    test_proteins = np.load(f"{data_path}/CAFA3/preprocessed/test_protein_{task}_{prot_emd_type}.npy")[:, 0, :]
     with open(f"{data_path}/CAFA3/preprocessed/train_label_{task}_{prot_emd_type}.txt") as f:
         train_labels = f.read().split("\n")
     with open(f"{data_path}/CAFA3/preprocessed/test_label_{task}_{prot_emd_type}.txt") as f:
@@ -44,15 +44,15 @@ def load_data(task, prot_emd_type):
     test_labels = [[int(i) for i in l.split()] for l in test_labels]
     max_label = max([max(l) for l in train_labels + test_labels])
 
-    train_labels = np.zeros((len(train_labels), max_label + 1))
+    train_labels_array = np.zeros((len(train_labels), max_label + 1))
     for i, l in enumerate(train_labels):
         for j in l:
-            train_labels[i, j] = 1
-    test_labels = np.zeros((len(test_labels), max_label + 1))
+            train_labels_array[i, j] = 1
+    test_labels_array = np.zeros((len(test_labels), max_label + 1))
     for i, l in enumerate(test_labels):
         for j in l:
-            test_labels[i, j] = 1
-    return train_proteins, test_proteins, train_labels, test_labels
+            test_labels_array[i, j] = 1
+    return train_proteins, test_proteins, train_labels_array, test_labels_array
 
 
 def split_train_val(data, val_size=0.16):
@@ -105,7 +105,7 @@ def get_layers(dims):
 
 
 class ProteinMiltilabelModel(torch.nn.Module):
-    def __init__(self, fuse_base, protein_dim, use_fuse, use_model, fuse_freeze=True):
+    def __init__(self, fuse_base, protein_dim, use_fuse, use_model, output_dim, fuse_freeze=True):
         super().__init__()
         self.input_dim = 0
         self.use_fuse = use_fuse
@@ -126,7 +126,7 @@ class ProteinMiltilabelModel(torch.nn.Module):
         if use_model:
             self.input_dim += protein_dim
 
-        self.layers = get_layers([self.input_dim, 512, 128, 1])
+        self.layers = get_layers([self.input_dim, 512, 512, output_dim])
 
     def forward(self, protein):
         x = []
@@ -134,13 +134,11 @@ class ProteinMiltilabelModel(torch.nn.Module):
             fuse_protein = self.fuse_model(protein, self.p_type)
             if self.fuse_freeze:
                 fuse_protein = fuse_protein.detach()
-            fuse_protein = self.p_fuse_linear(fuse_protein)
             x.append(fuse_protein)
         if self.use_model:
-            protein = self.p_model_linear(protein)
             x.append(protein)
-        mol_protein = torch.stack(x, dim=1)
-        return self.layers(mol_protein)
+        x = torch.concat(x, dim=1)
+        return self.layers(x)
 
 
 def run_epoch(model, loader, optimizer, criterion, part, epoch):
@@ -166,11 +164,14 @@ def run_epoch(model, loader, optimizer, criterion, part, epoch):
 
     real, pred = np.array(reals), np.array(preds)
     precision, recall, thresholds = precision_recall_curve(real, pred)
-    score = Score(auc=roc_auc_score(real, pred), epoch=epoch, part=part, accuracy=accuracy_score(real, pred > 0.5),
-                  precision=precision_score(real, pred > 0.5), recall=recall_score(real, pred > 0.5),
-                  aupr=area_under_curve(recall, precision))
+    if part != "train":
+        score = Score(auc=roc_auc_score(real, pred), epoch=epoch, part=part, accuracy=accuracy_score(real, pred > 0.5),
+                      precision=precision_score(real, pred > 0.5), recall=recall_score(real, pred > 0.5),
+                      aupr=area_under_curve(recall, precision))
 
-    return score
+        return score
+    else:
+        return None
 
 
 def model_to_conf_name(model: ProteinMiltilabelModel):
@@ -202,7 +203,8 @@ def main(args):
     val_loader = data_to_loader(val_proteins, val_labels, batch_size=bs, shuffle=False)
     test_loader = data_to_loader(test_proteins, test_labels, batch_size=bs, shuffle=False)
 
-    model = ProteinMiltilabelModel(fuse_base, type_to_vec_dim[PROTEIN], use_fuse, use_model, fuse_freeze).to(device)
+    model = ProteinMiltilabelModel(fuse_base, type_to_vec_dim[PROTEIN], use_fuse, use_model, train_labels.shape[-1],
+                                   fuse_freeze).to(device)
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -218,16 +220,16 @@ def main(args):
     best_train_all_auc = 0
     no_improve = 0
     for epoch in range(250):
-        train_score = run_epoch(model, train_loader, optimizer, loss_func, "train", epoch)
+        run_epoch(model, train_loader, optimizer, loss_func, "train", epoch)
         with torch.no_grad():
             val_score = run_epoch(model, val_loader, optimizer, loss_func, "val", epoch)
             test_score = run_epoch(model, test_loader, optimizer, loss_func, "test", epoch)
 
         if args.dp_print:
-            print(train_score.to_string())
+            # print(train_score.to_string())
             print(val_score.to_string())
             print(test_score.to_string())
-        best_train_all_auc = max(best_train_all_auc, train_score.auc)
+        # best_train_all_auc = max(best_train_all_auc, train_score.auc)
         if val_score.auc > best_val_auc:
             best_val_auc = val_score.auc
             best_test_auc = test_score.auc
