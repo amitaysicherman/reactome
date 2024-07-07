@@ -173,7 +173,8 @@ def main(args, fuse_model=None):
     val_loader = data_to_loader(val_proteins, val_labels, batch_size=bs, shuffle=False)
     test_loader = data_to_loader(test_proteins, test_labels, batch_size=bs, shuffle=False)
 
-    model = ProteinLabelModel(fuse_base, type_to_vec_dim[PROTEIN], use_fuse, use_model, 10, fuse_freeze,fuse_model=fuse_model).to(device)
+    model = ProteinLabelModel(fuse_base, type_to_vec_dim[PROTEIN], use_fuse, use_model, 10 if not is_bin else 2,
+                              fuse_freeze, fuse_model=fuse_model).to(device)
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
