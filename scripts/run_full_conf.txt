@@ -2,4 +2,9 @@
 --name loc_ProtBertT5-xl_roberta --dp_fuse_base fuse2_loc_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0
 --name loc_ESM-1B_roberta --dp_fuse_base fuse2_loc_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0
 --name loc_ESM2_roberta --dp_fuse_base fuse2_loc_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0
---name loc_ESM3_roberta --dp_fuse_base fuse2_loc_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0
+--name loc_ESM3_roberta --dp_fuse_base fuse2_loc_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --loc_bin 1
+--name loc_ProtBert-BFD_roberta --dp_fuse_base fuse2_loc_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --loc_bin 1
+--name loc_ProtBertT5-xl_roberta --dp_fuse_base fuse2_loc_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --loc_bin 1
+--name loc_ESM-1B_roberta --dp_fuse_base fuse2_loc_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --loc_bin 1
+--name loc_ESM2_roberta --dp_fuse_base fuse2_loc_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --loc_bin 1
+--name loc_ESM3_roberta --dp_fuse_base fuse2_loc_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --loc_bin 1

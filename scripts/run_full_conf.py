@@ -25,7 +25,6 @@ os.system(cmd)
 
 # run drug protein
 args.dp_print = 1
-args.dp_fuse_base = f"{args.dp_fuse_base}_best"
 configs = [{"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
            {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 0, "dp_p_model": 0},
            {"dp_m_fuse": 0, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1},
