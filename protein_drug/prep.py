@@ -54,7 +54,7 @@ if __name__ == "__main__":
         if data_type in [MOLECULE, 'all']:
             molecules.append(mol_name)
             molecules_vec.append(seq2vec.to_vec(smiles, MOLECULE))
-        if data_type == "all":
+        if data_type == "all" or data_type == "label":
             labels.append(label)
 
     if len(molecules):
