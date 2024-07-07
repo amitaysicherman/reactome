@@ -2,7 +2,6 @@ import pandas as pd
 import scipy
 import argparse
 
-
 parser = argparse.ArgumentParser()
 parser.add_argument("--use_model", type=int, default=0)
 parser.add_argument("--dataset", type=str, default="DrugBank")
@@ -40,5 +39,5 @@ res["statistically significant"] = p_values < 0.05
 print(metric)
 res = res.rename(columns={our_key: "Our", pre_key: "Pre-trained"})
 output_file = f"data/scores/drug_protein_{args.dataset}_{metric}.csv"
-res.to_csv("output_file")
+res.reset_index().to_csv("output_file")
 print(res)
