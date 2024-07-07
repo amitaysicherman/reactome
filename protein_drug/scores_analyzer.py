@@ -40,5 +40,5 @@ print(metric)
 res = res.rename(columns={our_key: "Our", pre_key: "Pre-trained"})
 output_file = f"data/scores/drug_protein_{args.dataset}_{metric}.csv"
 res = res.reset_index()
-res..to_csv("output_file")
+res.to_csv("output_file")
 print(res)
