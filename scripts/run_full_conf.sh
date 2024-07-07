@@ -6,5 +6,5 @@
 #SBATCH --requeue
 
 args=$(sed -n "$SLURM_ARRAY_TASK_ID"p scripts/run_full_conf.txt)
-python3 scripts/run_full_conf.py $args --downstream_task loc --
+python3 scripts/run_full_conf.py $args --downstream_task loc
 
