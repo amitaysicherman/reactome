@@ -7,4 +7,4 @@
 #SBATCH --requeue
 
 args=$(sed -n "$SLURM_ARRAY_TASK_ID"p localization/prep_all.txt)
-python3 localization/prep.py $args --self_token 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
+python3 localization/prep.py $args --self_token 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 --loc_bin 1

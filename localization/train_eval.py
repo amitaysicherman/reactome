@@ -13,7 +13,7 @@ from model.models import MultiModalLinearConfig, MiltyModalLinear
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-def load_data(task, prot_emd_type, is_bin):
+def load_data(prot_emd_type, is_bin):
     if is_bin:
         dir = "subcellular_localization"
     else:
@@ -149,7 +149,6 @@ def main(args):
     use_fuse = bool(args.cafa_use_fuse)
     use_model = bool(args.cafa_use_model)
     fuse_freeze = bool(args.cafa_fuse_freeze)
-    task = args.cafa_task
     bs = args.dp_bs
     lr = args.dp_lr
     is_bin = args.loc_bin
@@ -157,7 +156,7 @@ def main(args):
     seed = args.random_seed
     np.random.seed(seed)
     type_to_vec_dim = get_type_to_vec_dim(prot_emd_type)
-    proteins, labels = load_data(task, prot_emd_type, is_bin)
+    proteins, labels = load_data(prot_emd_type, is_bin)
     shuffle_index = np.random.permutation(len(proteins))
     proteins = proteins[shuffle_index]
     labels = labels[shuffle_index]
