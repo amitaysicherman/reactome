@@ -242,7 +242,7 @@ def main(args):
         print("Best Test scores\n", best_test_score.to_string())
         output_file = f"{scores_path}/cafa_{task}.csv"
         if not os.path.exists(output_file):
-            names = "name,m_fuse,p_fuse,m_model,p_model,"
+            names = "name,use_fuse,use_model,"
             with open(output_file, "w") as f:
                 f.write(names + Score.get_header() + "\n")
         with open(output_file, "a") as f:
