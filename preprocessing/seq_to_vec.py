@@ -154,14 +154,20 @@ class BioText2Vec(ABCSeq2Vec):
 
 
 class Seq2Vec:
-    def __init__(self, self_token, protein_name=P_T5_XL, mol_name=PEBCHEM10M):
+    def __init__(self, self_token, protein_name=P_T5_XL, mol_name=PEBCHEM10M, use_cache=False):
         self.prot2vec = Prot2vec(self_token, protein_name)
         self.dna2vec = DNA2Vec()
         self.mol2vec = Mol2Vec(mol_name)
         self.text2vec = BioText2Vec()
+        self.use_cache = use_cache
+        if use_cache:
+            self.cache = {}
         self.type_to_vec_dim = get_type_to_vec_dim(protein_name)
 
     def to_vec(self, seq: str, seq_type: str):
+        if self.use_cache and seq in self.cache:
+            return self.cache[seq]
+
         zeros = np.zeros((1, self.type_to_vec_dim[seq_type]))
         if seq_type == PROTEIN:
             vec = self.prot2vec.to_vec(seq)
@@ -176,6 +182,8 @@ class Seq2Vec:
             return zeros
         if vec is None:
             return zeros
+        if self.use_cache:
+            self.cache[seq] = vec
         return vec
 
 
