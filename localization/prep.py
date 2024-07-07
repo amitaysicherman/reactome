@@ -127,12 +127,12 @@ is_bin = args.loc_bin
 if is_bin:
     url = "https://miladeepgraphlearningproteindata.s3.us-east-2.amazonaws.com/peerdata/subcellular_localization_2.tar.gz"
     md5 = "5d2309bf1c0c2aed450102578e434f4e"
-    dir = "subcellular_localization"
+    dir = "subcellular_localization_2"
 
 else:
     url = "https://miladeepgraphlearningproteindata.s3.us-east-2.amazonaws.com/peerdata/subcellular_localization.tar.gz"
     md5 = "37cb6138b8d4603512530458b7c8a77d"
-    dir = "subcellular_localization_2"
+    dir = "subcellular_localization"
 
 loc_dir = "localization"
 
