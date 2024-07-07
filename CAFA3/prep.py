@@ -31,7 +31,7 @@ if __name__ == "__main__":
             seqs, labels = read_data(part, task_name)
             proteins = []
             for seq in tqdm(seqs):
-                proteins.append(seq2vec.to_vec(seq, PROTEIN))
+                proteins.append(seq2vec.to_vec(seq['seq'], PROTEIN))
             proteins = np.array(proteins)
             np.save(pjoin(output_dir, f"{part}_protein_{task_name}.npy"), proteins)
             labels = [" ".join([str(i) for i in l]) for l in labels]
