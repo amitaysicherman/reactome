@@ -90,7 +90,7 @@ class ProteinLabelModel(torch.nn.Module):
                 self.fuse_model, dim = load_fuse_model(fuse_base)
             else:
                 self.fuse_model = fuse_model
-                dim = fuse_model.output_dim
+                dim = fuse_model.output_dim[0]
             self.input_dim += dim
             if "protein_protein" in self.fuse_model.names:
                 self.p_type = "protein_protein"

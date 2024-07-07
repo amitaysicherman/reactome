@@ -134,7 +134,7 @@ class ProteinDrugLinearModel(torch.nn.Module):
                 self.fuse_model, dim = load_fuse_model(fuse_base)
             else:
                 self.fuse_model = fuse_model
-                dim = fuse_model.output_dim
+                dim = fuse_model.output_dim[0]
             if m_fuse:
                 self.m_fuse_linear = torch.nn.Linear(dim, trans_dim)
                 if "molecule_protein" in self.fuse_model.names:
