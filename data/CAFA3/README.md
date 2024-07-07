@@ -1,0 +1,1 @@
+from here : https://github.com/Shen-Lab/TALE/tree/master/data/CAFA3
