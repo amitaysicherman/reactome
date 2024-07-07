@@ -23,21 +23,31 @@ cmd = f"python3 model/contrastive_learning.py {args_to_string(args)}"
 print("Running command: ", cmd)
 os.system(cmd)
 
-# run drug protein
 args.dp_print = 1
-configs = [{"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
-           {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 0, "dp_p_model": 0},
-           {"dp_m_fuse": 0, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1},
-           {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 0, "dp_p_model": 1},
-           {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 0},
-           {"dp_m_fuse": 0, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
-           {"dp_m_fuse": 1, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1}]
+
+if args.downstream_task == "pd":
+    # run drug protein
+    configs = [{"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
+               {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 0, "dp_p_model": 0},
+               {"dp_m_fuse": 0, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1},
+               {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 0, "dp_p_model": 1},
+               {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 0},
+               {"dp_m_fuse": 0, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
+               {"dp_m_fuse": 1, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1}]
+
+    base_cmd = "python protein_drug/train_eval.py"
+else:
+    # run localization
+    configs = [{"cafa_use_fuse": 1, "cafa_use_model": 1},
+               {"cafa_use_fuse": 1, "cafa_use_model": 0},
+               {"cafa_use_fuse": 0, "cafa_use_model": 1}]
+    base_cmd = "python localization/train_eval.py"
+
 for random_seed in range(42, 52):
     args.random_seed = random_seed
     for config in configs:
         for key, value in config.items():
             setattr(args, key, value)
-        cmd = f"python protein_drug/train_eval.py {args_to_string(args)}"
+        cmd = f"{base_cmd} {args_to_string(args)}"
         print("Running command: ", cmd)
         os.system(cmd)
-
