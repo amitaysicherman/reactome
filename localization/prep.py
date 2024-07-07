@@ -31,9 +31,10 @@ loc_dir = "localization"
 target_fields = ["localization"]
 path = pjoin(data_path, loc_dir)
 
-zip_file = utils.download(url, path, md5=md5)
-utils.extract(zip_file)
-os.remove(zip_file)
+if not os.path.exists(pjoin(data, loc_dir, dir, f'{dir}_train.lmdb')):
+    zip_file = utils.download(url, path, md5=md5)
+    utils.extract(zip_file)
+    os.remove(zip_file)
 
 sequence_field = "primary"
 splits = ["train", "valid", "test"]
