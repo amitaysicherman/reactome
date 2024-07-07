@@ -19,12 +19,12 @@ if __name__ == "__main__":
     base_dir = os.path.join(data_path, "protein_drug")
 
     protein_output_file = os.path.join(base_dir, f"{dataset}_{protein_emd}_proteins.npy")
-    if skip_if_exists and os.path.exists(protein_output_file):
+    if skip_if_exists and os.path.exists(protein_output_file) and data_type ==PROTEIN:
         print(f"Skipping {protein_output_file}")
         exit(0)
 
     mol_output_file = os.path.join(base_dir, f"{dataset}_{mol_emd}_molecules.npy")
-    if skip_if_exists and os.path.exists(mol_output_file):
+    if skip_if_exists and os.path.exists(mol_output_file) and data_type == MOLECULE:
         print(f"Skipping {mol_output_file}")
         exit(0)
 
