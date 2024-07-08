@@ -11,8 +11,8 @@ args = parser.parse_args()
 our_key = 'True | True | True | True' if args.use_model else 'True | True | False | False'
 pre_key = 'False | False | True | True'
 df = pd.read_csv(f"data/scores/drug_protein_{args.dataset}.csv")
-df['protein_model'] = df.name.apply(lambda x: x.split("_")[0])
-df['molecule_model'] = df.name.apply(lambda x: x.split("_")[1])
+df['protein_model'] = df.name.apply(lambda x: x.split("_")[1] if len(x.split("_")) == 3 else "")
+df['molecule_model'] = df.name.apply(lambda x: x.split("_")[2] if len(x.split("_")) == 3 else "")
 df['conf'] = df['m_fuse'].astype(str) + " | " + df['p_fuse'].astype(str) + " | " + df['m_model'].astype(str) + " | " + \
              df['p_model'].astype(str)
 
