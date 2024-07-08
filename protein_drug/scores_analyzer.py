@@ -21,7 +21,8 @@ df['conf'] = df['m_fuse'].astype(str) + " | " + df['p_fuse'].astype(str) + " | "
 metric = args.metric
 
 if args.print_count:
-    print(pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
+    print(
+        pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric, aggfunc="count"))
 
 p_mean = pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
                         aggfunc="mean")
