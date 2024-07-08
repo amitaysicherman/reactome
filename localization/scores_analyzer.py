@@ -5,6 +5,8 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--use_model", type=int, default=0)
 parser.add_argument("--dataset", type=str, default="loc0")
+parser.add_argument("--print_count", type=int, default=0)
+
 args = parser.parse_args()
 
 our_key = 'True | True' if args.use_model else 'True | False'
@@ -19,6 +21,10 @@ p_mean = pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=[
                         aggfunc="mean")
 p_std = pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
                        aggfunc="std")
+
+if args.print_count:
+    print(pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
+                   aggfunc="count"))
 our_mean, our_std = p_mean[our_key], p_std[our_key]
 pre_mean, pre_std = p_mean[pre_key], p_std[pre_key]
 res = (p_mean * 100).round(1).astype(str) + "(" + (p_std * 100).round(2).astype(str) + ")"
