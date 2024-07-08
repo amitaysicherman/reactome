@@ -6,6 +6,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--use_model", type=int, default=0)
 parser.add_argument("--dataset", type=str, default="DrugBank")
 parser.add_argument("--metric", type=str, default="aupr")
+parser.add_argument("--print_count", type=int, default=0)
+
 args = parser.parse_args()
 
 our_key = 'True | True | True | True' if args.use_model else 'True | True | False | False'
@@ -17,6 +19,10 @@ df['conf'] = df['m_fuse'].astype(str) + " | " + df['p_fuse'].astype(str) + " | "
              df['p_model'].astype(str)
 
 metric = args.metric
+
+if args.print_count:
+    print(pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
+
 p_mean = pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
                         aggfunc="mean")
 p_std = pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
