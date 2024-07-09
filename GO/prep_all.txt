@@ -1,15 +1,5 @@
---protein_emd ESM2 --go_task MF
---protein_emd ProtBertT5-xl --go_task MF
---protein_emd ESM-1B --go_task MF
---protein_emd ESM3 --go_task MF
---protein_emd ProtBert-BFD --go_task MF
---protein_emd ProtBertT5-xl --go_task BP
---protein_emd ESM-1B --go_task BP
---protein_emd ESM2 --go_task BP
---protein_emd ESM3 --go_task BP
---protein_emd ProtBert-BFD --go_task BP
---protein_emd ProtBertT5-xl --go_task CC
---protein_emd ESM-1B --go_task CC
---protein_emd ESM2 --go_task CC
---protein_emd ESM3 --go_task CC
---protein_emd ProtBert-BFD --go_task CC
+--protein_emd ESM2
+--protein_emd ProtBertT5-xl
+--protein_emd ESM-1B
+--protein_emd ESM3
+--protein_emd ProtBert-BFD
