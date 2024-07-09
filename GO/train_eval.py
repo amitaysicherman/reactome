@@ -21,9 +21,11 @@ def load_data(prot_emd_type, task):
     return data, labels
 
 
-def split_train_val_test(data, val_size=0.16, test_size=0.20):
-    train_val_index = int((1 - val_size - test_size) * len(data))
-    val_test_index = int((1 - test_size) * len(data))
+def split_train_val_test(data, train_size=28187, val_size=3129, test_size=3148):
+    assert len(data) == train_size + val_size + test_size
+
+    train_val_index = train_size
+    val_test_index = train_size + val_size
     train_data = data[:train_val_index]
     val_data = data[train_val_index:val_test_index]
     test_data = data[val_test_index:]
@@ -157,9 +159,9 @@ def main(args, fuse_model=None):
     np.random.seed(seed)
     type_to_vec_dim = get_type_to_vec_dim(prot_emd_type)
     proteins, labels = load_data(prot_emd_type, task)
-    shuffle_index = np.random.permutation(len(proteins))
-    proteins = proteins[shuffle_index]
-    labels = labels[shuffle_index]
+    # shuffle_index = np.random.permutation(len(proteins))
+    # proteins = proteins[shuffle_index]
+    # labels = labels[shuffle_index]
     if args.dp_print:
         print(proteins.shape, labels.shape)
     train_proteins, val_proteins, test_proteins = split_train_val_test(proteins)
