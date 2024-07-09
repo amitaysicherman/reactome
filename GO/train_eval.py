@@ -15,10 +15,10 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def load_data(prot_emd_type, task):
 
-    protein_file = pjoin(data_path, "GO", f"{task}_{prot_emd_type}.npy")
+    protein_file = pjoin(data_path, "GO", f"{prot_emd_type}.npy")
     target_file = pjoin(data_path, "GO", f"{task}_label.npy")
     data = np.load(protein_file)[:, 0, :]
-    labels = np.load(target_file)[:,0,:]
+    labels = np.load(target_file)
     return data, labels
 
 
