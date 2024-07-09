@@ -80,7 +80,7 @@ class Prot2vec(ABCSeq2Vec):
             from huggingface_hub import login
             from esm.models.esm3 import ESM3
             login(token=self.token)
-            self.model = ESM3.from_pretrained("esm3_sm_open_v1").to("cuda")
+            self.model = ESM3.from_pretrained("esm3_sm_open_v1",device=device)
         elif self.name == ESM_1B or self.name == ESM_2:
             self.tokenizer = AutoTokenizer.from_pretrained(self.cp_name)
             self.model = EsmModel.from_pretrained(self.cp_name).eval().to(device)
