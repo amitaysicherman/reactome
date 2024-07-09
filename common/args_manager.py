@@ -12,7 +12,7 @@ def get_args():
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
                         choices=["all", "protein", "molecule", "text", 'dna', "label"])
 
-    parser.add_argument("--downstream_task", type=str, default="pd", choices=["pd", "loc"])
+    parser.add_argument("--downstream_task", type=str, default="pd", choices=["pd", "loc","go"])
 
     parser.add_argument("--name", type=str, default="default")
     parser.add_argument("--skip_if_exists", type=int, default=0)
@@ -83,6 +83,9 @@ def get_args():
 
     # localization args
     parser.add_argument("--loc_bin", type=int, default=0)
+
+    #go args
+    parser.add_argument("--go_task", type=str, default="MF", choices=["MF", "BP", "CC"])
 
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":
