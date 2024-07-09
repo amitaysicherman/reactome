@@ -220,7 +220,7 @@ def run_epoch(model, loader, optimizer, criterion, part, epoch):
     if part != "train":
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
-        score = area_under_prc(preds, reals).item()
+        score = area_under_prc(preds.flatten(), reals.flatten()).item()
         return score
     else:
         return 0
