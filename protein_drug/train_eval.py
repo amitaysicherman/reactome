@@ -7,29 +7,30 @@ from common.utils import get_type_to_vec_dim
 from common.data_types import MOLECULE, PROTEIN
 import torch
 from model.models import MultiModalLinearConfig, MiltyModalLinear
-from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, precision_recall_curve, \
-    auc as area_under_curve
+# from sklearn.metrics import accuracy_score, roc_auc_score, precision_score, recall_score, precision_recall_curve, \
+#     auc as area_under_curve
+from torchdrug.metrics import area_under_prc
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-class Score:
-    def __init__(self, epoch: int, part: str, auc: float, accuracy: float, precision: float, recall: float,
-                 aupr: float):
-        self.epoch = epoch
-        self.part = part
-        self.auc = auc
-        self.accuracy = accuracy
-        self.precision = precision
-        self.recall = recall
-        self.aupr = aupr
+# class Score:
+#     def __init__(self, epoch: int, part: str, auc: float, accuracy: float, precision: float, recall: float,
+#                  aupr: float):
+#         self.epoch = epoch
+#         self.part = part
+#         self.auc = auc
+#         self.accuracy = accuracy
+#         self.precision = precision
+#         self.recall = recall
+#         self.aupr = aupr
+#
+#     def to_string(self):
+#         return f"{self.epoch},{self.part},{self.auc},{self.accuracy},{self.precision},{self.recall},{self.aupr}"
 
-    def to_string(self):
-        return f"{self.epoch},{self.part},{self.auc},{self.accuracy},{self.precision},{self.recall},{self.aupr}"
-
-    @staticmethod
-    def get_header():
-        return "epoch,part,auc,accuracy,precision,recall,aupr"
+@staticmethod
+def get_header():
+    return "epoch,part,auc,accuracy,precision,recall,aupr"
 
 
 def load_data(dataset, prot_emd_type, mol_emd_type):
@@ -77,13 +78,16 @@ class ProteinDrugDataset(Dataset):
         if only_rand:
             self.proteins = np.stack([entity_to_rand(p, self.proteins.shape[1]) for p in proteins_names])
         self.labels = labels
-        self.e_types = e_types if e_types is not None else [0] * len(molecules)
+        if e_types is not None:
+            self.labels = self.labels[e_types == 1]
+            self.molecules = self.molecules[e_types == 1]
+            self.proteins = self.proteins[e_types == 1]
 
     def __len__(self):
         return len(self.labels)
 
     def __getitem__(self, idx):
-        return self.molecules[idx], self.proteins[idx], self.labels[idx], self.e_types[idx]
+        return self.molecules[idx], self.proteins[idx], self.labels[idx]
 
 
 def load_fuse_model(base_dir):
@@ -199,7 +203,7 @@ def run_epoch(model, loader, optimizer, criterion, part, epoch):
     reals = []
     preds = []
     total_loss = 0
-    for molecules, proteins, labels, e_type in loader:
+    for molecules, proteins, labels in loader:
         molecules = molecules.to(device).float()
         proteins = proteins.to(device).float()
         labels = labels.to(device)
@@ -211,17 +215,12 @@ def run_epoch(model, loader, optimizer, criterion, part, epoch):
             loss.backward()
             optimizer.step()
         total_loss += loss.item()
-        for e, r, p in zip(e_type, labels, outputs):
-            if (e.item() == 0 and part == "train") or (e.item() == 1 and part != "train"):
-                reals.append(r.item())
-                preds.append(torch.sigmoid(p).item())
+        reals.append(labels.detach())
+        preds.append(torch.sigmoid(outputs).detach())
 
-    real, pred = np.array(reals), np.array(preds)
-    precision, recall, thresholds = precision_recall_curve(real, pred)
-    score = Score(auc=roc_auc_score(real, pred), epoch=epoch, part=part, accuracy=accuracy_score(real, pred > 0.5),
-                  precision=precision_score(real, pred > 0.5), recall=recall_score(real, pred > 0.5),
-                  aupr=area_under_curve(recall, precision))
-
+    reals = torch.cat(reals, dim=0)
+    preds = torch.cat(preds, dim=0)
+    score = area_under_prc(preds, reals)
     return score
 
 
@@ -241,13 +240,13 @@ def get_test_e_type(train_proteins_names, test_proteins_names, train_molecules_n
     return test_types
 
 
-def score_to_str(score_dict):
-    if 0 in score_dict:
-        return f'{score_dict[0] * 100:.2f}'
-    else:
-        return f'{score_dict[1] * 100:.2f}'
-    # return " ".join([f"{k}:{v * 100:.1f}" for k, v in score_dict.items()])
-
+# def score_to_str(score_dict):
+#     if 0 in score_dict:
+#         return f'{score_dict[0] * 100:.2f}'
+#     else:
+#         return f'{score_dict[1] * 100:.2f}'
+#     # return " ".join([f"{k}:{v * 100:.1f}" for k, v in score_dict.items()])
+#
 
 def model_to_conf_name(model):
     return f"{model.m_fuse},{model.p_fuse},{model.m_model},{model.p_model},"
@@ -330,10 +329,8 @@ def main(args, fuse_model=None):
     pos_weight = negative_sample_weight / positive_sample_weight
     loss_func = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor(pos_weight).to(device))
 
-    best_val_auc = 0
-    best_test_auc = 0
-    best_test_score = None
-    best_train_all_auc = 0
+    best_val_score = 0
+    best_test_score = 0
     no_improve = 0
     for epoch in range(250):
         train_score = run_epoch(model, train_loader, optimizer, loss_func, "train", epoch)
@@ -342,13 +339,10 @@ def main(args, fuse_model=None):
             test_score = run_epoch(model, test_loader, optimizer, loss_func, "test", epoch)
 
         if args.dp_print:
-            print(train_score.to_string())
-            print(val_score.to_string())
-            print(test_score.to_string())
-        best_train_all_auc = max(best_train_all_auc, train_score.auc)
-        if val_score.auc > best_val_auc:
-            best_val_auc = val_score.auc
-            best_test_auc = test_score.auc
+            print(epoch,train_score, val_score, test_score)
+
+        if val_score > best_val_score:
+            best_val_score = val_score
             best_test_score = test_score
             no_improve = 0
         else:
@@ -357,16 +351,16 @@ def main(args, fuse_model=None):
                 break
 
     if args.dp_print:
-        print("Best Test scores\n", best_test_score.to_string())
+        print("Best Test scores\n", best_test_score)
         output_file = f"{scores_path}/drug_protein_{dataset}.csv"
         if not os.path.exists(output_file):
             names = "name,m_fuse,p_fuse,m_model,p_model,"
 
             with open(output_file, "w") as f:
-                f.write(names + Score.get_header() + "\n")
+                f.write(names + f'auprc,' + "\n")
         with open(output_file, "a") as f:
             f.write(f'{args.name},' + model_to_conf_name(model) + best_test_score.to_string() + "\n")
-    return best_val_auc, best_test_auc
+    return best_val_score, best_test_score
 
 
 if __name__ == '__main__':
