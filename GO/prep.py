@@ -46,9 +46,9 @@ bp_labels = np.array(bp_labels)
 mf_labels = np.array(mf_labels)
 
 output_protein = pjoin(data_path, "GO", f"{protein_emd}.npy")
-output_cc_label = pjoin(data_path, "GO", f"cc_label.npy")
-output_bp_label = pjoin(data_path, "GO", f"bp_label.npy")
-output_mf_label = pjoin(data_path, "GO", f"mf_label.npy")
+output_cc_label = pjoin(data_path, "GO", f"CC_label.npy")
+output_bp_label = pjoin(data_path, "GO", f"BP_label.npy")
+output_mf_label = pjoin(data_path, "GO", f"MF_label.npy")
 
 np.save(output_protein, proteins)
 np.save(output_cc_label, cc_labels)
