@@ -362,7 +362,7 @@ def main(args, fuse_model=None):
             with open(output_file, "w") as f:
                 f.write(names + f'auprc,' + "\n")
         with open(output_file, "a") as f:
-            f.write(f'{args.name},' + model_to_conf_name(model) + best_test_score.to_string() + "\n")
+            f.write(f'{args.name},' + model_to_conf_name(model) + best_test_score + "\n")
     return best_val_score, best_test_score
 
 
