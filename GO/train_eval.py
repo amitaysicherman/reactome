@@ -183,8 +183,8 @@ def main(args, fuse_model=None):
     pos_weight = torch.tensor(pos_weight, device=device, dtype=torch.float32)
     loss_func = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
-    best_val_score = 0
-    best_test_score = 0
+    best_val_score = -100
+    best_test_score = -100
     no_improve = 0
     for epoch in range(250):
         train_score = run_epoch(model, train_loader, optimizer, loss_func, "train")
