@@ -15,7 +15,7 @@ df['protein_model'] = df.name.apply(lambda x: x.split("_")[1] if len(x.split("_"
 df['molecule_model'] = df.name.apply(lambda x: x.split("_")[2] if len(x.split("_")) == 3 else "")
 df['conf'] = df['use_fuse'].astype(str) + " | " + df['use_model'].astype(str)
 
-metric = "acc"
+metric = "f1max"
 p_mean = pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
                         aggfunc="mean")
 p_std = pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
