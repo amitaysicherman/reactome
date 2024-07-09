@@ -1,18 +1,18 @@
---name go-CC_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-CC_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC
---name go-MF_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-MF_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF
---name go-BP_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-BP_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP
---name go-CC_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go-CC_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC
---name go-MF_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go-MF_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF
---name go-BP_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go-BP_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP
---name go-CC_ESM-1B_roberta --dp_fuse_base fuse2_go-CC_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC
---name go-MF_ESM-1B_roberta --dp_fuse_base fuse2_go-MF_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF
---name go-BP_ESM-1B_roberta --dp_fuse_base fuse2_go-BP_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP
---name go-CC_ESM2_roberta --dp_fuse_base fuse2_go-CC_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC
---name go-MF_ESM2_roberta --dp_fuse_base fuse2_go-MF_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF
---name go-BP_ESM2_roberta --dp_fuse_base fuse2_go-BP_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP
---name go-CC_ESM3_roberta --dp_fuse_base fuse2_go-CC_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC
---name go-MF_ESM3_roberta --dp_fuse_base fuse2_go-MF_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF
---name go-BP_ESM3_roberta --dp_fuse_base fuse2_go-BP_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP
+--name go-CC_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-CC_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
+--name go-MF_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-MF_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
+--name go-BP_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-BP_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
+--name go-CC_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go-CC_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
+--name go-MF_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go-MF_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
+--name go-BP_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go-BP_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
+--name go-CC_ESM-1B_roberta --dp_fuse_base fuse2_go-CC_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
+--name go-MF_ESM-1B_roberta --dp_fuse_base fuse2_go-MF_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
+--name go-BP_ESM-1B_roberta --dp_fuse_base fuse2_go-BP_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
+--name go-CC_ESM2_roberta --dp_fuse_base fuse2_go-CC_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
+--name go-MF_ESM2_roberta --dp_fuse_base fuse2_go-MF_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
+--name go-BP_ESM2_roberta --dp_fuse_base fuse2_go-BP_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
+--name go-CC_ESM3_roberta --dp_fuse_base fuse2_go-CC_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
+--name go-MF_ESM3_roberta --dp_fuse_base fuse2_go-MF_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
+--name go-BP_ESM3_roberta --dp_fuse_base fuse2_go-BP_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
 
 
 --name loc_ProtBert-BFD_roberta --dp_fuse_base fuse2_loc_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task loc
