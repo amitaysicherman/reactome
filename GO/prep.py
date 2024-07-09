@@ -7,6 +7,7 @@ from preprocessing.seq_to_vec import Seq2Vec
 from common.args_manager import get_args
 from common.data_types import PROTEIN
 from common.path_manager import data_path
+from tqdm import tqdm
 
 args = get_args()
 task = args.go_task
@@ -17,7 +18,7 @@ dataset = datasets.GeneOntology("data/GO/", branch=task, transform=ProteinView(v
 seq2vec = Seq2Vec(use_cache=True, protein_name=protein_emd, self_token=self_token)
 proteins = []
 labels = []
-for data in dataset:
+for data in tqdm(dataset):
     seq = data['graph'].to_sequence().replace(".G", "")
     proteins.append(seq2vec.to_vec(seq, PROTEIN))
     labels.append(data['targets'].numpy())
