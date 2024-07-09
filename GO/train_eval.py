@@ -138,7 +138,7 @@ def run_epoch(model, loader, optimizer, criterion, part):
     reals = torch.cat(reals, dim=0)
     preds = torch.cat(preds, dim=0)
     fmax = f1_max(reals, preds)
-    return fmax
+    return fmax.item()
 
 
 def model_to_conf_name(model: ProteinLabelModel):
