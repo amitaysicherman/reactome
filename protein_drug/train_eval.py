@@ -215,13 +215,16 @@ def run_epoch(model, loader, optimizer, criterion, part, epoch):
             loss.backward()
             optimizer.step()
         total_loss += loss.item()
-        reals.append(labels.detach())
-        preds.append(torch.sigmoid(outputs).detach())
-
-    reals = torch.cat(reals, dim=0)
-    preds = torch.cat(preds, dim=0)
-    score = area_under_prc(preds, reals)
-    return score
+        if part != "train":
+            reals.append(labels.detach())
+            preds.append(torch.sigmoid(outputs).detach())
+    if part != "train":
+        reals = torch.cat(reals, dim=0)
+        preds = torch.cat(preds, dim=0)
+        score = area_under_prc(preds, reals).item()
+        return score
+    else:
+        return 0
 
 
 def get_test_e_type(train_proteins_names, test_proteins_names, train_molecules_names, test_molecules_names):
@@ -333,13 +336,13 @@ def main(args, fuse_model=None):
     best_test_score = 0
     no_improve = 0
     for epoch in range(250):
-        train_score = run_epoch(model, train_loader, optimizer, loss_func, "train", epoch)
+        _ = run_epoch(model, train_loader, optimizer, loss_func, "train", epoch)
         with torch.no_grad():
             val_score = run_epoch(model, val_loader, optimizer, loss_func, "val", epoch)
             test_score = run_epoch(model, test_loader, optimizer, loss_func, "test", epoch)
 
         if args.dp_print:
-            print(epoch,train_score, val_score, test_score)
+            print(epoch, val_score, test_score)
 
         if val_score > best_val_score:
             best_val_score = val_score
