@@ -30,7 +30,7 @@ proteins = []
 cc_labels = []
 bp_labels = []
 mf_labels = []
-for i in range(len(cc_dataset)):
+for i in tqdm(range(len(cc_dataset))):
     cc_seq = cc_dataset[i]['graph'].to_sequence().replace(".G", "")
     bp_seq = bp_dataset[i]['graph'].to_sequence().replace(".G", "")
     mf_seq = mf_dataset[i]['graph'].to_sequence().replace(".G", "")
