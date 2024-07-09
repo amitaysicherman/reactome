@@ -215,9 +215,8 @@ def run_epoch(model, loader, optimizer, criterion, part, epoch):
             loss.backward()
             optimizer.step()
         total_loss += loss.item()
-        if part != "train":
-            reals.append(labels.detach())
-            preds.append(torch.sigmoid(outputs).detach())
+        reals.append(labels.unsqueeze(1).detach())
+        preds.append(torch.sigmoid(outputs).detach())
     if part != "train":
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
