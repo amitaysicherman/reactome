@@ -14,7 +14,6 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 def load_data(prot_emd_type, task):
-
     protein_file = pjoin(data_path, "GO", f"{prot_emd_type}.npy")
     target_file = pjoin(data_path, "GO", f"{task}_label.npy")
     data = np.load(protein_file)[:, 0, :]
@@ -176,15 +175,15 @@ def main(args, fuse_model=None):
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    #calcualte pos_weight based on the data
+    # calcualte pos_weight based on the data
     pos_weight = train_labels.sum(axis=0) / train_labels.shape[0]
     pos_weight = (1 - pos_weight) / pos_weight
     pos_weight = torch.tensor(pos_weight, device=device, dtype=torch.float32)
-    print(pos_weight)
+    print("pos_weight", pos_weight.shape, pos_weight)
     loss_func = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
     best_val_score = 0
-    best_test_score= 0
+    best_test_score = 0
     no_improve = 0
     for epoch in range(250):
         train_score = run_epoch(model, train_loader, optimizer, loss_func, "train")
