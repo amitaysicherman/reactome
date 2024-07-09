@@ -15,6 +15,7 @@ from common.utils import prepare_files, get_type_to_vec_dim
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 from protein_drug.train_eval import main as protein_drug_main
 from localization.train_eval import main as localization_main
+from GO.train_eval import main as go_main
 from common.path_manager import scores_path
 import shutil
 
@@ -236,7 +237,15 @@ def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hid
 def main(args):
     downstream_task = args.downstream_task
     save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
-    downstream_func = protein_drug_main if downstream_task == "pd" else localization_main
+    if downstream_task == "go":
+        downstream_func = go_main
+    elif downstream_task == "pd":
+        downstream_func = protein_drug_main
+    elif downstream_task == "loc":
+        downstream_func = localization_main
+    else:
+        raise ValueError(f"Unknown downstream task: {downstream_task}")
+
     if args.debug:
         args.fuse_batch_size = 2
     node_index_manager = NodesIndexManager(PRETRAINED_EMD, prot_emd_type=args.protein_emd, mol_emd_type=args.mol_emd)

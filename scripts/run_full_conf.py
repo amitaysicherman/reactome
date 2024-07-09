@@ -41,7 +41,11 @@ else:
     configs = [{"cafa_use_fuse": 1, "cafa_use_model": 1},
                {"cafa_use_fuse": 1, "cafa_use_model": 0},
                {"cafa_use_fuse": 0, "cafa_use_model": 1}]
-    base_cmd = "python localization/train_eval.py"
+    if args.downstream_task == "go":
+        base_cmd = "python GO/train_eval.py"
+    else:
+        base_cmd = "python localization/train_eval.py"
+
 
 for random_seed in range(42, 52):
     args.random_seed = random_seed
