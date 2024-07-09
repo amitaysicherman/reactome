@@ -239,6 +239,7 @@ def get_test_e_type(train_proteins_names, test_proteins_names, train_molecules_n
             test_types.append(3)
         else:
             test_types.append(4)
+    test_types = np.array(test_types)
     return test_types
 
 
