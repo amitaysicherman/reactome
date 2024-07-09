@@ -176,8 +176,10 @@ def main(args, fuse_model=None):
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-
-    loss_func = torch.nn.BCEWithLogitsLoss()
+    #calcualte pos_weight based on the data
+    pos_weight = labels.sum(axis=0) / labels.shape[0]
+    pos_weight = torch.tensor(pos_weight, device=device, dtype=torch.float32)
+    loss_func = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
     best_val_score = 0
     best_test_score= 0
@@ -189,7 +191,6 @@ def main(args, fuse_model=None):
             test_score = run_epoch(model, test_loader, optimizer, loss_func, "test")
 
         if args.dp_print:
-            # print(train_score.to_string())
             print(epoch, train_score, val_score, test_score)
         if val_score > best_val_score:
             best_val_score = val_score
