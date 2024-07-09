@@ -26,7 +26,7 @@ def load_data(prot_emd_type, is_bin):
     return data, labels
 
 
-def split_train_val_test(data, train_size=8420, val_size=2811, test_size=2773):
+def split_train_val_test(data, train_size, val_size, test_size):
     assert len(data) == train_size + val_size + test_size
     train_val_index = train_size
     val_test_index = train_size + val_size
@@ -167,8 +167,12 @@ def main(args, fuse_model=None):
     # labels = labels[shuffle_index]
     if args.dp_print:
         print(proteins.shape, labels.shape)
-    train_proteins, val_proteins, test_proteins = split_train_val_test(proteins)
-    train_labels, val_labels, test_labels = split_train_val_test(labels)
+    if is_bin:
+        train_size, val_size, test_size = 5184, 1729, 1749
+    else:
+        train_size, val_size, test_size = 8420, 2811, 2773
+    train_proteins, val_proteins, test_proteins = split_train_val_test(proteins, train_size, val_size, test_size)
+    train_labels, val_labels, test_labels = split_train_val_test(labels, train_size, val_size, test_size)
 
     train_loader = data_to_loader(train_proteins, train_labels, batch_size=bs, shuffle=True)
     val_loader = data_to_loader(val_proteins, val_labels, batch_size=bs, shuffle=False)
