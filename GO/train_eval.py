@@ -206,7 +206,7 @@ def main(args, fuse_model=None):
         if not os.path.exists(output_file):
             names = "name,use_fuse,use_model,"
             with open(output_file, "w") as f:
-                f.write(names + "acc" + "\n")
+                f.write(names + "f1max" + "\n")
         with open(output_file, "a") as f:
             f.write(f'{args.name},' + model_to_conf_name(model) + str(best_test_score) + "\n")
     return best_val_score, best_val_score
