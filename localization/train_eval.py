@@ -162,9 +162,9 @@ def main(args, fuse_model=None):
     np.random.seed(seed)
     type_to_vec_dim = get_type_to_vec_dim(prot_emd_type)
     proteins, labels = load_data(prot_emd_type, is_bin)
-    shuffle_index = np.random.permutation(len(proteins))
-    proteins = proteins[shuffle_index]
-    labels = labels[shuffle_index]
+    # shuffle_index = np.random.permutation(len(proteins))
+    # proteins = proteins[shuffle_index]
+    # labels = labels[shuffle_index]
     if args.dp_print:
         print(proteins.shape, labels.shape)
     train_proteins, val_proteins, test_proteins = split_train_val_test(proteins)
