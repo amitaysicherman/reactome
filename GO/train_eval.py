@@ -179,7 +179,6 @@ def main(args, fuse_model=None):
     pos_weight = train_labels.sum(axis=0) / train_labels.shape[0]
     pos_weight = (1 - pos_weight) / pos_weight
     pos_weight = torch.tensor(pos_weight, device=device, dtype=torch.float32)
-    print("pos_weight", pos_weight.shape, pos_weight)
     loss_func = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
 
     best_val_score = 0
