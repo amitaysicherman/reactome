@@ -43,8 +43,10 @@ else:
                {"cafa_use_fuse": 0, "cafa_use_model": 1}]
     if args.downstream_task == "go":
         base_cmd = "python GO/train_eval.py"
-    else:
+    elif args.downstream_task == "loc":
         base_cmd = "python localization/train_eval.py"
+    else:
+        raise Exception("Unknown downstream task")
 
 
 for random_seed in range(42, 52):
