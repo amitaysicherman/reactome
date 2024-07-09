@@ -1,6 +1,6 @@
---name go_ProtBert-BFD_roberta --dp_fuse_base fuse2_go_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF
---name go_ProtBert-BFD_roberta --dp_fuse_base fuse2_go_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP
---name go_ProtBert-BFD_roberta --dp_fuse_base fuse2_go_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC
+--name go-MF_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-MF_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF
+--name go-BP_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-BP_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP
+--name go-CC_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-CC_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC
 --name go_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF
 --name go_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP
 --name go_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC
