@@ -34,3 +34,5 @@ labels = np.array(labels)
 
 output_protein = pjoin(data_path, "GO", f"{task}_{protein_emd}.npy")
 output_label = pjoin("data", f"{task}_label.npy")
+np.save(output_protein, proteins)
+np.save(output_label, labels)
