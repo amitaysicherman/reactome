@@ -26,9 +26,10 @@ def load_data(prot_emd_type, is_bin):
     return data, labels
 
 
-def split_train_val_test(data, val_size=0.16, test_size=0.20):
-    train_val_index = int((1 - val_size - test_size) * len(data))
-    val_test_index = int((1 - test_size) * len(data))
+def split_train_val_test(data, train_size=8420, val_size=2811, test_size=2773):
+    assert len(data) == train_size + val_size + test_size
+    train_val_index = train_size
+    val_test_index = train_size + val_size
     train_data = data[:train_val_index]
     val_data = data[train_val_index:val_test_index]
     test_data = data[val_test_index:]
