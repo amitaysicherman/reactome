@@ -12,7 +12,7 @@ def get_args():
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
                         choices=["all", "protein", "molecule", "text", 'dna', "label"])
 
-    parser.add_argument("--downstream_task", type=str, default="pd", choices=["pd", "loc","go","rrf","cl"])
+    parser.add_argument("--downstream_task", type=str, default="pd", choices=["pd", "loc","go","rrf","cl","mol"])
 
     parser.add_argument("--name", type=str, default="default")
     parser.add_argument("--skip_if_exists", type=int, default=0)
@@ -89,7 +89,6 @@ def get_args():
 
     #mol
     parser.add_argument("--mol_task", type=str, default="BACE", choices=["BACE", "BBBP", "ClinTox", "HIV", "SIDER", "Tox21", "ToxCast"])
-    parser.add_argument("--mol_label_key", type=str, default="Class")
 
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":

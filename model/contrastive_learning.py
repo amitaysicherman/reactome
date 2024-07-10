@@ -17,6 +17,7 @@ from protein_drug.train_eval import main as protein_drug_main
 from localization.train_eval import main as localization_main
 from GO.train_eval import main as go_main
 from reaction_real_fake.train_eval import main as rrf_main
+from mol_tasks.train_eval import main as mol_main
 from common.path_manager import scores_path
 
 EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
@@ -245,6 +246,8 @@ def main(args):
         downstream_func = localization_main
     elif downstream_task == "rrf":
         downstream_func = rrf_main
+    elif downstream_task == "mol":
+        downstream_func = mol_main
     elif downstream_task == "cl":
         downstream_func = "cl"
     else:

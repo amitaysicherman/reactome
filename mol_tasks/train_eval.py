@@ -13,10 +13,10 @@ from model.models import MultiModalLinearConfig, MiltyModalLinear
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
-def load_data(mol_emd, task_name, label_key):
+def load_data(mol_emd, task_name):
     base_dir = f"{data_path}/mol/"
     mol_file = pjoin(base_dir, f"{task_name}_{mol_emd}_molecules.npy")
-    labels_output_file = pjoin(base_dir, f"{task_name}_{label_key}_label.npy")
+    labels_output_file = pjoin(base_dir, f"{task_name}_label.npy")
     data = np.load(mol_file)[:, 0, :]
     labels = np.load(labels_output_file)
     return data, labels
@@ -116,7 +116,7 @@ def run_epoch(model, loader, optimizer, criterion, part):
     for mols, labels in loader:
         mols = mols.to(device).float()
         optimizer.zero_grad()
-        labels = labels.float().unsqueeze(-1).to(device)
+        labels = labels.float().to(device)
         output = model(mols, labels)
         loss = criterion(output, labels)
         if part == "train":
@@ -147,12 +147,11 @@ def main(args, fuse_model=None):
     lr = args.dp_lr
     mol_emd_type = args.mol_emd
     mol_task = args.mol_task
-    mol_label_key = args.mol_label_key
 
     seed = args.random_seed
     np.random.seed(seed)
     type_to_vec_dim = get_type_to_vec_dim()
-    mols, labels = load_data(mol_emd_type, mol_task, mol_label_key)
+    mols, labels = load_data(mol_emd_type, mol_task)
     shuffle_index = np.random.permutation(len(mols))
     mols = mols[shuffle_index]
     labels = labels[shuffle_index]
@@ -163,14 +162,16 @@ def main(args, fuse_model=None):
     val_loader = data_to_loader(val_proteins, val_labels, batch_size=bs, shuffle=False)
     test_loader = data_to_loader(test_proteins, test_labels, batch_size=bs, shuffle=False)
 
-    model = MolLabelModel(fuse_base, type_to_vec_dim[MOLECULE], use_fuse, use_model, 2,
+    model = MolLabelModel(fuse_base, type_to_vec_dim[MOLECULE], use_fuse, use_model, labels.shape[1],
                           fuse_freeze, fuse_model=fuse_model).to(device)
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    loss_func = torch.nn.CrossEntropyLoss()
-
+    pos_weight = (1 + train_labels.sum(axis=0)) / train_labels.shape[0]
+    pos_weight = (1 - pos_weight) / pos_weight
+    pos_weight = torch.tensor(pos_weight, device=device, dtype=torch.float32)
+    loss_func = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
     best_val_acc = 0
     best_test_acc = 0
     no_improve = 0
@@ -194,7 +195,7 @@ def main(args, fuse_model=None):
 
     if args.dp_print:
         print("Best Test scores\n", best_test_acc)
-        output_file = f"{scores_path}/mol_{mol_task}_{mol_label_key}.csv"
+        output_file = f"{scores_path}/mol_{mol_task}.csv"
         if not os.path.exists(output_file):
             names = "name,use_fuse,use_model,"
             with open(output_file, "w") as f:

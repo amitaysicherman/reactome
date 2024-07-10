@@ -37,7 +37,7 @@ if args.downstream_task == "pd":
 
     base_cmd = "python protein_drug/train_eval.py"
 elif args.downstream_task == "rrf":
-    configs = [{"gnn_pretrained_method": 1},{"gnn_pretrained_method": 2}]
+    configs = [{"gnn_pretrained_method": 1}, {"gnn_pretrained_method": 2}]
     base_cmd = f"python reaction_real_fake/train_eval.py"
 else:
     # run localization
@@ -48,6 +48,8 @@ else:
         base_cmd = "python GO/train_eval.py"
     elif args.downstream_task == "loc":
         base_cmd = "python localization/train_eval.py"
+    elif args.downstream_task == "mol":
+        base_cmd = "python mol_tasks/train_eval.py"
     else:
         raise Exception("Unknown downstream task")
 
