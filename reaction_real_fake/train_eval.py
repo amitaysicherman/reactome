@@ -148,7 +148,7 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file=""):
 
 
 def main(args, model=None):
-    batch_size = 2048
+    batch_size = 512
     lr = 0.001
     aug_factor = 5
 
