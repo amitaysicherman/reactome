@@ -12,7 +12,7 @@ def get_args():
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
                         choices=["all", "protein", "molecule", "text", 'dna', "label"])
 
-    parser.add_argument("--downstream_task", type=str, default="pd", choices=["pd", "loc","go"])
+    parser.add_argument("--downstream_task", type=str, default="pd", choices=["pd", "loc","go","rrf","cl"])
 
     parser.add_argument("--name", type=str, default="default")
     parser.add_argument("--skip_if_exists", type=int, default=0)
@@ -54,7 +54,7 @@ def get_args():
 
     parser.add_argument("--eval_n", type=int, default=10)
 
-    parser.add_argument("--seq_use_trans", type=int, default=0)
+    parser.add_argument("--seq_use_trans", type=int, default=1)
     parser.add_argument("--seq_size", type=str, default="s", choices=['s', 'm', 'l'])
 
     parser.add_argument("--seq_a", type=float, default=[0.15, 0.15, 0], nargs='+')

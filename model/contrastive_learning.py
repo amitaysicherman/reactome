@@ -16,8 +16,8 @@ from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 from protein_drug.train_eval import main as protein_drug_main
 from localization.train_eval import main as localization_main
 from GO.train_eval import main as go_main
+from reaction_real_fake.train_eval import main as rrf_main
 from common.path_manager import scores_path
-import shutil
 
 EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -243,6 +243,10 @@ def main(args):
         downstream_func = protein_drug_main
     elif downstream_task == "loc":
         downstream_func = localization_main
+    elif downstream_task == "rrf":
+        downstream_func = rrf_main
+    elif downstream_task == "cl":
+        downstream_func = "cl"
     else:
         raise ValueError(f"Unknown downstream task: {downstream_task}")
 
@@ -290,8 +294,8 @@ def main(args):
     no_improve_count = 0
     for epoch in range(args.fuse_epochs):
         running_args["epoch"] = epoch
-        train_auc = run_epoch(**running_args, loader=train_loader, part="train")
-        if args.fuse_train_all:
+        _ = run_epoch(**running_args, loader=train_loader, part="train")
+        if downstream_task != "cl":
             valid_auc, test_auc = downstream_func(args, model)
             print(f"Drug-Protein Valid AUC: {valid_auc:.3f}, Test AUC: {test_auc:.3f}")
         else:

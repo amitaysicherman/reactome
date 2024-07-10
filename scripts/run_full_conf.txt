@@ -1,3 +1,34 @@
+--name rrf-ProtBert-BFD-pebchem10m-0 --dp_fuse_base fuse2_rrf-ProtBert-BFD-pebchem10m-0 --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ProtBert-BFD-pebchem10m-1 --dp_fuse_base fuse2_rrf-ProtBert-BFD-pebchem10m-1 --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ProtBert-BFD-roberta-0 --dp_fuse_base fuse2_rrf-ProtBert-BFD-roberta-0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ProtBert-BFD-roberta-1 --dp_fuse_base fuse2_rrf-ProtBert-BFD-roberta-1 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ProtBert-BFD-chemberta-0 --dp_fuse_base fuse2_rrf-ProtBert-BFD-chemberta-0 --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ProtBert-BFD-chemberta-1 --dp_fuse_base fuse2_rrf-ProtBert-BFD-chemberta-1 --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ProtBertT5-xl-pebchem10m-0 --dp_fuse_base fuse2_rrf-ProtBertT5-xl-pebchem10m-0 --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ProtBertT5-xl-pebchem10m-1 --dp_fuse_base fuse2_rrf-ProtBertT5-xl-pebchem10m-1 --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ProtBertT5-xl-roberta-0 --dp_fuse_base fuse2_rrf-ProtBertT5-xl-roberta-0 --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ProtBertT5-xl-roberta-1 --dp_fuse_base fuse2_rrf-ProtBertT5-xl-roberta-1 --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ProtBertT5-xl-chemberta-0 --dp_fuse_base fuse2_rrf-ProtBertT5-xl-chemberta-0 --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ProtBertT5-xl-chemberta-1 --dp_fuse_base fuse2_rrf-ProtBertT5-xl-chemberta-1 --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ESM-1B-pebchem10m-0 --dp_fuse_base fuse2_rrf-ESM-1B-pebchem10m-0 --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ESM-1B-pebchem10m-1 --dp_fuse_base fuse2_rrf-ESM-1B-pebchem10m-1 --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ESM-1B-roberta-0 --dp_fuse_base fuse2_rrf-ESM-1B-roberta-0 --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ESM-1B-roberta-1 --dp_fuse_base fuse2_rrf-ESM-1B-roberta-1 --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ESM-1B-chemberta-0 --dp_fuse_base fuse2_rrf-ESM-1B-chemberta-0 --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ESM-1B-chemberta-1 --dp_fuse_base fuse2_rrf-ESM-1B-chemberta-1 --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ESM2-pebchem10m-0 --dp_fuse_base fuse2_rrf-ESM2-pebchem10m-0 --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ESM2-pebchem10m-1 --dp_fuse_base fuse2_rrf-ESM2-pebchem10m-1 --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ESM2-roberta-0 --dp_fuse_base fuse2_rrf-ESM2-roberta-0 --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ESM2-roberta-1 --dp_fuse_base fuse2_rrf-ESM2-roberta-1 --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ESM2-chemberta-0 --dp_fuse_base fuse2_rrf-ESM2-chemberta-0 --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ESM2-chemberta-1 --dp_fuse_base fuse2_rrf-ESM2-chemberta-1 --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ESM3-pebchem10m-0 --dp_fuse_base fuse2_rrf-ESM3-pebchem10m-0 --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ESM3-pebchem10m-1 --dp_fuse_base fuse2_rrf-ESM3-pebchem10m-1 --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ESM3-roberta-0 --dp_fuse_base fuse2_rrf-ESM3-roberta-0 --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ESM3-roberta-1 --dp_fuse_base fuse2_rrf-ESM3-roberta-1 --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+--name rrf-ESM3-chemberta-0 --dp_fuse_base fuse2_rrf-ESM3-chemberta-0 --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 1  --seq_size s
+--name rrf-ESM3-chemberta-1 --dp_fuse_base fuse2_rrf-ESM3-chemberta-1 --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s
+
 --name go-CC_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-CC_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
 --name go-MF_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-MF_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
 --name go-BP_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-BP_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
@@ -86,3 +117,8 @@
 --name KIBA_ESM3_pebchem10m --dp_fuse_base fuse2_KIBA_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset KIBA
 --name KIBA_ESM3_roberta --dp_fuse_base fuse2_KIBA_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset KIBA
 --name KIBA_ESM3_chemberta --dp_fuse_base fuse2_KIBA_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset KIBA
+
+
+
+
+

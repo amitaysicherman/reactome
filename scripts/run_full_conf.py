@@ -36,6 +36,9 @@ if args.downstream_task == "pd":
                {"dp_m_fuse": 1, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1}]
 
     base_cmd = "python protein_drug/train_eval.py"
+elif args.downstream_task == "rrf":
+    configs = [{"dp_print": 1}]  # no effect. just to keep the same format
+    base_cmd = f"python reaction_real_fake/train_eval.py"
 else:
     # run localization
     configs = [{"cafa_use_fuse": 1, "cafa_use_model": 1},
@@ -47,7 +50,6 @@ else:
         base_cmd = "python localization/train_eval.py"
     else:
         raise Exception("Unknown downstream task")
-
 
 for random_seed in range(42, 52):
     args.random_seed = random_seed
