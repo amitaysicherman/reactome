@@ -3,10 +3,7 @@ import scipy
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--use_model", type=int, default=0)
-parser.add_argument("--dataset", type=str, default="DrugBank")
 parser.add_argument("--print_count", type=int, default=0)
-
 args = parser.parse_args()
 
 our_key = '2'
