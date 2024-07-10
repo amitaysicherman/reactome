@@ -126,9 +126,11 @@ def run_epoch(model, loader, optimizer, criterion, part):
         reals.append(labels)
         preds.append(output)
     if part != "train":
+        print("here")
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
         score = area_under_roc(reals.flatten(), preds.flatten()).item()
+        print(score)
         return score
     else:
         return 0
