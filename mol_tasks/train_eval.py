@@ -117,7 +117,7 @@ def run_epoch(model, loader, optimizer, criterion, part):
         mols = mols.to(device).float()
         optimizer.zero_grad()
         labels = labels.float().to(device)
-        output = model(mols, labels)
+        output = model(mols)
         loss = criterion(output, labels)
         if part == "train":
             loss.backward()
