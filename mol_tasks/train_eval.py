@@ -8,7 +8,7 @@ from common.data_types import MOLECULE
 from common.path_manager import data_path, scores_path, model_path
 from common.utils import get_type_to_vec_dim
 from model.models import MultiModalLinearConfig, MiltyModalLinear
-
+from torch.utils.data import Dataset, DataLoader
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
