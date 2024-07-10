@@ -37,7 +37,7 @@ if args.downstream_task == "pd":
 
     base_cmd = "python protein_drug/train_eval.py"
 elif args.downstream_task == "rrf":
-    configs = [{"dp_print": 1}]  # no effect. just to keep the same format
+    configs = [{"gnn_pretrained_method": 1},{"gnn_pretrained_method": 2}]
     base_cmd = f"python reaction_real_fake/train_eval.py"
 else:
     # run localization
