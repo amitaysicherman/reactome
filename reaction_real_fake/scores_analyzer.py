@@ -6,8 +6,8 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--print_count", type=int, default=0)
 args = parser.parse_args()
 
-our_key = '2'
-pre_key = '1'
+our_key = 2
+pre_key = 1
 df = pd.read_csv(f"data/scores/rrf.csv")
 metric = "auc"
 
