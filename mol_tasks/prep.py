@@ -44,9 +44,7 @@ def prep_dataset_part(task_name, label_key):
 
     labels = np.array(labels)
     np.save(labels_output_file, labels)
-    if skip_mol:
-        return
-    mols = np.array(mols)
+
     np.save(mol_output_file, mols)
 
 
