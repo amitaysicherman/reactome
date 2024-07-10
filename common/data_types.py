@@ -162,3 +162,38 @@ ESM_3 = "ESM3"
 PEBCHEM10M = "pebchem10m"
 ROBERTA = "roberta"
 CHEMBERTA = "chemberta"
+mol_tasks = ["BACE", "BBBP", "ClinTox", "HIV", "SIDER"]
+
+mol_task_to_label_keys = {
+    "BACE": "Class",
+    "BBBP": "p_np",
+    "ClinTox": "CT_TOX",
+    "HIV": "HIV_active",
+    "SIDER": ['Hepatobiliary disorders',
+              'Metabolism and nutrition disorders',
+              'Product issues',
+              'Eye disorders',
+              'Investigations',
+              'Musculoskeletal and connective tissue disorders',
+              'Gastrointestinal disorders',
+              'Social circumstances',
+              'Immune system disorders',
+              'Reproductive system and breast disorders',
+              'Neoplasms benign, malignant and unspecified (incl cysts and polyps)',
+              'General disorders and administration site conditions',
+              'Endocrine disorders',
+              'Surgical and medical procedures',
+              'Vascular disorders',
+              'Blood and lymphatic system disorders',
+              'Skin and subcutaneous tissue disorders',
+              'Congenital, familial and genetic disorders',
+              'Infections and infestations',
+              'Respiratory, thoracic and mediastinal disorders',
+              'Psychiatric disorders',
+              'Renal and urinary disorders',
+              'Pregnancy, puerperium and perinatal conditions',
+              'Ear and labyrinth disorders',
+              'Cardiac disorders',
+              'Nervous system disorders',
+              'Injury, poisoning and procedural complications']
+}

@@ -7,6 +7,7 @@ from os.path import join as pjoin
 import os
 from common.utils import sent_to_key
 from tqdm import tqdm
+from common.data_types import mol_task_to_label_keys, mol_tasks
 
 base_dir = f"{data_path}/mol/"
 
@@ -32,13 +33,17 @@ def prep_dataset_part(task_name, label_key):
     mols = []
     labels = []
     mol_output_file = pjoin(base_dir, f"{task_name}_{mol_emd}_molecules.npy")
-    labels_output_file = pjoin(base_dir, f"{task_name}_{sent_to_key(label_key)}_label.npy")
+    labels_output_file = pjoin(base_dir, f"{task_name}_label.npy")
 
     for i in tqdm(range(len(dataset))):
         try:
             x = dataset[i]['graph'].to_smiles()
             mols.append(seq2vec.to_vec(x, MOLECULE))
-            labels.append(dataset[i][label_key])
+            if type(label_key) == list:
+                label = [dataset[i][key] for key in label_key]
+                labels.append(label)
+            else:
+                labels.append([dataset[i][label_key]])
         except:
             print(f"Error processing {i}")
 
@@ -55,44 +60,9 @@ def prep_dataset_part(task_name, label_key):
 # SIDER:   Marketed drugs and adverse drug reactions (ADR) dataset, grouped into 27 system organ classes.
 
 
-tasks = ["BACE", "BBBP", "ClinTox", "HIV", "SIDER"]
-
-task_to_label_keys = {
-    "BACE": ["Class"],
-    "BBBP": ["p_np"],
-    "ClinTox": ["FDA_APPROVED", "CT_TOX"],
-    "HIV": ["HIV_active"],
-    "SIDER": ['Hepatobiliary disorders',
-              'Metabolism and nutrition disorders',
-              'Product issues',
-              'Eye disorders',
-              'Investigations',
-              'Musculoskeletal and connective tissue disorders',
-              'Gastrointestinal disorders',
-              'Social circumstances',
-              'Immune system disorders',
-              'Reproductive system and breast disorders',
-              'Neoplasms benign, malignant and unspecified (incl cysts and polyps)',
-              'General disorders and administration site conditions',
-              'Endocrine disorders',
-              'Surgical and medical procedures',
-              'Vascular disorders',
-              'Blood and lymphatic system disorders',
-              'Skin and subcutaneous tissue disorders',
-              'Congenital, familial and genetic disorders',
-              'Infections and infestations',
-              'Respiratory, thoracic and mediastinal disorders',
-              'Psychiatric disorders',
-              'Renal and urinary disorders',
-              'Pregnancy, puerperium and perinatal conditions',
-              'Ear and labyrinth disorders',
-              'Cardiac disorders',
-              'Nervous system disorders',
-              'Injury, poisoning and procedural complications']
-}
 log_file = "log.txt"
-for task in tasks:
-    for label_key in task_to_label_keys[task]:
-        with open(log_file, "a") as f:
-            f.write(f"Processing {task} {label_key}\n")
-        prep_dataset_part(task, label_key)
+for task in mol_tasks:
+    label_key = mol_task_to_label_keys[task]
+    with open(log_file, "a") as f:
+        f.write(f"Processing {task} {label_key}\n")
+    prep_dataset_part(task, label_key)
