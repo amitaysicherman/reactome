@@ -40,4 +40,5 @@ res = res.rename(columns={our_key: "Our", pre_key: "Pre-trained"})
 output_file = f"data/scores/rrf_{metric}.csv"
 res = res.reset_index()
 res.to_csv("output_file")
+print(res.to_csv())
 print(res)
