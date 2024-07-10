@@ -2,12 +2,13 @@ from torchdrug import datasets
 from preprocessing.seq_to_vec import Seq2Vec
 from common.data_types import MOLECULE
 import numpy as np
+from common.path_manager import data_path
 from os.path import join as pjoin
 import os
 from common.utils import sent_to_key
 from tqdm import tqdm
 
-base_dir = "data/mol/"
+base_dir = f"{data_path}/mol/"
 
 from common.args_manager import get_args
 
@@ -32,15 +33,15 @@ def prep_dataset_part(task_name, label_key):
     labels = []
     mol_output_file = pjoin(base_dir, f"{task_name}_{mol_emd}_molecules.npy")
     labels_output_file = pjoin(base_dir, f"{task_name}_{sent_to_key(label_key)}_label.npy")
-    skip_mol = False
-    if os.path.exists(mol_output_file):
-        skip_mol = True
+
     for i in tqdm(range(len(dataset))):
-        labels.append(dataset[i][label_key])
-        if skip_mol:
-            continue
-        x = dataset[i]['graph'].to_smiles()
-        mols.append(seq2vec.to_vec(x, MOLECULE))
+        try:
+            x = dataset[i]['graph'].to_smiles()
+            mols.append(seq2vec.to_vec(x, MOLECULE))
+            labels.append(dataset[i][label_key])
+        except:
+            print(f"Error processing {i}")
+
     labels = np.array(labels)
     np.save(labels_output_file, labels)
     if skip_mol:

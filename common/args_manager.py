@@ -89,6 +89,7 @@ def get_args():
 
     #mol
     parser.add_argument("--mol_task", type=str, default="BACE", choices=["BACE", "BBBP", "ClinTox", "HIV", "SIDER", "Tox21", "ToxCast"])
+    parser.add_argument("--mol_label_key", type=str, default="Class")
 
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":
