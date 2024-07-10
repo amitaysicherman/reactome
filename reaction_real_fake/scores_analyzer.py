@@ -26,8 +26,8 @@ res = (p_mean * 100).round(1).astype(str) + "(" + (p_std * 100).round(2).astype(
 
 
 def calcualte_ttest(data):
-    our = data[data['conf'] == our_key][metric].values
-    pre = data[data['conf'] == pre_key][metric].values
+    our = data[data['pretrained_method'] == our_key][metric].values
+    pre = data[data['pretrained_method'] == pre_key][metric].values
     return scipy.stats.ttest_ind(our, pre).pvalue
 
 
