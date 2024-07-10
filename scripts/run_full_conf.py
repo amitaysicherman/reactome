@@ -52,8 +52,8 @@ else:
         base_cmd = "python mol_tasks/train_eval.py"
     else:
         raise Exception("Unknown downstream task")
-
-for random_seed in range(42, 52):
+max_seed = 52 if args.downstream_task != "mol" else 102
+for random_seed in range(42, max_seed):
     args.random_seed = random_seed
     for config in configs:
         for key, value in config.items():
