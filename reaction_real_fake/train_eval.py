@@ -204,7 +204,7 @@ def main(args, model=None):
         output_file = f"{scores_path}/rrf.csv"
         if not os.path.exists(output_file):
             with open(output_file, "w") as f:
-                f.write(f'{args.name},{args.gnn_pretrained_method},{args.protein_emd},{args.mol_emd},auc\n')
+                f.write(f'name,pretrained_method,protein_emd,mol_emd,auc\n')
         with open(output_file, "a") as f:
             f.write(f'{args.name},{args.gnn_pretrained_method},{args.protein_emd},{args.mol_emd},{best_test_score}\n')
     return best_val_score, best_test_score
