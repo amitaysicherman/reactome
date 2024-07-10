@@ -6,6 +6,7 @@ from os.path import join as pjoin
 import os
 from common.utils import sent_to_key
 from tqdm import tqdm
+
 base_dir = "data/mol/"
 
 from common.args_manager import get_args
@@ -16,9 +17,17 @@ protein_emd = args.protein_emd
 mol_emd = args.mol_emd
 seq2vec = Seq2Vec(self_token, protein_name=protein_emd, mol_name=mol_emd)
 
+name_to_dataset = {
+    "BACE": datasets.BACE,
+    "BBBP": datasets.BBBP,
+    "ClinTox": datasets.ClinTox,
+    "HIV": datasets.HIV,
+    "SIDER": datasets.SIDER
+}
+
 
 def prep_dataset_part(task_name, label_key):
-    dataset = datasets.BACE(pjoin(base_dir, task_name))
+    dataset = name_to_dataset[task_name](pjoin(base_dir, task_name))
     mols = []
     labels = []
     mol_output_file = pjoin(base_dir, f"{task_name}_{mol_emd}_molecules.npy")
@@ -82,7 +91,7 @@ task_to_label_keys = {
               'Nervous system disorders',
               'Injury, poisoning and procedural complications']
 }
-log_file="log.txt"
+log_file = "log.txt"
 for task in tasks:
     for label_key in task_to_label_keys[task]:
         with open(log_file, "a") as f:
