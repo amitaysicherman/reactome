@@ -32,7 +32,7 @@ class NodeData:
 
 class NodesIndexManager:
     def __init__(self, pretrained_method=PRETRAINED_EMD, fuse_name="", fuse_pretrained_start=True,
-                 prot_emd_type=P_T5_XL, mol_emd_type=PEBCHEM10M):
+                 prot_emd_type=P_T5_XL, mol_emd_type=PEBCHEM10M,fuse_model=None):
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
         self.nodes = [reaction_node, complex_node]
@@ -42,7 +42,10 @@ class NodesIndexManager:
         self.dtype_to_last_index = dict()
         self.type_to_vec_dim = get_type_to_vec_dim(prot_emd_type)
         self.bp_name_to_index = {"": -1}
-        self.fuse_model = load_fuse_model(fuse_name, fuse_pretrained_start)
+        if fuse_model is not None:
+            self.fuse_model = fuse_model
+        else:
+            self.fuse_model = load_fuse_model(fuse_name, fuse_pretrained_start)
         if self.fuse_model is not None:
             self.fuse_model.to(device)
         with open(f'{item_path}/{BIOLOGICAL_PROCESS}.txt') as f:

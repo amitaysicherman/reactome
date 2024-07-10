@@ -120,6 +120,7 @@ def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, s
         all_data.append(collate_fn(dataset[-(len(dataset) % batch_size):], type_to_vec_dim))
     return all_data
 
+
 def run_epoch(model, optimizer, loss_fn, dataset, part, output_file=""):
     is_train = part == "train"
     if is_train:
@@ -150,14 +151,16 @@ def run_epoch(model, optimizer, loss_fn, dataset, part, output_file=""):
         return 0
 
 
-def main(args):
+def main(args, model=None):
     batch_size = 2048
     lr = 0.001
     aug_factor = 5
 
     max_no_improve = args.max_no_improve
-    node_index_manager: NodesIndexManager = get_from_args(args)
-
+    node_index_manager = NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name,
+                                           fuse_pretrained_start=args.fuse_pretrained_start,
+                                           prot_emd_type=args.protein_emd,
+                                           mol_emd_type=args.mol_emd, fuse_model=model)
     TYPE_TO_VEC_DIM = {PROTEIN: node_index_manager.index_to_node[node_index_manager.protein_indexes[0]].vec.shape[0],
                        MOLECULE: node_index_manager.index_to_node[node_index_manager.molecule_indexes[0]].vec.shape[0],
                        TEXT: node_index_manager.index_to_node[node_index_manager.text_indexes[0]].vec.shape[0]}
@@ -209,7 +212,6 @@ def main(args):
 
 if __name__ == "__main__":
     from common.args_manager import get_args
-
 
     args = get_args()
     main(args)
