@@ -2,9 +2,8 @@ import os
 from os.path import join as pjoin
 import numpy as np
 import torch
-from torchdrug.metrics import area_under_roc
-from torch.utils.data import Dataset, DataLoader
-
+# from torchdrug.metrics import area_under_roc
+from sklearn.metrics import roc_auc_score as area_under_roc
 from common.data_types import MOLECULE
 from common.path_manager import data_path, scores_path, model_path
 from common.utils import get_type_to_vec_dim
@@ -124,17 +123,11 @@ def run_epoch(model, loader, optimizer, criterion, part):
             optimizer.step()
         output = torch.sigmoid(output).detach()
         reals.append(labels)
-        print(labels)
-        print(output)
         preds.append(output)
     if part != "train":
-        print("here")
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
-        score = area_under_roc(reals.flatten(), preds.flatten()).item()
-        from sklearn.metrics import roc_auc_score as r2
-        print(r2(reals.flatten().cpu().numpy(), preds.flatten().cpu().numpy()))
-        print(score)
+        score = area_under_roc(reals.flatten().cpu().numpy(), preds.flatten().cpu().numpy())
         return score
     else:
         return 0
