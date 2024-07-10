@@ -1,11 +1,7 @@
 import random
 from typing import List
-
-import numpy as np
 import torch
 import torch.nn as nn
-from sklearn.metrics import roc_auc_score
-from tqdm import tqdm
 from common.data_types import REAL, PROTEIN, TEXT, MOLECULE
 from common.data_types import Reaction
 from common.utils import prepare_files
@@ -104,7 +100,7 @@ def collate_fn(reaction_seqs: List[ReactionSeq], type_to_vec_dim, return_bp=Fals
 
 def lines_to_dataset(lines, node_index_manager: NodesIndexManager, batch_size, shuffle, aug_factor, type_to_vec_dim):
     dataset = []
-    for reaction in tqdm(lines):
+    for reaction in lines:
         nodes = reaction_to_nodes(reaction, node_index_manager)
         data = ReactionSeq(nodes)
         dataset.append(data)
@@ -172,6 +168,7 @@ def main(args, model=None):
                                    type_to_vec_dim=TYPE_TO_VEC_DIM)
     test_dataset = lines_to_dataset(test_lines, node_index_manager, batch_size, shuffle=False, aug_factor=aug_factor,
                                     type_to_vec_dim=TYPE_TO_VEC_DIM)
+
     print(len(train_lines), len(train_dataset))
 
     model = MultiModalSeq(args.seq_size, TYPE_TO_VEC_DIM, use_trans=args.seq_use_trans).to(device)
