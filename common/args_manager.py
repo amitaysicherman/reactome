@@ -87,6 +87,9 @@ def get_args():
     #go args
     parser.add_argument("--go_task", type=str, default="MF", choices=["MF", "BP", "CC"])
 
+    #mol
+    parser.add_argument("--mol_task", type=str, default="BACE", choices=["BACE", "BBBP", "ClinTox", "HIV", "SIDER", "Tox21", "ToxCast"])
+
     args = parser.parse_args()
     if args.fuse_name == "" or args.fuse_name == "0":
         args.fuse_name = args.name

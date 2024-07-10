@@ -172,3 +172,7 @@ def prepare_files(run_name, skip_if_exists=False):
     if os.path.exists(scores_file):
         os.remove(scores_file)
     return save_dir, scores_file
+
+
+def sent_to_key(sen):
+    return sen.replace(" ", "_").replace("/", "_").replace("(", "_").replace(")", "_").replace(":", "_").replace("-", "_")
