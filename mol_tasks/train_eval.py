@@ -124,12 +124,16 @@ def run_epoch(model, loader, optimizer, criterion, part):
             optimizer.step()
         output = torch.sigmoid(output).detach()
         reals.append(labels)
+        print(labels)
+        print(output)
         preds.append(output)
     if part != "train":
         print("here")
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
         score = area_under_roc(reals.flatten(), preds.flatten()).item()
+        from sklearn.metrics import roc_auc_score as r2
+        print(r2(reals.flatten().cpu().numpy(), preds.flatten().cpu().numpy()))
         print(score)
         return score
     else:
