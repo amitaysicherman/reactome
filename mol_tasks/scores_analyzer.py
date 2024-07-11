@@ -53,6 +53,6 @@ if __name__ == "__main__":
         all_res[task] = res
     final_res = all_res[tasks[0]]
     for task in tasks[1:]:
-        final_res = final_res.merge(all_res[task], how='outer', left_index=True, right_index=True)
+        final_res = final_res.merge(all_res[task], how='outer', left_index=True, right_index=True, suffixes=('', f'_{task}'))
     print(final_res.to_latex())
     print(final_res.to_csv())
