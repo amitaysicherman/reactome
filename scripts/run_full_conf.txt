@@ -104,18 +104,18 @@
 --name KIBA_ESM3_chemberta --dp_fuse_base fuse2_KIBA_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset KIBA
 
 
---name mol-chemberta-BACE --dp_fuse_base fuse2_mol-chemberta-BACE --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task BACE
---name mol-chemberta-BBBP --dp_fuse_base fuse2_mol-chemberta-BBBP --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task BBBP
---name mol-chemberta-ClinTox --dp_fuse_base fuse2_mol-chemberta-ClinTox --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task ClinTox
---name mol-chemberta-HIV --dp_fuse_base fuse2_mol-chemberta-HIV --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task HIV
---name mol-chemberta-SIDER --dp_fuse_base fuse2_mol-chemberta-SIDER --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task SIDER
---name mol-roberta-BACE --dp_fuse_base fuse2_mol-roberta-BACE --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task BACE
---name mol-roberta-BBBP --dp_fuse_base fuse2_mol-roberta-BBBP --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task BBBP
---name mol-roberta-ClinTox --dp_fuse_base fuse2_mol-roberta-ClinTox --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task ClinTox
---name mol-roberta-HIV --dp_fuse_base fuse2_mol-roberta-HIV --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task HIV
---name mol-roberta-SIDER --dp_fuse_base fuse2_mol-roberta-SIDER --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task SIDER
---name mol-pebchem10m-BACE --dp_fuse_base fuse2_mol-pebchem10m-BACE --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task BACE
---name mol-pebchem10m-BBBP --dp_fuse_base fuse2_mol-pebchem10m-BBBP --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task BBBP
---name mol-pebchem10m-ClinTox --dp_fuse_base fuse2_mol-pebchem10m-ClinTox --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task ClinTox
---name mol-pebchem10m-HIV --dp_fuse_base fuse2_mol-pebchem10m-HIV --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task HIV
---name mol-pebchem10m-SIDER --dp_fuse_base fuse2_mol-pebchem10m-SIDER --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task SIDER
+--name mol-chemberta-BACE --dp_fuse_base fuse2_mol-chemberta-BACE --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task BACE --dp_bs 64 --dp_lr 0.00005
+--name mol-chemberta-BBBP --dp_fuse_base fuse2_mol-chemberta-BBBP --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task BBBP --dp_bs 64 --dp_lr 0.00005
+--name mol-chemberta-ClinTox --dp_fuse_base fuse2_mol-chemberta-ClinTox --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005
+--name mol-chemberta-HIV --dp_fuse_base fuse2_mol-chemberta-HIV --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task HIV --dp_bs 64 --dp_lr 0.00005
+--name mol-chemberta-SIDER --dp_fuse_base fuse2_mol-chemberta-SIDER --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task SIDER --dp_bs 64 --dp_lr 0.00005
+--name mol-roberta-BACE --dp_fuse_base fuse2_mol-roberta-BACE --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task BACE --dp_bs 64 --dp_lr 0.00005
+--name mol-roberta-BBBP --dp_fuse_base fuse2_mol-roberta-BBBP --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task BBBP --dp_bs 64 --dp_lr 0.00005
+--name mol-roberta-ClinTox --dp_fuse_base fuse2_mol-roberta-ClinTox --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005
+--name mol-roberta-HIV --dp_fuse_base fuse2_mol-roberta-HIV --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task HIV --dp_bs 64 --dp_lr 0.00005
+--name mol-roberta-SIDER --dp_fuse_base fuse2_mol-roberta-SIDER --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task SIDER --dp_bs 64 --dp_lr 0.00005
+--name mol-pebchem10m-BACE --dp_fuse_base fuse2_mol-pebchem10m-BACE --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task BACE --dp_bs 64 --dp_lr 0.00005
+--name mol-pebchem10m-BBBP --dp_fuse_base fuse2_mol-pebchem10m-BBBP --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task BBBP --dp_bs 64 --dp_lr 0.00005
+--name mol-pebchem10m-ClinTox --dp_fuse_base fuse2_mol-pebchem10m-ClinTox --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005
+--name mol-pebchem10m-HIV --dp_fuse_base fuse2_mol-pebchem10m-HIV --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task HIV --dp_bs 64 --dp_lr 0.00005
+--name mol-pebchem10m-SIDER --dp_fuse_base fuse2_mol-pebchem10m-SIDER --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task SIDER --dp_bs 64 --dp_lr 0.00005
