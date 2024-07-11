@@ -44,13 +44,13 @@ def main(use_model, task, print_count) -> pd.DataFrame:
 
 
 def to_latex(res):
-    for task in tasks:
-        for i in range(len(res)):
+    for i,_ in res.iterrows():
+        for task in tasks:
             if res.loc[i, f"{OUR}_{task}"] > res.loc[i, f"{PRE}_{task}"]:
                 res.loc[i, f"{OUR}_{task}"] = "\\textbf{" + res.loc[i, f"{OUR}_{task}"] + "}"
             else:
                 res.loc[i, f"{PRE}_{task}"] = "\\textbf{" + res.loc[i, f"{PRE}_{task}"] + "}"
-        res.drop(columns=f"{STAT}_{task}", inplace=True)
+            res.drop(columns=f"{STAT}_{task}", inplace=True)
     print(res.to_latex())
 
 
