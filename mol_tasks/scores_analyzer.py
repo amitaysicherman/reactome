@@ -54,7 +54,7 @@ def to_latex(res):
     res.columns = pd.MultiIndex.from_tuples([(x.split("_")[1], x.split("_")[0]) for x in res.columns],
                                             names=['Task', 'Method'])
 
-    print(res.to_latex())
+    print(res.T.to_latex())
 
 
 if __name__ == "__main__":
