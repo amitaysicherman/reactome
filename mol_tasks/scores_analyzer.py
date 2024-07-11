@@ -44,13 +44,16 @@ def main(use_model, task, print_count) -> pd.DataFrame:
 
 
 def to_latex(res):
-    for i,_ in res.iterrows():
+    for i, _ in res.iterrows():
         for task in tasks:
             if res.loc[i, f"{OUR}_{task}"] > res.loc[i, f"{PRE}_{task}"]:
                 res.loc[i, f"{OUR}_{task}"] = "\\textbf{" + res.loc[i, f"{OUR}_{task}"] + "}"
             else:
                 res.loc[i, f"{PRE}_{task}"] = "\\textbf{" + res.loc[i, f"{PRE}_{task}"] + "}"
             # res.drop(columns=f"{STAT}_{task}", inplace=True)
+    res.columns = pd.MultiIndex.from_tuples([(x.split("_")[1], x.split("_")[0]) for x in res.columns],
+                                            names=['Task', 'Method'])
+
     print(res.to_latex())
 
 
