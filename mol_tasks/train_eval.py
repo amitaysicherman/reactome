@@ -196,11 +196,11 @@ def main(args, fuse_model=None):
         print("Best Test scores\n", best_test_acc)
         output_file = f"{scores_path}/mol_{mol_task}.csv"
         if not os.path.exists(output_file):
-            names = "name,use_fuse,use_model,"
+            names = "name,use_fuse,use_model,seed,"
             with open(output_file, "w") as f:
                 f.write(names + "acc" + "\n")
         with open(output_file, "a") as f:
-            f.write(f'{args.name},' + model_to_conf_name(model) + str(best_test_acc) + "\n")
+            f.write(f'{args.name},{seed},' + model_to_conf_name(model) + str(best_test_acc) + "\n")
     return best_val_acc, best_test_acc
 
 
