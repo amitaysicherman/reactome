@@ -34,7 +34,7 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     p_values = df.groupby(['molecule_model']).apply(calcualte_ttest)
     res = res[[pre_key, our_key]]
 
-    res[STAT] = p_values < 0.05
+    res[f'{STAT}_{task}'] = p_values < 0.05
     print(metric)
     res = res.rename(columns={our_key: f'{OUR}_{task}', pre_key: f'{PRE}_{task}'})
     res = res.reset_index()
