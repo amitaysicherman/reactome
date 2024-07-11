@@ -196,7 +196,7 @@ def main(args, fuse_model=None):
         print("Best Test scores\n", best_test_acc)
         output_file = f"{scores_path}/mol_{mol_task}.csv"
         if not os.path.exists(output_file):
-            names = "name,use_fuse,use_model,seed,"
+            names = "name,seed,use_fuse,use_model,"
             with open(output_file, "w") as f:
                 f.write(names + "acc" + "\n")
         with open(output_file, "a") as f:
