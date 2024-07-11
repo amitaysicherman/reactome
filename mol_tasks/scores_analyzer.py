@@ -2,6 +2,11 @@ import pandas as pd
 import scipy
 import argparse
 
+tasks = ["BACE", "BBBP", "ClinTox", "HIV", "SIDER"]
+OUR = "Our"
+PRE = "Pre-trained"
+STAT = "statistically significant"
+
 
 def main(use_model, task, print_count) -> pd.DataFrame:
     our_key = 'True | True' if use_model else 'True | False'
@@ -29,13 +34,24 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     p_values = df.groupby(['molecule_model']).apply(calcualte_ttest)
     res = res[[pre_key, our_key]]
 
-    res["statistically significant"] = p_values < 0.05
+    res[STAT] = p_values < 0.05
     print(metric)
-    res = res.rename(columns={our_key: "Our", pre_key: "Pre-trained"})
+    res = res.rename(columns={our_key: OUR, pre_key: PRE})
     res = res.reset_index()
     print(res.to_csv())
     print(res)
     return res
+
+
+def to_latex(res):
+    for task in tasks:
+        for i in range(len(res)):
+            if res.loc[i, f"{OUR}_{task}"] > res.loc[i, f"{PRE}_{task}"]:
+                res.loc[i, f"{OUR}_{task}"] = "\\textbf{" + res.loc[i, f"{OUR}_{task}"] + "}"
+            else:
+                res.loc[i, f"{PRE}_{task}"] = "\\textbf{" + res.loc[i, f"{PRE}_{task}"] + "}"
+        res.drop(columns=f"{STAT}_{task}", inplace=True)
+    print(res.to_latex())
 
 
 if __name__ == "__main__":
@@ -46,13 +62,14 @@ if __name__ == "__main__":
     parser.add_argument("--print_count", type=int, default=0)
     args = parser.parse_args()
     all_res = dict()
-    tasks = ["BACE", "BBBP", "ClinTox", "HIV", "SIDER"]
     for task in tasks:
         res = main(args.use_model, task, args.print_count)
         res.set_index('molecule_model', inplace=True, drop=True)
         all_res[task] = res
     final_res = all_res[tasks[0]]
     for task in tasks[1:]:
-        final_res = final_res.merge(all_res[task], how='outer', left_index=True, right_index=True, suffixes=('', f'_{task}'))
-    print(final_res.to_latex())
+        final_res = final_res.merge(all_res[task], how='outer', left_index=True, right_index=True,
+                                    suffixes=('', f'_{task}'))
     print(final_res.to_csv())
+    to_latex(final_res)
+    print(final_res)
