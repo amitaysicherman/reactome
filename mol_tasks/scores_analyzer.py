@@ -26,15 +26,15 @@ def main(use_model, task, print_count) -> pd.DataFrame:
                              aggfunc="count"))
     res = (p_mean * 100).round(2).astype(str) + "(" + (p_std * 100).round(2).astype(str) + ")"
 
-    def calcualte_ttest(data):
-        our = data[data['conf'] == our_key][metric].values
-        pre = data[data['conf'] == pre_key][metric].values
-        return scipy.stats.ttest_ind(our, pre).pvalue
-
-    p_values = df.groupby(['molecule_model']).apply(calcualte_ttest)
+    # def calcualte_ttest(data):
+    #     our = data[data['conf'] == our_key][metric].values
+    #     pre = data[data['conf'] == pre_key][metric].values
+    #     return scipy.stats.ttest_ind(our, pre).pvalue
+    #
+    # p_values = df.groupby(['molecule_model']).apply(calcualte_ttest)
     res = res[[pre_key, our_key]]
 
-    res[f'{STAT}_{task}'] = p_values < 0.05
+    # res[f'{STAT}_{task}'] = p_values < 0.05
     print(metric)
     res = res.rename(columns={our_key: f'{OUR}_{task}', pre_key: f'{PRE}_{task}'})
     res = res.reset_index()
@@ -50,7 +50,7 @@ def to_latex(res):
                 res.loc[i, f"{OUR}_{task}"] = "\\textbf{" + res.loc[i, f"{OUR}_{task}"] + "}"
             else:
                 res.loc[i, f"{PRE}_{task}"] = "\\textbf{" + res.loc[i, f"{PRE}_{task}"] + "}"
-            res.drop(columns=f"{STAT}_{task}", inplace=True)
+            # res.drop(columns=f"{STAT}_{task}", inplace=True)
     print(res.to_latex())
 
 
