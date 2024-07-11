@@ -36,7 +36,7 @@ def main(use_model, task, print_count) -> pd.DataFrame:
 
     res[STAT] = p_values < 0.05
     print(metric)
-    res = res.rename(columns={our_key: OUR, pre_key: PRE})
+    res = res.rename(columns={our_key: f'{OUR}_{task}', pre_key: f'{PRE}_{task}'})
     res = res.reset_index()
     print(res.to_csv())
     print(res)
@@ -68,8 +68,7 @@ if __name__ == "__main__":
         all_res[task] = res
     final_res = all_res[tasks[0]]
     for task in tasks[1:]:
-        final_res = final_res.merge(all_res[task], how='outer', left_index=True, right_index=True,
-                                    suffixes=(f'_{tasks[0]}' if task == task[1] else "", f'_{task}'))
+        final_res = final_res.merge(all_res[task], how='outer', left_index=True, right_index=True)
     print(final_res.to_csv())
     to_latex(final_res)
     print(final_res)
