@@ -23,6 +23,8 @@ def main(use_model, task, print_count) -> pd.DataFrame:
         if len(d_our) and len(d_pre):
             assert len(d_our) == len(d_pre) == 1
             seeds.append(s)
+        else:
+            print(f"seed {s} is missing {task}")
     df = df[df['seed'].isin(seeds)]
 
     metric = "acc"  # real is auc it;s bug
