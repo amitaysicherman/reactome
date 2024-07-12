@@ -46,7 +46,7 @@ def main(use_model, task, print_count) -> pd.DataFrame:
         return delta.std()
 
     res[f"Delta STD_{task}"] = df.groupby(['molecule_model']).apply(def_delta_std)
-    res = (res * 100).round(2)
+    res = (res * 100).round(2).astype(str)
 
     def calcualte_ttest(data):
         data = drop_dup_mis_seed(data)
