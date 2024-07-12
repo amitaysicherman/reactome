@@ -14,21 +14,6 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     df = pd.read_csv(f"data/scores/mol_{task}.csv")
     df['molecule_model'] = df.name.apply(lambda x: x.split("-")[1])
     df['conf'] = df['use_fuse'].astype(str) + " | " + df['use_model'].astype(str)
-    print(df)
-    print(len(df))
-    df = df.drop_duplicates(['seed', 'conf'])
-    print(len(df))
-    seeds = []
-    for s in df['seed'].unique():
-        d = df[df['seed'] == s]
-        d_our = d[d['conf'] == our_key]
-        d_pre = d[d['conf'] == pre_key]
-        if len(d_our) and len(d_pre):
-            assert len(d_our) == len(d_pre) == 1
-            seeds.append(s)
-        else:
-            print(f"seed {s} is missing {task}")
-    df = df[df['seed'].isin(seeds)]
 
     metric = "acc"  # real is auc it;s bug
     if print_count:
@@ -38,9 +23,25 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     res = pd.pivot_table(df, index=['molecule_model'], columns=['conf'], values=metric,
                          aggfunc="mean")
 
+    def drop_dup_mis_seed(data):
+        data = data.drop_duplicates(['seed', 'conf', 'molecule_model'])
+        seeds = []
+        for s in data['seed'].unique():
+            d = data[data['seed'] == s]
+            d_our = d[d['conf'] == our_key]
+            d_pre = d[d['conf'] == pre_key]
+            if len(d_our) and len(d_pre):
+                assert len(d_our) == len(d_pre) == 1
+                seeds.append(s)
+            else:
+                print(f"seed {s} is missing {task}")
+        data = data[data['seed'].isin(seeds)]
+        return data.sot_values(by="seed")
+
     def def_delta_std(data):
-        our = data[data['conf'] == our_key].sort_values(by="seed")[metric].values
-        pre = data[data['conf'] == pre_key].sort_values(by="seed")[metric].values
+        data = drop_dup_mis_seed(data)
+        our = data[data['conf'] == our_key][metric].values
+        pre = data[data['conf'] == pre_key][metric].values
         delta = (our - pre)
         return delta.std()
 
@@ -48,8 +49,9 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     res = (res * 100).round(2)
 
     def calcualte_ttest(data):
-        our = data[data['conf'] == our_key].sort_values(by="seed")[metric].values
-        pre = data[data['conf'] == pre_key].sort_values(by="seed")[metric].values
+        data = drop_dup_mis_seed(data)
+        our = data[data['conf'] == our_key][metric].values
+        pre = data[data['conf'] == pre_key][metric].values
         return scipy.stats.ttest_rel(our, pre).pvalue
 
     p_values = df.groupby(['molecule_model']).apply(calcualte_ttest)
