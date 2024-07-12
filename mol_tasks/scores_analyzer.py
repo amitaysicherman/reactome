@@ -36,7 +36,7 @@ def main(use_model, task, print_count) -> pd.DataFrame:
             else:
                 print(f"seed {s} is missing {task}")
         data = data[data['seed'].isin(seeds)]
-        return data.sot_values(by="seed")
+        return data.sort_values(by="seed")
 
     def def_delta_std(data):
         data = drop_dup_mis_seed(data)
