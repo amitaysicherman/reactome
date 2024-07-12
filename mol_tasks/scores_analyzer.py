@@ -15,6 +15,15 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     df['molecule_model'] = df.name.apply(lambda x: x.split("-")[1])
     df['conf'] = df['use_fuse'].astype(str) + " | " + df['use_model'].astype(str)
     df = df.drop_duplicates(['seed', 'conf'])
+    seeds = []
+    for s in df['seed'].unique():
+        d = df[df['seed'] == s]
+        d_our = d[d['conf'] == our_key]
+        d_pre = d[d['conf'] == pre_key]
+        if len(d_our) and len(d_pre):
+            assert len(d_our) == len(d_pre) == 1
+            seeds.append(s)
+    df = df[df['seed'].isin(seeds)]
 
     metric = "acc"  # real is auc it;s bug
     if print_count:
