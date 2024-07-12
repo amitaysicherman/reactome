@@ -14,6 +14,7 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     df = pd.read_csv(f"data/scores/mol_{task}.csv")
     df['molecule_model'] = df.name.apply(lambda x: x.split("-")[1])
     df['conf'] = df['use_fuse'].astype(str) + " | " + df['use_model'].astype(str)
+    print(df)
     print(len(df))
     df = df.drop_duplicates(['seed', 'conf'])
     print(len(df))
