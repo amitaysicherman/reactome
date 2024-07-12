@@ -14,6 +14,7 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     df = pd.read_csv(f"data/scores/mol_{task}.csv")
     df['molecule_model'] = df.name.apply(lambda x: x.split("-")[1])
     df['conf'] = df['use_fuse'].astype(str) + " | " + df['use_model'].astype(str)
+    df = df.drop_duplicates(['seed', 'conf'])
 
     metric = "acc"  # real is auc it;s bug
     if print_count:
@@ -43,7 +44,6 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     res[f'{STAT}_{task}'] = p_values < 0.05
 
     res = res.rename(columns={our_key: f'{OUR}_{task}', pre_key: f'{PRE}_{task}'})
-    res = res.drop_duplicates(['seed', 'conf'])
 
     res = res.reset_index()
     return res
