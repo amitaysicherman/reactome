@@ -24,8 +24,8 @@ def main(use_model, task, print_count) -> pd.DataFrame:
                          aggfunc="mean")
 
     def def_delta_std(data):
-        our = data[data['conf'] == our_key].sort_value(by="seed")[metric].values
-        pre = data[data['conf'] == pre_key].sort_value(by="seed")[metric].values
+        our = data[data['conf'] == our_key].sort_values(by="seed")[metric].values
+        pre = data[data['conf'] == pre_key].sort_values(by="seed")[metric].values
         delta = (our - pre)
         return delta.std()
 
@@ -33,8 +33,8 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     res = (res * 100).round(2)
 
     def calcualte_ttest(data):
-        our = data[data['conf'] == our_key].sort_value(by="seed")[metric].values
-        pre = data[data['conf'] == pre_key].sort_value(by="seed")[metric].values
+        our = data[data['conf'] == our_key].sort_values(by="seed")[metric].values
+        pre = data[data['conf'] == pre_key].sort_values(by="seed")[metric].values
         return scipy.stats.ttest_rel(our, pre).pvalue
 
     p_values = df.groupby(['molecule_model']).apply(calcualte_ttest)
