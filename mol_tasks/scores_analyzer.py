@@ -78,10 +78,10 @@ def to_latex(res):
         res.drop(columns=f"{STAT}_{task}", inplace=True)
 
     res.columns = pd.MultiIndex.from_tuples(
-        [(x.split("_")[1], NAME_TO_UI.get(x.split("_")[0], x.split("_")[0])) for x in res.columns],
+        [(x.split("_")[1], x.split("_")[0]) for x in res.columns],
         names=['Task', 'Method'])
     res = res.T
-    res = res[sorted(res.columns, key=MOL_UI_ORDER.index)]
+    res = res[[NAME_TO_UI.get(x, x) for x in sorted(res.columns, key=MOL_UI_ORDER.index)]]
     print(res.to_latex())
 
 
