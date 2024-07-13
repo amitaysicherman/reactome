@@ -82,7 +82,7 @@ def to_latex(res):
         names=['Task', 'Method'])
     res = res.T
     res = res[sorted(res.columns, key=MOL_UI_ORDER.index)]
-    print(res.T.to_latex())
+    print(res.to_latex())
 
 
 if __name__ == "__main__":
