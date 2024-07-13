@@ -1,7 +1,7 @@
 import pandas as pd
 import scipy
 import argparse
-from common.data_types import NAME_TO_UI, PROT_UI_ORDER
+from common.data_types import NAME_TO_UI, PROT_UI_ORDER, ROBERTA
 
 tasks = ["CC", "BP", "MF"]
 
@@ -21,6 +21,8 @@ def main(args):
     pre_key = 'False | True'
     df = pd.read_csv(f"data/scores/go-{args.task}.csv")
     df['protein_model'] = df.name.apply(lambda x: x.split("_")[1] if len(x.split("_")) == 3 else "")
+    df['molecule_model'] = df.name.apply(lambda x: x.split("_")[2] if len(x.split("_")) == 3 else "")
+    df = df[df['molecule_model'] == ROBERTA]
     df['conf'] = df['use_fuse'].astype(str) + " | " + df['use_model'].astype(str)
 
     metric = "f1max"
@@ -63,7 +65,7 @@ def to_latex(res):
     res = res.T
     res = res[sorted(res.columns, key=PROT_UI_ORDER.index)]
     res.rename(columns={x: NAME_TO_UI[x] for x in res.columns}, inplace=True)
-    print(res.to_latex().T.replace("protein_model", ""))
+    print(res.to_latex().replace("protein_model", ""))
 
 
 if __name__ == "__main__":
