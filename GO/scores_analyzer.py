@@ -61,7 +61,7 @@ def to_latex(res):
         [(x.split("_")[1], x.split("_")[0]) for x in res.columns],
         names=['Task', 'Method'])
     res = res.T
-    res = res[sorted(res.columns, key=P.index)]
+    res = res[sorted(res.columns, key=PROT_UI_ORDER.index)]
     res.rename(columns={x: NAME_TO_UI[x] for x in res.columns}, inplace=True)
     print(res.to_latex(index_names=False))
 
