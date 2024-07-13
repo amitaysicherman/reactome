@@ -1,3 +1,77 @@
+--name DrugBank_reg_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ESM-1B_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ESM-1B_roberta --dp_fuse_base fuse2_DrugBank_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ESM-1B_chemberta --dp_fuse_base fuse2_DrugBank_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ESM2_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ESM2_roberta --dp_fuse_base fuse2_DrugBank_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ESM2_chemberta --dp_fuse_base fuse2_DrugBank_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ESM3_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ESM3_roberta --dp_fuse_base fuse2_DrugBank_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ESM3_chemberta --dp_fuse_base fuse2_DrugBank_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_protein_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ESM-1B_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ESM-1B_roberta --dp_fuse_base fuse2_DrugBank_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ESM-1B_chemberta --dp_fuse_base fuse2_DrugBank_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ESM2_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ESM2_roberta --dp_fuse_base fuse2_DrugBank_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ESM2_chemberta --dp_fuse_base fuse2_DrugBank_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ESM3_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ESM3_roberta --dp_fuse_base fuse2_DrugBank_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_protein_ESM3_chemberta --dp_fuse_base fuse2_DrugBank_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
+--name DrugBank_molecule_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ESM-1B_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ESM-1B_roberta --dp_fuse_base fuse2_DrugBank_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ESM-1B_chemberta --dp_fuse_base fuse2_DrugBank_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ESM2_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ESM2_roberta --dp_fuse_base fuse2_DrugBank_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ESM2_chemberta --dp_fuse_base fuse2_DrugBank_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ESM3_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ESM3_roberta --dp_fuse_base fuse2_DrugBank_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_molecule_ESM3_chemberta --dp_fuse_base fuse2_DrugBank_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
+--name DrugBank_recon_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ESM-1B_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ESM-1B_roberta --dp_fuse_base fuse2_DrugBank_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ESM-1B_chemberta --dp_fuse_base fuse2_DrugBank_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ESM2_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ESM2_roberta --dp_fuse_base fuse2_DrugBank_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ESM2_chemberta --dp_fuse_base fuse2_DrugBank_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ESM3_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ESM3_roberta --dp_fuse_base fuse2_DrugBank_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+--name DrugBank_recon_ESM3_chemberta --dp_fuse_base fuse2_DrugBank_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 --name rrf-ProtBert-BFD-pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
 --name rrf-ProtBert-BFD-roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
 --name rrf-ProtBert-BFD-chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
