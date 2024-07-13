@@ -77,7 +77,7 @@ if __name__ == "__main__":
     for task in tasks:
         args.task = task
         res = main(args)
-        res.set_index('molecule_model', inplace=True, drop=True)
+        res.set_index('protein_model', inplace=True, drop=True)
         all_res[task] = res
     final_res = all_res[tasks[0]]
     for task in tasks[1:]:
