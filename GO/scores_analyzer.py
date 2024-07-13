@@ -32,7 +32,7 @@ def main(args):
     if args.print_count:
         print(pd.pivot_table(df, index=['protein_model'], columns=['conf'], values=metric,
                              aggfunc="count"))
-    res = (p_mean * 100).round(2).astype(str) + "\pm " + (p_std * 100).round(2).astype(str)
+    res = "$" + (p_mean * 100).round(2).astype(str) + " \pm " + (p_std * 100).round(2).astype(str) + "$"
     p_values = df.groupby(['protein_model']).apply(calcualte_ttest, our_key=our_key, pre_key=pre_key, metric=metric)
     res = res[[pre_key, our_key]]
 
@@ -48,8 +48,8 @@ def to_latex(res):
     for i, _ in res.iterrows():
         for task in tasks:
             if res.loc[i, f"{STAT}_{task}"]:
-                a = float(res.loc[i, f"{OUR}_{task}"].split("\pm")[0])
-                b = float(res.loc[i, f"{PRE}_{task}"].split("\pm")[0])
+                a = float(res.loc[i, f"{OUR}_{task}"].split("\pm")[0][1:])
+                b = float(res.loc[i, f"{PRE}_{task}"].split("\pm")[0][1:])
                 if a > b:
                     res.loc[i, f"{OUR}_{task}"] = "\\textbf{" + res.loc[i, f"{OUR}_{task}"] + "}"
                 else:
@@ -63,7 +63,7 @@ def to_latex(res):
     res = res.T
     res = res[sorted(res.columns, key=PROT_UI_ORDER.index)]
     res.rename(columns={x: NAME_TO_UI[x] for x in res.columns}, inplace=True)
-    print(res.to_latex().replace("protein_model",""))
+    print(res.to_latex().replace("protein_model", ""))
 
 
 if __name__ == "__main__":
