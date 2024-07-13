@@ -1,6 +1,7 @@
 import pandas as pd
 import scipy
 import argparse
+from common.data_types import NAME_TO_UI, MOL_UI_ORDER
 
 tasks = ["BACE", "BBBP", "ClinTox", "HIV", "SIDER"]
 OUR = "Our"
@@ -75,9 +76,12 @@ def to_latex(res):
                     res.loc[i, f"{PRE}_{task}"] = "\\textbf{" + res.loc[i, f"{PRE}_{task}"] + "}"
     for task in tasks:
         res.drop(columns=f"{STAT}_{task}", inplace=True)
-    res.columns = pd.MultiIndex.from_tuples([(x.split("_")[1], x.split("_")[0]) for x in res.columns],
-                                            names=['Task', 'Method'])
 
+    res.columns = pd.MultiIndex.from_tuples(
+        [(x.split("_")[1], NAME_TO_UI.get(x.split("_")[0], x.split("_")[0])) for x in res.columns],
+        names=['Task', 'Method'])
+    res = res.T
+    res = res[sorted(res.columns, key=MOL_UI_ORDER.index)]
     print(res.T.to_latex())
 
 
