@@ -164,7 +164,7 @@ ROBERTA = "roberta"
 CHEMBERTA = "chemberta"
 
 NAME_TO_UI = {
-    PEBCHEM10M: "PeBChem-10M",
+    PEBCHEM10M: "PubChem-10M",
     ROBERTA: "Roberta-100M",
     CHEMBERTA: "ChemBerta-50M",
     P_BFD: "ProtBertBFD-0.5B",
