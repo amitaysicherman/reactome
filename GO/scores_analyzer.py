@@ -63,7 +63,7 @@ def to_latex(res):
     res = res.T
     res = res[sorted(res.columns, key=PROT_UI_ORDER.index)]
     res.rename(columns={x: NAME_TO_UI[x] for x in res.columns}, inplace=True)
-    print(res.to_latex().replace("protein_model", ""))
+    print(res.to_latex().T.replace("protein_model", ""))
 
 
 if __name__ == "__main__":
