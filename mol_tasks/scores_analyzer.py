@@ -83,7 +83,7 @@ def to_latex(res):
     res = res.T
     res = res[sorted(res.columns, key=MOL_UI_ORDER.index)]
     res.rename(columns={x: NAME_TO_UI[x] for x in res.columns}, inplace=True)
-    print(res.to_latex().replace("molecule_model",""))
+    print(res.to_latex(index_names=False))
 
 
 if __name__ == "__main__":
