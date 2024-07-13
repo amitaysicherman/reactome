@@ -51,9 +51,9 @@ def to_latex(res):
                 a = float(res.loc[i, f"{OUR}_{task}"].split("\pm")[0][1:])
                 b = float(res.loc[i, f"{PRE}_{task}"].split("\pm")[0][1:])
                 if a > b:
-                    res.loc[i, f"{OUR}_{task}"] = "\\boldsymbol{" + res.loc[i, f"{OUR}_{task}"] + "}"
+                    res.loc[i, f"{OUR}_{task}"] = "\\boldsymbol{" + res.loc[i, f"{OUR}_{task}"][1:-1] + "}"
                 else:
-                    res.loc[i, f"{PRE}_{task}"] = "\\boldsymbol{" + res.loc[i, f"{PRE}_{task}"] + "}"
+                    res.loc[i, f"{PRE}_{task}"] = "\\boldsymbol{" + res.loc[i, f"{PRE}_{task}"][1:-1] + "}"
     for task in tasks:
         res.drop(columns=f"{STAT}_{task}", inplace=True)
 
