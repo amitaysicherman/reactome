@@ -16,6 +16,8 @@ pre_key = 'False | False | True | True'
 df = pd.read_csv(f"data/scores/drug_protein_{args.dataset}.csv")
 
 if args.mul_fuse:
+    df['name_len']=df.name.apply(lambda x: len(x.split("_")))
+    df = df[df.name_len == 4]
     df['fuse_model'] = df.name.apply(lambda x: x.split("_")[1])
     df['protein_model'] = df.name.apply(lambda x: x.split("_")[2])
     df['molecule_model'] = df.name.apply(lambda x: x.split("_")[3])
