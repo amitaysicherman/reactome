@@ -7,14 +7,23 @@ parser.add_argument("--use_model", type=int, default=0)
 parser.add_argument("--dataset", type=str, default="DrugBank")
 parser.add_argument("--metric", type=str, default="aupr")
 parser.add_argument("--print_count", type=int, default=0)
+parser.add_argument("--mul_fuse", type=int, default=1)
 
 args = parser.parse_args()
 
 our_key = 'True | True | True | True' if args.use_model else 'True | True | False | False'
 pre_key = 'False | False | True | True'
 df = pd.read_csv(f"data/scores/drug_protein_{args.dataset}.csv")
-df['protein_model'] = df.name.apply(lambda x: x.split("_")[1] if len(x.split("_")) == 3 else "")
-df['molecule_model'] = df.name.apply(lambda x: x.split("_")[2] if len(x.split("_")) == 3 else "")
+
+if args.mul_fuse:
+    df['fuse_model'] = df.name.apply(lambda x: x.split("_")[1])
+    df['protein_model'] = df.name.apply(lambda x: x.split("_")[2])
+    df['molecule_model'] = df.name.apply(lambda x: x.split("_")[3])
+    group_cols = ['fuse_model', 'protein_model', 'molecule_model']
+else:
+    df['protein_model'] = df.name.apply(lambda x: x.split("_")[1])
+    df['molecule_model'] = df.name.apply(lambda x: x.split("_")[2])
+    group_cols = ['protein_model', 'molecule_model']
 df['conf'] = df['m_fuse'].astype(str) + " | " + df['p_fuse'].astype(str) + " | " + df['m_model'].astype(str) + " | " + \
              df['p_model'].astype(str)
 
@@ -22,11 +31,11 @@ metric = args.metric
 
 if args.print_count:
     print(
-        pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric, aggfunc="count"))
+        pd.pivot_table(df, index=group_cols, columns=['conf'], values=metric, aggfunc="count"))
 
-p_mean = pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
+p_mean = pd.pivot_table(df, index=group_cols, columns=['conf'], values=metric,
                         aggfunc="mean")
-p_std = pd.pivot_table(df, index=['protein_model', 'molecule_model'], columns=['conf'], values=metric,
+p_std = pd.pivot_table(df, index=group_cols, columns=['conf'], values=metric,
                        aggfunc="std")
 our_mean, our_std = p_mean[our_key], p_std[our_key]
 pre_mean, pre_std = p_mean[pre_key], p_std[pre_key]
@@ -39,7 +48,7 @@ def calcualte_ttest(data):
     return scipy.stats.ttest_ind(our, pre).pvalue
 
 
-p_values = df.groupby(['protein_model', 'molecule_model']).apply(calcualte_ttest)
+p_values = df.groupby(group_cols).apply(calcualte_ttest)
 res = res[[pre_key, our_key]]
 
 res["statistically significant"] = p_values < 0.05
