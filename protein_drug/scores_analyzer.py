@@ -5,7 +5,7 @@ import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--use_model", type=int, default=0)
 parser.add_argument("--dataset", type=str, default="DrugBank")
-parser.add_argument("--metric", type=str, default="aupr")
+parser.add_argument("--metric", type=str, default="auprc")
 parser.add_argument("--print_count", type=int, default=0)
 parser.add_argument("--mul_fuse", type=int, default=1)
 
