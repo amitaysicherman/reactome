@@ -236,6 +236,15 @@ def build_models(args, fuse_all_to_one, fuse_output_dim, fuse_n_layers, fuse_hid
 
 
 def main(args):
+    if args.gnn_sample == -1:
+        save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
+
+        model, reconstruction_model = build_models(args, args.fuse_all_to_one, args.fuse_output_dim, args.fuse_n_layers,
+                                                   args.fuse_hidden_dim, args.fuse_dropout, save_dir,
+                                                   args.fuse_self_move)
+        save_fuse_model(model, reconstruction_model, save_dir, -1)
+        return
+
     downstream_task = args.downstream_task
     save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
     if downstream_task == "go":

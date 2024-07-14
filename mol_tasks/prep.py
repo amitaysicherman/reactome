@@ -1,4 +1,6 @@
 from torchdrug import datasets
+from torchdrug.data import ordered_scaffold_split
+
 from preprocessing.seq_to_vec import Seq2Vec
 from common.data_types import MOLECULE
 import numpy as np
@@ -30,22 +32,25 @@ name_to_dataset = {
 
 def prep_dataset_part(task_name, label_key):
     dataset = name_to_dataset[task_name](pjoin(base_dir, task_name))
-    mols = []
-    labels = []
+    mols_dict = dict()
+    labels_dict = dict()
     mol_output_file = pjoin(base_dir, f"{task_name}_{mol_emd}_molecules.npy")
     labels_output_file = pjoin(base_dir, f"{task_name}_label.npy")
-
-    for i in tqdm(range(len(dataset))):
-        try:
-            x = dataset[i]['graph'].to_smiles()
-            mols.append(seq2vec.to_vec(x, MOLECULE))
-            if type(label_key) == list:
-                label = [dataset[i][key] for key in label_key]
-                labels.append(label)
-            else:
-                labels.append([dataset[i][label_key]])
-        except:
-            print(f"Error processing {i}")
+    train, valid, test = ordered_scaffold_split(dataset, None)
+    for split, name in zip([train, valid, test], ["train", "valid", "test"]):
+        mols=[]
+        labels=[]
+        for i in tqdm(range(len(split))):
+            try:
+                x = split[i]['graph'].to_smiles()
+                mols.append(seq2vec.to_vec(x, MOLECULE))
+                if type(label_key) == list:
+                    label = [split[i][key] for key in label_key]
+                    labels.append(label)
+                else:
+                    labels.append([split[i][label_key]])
+            except:
+                print(f"Error processing {i}")
 
     labels = np.array(labels)
     np.save(labels_output_file, labels)
