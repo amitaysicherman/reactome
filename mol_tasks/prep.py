@@ -34,8 +34,7 @@ def prep_dataset_part(task_name, label_key):
     dataset = name_to_dataset[task_name](pjoin(base_dir, task_name))
     mols_dict = dict()
     labels_dict = dict()
-    mol_output_file = pjoin(base_dir, f"{task_name}_{mol_emd}_molecules.npy")
-    labels_output_file = pjoin(base_dir, f"{task_name}_label.npy")
+    output_file = pjoin(base_dir, f"{task_name}_{mol_emd}.npz")
     train, valid, test = ordered_scaffold_split(dataset, None)
     for split, name in zip([train, valid, test], ["train", "valid", "test"]):
         mols = []
@@ -54,10 +53,9 @@ def prep_dataset_part(task_name, label_key):
 
         labels = np.array(labels)
         mols = np.array(mols)
-        mols_dict[name] = mols
-        labels_dict[name] = labels
-    np.savez(mol_output_file, **mols_dict)
-    np.savez(labels_output_file, **labels_dict)
+        mols_dict["mol_" + name] = mols
+        labels_dict["label_" + name] = labels
+    np.savez(output_file, **mols_dict, **labels_dict)
 
 
 # BACE:    Binary binding results for a set of inhibitors of human :math:`\beta`-secretase 1(BACE-1).
