@@ -38,8 +38,8 @@ def prep_dataset_part(task_name, label_key):
     labels_output_file = pjoin(base_dir, f"{task_name}_label.npy")
     train, valid, test = ordered_scaffold_split(dataset, None)
     for split, name in zip([train, valid, test], ["train", "valid", "test"]):
-        mols=[]
-        labels=[]
+        mols = []
+        labels = []
         for i in tqdm(range(len(split))):
             try:
                 x = split[i]['graph'].to_smiles()
@@ -52,10 +52,12 @@ def prep_dataset_part(task_name, label_key):
             except:
                 print(f"Error processing {i}")
 
-    labels = np.array(labels)
-    np.save(labels_output_file, labels)
-    mols = np.array(mols)
-    np.save(mol_output_file, mols)
+        labels = np.array(labels)
+        mols = np.array(mols)
+        mols_dict[name] = mols
+        labels_dict[name] = labels
+    np.savez(mol_output_file, **mols_dict)
+    np.savez(labels_output_file, **labels_dict)
 
 
 # BACE:    Binary binding results for a set of inhibitors of human :math:`\beta`-secretase 1(BACE-1).
