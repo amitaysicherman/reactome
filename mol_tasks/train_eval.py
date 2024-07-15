@@ -9,6 +9,7 @@ from common.path_manager import data_path, scores_path, model_path
 from common.utils import get_type_to_vec_dim
 from model.models import MultiModalLinearConfig, MiltyModalLinear
 from torch.utils.data import Dataset, DataLoader
+
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
@@ -17,9 +18,11 @@ def load_data(mol_emd, task_name):
     data_file = pjoin(base_dir, f"{task_name}_{mol_emd}.npz")
     data = np.load(data_file)
     mol_train, mol_valid, mol_test = [data[f"mol_{x}"] for x in ["train", "valid", "test"]]
+    mol_train = mol_train[:, 0, :]
+    mol_valid = mol_valid[:, 0, :]
+    mol_test = mol_test[:, 0, :]
     label_train, label_valid, label_test = [data[f"label_{x}"] for x in ["train", "valid", "test"]]
     return mol_train, label_train, mol_valid, label_valid, mol_test, label_test
-
 
 
 class MolLabelDatast(Dataset):
