@@ -14,20 +14,12 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def load_data(mol_emd, task_name):
     base_dir = f"{data_path}/mol/"
-    mol_file = pjoin(base_dir, f"{task_name}_{mol_emd}_molecules.npy")
-    labels_output_file = pjoin(base_dir, f"{task_name}_label.npy")
-    data = np.load(mol_file)[:, 0, :]
-    labels = np.load(labels_output_file)
-    return data, labels
+    data_file = pjoin(base_dir, f"{task_name}_{mol_emd}.npz")
+    data = np.load(data_file)
+    mol_train, mol_valid, mol_test = [data[f"mol_{x}"] for x in ["train", "valid", "test"]]
+    label_train, label_valid, label_test = [data[f"label_{x}"] for x in ["train", "valid", "test"]]
+    return mol_train, label_train, mol_valid, label_valid, mol_test, label_test
 
-
-def split_train_val_test(data, train_size=0.7, val_size=0.15):
-    train_val_index = int(len(data) * train_size)
-    val_test_index = train_val_index + int(len(data) * val_size)
-    train_data = data[:train_val_index]
-    val_data = data[train_val_index:val_test_index]
-    test_data = data[val_test_index:]
-    return train_data, val_data, test_data
 
 
 class MolLabelDatast(Dataset):
@@ -150,24 +142,19 @@ def main(args, fuse_model=None):
     seed = args.random_seed
     np.random.seed(seed)
     type_to_vec_dim = get_type_to_vec_dim()
-    mols, labels = load_data(mol_emd_type, mol_task)
-    shuffle_index = np.random.permutation(len(mols))
-    mols = mols[shuffle_index]
-    labels = labels[shuffle_index]
-    train_proteins, val_proteins, test_proteins = split_train_val_test(mols)
-    train_labels, val_labels, test_labels = split_train_val_test(labels)
+    mol_train, label_train, mol_valid, label_valid, mol_test, label_test = load_data(mol_emd_type, mol_task)
 
-    train_loader = data_to_loader(train_proteins, train_labels, batch_size=bs, shuffle=True)
-    val_loader = data_to_loader(val_proteins, val_labels, batch_size=bs, shuffle=False)
-    test_loader = data_to_loader(test_proteins, test_labels, batch_size=bs, shuffle=False)
+    train_loader = data_to_loader(mol_train, label_train, batch_size=bs, shuffle=True)
+    val_loader = data_to_loader(mol_valid, label_valid, batch_size=bs, shuffle=False)
+    test_loader = data_to_loader(mol_test, label_test, batch_size=bs, shuffle=False)
 
-    model = MolLabelModel(fuse_base, type_to_vec_dim[MOLECULE], use_fuse, use_model, labels.shape[1],
+    model = MolLabelModel(fuse_base, type_to_vec_dim[MOLECULE], use_fuse, use_model, label_train.shape[1],
                           fuse_freeze, fuse_model=fuse_model).to(device)
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
-    pos_weight = (1 + train_labels.sum(axis=0)) / train_labels.shape[0]
+    pos_weight = (1 + label_train.sum(axis=0)) / label_train.shape[0]
     pos_weight = (1 - pos_weight) / pos_weight
     pos_weight = torch.tensor(pos_weight, device=device, dtype=torch.float32)
     loss_func = torch.nn.BCEWithLogitsLoss(pos_weight=pos_weight)
