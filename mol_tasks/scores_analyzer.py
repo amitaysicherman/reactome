@@ -13,7 +13,12 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     our_key = 'True | True' if use_model else 'True | False'
     pre_key = 'False | True'
     df = pd.read_csv(f"data/scores/mol_{task}.csv")
+    have_name = df.name.apply(lambda x: len(x.split("-")[1]) > 1)
+    print(len(df), have_name.sum())
+    df = df[have_name]
+
     df['molecule_model'] = df.name.apply(lambda x: x.split("-")[1])
+
     df['conf'] = df['use_fuse'].astype(str) + " | " + df['use_model'].astype(str)
 
     metric = "acc"  # real is auc it;s bug
