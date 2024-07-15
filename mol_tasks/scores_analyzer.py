@@ -13,7 +13,7 @@ def main(use_model, task, print_count) -> pd.DataFrame:
     our_key = 'True | True' if use_model else 'True | False'
     pre_key = 'False | True'
     df = pd.read_csv(f"data/scores/mol_{task}.csv")
-    have_name = df.name.apply(lambda x: len(x.split("-")[1]) > 1)
+    have_name = df.name.apply(lambda x: len(x.split("-")) > 1)
     print(len(df), have_name.sum())
     df = df[have_name]
 
