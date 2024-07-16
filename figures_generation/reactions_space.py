@@ -62,7 +62,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
             ax.scatter(X_embedded[mask, 0], X_embedded[mask, 1], c=[colors[id_count]] * sum(mask),
                        marker=type_to_shape[type_], s=50, edgecolor='k',
                        label=f'{type_} | {reactions_names[reactions_ids.index(id_)]}')
-
+    ax.grid(False)
     # Save the plot without legend
     output_dir = 'data/figures/reactions_space'
     os.makedirs(output_dir, exist_ok=True)
