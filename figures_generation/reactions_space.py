@@ -41,6 +41,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     X_embedded = tsne.fit_transform(cosine_dist)
 
     # X_embedded = TSNE(n_components=2, perplexity=4).fit_transform(vecs)
+    fig = plt.figure()
     for id_count, id_ in enumerate(np.unique(ids)):
         for type_ in np.unique(types):
             mask = (ids == id_) & (types == type_)
@@ -51,4 +52,4 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     if not os.path.exists('data/figures/reactions_space'):
         os.makedirs('data/figures/reactions_space')
     plt.savefig(f'data/figures/reactions_space/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}.png')
-    plt.show()
+    plt.close(fig)
