@@ -3,7 +3,7 @@
 
 
 
---name DrugBank_reg_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank
+--name DrugBank_reg_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_dropout 0
 --name DrugBank_reg_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
 --name DrugBank_reg_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
 --name DrugBank_reg_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank
