@@ -311,6 +311,9 @@ def main(args):
                     "self_move": args.fuse_self_move}
     no_improve_count = 0
     for epoch in range(args.fuse_epochs):
+        if PLOT_REACTION:
+            plot_reaction_space(epoch, model, args.protein_emd, args.mol_emd)
+
         running_args["epoch"] = epoch
         _ = run_epoch(**running_args, loader=train_loader, part="train")
         if downstream_task != "cl":
@@ -330,8 +333,6 @@ def main(args):
             no_improve_count += 1
             if no_improve_count >= args.fuse_max_no_improve:
                 break
-        if PLOT_REACTION:
-            plot_reaction_space(epoch, model, args.protein_emd, args.mol_emd)
 
     with open(f'{scores_path}/all_fuse_dp.csv', "a") as f:
         f.write(f"{args.fuse_name},{best_valid_auc * 100:.1f},{best_test_auc * 100:.1f}\n")
