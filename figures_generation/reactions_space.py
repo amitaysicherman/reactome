@@ -6,6 +6,7 @@ from dataset.index_manger import NodesIndexManager
 from dataset.dataset_builder import get_reactions, get_reaction_entities_id_with_text
 import numpy as np
 import os
+from sklearn.decomposition import PCA
 
 PROTEIN = "protein"
 MOLECULE = "molecule"
@@ -50,9 +51,11 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     cosine_dist = cosine_distances(vecs)
 
     # Initialize and fit t-SNE
-    tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
-                verbose=0)
-    X_embedded = tsne.fit_transform(cosine_dist)
+    # tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
+    #             verbose=0)
+    # X_embedded = tsne.fit_transform(cosine_dist)
+
+    X_embedded = PCA(n_components=2).fit_transform(cosine_dist)
 
     # Plot the embedded space without legend
     type_to_shape = {PROTEIN: 'o', MOLECULE: 'X'}
