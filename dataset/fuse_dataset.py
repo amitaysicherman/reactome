@@ -17,7 +17,7 @@ EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager):
     elements = []
 
-    reaction_elements = reaction.inputs + sum([x.entities for x in reaction.catalysis], [])  # + reaction.outputs
+    reaction_elements = reaction.inputs + sum([x.entities for x in reaction.catalysis], []) + reaction.outputs
 
     for reaction_element in reaction_elements:
         node = nodes_index_manager.name_to_node[reaction_element.get_db_identifier()]
@@ -77,16 +77,16 @@ class PairsDataset(Dataset):
             self.elements_unique = np.array(list(set([x[0] for x in self.data] + [x[1] for x in self.data])))
             return
 
-        reactions = [reaction for reaction in reactions if
-                     not have_unkown_nodes(reaction, nodes_index_manager, check_output=True)]
         self.all_pairs = []
         self.all_elements = []
         for reaction in tqdm(reactions):
             elements, pairs = pairs_from_reaction(reaction, nodes_index_manager)
             self.all_elements.extend(elements)
             self.all_pairs.extend(pairs)
+
         self.pairs_unique = set(self.all_pairs)
-        self.all_pairs = list(self.pairs_unique) #TODO : REMOVE ?
+        print(f"Pairs: {len(self.all_pairs)} Unique pairs: {len(self.pairs_unique)}")
+        self.all_pairs = list(self.pairs_unique)  # TODO : REMOVE ?
         elements_unique, elements_count = np.unique(self.all_elements, return_counts=True)
         self.elements_unique = elements_unique
         for dtype in EMBEDDING_DATA_TYPES:

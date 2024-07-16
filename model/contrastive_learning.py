@@ -1,5 +1,5 @@
 import numpy as np
-
+from collections import defaultdict
 from dataset.fuse_dataset import PairsDataset, SameNameBatchSampler
 from dataset.index_manger import NodesIndexManager
 import os
@@ -13,15 +13,10 @@ from sklearn.metrics import roc_auc_score
 from itertools import chain
 from common.utils import prepare_files, get_type_to_vec_dim
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
-from protein_drug.train_eval import main as protein_drug_main
-from localization.train_eval import main as localization_main
-from GO.train_eval import main as go_main
-from reaction_real_fake.train_eval import main as rrf_main
-from mol_tasks.train_eval import main as mol_main
 from common.path_manager import scores_path
 from figures_generation.reactions_space import plot_reaction_space
 
-PLOT_REACTION = True
+PLOT_REACTION = False
 EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Device: {device}")
@@ -68,9 +63,11 @@ def print_auc_each_type(all_labels, all_preds, types):
     all_labels = np.array(all_labels)
     types = np.array(types)
     for t in np.unique(types):
-        mask = types == t
-        auc = roc_auc_score(all_labels[mask], all_preds[mask])
-        print(f"{t}: {auc:.3f}")
+        for pos_neg in [True, False]:
+            mask = (types == t) & (pos_neg == (all_labels == 1))
+
+            mean_dist = all_preds[mask].mean()
+            print(f"{t},{pos_neg}: {mean_dist:.3f}")
 
 
 def run_epoch(model, node_index_manager, reconstruction_model, optimizer, reconstruction_optimizer, loader,
@@ -161,9 +158,6 @@ def run_epoch(model, node_index_manager, reconstruction_model, optimizer, recons
             cont_loss.backward()
             optimizer.step()
             optimizer.zero_grad()
-        if PLOT_REACTION:
-            plot_reaction_space(f'{epoch}_{i}', model, args.protein_emd, args.mol_emd)
-
     auc = roc_auc_score(all_labels, all_preds)
     print_auc_each_type(all_labels, all_preds, types)
     msg = f"Epoch {epoch} {part} AUC {auc:.3f} (cont: {total_loss / len(loader):.3f}, " \
@@ -251,15 +245,23 @@ def main(args):
 
     downstream_task = args.downstream_task
     save_dir, scores_file = prepare_files(f'fuse2_{args.fuse_name}', skip_if_exists=args.skip_if_exists)
+
     if downstream_task == "go":
+        from GO.train_eval import main as go_main
         downstream_func = go_main
     elif downstream_task == "pd":
+        from protein_drug.train_eval import main as protein_drug_main
         downstream_func = protein_drug_main
     elif downstream_task == "loc":
+        from localization.train_eval import main as localization_main
         downstream_func = localization_main
     elif downstream_task == "rrf":
+        from reaction_real_fake.train_eval import main as rrf_main
+
         downstream_func = rrf_main
     elif downstream_task == "mol":
+        from mol_tasks.train_eval import main as mol_main
+
         downstream_func = mol_main
     elif downstream_task == "cl":
         downstream_func = "cl"
@@ -328,6 +330,9 @@ def main(args):
             no_improve_count += 1
             if no_improve_count >= args.fuse_max_no_improve:
                 break
+        if PLOT_REACTION:
+            plot_reaction_space(epoch, model, args.protein_emd, args.mol_emd)
+
     with open(f'{scores_path}/all_fuse_dp.csv', "a") as f:
         f.write(f"{args.fuse_name},{best_valid_auc * 100:.1f},{best_test_auc * 100:.1f}\n")
     return best_valid_auc
@@ -335,5 +340,6 @@ def main(args):
 
 if __name__ == '__main__':
     from common.args_manager import get_args
-    args= get_args()
+
+    args = get_args()
     main(args)

@@ -1,99 +1,60 @@
 from dataset.index_manger import NodesIndexManager
 from common.data_types import NodeTypes
 import torch
-from model.tagging import ReactionTag
-from dataset.dataset_builder import have_unkown_nodes, reaction_to_data, reaction_from_str
-import dataclasses
 import numpy as np
 import seaborn as sns
-from common.path_manager import item_path, figures_path
-import pandas as pd
+from dataset.dataset_builder import get_reactions, get_reaction_entities
+from common.path_manager import figures_path
 import matplotlib.pyplot as plt
-import os
-from collections import defaultdict
-
-sns.set_theme(style="white")
-device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
-tag_names = list(dataclasses.asdict(ReactionTag()).keys())
-
-NT = NodeTypes()
+from dataset.fuse_dataset import PairsDataset
 
 nodes_index_manager = NodesIndexManager()
 
-dtype_to_count = {}
-for dtype in nodes_index_manager.dtype_to_first_index:
-    with open(f"{item_path}/{dtype}.txt") as f:
-        lines = f.read().splitlines()
-    total_count = 0
-    for line in lines:
-        try:
-            _, _, count = line.split("@")
-            total_count += int(count)
-        except:
-            pass
-    dtype_to_count[dtype] = total_count
-    print(f"{dtype}: {total_count:,} total count")
+total_proteins = len([node for node in nodes_index_manager.nodes if node.type == NodeTypes.protein])
+total_molecules = len([node for node in nodes_index_manager.nodes if node.type == NodeTypes.molecule])
+print(f"Total proteins: {total_proteins}")
+print(f"Total molecules: {total_molecules}")
 
-print(f"Total nodes: {sum(dtype_to_count.values()):,}")
+sns.set_theme(style="white")
+device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
+reactions = get_reactions(filter_unknown=False, filter_dna=False, filter_no_seq=False, filter_untrain=False,
+                          filter_no_act=False, filter_no_mol=False, filter_singal_entity=False)
+reactions = sum(reactions, [])  # train_lines + val_lines + test_lines
+print("Number of reactions:", len(reactions))
+knowns_reactions = get_reactions(filter_unknown=True, filter_dna=True, filter_no_seq=True, filter_untrain=False,
+                                 filter_no_act=False, filter_no_mol=False, filter_singal_entity=True)
+knowns_reactions = sum(knowns_reactions, [])
+print("Number of known reactions:", len(knowns_reactions))
 
-total_unique_elements = 0
-for dtype in nodes_index_manager.dtype_to_first_index:
-    unique_element = nodes_index_manager.dtype_to_last_index[dtype] - nodes_index_manager.dtype_to_first_index[dtype]
-    print(f"{dtype}: {unique_element:,} unique elements")
-    total_unique_elements += unique_element
-print(f"Total unique elements: {total_unique_elements:,}")
+pairs_dataset = PairsDataset(knowns_reactions, nodes_index_manager)
+print("Number of pairs:", len(pairs_dataset.all_pairs), len(pairs_dataset.pairs_unique))
 
-with open(f'{item_path}/reaction.txt') as f:
-    lines = f.readlines()
-print(f"Number of reactions: {len(lines):,}")
-dataset = []
-no_tags_reaction = 0
-for reaction in lines:
-    if have_unkown_nodes(reaction_from_str(reaction), nodes_index_manager):
-        no_tags_reaction += 1
-        continue
-    data = reaction_to_data(reaction, nodes_index_manager)
-    if data is None or data.tags.sum().item() == 0:
-        no_tags_reaction += 1
-        continue
-    dataset.append(data)
-print(f"Number of reactions without tags: {no_tags_reaction:,}")
-print(f"Number of reactions with tags: {len(dataset):,}")
-tags = [data.tags.cpu().numpy().tolist() for data in dataset]
-counts = pd.DataFrame(tags).sum(axis=0).values
+proteins_per_reaction = []
+mol_per_reaction = []
+for reaction in knowns_reactions:
+    p_reaction = set()
+    m_reaction = set()
+    entities = get_reaction_entities(reaction, True)
+    for entity in entities:
+        name = entity.get_db_identifier()
+        if name in nodes_index_manager.name_to_node:
+            node = nodes_index_manager.name_to_node[name]
+            if node.type == NodeTypes.protein:
+                p_reaction.add(node.index)
+            elif node.type == NodeTypes.molecule:
+                m_reaction.add(node.index)
+    proteins_per_reaction.append(len(p_reaction))
+    mol_per_reaction.append(len(m_reaction))
+print(
+    f"Proteins per reaction: {np.mean(proteins_per_reaction):.2f} ± {np.std(proteins_per_reaction):.2f} Median {np.quantile(proteins_per_reaction, 0.5)}")
+print(
+    f"Molecules per reaction: {np.mean(mol_per_reaction):.2f} ± {np.std(mol_per_reaction):.2f} Median {np.quantile(mol_per_reaction, 0.5)}")
 
-# create pie chart
-fig, ax = plt.subplots()
-counts = counts[:-1]  # remove fake tag
-tag_names = tag_names[:-1]  # remove fake tag
-tag_names = [x.upper() for x in tag_names]
-ax.pie(counts, labels=tag_names, autopct='%1.1f%%')
-ax.axis('equal')  # Equal aspect ratio ensures that pie is drawn as a circle.
-plt.title("Labels Distribution")
-plt.savefig(os.path.join(figures_path, "tags_distribution.png"), dpi=300)
+fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(8, 3))
+ax1.hist(proteins_per_reaction, bins=range(0, 20), color='skyblue', edgecolor='black', linewidth=1.2)
+ax1.set_title("Proteins per reaction")
+ax2.hist(mol_per_reaction, bins=range(0, 10), color='skyblue', edgecolor='black', linewidth=1.2)
+ax2.set_title("Molecules per reaction")
+plt.tight_layout()
+plt.savefig(f"{figures_path}/proteins_molecules_per_reaction.png")
 plt.show()
-
-# bar chart for the number of tags per reaction
-tags_per_reaction = [data.tags.cpu().numpy().sum() for data in dataset]
-tags_per_reaction = np.array(tags_per_reaction)
-fig, ax = plt.subplots()
-ax.bar(*np.unique(tags_per_reaction, return_counts=True))
-plt.title("Number of labels per reaction")
-plt.xlabel("Number of labels")
-plt.ylabel("Number of reactions")
-
-output_path = os.path.join(figures_path, "tags_per_reaction.png")
-plt.savefig(output_path, dpi=300)
-plt.show()
-
-dtype_to_proccess_count = defaultdict(list)
-
-for node in nodes_index_manager.index_to_node.values():
-    vec = node.vec
-if vec is not None:
-    dtype_to_proccess_count[node.type].append(not np.allclose(vec, 0))
-else:
-    dtype_to_proccess_count[node.type].append(False)
-for dtype in dtype_to_proccess_count:
-    print(
-        f"{dtype}: {np.mean(dtype_to_proccess_count[dtype])}, {np.sum(dtype_to_proccess_count[dtype])}, {len(dtype_to_proccess_count[dtype])}")
