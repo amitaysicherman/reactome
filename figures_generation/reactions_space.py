@@ -17,7 +17,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
                                       prot_emd_type=prot_emd_type, mol_emd_type=mol_emd_type)
 
     # Get reaction data
-    train_lines, val_lines, test_lines = get_reactions()
+    train_lines, val_lines, test_lines = get_reactions(filter_dna=True)
 
     # Define specific reaction IDs to analyze
     reactions_ids = [6102, 4598, 4415]
