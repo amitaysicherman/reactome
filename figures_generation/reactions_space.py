@@ -55,7 +55,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     type_to_shape = {PROTEIN: 'o', MOLECULE: 'X'}
     colors = ['#e41a1c', '#377eb8', '#4daf4a']
 
-    fig, ax = plt.subplots(figsize=(10, 8), dpi=300)
+    fig, ax = plt.subplots()
     for id_count, id_ in enumerate(np.unique(ids)):
         for type_ in np.unique(types):
             mask = (ids == id_) & (types == type_)
@@ -71,7 +71,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     plt.close(fig)
 
     # Create a figure for the legend only
-    fig_legend = plt.figure(figsize=(10, 8), dpi=300)
+    fig_legend = plt.figure()
     fig_legend.legend(*ax.get_legend_handles_labels(), loc='center', fontsize='small', markerscale=1.2)
 
     # Save the legend as a separate plot
