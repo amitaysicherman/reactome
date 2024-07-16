@@ -47,5 +47,8 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
             plt.scatter(X_embedded[mask, 0], X_embedded[mask, 1], c=[colors[id_count]] * sum(mask),
                         marker=type_to_shape[type_], label=f'{type_}_{id_}')
     plt.legend()
-    plt.savefig(f'data/figures/reactions_space_{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}.png')
+    import os
+    if not os.path.exists('data/figures/reactions_space'):
+        os.makedirs('data/figures/reactions_space')
+    plt.savefig(f'data/figures/reactions_space/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}.png')
     plt.show()
