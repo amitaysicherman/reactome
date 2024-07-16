@@ -20,7 +20,8 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     train_lines, val_lines, test_lines = get_reactions()
 
     # Define specific reaction IDs to analyze
-    reactions_ids = [792, 2940, 6942]
+    reactions_ids = [2169, 1143, 2020]
+
     reactions_names = [train_lines[id_].name for id_ in reactions_ids]
 
     # Initialize containers for IDs, types, and vectors
