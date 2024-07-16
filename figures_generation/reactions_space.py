@@ -48,7 +48,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     cosine_dist = cosine_distances(vecs)
 
     # Initialize and fit t-SNE
-    tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=4, n_iter=500, verbose=1)
+    tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=min(len(vecs),30), n_iter=500, verbose=1)
     X_embedded = tsne.fit_transform(cosine_dist)
 
     # Plot the embedded space without legend
