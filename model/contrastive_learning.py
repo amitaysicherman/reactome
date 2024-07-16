@@ -162,8 +162,7 @@ def run_epoch(model, node_index_manager, reconstruction_model, optimizer, recons
             optimizer.step()
             optimizer.zero_grad()
         if PLOT_REACTION:
-            plot_reaction_space(f'{epoch}_{i}', model, node_index_manager.prot_emd_type,
-                                node_index_manager.mol_emd_type)
+            plot_reaction_space(f'{epoch}_{i}', model, args.protein_emd, args.mol_emd)
 
     auc = roc_auc_score(all_labels, all_preds)
     print_auc_each_type(all_labels, all_preds, types)
@@ -336,5 +335,5 @@ def main(args):
 
 if __name__ == '__main__':
     from common.args_manager import get_args
-
-    main(get_args())
+    args= get_args()
+    main(args)
