@@ -21,7 +21,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
 
     # Define specific reaction IDs to analyze
     reactions_ids = [792, 2940, 6942]
-    reactions_names = [train_lines[id_] for id_ in reactions_ids]
+    reactions_names = [train_lines[id_].name for id_ in reactions_ids]
 
     # Initialize containers for IDs, types, and vectors
     ids, types, vecs = [], [], []
@@ -55,7 +55,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     type_to_shape = {PROTEIN: 'o', MOLECULE: 'X'}
     colors = ['#e41a1c', '#377eb8', '#4daf4a']
 
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(10, 8), dpi=300)
     for id_count, id_ in enumerate(np.unique(ids)):
         for type_ in np.unique(types):
             mask = (ids == id_) & (types == type_)
@@ -70,17 +70,11 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
                 bbox_inches='tight')
     plt.close(fig)
 
-    # Plot the embedded space with legend
-    fig_with_legend, ax_with_legend = plt.subplots()
-    for id_count, id_ in enumerate(np.unique(ids)):
-        for type_ in np.unique(types):
-            mask = (ids == id_) & (types == type_)
-            ax_with_legend.scatter(X_embedded[mask, 0], X_embedded[mask, 1], c=[colors[id_count]] * sum(mask),
-                                   marker=type_to_shape[type_], s=50, edgecolor='k',
-                                   label=f'{type_}_{reactions_names[reactions_ids.index(id_)]}')
+    # Create a figure for the legend only
+    fig_legend = plt.figure(figsize=(10, 8), dpi=300)
+    fig_legend.legend(*ax.get_legend_handles_labels(), loc='center', fontsize='small', markerscale=1.2)
 
-    # Add legend and save the plot
-    ax_with_legend.legend(loc='best', fontsize='small', markerscale=1.2)
-    plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_with_legend.png',
+    # Save the legend as a separate plot
+    plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_legend.png',
                 bbox_inches='tight')
-    plt.close(fig_with_legend)
+    plt.close(fig_legend)
