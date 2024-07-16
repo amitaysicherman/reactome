@@ -19,7 +19,9 @@ from GO.train_eval import main as go_main
 from reaction_real_fake.train_eval import main as rrf_main
 from mol_tasks.train_eval import main as mol_main
 from common.path_manager import scores_path
+from figures_generation.reactions_space import plot_reaction_space
 
+PLOT_REACTION = True
 EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Device: {device}")
@@ -159,6 +161,9 @@ def run_epoch(model, node_index_manager, reconstruction_model, optimizer, recons
             cont_loss.backward()
             optimizer.step()
             optimizer.zero_grad()
+        if PLOT_REACTION:
+            plot_reaction_space(f'{epoch}_{i}', model, node_index_manager.prot_emd_type,
+                                node_index_manager.mol_emd_type)
 
     auc = roc_auc_score(all_labels, all_preds)
     print_auc_each_type(all_labels, all_preds, types)
