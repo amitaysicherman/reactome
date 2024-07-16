@@ -32,7 +32,7 @@ class NodeData:
 
 class NodesIndexManager:
     def __init__(self, pretrained_method=PRETRAINED_EMD, fuse_name="", fuse_pretrained_start=True,
-                 prot_emd_type=P_T5_XL, mol_emd_type=PEBCHEM10M,fuse_model=None):
+                 prot_emd_type=P_T5_XL, mol_emd_type=PEBCHEM10M, fuse_model=None):
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
         self.nodes = [reaction_node, complex_node]
@@ -64,9 +64,9 @@ class NodesIndexManager:
                     vectors = np.stack([np.random.rand(self.type_to_vec_dim[dt]) for _ in range(len(lines))])
                 else:
                     prefix = ""
-                    if dt == PROTEIN:
+                    if dt == PROTEIN and prot_emd_type:
                         prefix = f"{prot_emd_type}_"
-                    if dt == MOLECULE:
+                    if dt == MOLECULE and mol_emd_type:
                         prefix = f"{mol_emd_type}_"
                     pretrained_vec_file = f'{item_path}/{dt}_{prefix}vec.npy'
                     vectors = np.load(pretrained_vec_file)

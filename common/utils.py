@@ -12,10 +12,12 @@ from common.data_types import CatalystOBJ, Entity, Reaction, UNKNOWN_ENTITY_TYPE
 from common.path_manager import model_path, scores_path
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 
+
 def get_type_to_vec_dim(prot_emd_type=P_T5_XL):
     type_to_dim = {DNA: 768,
                    MOLECULE: 768,
-                   TEXT: 768
+                   TEXT: 768,
+                   PROTEIN: 1024
                    }
     if prot_emd_type == P_T5_XL:
         type_to_dim[PROTEIN] = 1024
@@ -28,8 +30,6 @@ def get_type_to_vec_dim(prot_emd_type=P_T5_XL):
     elif prot_emd_type == ESM_3:
         type_to_dim[PROTEIN] = 1536
     return type_to_dim
-
-
 
 
 def db_to_type(db_name):
@@ -175,4 +175,5 @@ def prepare_files(run_name, skip_if_exists=False):
 
 
 def sent_to_key(sen):
-    return sen.replace(" ", "_").replace("/", "_").replace("(", "_").replace(")", "_").replace(":", "_").replace("-", "_")
+    return sen.replace(" ", "_").replace("/", "_").replace("(", "_").replace(")", "_").replace(":", "_").replace("-",
+                                                                                                                 "_")
