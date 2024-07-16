@@ -6,6 +6,7 @@ from dataset.index_manger import NodesIndexManager
 from dataset.dataset_builder import get_reactions, get_reaction_entities_id_with_text
 import numpy as np
 import os
+
 PROTEIN = "protein"
 MOLECULE = "molecule"
 
@@ -54,7 +55,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     type_to_shape = {PROTEIN: 'o', MOLECULE: 'X'}
     colors = ['#e41a1c', '#377eb8', '#4daf4a']
 
-    fig, ax = plt.subplots(figsize=(10, 8), dpi=300)
+    fig, ax = plt.subplots()
     for id_count, id_ in enumerate(np.unique(ids)):
         for type_ in np.unique(types):
             mask = (ids == id_) & (types == type_)
@@ -70,7 +71,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     plt.close(fig)
 
     # Plot the embedded space with legend
-    fig_with_legend, ax_with_legend = plt.subplots(figsize=(10, 8), dpi=300)
+    fig_with_legend, ax_with_legend = plt.subplots()
     for id_count, id_ in enumerate(np.unique(ids)):
         for type_ in np.unique(types):
             mask = (ids == id_) & (types == type_)
