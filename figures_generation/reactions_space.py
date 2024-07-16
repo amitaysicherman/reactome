@@ -11,45 +11,75 @@ MOLECULE = "molecule"
 
 
 def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretrained_method=2):
+    # Initialize index manager with given parameters
     index_manager = NodesIndexManager(pretrained_method=pretrained_method, fuse_model=fuse_model,
                                       prot_emd_type=prot_emd_type, mol_emd_type=mol_emd_type)
-    train_lines, val_lines, test_lines = get_reactions()
-    reactions_ids = [792, 2940, 6942]
 
-    ids = []
-    types = []
-    vecs = []
+    # Get reaction data
+    train_lines, val_lines, test_lines = get_reactions()
+
+    # Define specific reaction IDs to analyze
+    reactions_ids = [792, 2940, 6942]
+    reactions_names = [train_lines[id_] for id_ in reactions_ids]
+
+    # Initialize containers for IDs, types, and vectors
+    ids, types, vecs = [], [], []
+
     for id_ in reactions_ids:
         reaction = train_lines[id_]
+        # Extract entities and their vectors
         names = get_reaction_entities_id_with_text(reaction, False)
         nodes = [index_manager.name_to_node[name] for name in names if
-                 name in index_manager.name_to_node and (
-                         index_manager.name_to_node[name].type in [PROTEIN, MOLECULE])]
+                 name in index_manager.name_to_node and
+                 index_manager.name_to_node[name].type in [PROTEIN, MOLECULE]]
+
+        # Extend containers with current reaction data
         ids.extend([id_] * len(nodes))
         types.extend([node.type for node in nodes])
         vecs.extend([node.vec for node in nodes])
 
-    type_to_shape = {'protein': 'o', 'molecule': 'X'}
-    colors = ['red', 'blue', 'green', 'yellow']
+    # Convert lists to numpy arrays
     vecs = np.array(vecs)
     ids = np.array(ids)
     types = np.array(types)
+
+    # Compute cosine distance matrix
     cosine_dist = cosine_distances(vecs)
 
-    # Initialize and fit t-SNE with the precomputed cosine distance matrix
+    # Initialize and fit t-SNE
     tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=4, n_iter=500, verbose=1)
     X_embedded = tsne.fit_transform(cosine_dist)
 
-    # X_embedded = TSNE(n_components=2, perplexity=4).fit_transform(vecs)
-    fig = plt.figure()
+    # Plot the embedded space without legend
+    type_to_shape = {PROTEIN: 'o', MOLECULE: 'X'}
+    colors = ['#e41a1c', '#377eb8', '#4daf4a']
+
+    fig, ax = plt.subplots(figsize=(10, 8), dpi=300)
     for id_count, id_ in enumerate(np.unique(ids)):
         for type_ in np.unique(types):
             mask = (ids == id_) & (types == type_)
-            plt.scatter(X_embedded[mask, 0], X_embedded[mask, 1], c=[colors[id_count]] * sum(mask),
-                        marker=type_to_shape[type_], label=f'{type_}_{id_}')
-    plt.legend()
-    import os
-    if not os.path.exists('data/figures/reactions_space'):
-        os.makedirs('data/figures/reactions_space')
-    plt.savefig(f'data/figures/reactions_space/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}.png')
+            ax.scatter(X_embedded[mask, 0], X_embedded[mask, 1], c=[colors[id_count]] * sum(mask),
+                       marker=type_to_shape[type_], s=50, edgecolor='k',
+                       label=f'{type_}_{reactions_names[reactions_ids.index(id_)]}')
+
+    # Save the plot without legend
+    output_dir = 'data/figures/reactions_space'
+    os.makedirs(output_dir, exist_ok=True)
+    plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_no_legend.png',
+                bbox_inches='tight')
     plt.close(fig)
+
+    # Plot the embedded space with legend
+    fig_with_legend, ax_with_legend = plt.subplots(figsize=(10, 8), dpi=300)
+    for id_count, id_ in enumerate(np.unique(ids)):
+        for type_ in np.unique(types):
+            mask = (ids == id_) & (types == type_)
+            ax_with_legend.scatter(X_embedded[mask, 0], X_embedded[mask, 1], c=[colors[id_count]] * sum(mask),
+                                   marker=type_to_shape[type_], s=50, edgecolor='k',
+                                   label=f'{type_}_{reactions_names[reactions_ids.index(id_)]}')
+
+    # Add legend and save the plot
+    ax_with_legend.legend(loc='best', fontsize='small', markerscale=1.2)
+    plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_with_legend.png',
+                bbox_inches='tight')
+    plt.close(fig_with_legend)
