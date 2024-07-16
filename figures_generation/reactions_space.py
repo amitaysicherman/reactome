@@ -5,7 +5,7 @@ import random
 from dataset.index_manger import NodesIndexManager
 from dataset.dataset_builder import get_reactions, get_reaction_entities_id_with_text
 import numpy as np
-
+import os
 PROTEIN = "protein"
 MOLECULE = "molecule"
 
