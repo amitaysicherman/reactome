@@ -70,7 +70,7 @@ def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, spl
 
 
 class PairsDataset(Dataset):
-    def __init__(self, reactions, nodes_index_manager: NodesIndexManager, neg_count=1, test_mode=False, split="train"):
+    def __init__(self, reactions, nodes_index_manager: NodesIndexManager, neg_count=5, test_mode=False, split="train"):
         self.nodes_index_manager = nodes_index_manager
         if test_mode:
             self.data = get_two_pairs_without_share_nodes(nodes_index_manager, split)

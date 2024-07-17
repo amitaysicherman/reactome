@@ -29,6 +29,12 @@ print("Number of known reactions:", len(knowns_reactions))
 pairs_dataset = PairsDataset(knowns_reactions, nodes_index_manager)
 print("Number of pairs:", len(pairs_dataset.all_pairs), len(pairs_dataset.pairs_unique))
 
+total_proteins = len([node for node in nodes_index_manager.nodes if node.type == NodeTypes.protein])
+total_molecules = len([node for node in nodes_index_manager.nodes if node.type == NodeTypes.molecule])
+print(f"Total proteins: {total_proteins}")
+print(f"Total molecules: {total_molecules}")
+
+
 proteins_per_reaction = []
 mol_per_reaction = []
 for reaction in knowns_reactions:
