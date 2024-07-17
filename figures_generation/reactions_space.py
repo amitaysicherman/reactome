@@ -16,7 +16,7 @@ COLORS = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a6
 
 
 def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretrained_method=2,
-                        reactions_ids=(1034, 222, 4355)):
+                        reactions_ids=[1034, 222, 4355]):
     # Initialize index manager with given parameters
     index_manager = NodesIndexManager(pretrained_method=pretrained_method, fuse_model=fuse_model,
                                       prot_emd_type=prot_emd_type, mol_emd_type=mol_emd_type)
