@@ -53,7 +53,8 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     fig, ax = plt.subplots(figsize=(10, 10))
     sns.heatmap(cosine_dist, xticklabels=names, yticklabels=names, annot=True, ax=ax)
     plt.tight_layout()
-    plt.savefig(f'data/figures/reactions_space/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}.png')
+    plt.show()
+    # plt.savefig(f'data/figures/reactions_space/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}.png')
     # Initialize and fit t-SNE
     # tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
     #             verbose=0)
