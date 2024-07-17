@@ -17,6 +17,9 @@ from common.path_manager import scores_path
 from figures_generation.reactions_space import plot_reaction_space
 
 PLOT_REACTION = True
+VECS=[]
+LABELS=[]
+
 EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 print(f"Device: {device}")
@@ -136,7 +139,6 @@ def run_epoch(model, node_index_manager, reconstruction_model, optimizer, recons
             if recon:
                 recon_1 = reconstruction_model(out1, type_1)
                 recon_2 = reconstruction_model(out2, type_2)
-
         all_labels.extend((label == 1).cpu().detach().numpy().astype(int).tolist())
         all_preds.extend((0.5 * (1 + F.cosine_similarity(out1, out2).cpu().detach().numpy())).tolist())
         types.extend([f"{type_1}_{type_2}"] * len(label))

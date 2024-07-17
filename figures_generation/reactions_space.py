@@ -23,7 +23,6 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     # Define specific reaction IDs to analyze
     reactions_ids = [6102, 4598, 4415]
 
-
     reactions_names = [train_lines[id_].name for id_ in reactions_ids]
 
     # Initialize containers for IDs, types, and vectors
@@ -48,41 +47,44 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     types = np.array(types)
 
     # Compute cosine distance matrix
-    cosine_dist = cosine_distances(vecs)
-
+    cosine_dist = (cosine_distances(vecs) * 100).astype(int)
+    names = [f"{id_}_{type_}" for id_, type_ in zip(ids, types)]
+    import seaborn as sns
+    sns.heatmap(cosine_dist, xticklabels=names, yticklabels=names, annot=True)
+    plt.savefig(f'data/figures/reactions_space/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}.png')
     # Initialize and fit t-SNE
     # tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
     #             verbose=0)
     # X_embedded = tsne.fit_transform(cosine_dist)
 
-    X_embedded = PCA(n_components=2).fit_transform(cosine_dist)
-
-    # Plot the embedded space without legend
-    type_to_shape = {PROTEIN: 'o', MOLECULE: 'X'}
-    colors = ['#e41a1c', '#377eb8', '#4daf4a']
-
-    fig, ax = plt.subplots()
-    for id_count, id_ in enumerate(np.unique(ids)):
-        for type_ in np.unique(types):
-            mask = (ids == id_) & (types == type_)
-            ax.scatter(X_embedded[mask, 0], X_embedded[mask, 1], c=[colors[id_count]] * sum(mask),
-                       marker=type_to_shape[type_], s=50, edgecolor='k',
-                       label=f'{type_} | {reactions_names[reactions_ids.index(id_)]}')
-    ax.grid(False)
-    ax.set_xticks([])
-    ax.set_yticks([])
-    # Save the plot without legend
-    output_dir = 'data/figures/reactions_space'
-    os.makedirs(output_dir, exist_ok=True)
-    plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_no_legend.png',
-                bbox_inches='tight')
-    plt.close(fig)
-
-    # Create a figure for the legend only
-    fig_legend = plt.figure()
-    fig_legend.legend(*ax.get_legend_handles_labels(), loc='center', fontsize='small', markerscale=1.2)
-
-    # Save the legend as a separate plot
-    plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_legend.png',
-                bbox_inches='tight')
-    plt.close(fig_legend)
+    # X_embedded = PCA(n_components=2).fit_transform(cosine_dist)
+    #
+    # # Plot the embedded space without legend
+    # type_to_shape = {PROTEIN: 'o', MOLECULE: 'X'}
+    # colors = ['#e41a1c', '#377eb8', '#4daf4a']
+    #
+    # fig, ax = plt.subplots()
+    # for id_count, id_ in enumerate(np.unique(ids)):
+    #     for type_ in np.unique(types):
+    #         mask = (ids == id_) & (types == type_)
+    #         ax.scatter(X_embedded[mask, 0], X_embedded[mask, 1], c=[colors[id_count]] * sum(mask),
+    #                    marker=type_to_shape[type_], s=50, edgecolor='k',
+    #                    label=f'{type_} | {reactions_names[reactions_ids.index(id_)]}')
+    # ax.grid(False)
+    # ax.set_xticks([])
+    # ax.set_yticks([])
+    # # Save the plot without legend
+    # output_dir = 'data/figures/reactions_space'
+    # os.makedirs(output_dir, exist_ok=True)
+    # plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_no_legend.png',
+    #             bbox_inches='tight')
+    # plt.close(fig)
+    #
+    # # Create a figure for the legend only
+    # fig_legend = plt.figure()
+    # fig_legend.legend(*ax.get_legend_handles_labels(), loc='center', fontsize='small', markerscale=1.2)
+    #
+    # # Save the legend as a separate plot
+    # plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_legend.png',
+    #             bbox_inches='tight')
+    # plt.close(fig_legend)
