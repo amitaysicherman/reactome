@@ -3,63 +3,97 @@ from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import cosine_distances
 import random
 from dataset.index_manger import NodesIndexManager
-from dataset.dataset_builder import get_reactions, get_reaction_entities_id_with_text
+from dataset.dataset_builder import get_reactions, get_reaction_entities
 import numpy as np
 import os
 from sklearn.decomposition import PCA
 
 PROTEIN = "protein"
 MOLECULE = "molecule"
+ENTITIES = [PROTEIN, MOLECULE]
+
+COLORS = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999']
 
 
-def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretrained_method=2):
+def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretrained_method=2,
+                        reactions_ids=(1034, 222, 4355)):
     # Initialize index manager with given parameters
     index_manager = NodesIndexManager(pretrained_method=pretrained_method, fuse_model=fuse_model,
                                       prot_emd_type=prot_emd_type, mol_emd_type=mol_emd_type)
 
     # Get reaction data
+
     train_lines, val_lines, test_lines = get_reactions(filter_dna=True)
+    reactions = train_lines + val_lines + test_lines
+    all_nodes = [node for node in index_manager.nodes if node.type in ENTITIES]
+    all_vecs = np.array([node.vec for node in all_nodes])
+    cosine_dist = cosine_distances(all_vecs)
+    tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
+                verbose=0)
+    X_embedded = tsne.fit_transform(cosine_dist)
 
-    # Define specific reaction IDs to analyze
-    reactions_ids = [1034, 222, 4355]
+    shapes = ['o' if node.type == PROTEIN else 'X' for node in all_nodes]
+    reactoins_to_indexes = dict()
+    for reaction_id in enumerate(reactions_ids):
+        reaction = reactions[reaction_id]
+        entities = get_reaction_entities(reaction, True)
+        names = [e.get_db_identifier() for e in entities]
+        indexes = [index_manager.name_to_node[name].index for name in names if name in index_manager.name_to_node]
+        reactoins_to_indexes[reaction.name] = indexes
 
-    reactions_names = [train_lines[id_].name for id_ in reactions_ids]
-
-    # Initialize containers for IDs, types, and vectors
-    ids, types, vecs = [], [], []
-
-    for id_ in reactions_ids:
-        reaction = train_lines[id_]
-        # Extract entities and their vectors
-        names = get_reaction_entities_id_with_text(reaction, False)
-        nodes = [index_manager.name_to_node[name] for name in names if
-                 name in index_manager.name_to_node and
-                 index_manager.name_to_node[name].type in [PROTEIN, MOLECULE]]
-
-        # Extend containers with current reaction data
-        ids.extend([id_] * len(nodes))
-        types.extend([node.type for node in nodes])
-        vecs.extend([node.vec for node in nodes])
-
-    # Convert lists to numpy arrays
-    vecs = np.array(vecs)
-    ids = np.array(ids)
-    types = np.array(types)
-
-    # Compute cosine distance matrix
-    cosine_dist = (cosine_distances(vecs) * 50).astype(int)
-    names = [f"{id_}_{type_}" for id_, type_ in zip(ids, types)]
-    import seaborn as sns
-    fig, ax = plt.subplots(figsize=(10, 10))
-    sns.heatmap(cosine_dist, xticklabels=names, yticklabels=names, annot=True, ax=ax)
-    plt.tight_layout()
-    plt.show()
-    # plt.savefig(f'data/figures/reactions_space/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}.png')
-    # Initialize and fit t-SNE
+    reactions_indexes_mask = np.zeros(len(all_nodes), dtype=bool)
+    for indexes in reactoins_to_indexes.values():
+        reactions_indexes_mask[indexes] = True
+    x_no_reactions = X_embedded[~reactions_indexes_mask]
+    plt.scatter(x_no_reactions[:, 0], x_no_reactions[:, 1], c='gray', marker='o', s=50, edgecolor='k')
+    for i, (name, ids) in enumerate(reactoins_to_indexes.items()):
+        x = X_embedded[ids]
+        plt.scatter(x[:, 0], x[:, 1], c=COLORS[i], marker='X', s=50, edgecolor='k', label=name)
+    plt.legend()
+    #
+    #     reactoins_to_indexes[reaction.name]=i
+    # for id_ in reactions_ids:
+    #
+    # all_vecs_2d = TSNE(n_components=2).fit_transform(all_vecs)
+    # all_types = [node.type for node in all_nodes]
+    #
+    # reactions_names = [train_lines[id_].name for id_ in reactions_ids]
+    #
+    # # Initialize containers for IDs, types, and vectors
+    # ids, types, vecs = [], [], []
+    #
+    # for id_ in reactions_ids:
+    #     reaction = train_lines[id_]
+    #     # Extract entities and their vectors
+    #     names = get_reaction_entities_id_with_text(reaction, False)
+    #     nodes = [index_manager.name_to_node[name] for name in names if
+    #              name in index_manager.name_to_node and
+    #              index_manager.name_to_node[name].type in ENTITIES]
+    #
+    #     # Extend containers with current reaction data
+    #     ids.extend([id_] * len(nodes))
+    #     types.extend([node.type for node in nodes])
+    #     vecs.extend([node.vec for node in nodes])
+    #
+    # # Convert lists to numpy arrays
+    # vecs = np.array(vecs)
+    # ids = np.array(ids)
+    # types = np.array(types)
+    #
+    # # Compute cosine distance matrix
+    # cosine_dist = (cosine_distances(vecs) * 50).astype(int)
+    # names = [f"{id_}_{type_}" for id_, type_ in zip(ids, types)]
+    # import seaborn as sns
+    # fig, ax = plt.subplots(figsize=(10, 10))
+    # sns.heatmap(cosine_dist, xticklabels=names, yticklabels=names, annot=True, ax=ax)
+    # plt.tight_layout()
+    # plt.show()
+    # # plt.savefig(f'data/figures/reactions_space/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}.png')
+    # # Initialize and fit t-SNE
     # tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
     #             verbose=0)
     # X_embedded = tsne.fit_transform(cosine_dist)
-
+    #
     # X_embedded = PCA(n_components=2).fit_transform(cosine_dist)
     #
     # # Plot the embedded space without legend
@@ -76,18 +110,19 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     # ax.grid(False)
     # ax.set_xticks([])
     # ax.set_yticks([])
-    # # Save the plot without legend
-    # output_dir = 'data/figures/reactions_space'
-    # os.makedirs(output_dir, exist_ok=True)
-    # plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_no_legend.png',
-    #             bbox_inches='tight')
-    # plt.close(fig)
-    #
-    # # Create a figure for the legend only
-    # fig_legend = plt.figure()
-    # fig_legend.legend(*ax.get_legend_handles_labels(), loc='center', fontsize='small', markerscale=1.2)
-    #
-    # # Save the legend as a separate plot
-    # plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_legend.png',
-    #             bbox_inches='tight')
-    # plt.close(fig_legend)
+    # plt.show()
+    # # # Save the plot without legend
+    # # output_dir = 'data/figures/reactions_space'
+    # # os.makedirs(output_dir, exist_ok=True)
+    # # plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_no_legend.png',
+    # #             bbox_inches='tight')
+    # # plt.close(fig)
+    # #
+    # # # Create a figure for the legend only
+    # # fig_legend = plt.figure()
+    # # fig_legend.legend(*ax.get_legend_handles_labels(), loc='center', fontsize='small', markerscale=1.2)
+    # #
+    # # # Save the legend as a separate plot
+    # # plt.savefig(f'{output_dir}/{prot_emd_type}_{mol_emd_type}_{pretrained_method}_{counter}_legend.png',
+    # #             bbox_inches='tight')
+    # # plt.close(fig_legend)
