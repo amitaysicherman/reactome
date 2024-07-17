@@ -37,8 +37,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     all_reaction_indexes = set(sum(reactoins_to_indexes.values(), []))
     nodes_no_reactions = [node for node in all_nodes if node.index not in all_reaction_indexes]
     nodes_in_reactions = [node for node in all_nodes if node.index in all_reaction_indexes]
-    nodes_in_reaction_indexes = [node.index for node in nodes_in_reactions]
-
+    node_index_to_array_index = {node.index: i for i, node in enumerate(nodes_in_reactions)}
     all_vecs = np.array([node.vec for node in nodes_no_reactions + nodes_in_reactions])
     cosine_dist = cosine_distances(all_vecs)
     tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
@@ -46,10 +45,9 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     X_embedded = tsne.fit_transform(cosine_dist)
 
     X_embedded_no_reactions = X_embedded[:len(nodes_no_reactions)]
-    X_embedded_reactions = X_embedded[len(nodes_no_reactions):]
     plt.scatter(X_embedded_no_reactions[:, 0], X_embedded_no_reactions[:, 1], c='gray', marker='o', s=5, edgecolor='k')
     for i, (name, ids) in enumerate(reactoins_to_indexes.items()):
-        x = X_embedded[ids]
+        x = X_embedded[[node_index_to_array_index[id_] for id_ in ids]]
         plt.scatter(x[:, 0], x[:, 1], c=COLORS[i], marker='X', s=50, edgecolor='k', label=name)
     plt.legend()
     plt.show()
