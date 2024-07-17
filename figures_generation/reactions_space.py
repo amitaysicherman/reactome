@@ -35,7 +35,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
 
     shapes = ['o' if node.type == PROTEIN else 'X' for node in all_nodes]
     reactoins_to_indexes = dict()
-    for reaction_id in enumerate(reactions_ids):
+    for reaction_id in reactions_ids:
         print(reaction_id, reactions_ids, type(reactions))
         reaction = reactions[reaction_id]
         entities = get_reaction_entities(reaction, True)
