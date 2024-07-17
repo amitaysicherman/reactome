@@ -152,7 +152,7 @@ class SameNameBatchSampler(Sampler):
         self.all_to_one = None
 
     def __iter__(self):
-        for _ in range(100):
+        for _ in range(10):
             for name in self.names:
                 indices = self.name_to_indices[name]
                 if self.batch_size > len(indices):
