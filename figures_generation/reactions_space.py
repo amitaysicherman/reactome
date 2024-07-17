@@ -48,14 +48,13 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     X_embedded = tsne.fit_transform(cosine_dist)
 
     X_embedded_no_reactions = X_embedded[:len(nodes_no_reactions)]
-
+    X_embedded_in_reactions = X_embedded[len(nodes_no_reactions):]
     mol_no_reactions = X_embedded_no_reactions[molecule_mask]
     prot_no_reactions = X_embedded_no_reactions[protein_mask]
     plt.scatter(mol_no_reactions[:, 0], mol_no_reactions[:, 1], c='gray', marker='+', s=5, label='Molecule')
     plt.scatter(prot_no_reactions[:, 0], prot_no_reactions[:, 1], c='gray', marker='x', s=5, label='Protein')
     for i, (name, ids) in enumerate(reactoins_to_indexes.items()):
-
-        x = X_embedded[[node_index_to_array_index[id_] for id_ in ids]]
+        x = X_embedded_in_reactions[[node_index_to_array_index[id_] for id_ in ids]]
         plt.scatter(x[:, 0], x[:, 1], c=COLORS[i], marker='X', s=50, edgecolor='k', label=name)
     plt.legend()
     plt.show()
