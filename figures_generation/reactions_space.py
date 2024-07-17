@@ -14,7 +14,9 @@ ENTITIES = [PROTEIN, MOLECULE]
 
 COLORS = ['#e41a1c', '#377eb8', '#4daf4a', '#984ea3', '#ff7f00', '#ffff33', '#a65628', '#f781bf', '#999999']
 
-reactions_ids=[1034, 222, 4355]
+reactions_ids = [1034, 222, 4355]
+
+
 def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretrained_method=2):
     # Initialize index manager with given parameters
     index_manager = NodesIndexManager(pretrained_method=pretrained_method, fuse_model=fuse_model,
@@ -34,6 +36,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     shapes = ['o' if node.type == PROTEIN else 'X' for node in all_nodes]
     reactoins_to_indexes = dict()
     for reaction_id in enumerate(reactions_ids):
+        print(reaction_id, reactions_ids, type(reactions))
         reaction = reactions[reaction_id]
         entities = get_reaction_entities(reaction, True)
         names = [e.get_db_identifier() for e in entities]
