@@ -27,31 +27,32 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     train_lines, val_lines, test_lines = get_reactions(filter_dna=True)
     reactions = train_lines + val_lines + test_lines
     all_nodes = [node for node in index_manager.nodes if node.type in ENTITIES]
-    all_vecs = np.array([node.vec for node in all_nodes])
-    cosine_dist = cosine_distances(all_vecs)
-    tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
-                verbose=0)
-    X_embedded = tsne.fit_transform(cosine_dist)
-
-    shapes = ['o' if node.type == PROTEIN else 'X' for node in all_nodes]
     reactoins_to_indexes = dict()
     for reaction_id in reactions_ids:
-        print(reaction_id, reactions_ids, type(reactions))
         reaction = reactions[reaction_id]
         entities = get_reaction_entities(reaction, True)
         names = [e.get_db_identifier() for e in entities]
         indexes = [index_manager.name_to_node[name].index for name in names if name in index_manager.name_to_node]
         reactoins_to_indexes[reaction.name] = indexes
+    all_reaction_indexes = set(sum(reactoins_to_indexes.values(), []))
+    nodes_no_reactions = [node for node in all_nodes if node.index not in all_reaction_indexes]
+    nodes_in_reactions = [node for node in all_nodes if node.index in all_reaction_indexes]
+    nodes_in_reaction_indexes = [node.index for node in nodes_in_reactions]
 
-    reactions_indexes_mask = np.zeros(len(all_nodes), dtype=bool)
-    for indexes in reactoins_to_indexes.values():
-        reactions_indexes_mask[indexes] = True
-    x_no_reactions = X_embedded[~reactions_indexes_mask]
-    plt.scatter(x_no_reactions[:, 0], x_no_reactions[:, 1], c='gray', marker='o', s=50, edgecolor='k')
+    all_vecs = np.array([node.vec for node in nodes_no_reactions + nodes_in_reactions])
+    cosine_dist = cosine_distances(all_vecs)
+    tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
+                verbose=0)
+    X_embedded = tsne.fit_transform(cosine_dist)
+
+    X_embedded_no_reactions = X_embedded[:len(nodes_no_reactions)]
+    X_embedded_reactions = X_embedded[len(nodes_no_reactions):]
+    plt.scatter(X_embedded_no_reactions[:, 0], X_embedded_no_reactions[:, 1], c='gray', marker='o', s=5, edgecolor='k')
     for i, (name, ids) in enumerate(reactoins_to_indexes.items()):
         x = X_embedded[ids]
         plt.scatter(x[:, 0], x[:, 1], c=COLORS[i], marker='X', s=50, edgecolor='k', label=name)
     plt.legend()
+    plt.show()
     #
     #     reactoins_to_indexes[reaction.name]=i
     # for id_ in reactions_ids:
