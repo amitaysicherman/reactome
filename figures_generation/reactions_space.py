@@ -47,7 +47,7 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     types = np.array(types)
 
     # Compute cosine distance matrix
-    cosine_dist = (cosine_distances(vecs) * 100).astype(int)
+    cosine_dist = (cosine_distances(vecs) * 50).astype(int)
     names = [f"{id_}_{type_}" for id_, type_ in zip(ids, types)]
     import seaborn as sns
     fig, ax = plt.subplots(figsize=(10, 10))
