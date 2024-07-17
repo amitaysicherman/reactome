@@ -46,8 +46,8 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     # tsne = TSNE(metric='precomputed', init="random", n_components=2, perplexity=3, n_iter=500,
     #             verbose=0)
     # X_embedded = tsne.fit_transform(cosine_dist)
-    PCA(n_components=2).fit(all_vecs)
-    X_embedded = X_embedded_no_reactions = X_embedded[:len(nodes_no_reactions)]
+    X_embedded = PCA(n_components=2).fit(all_vecs)
+    X_embedded_no_reactions = X_embedded[:len(nodes_no_reactions)]
     X_embedded_in_reactions = X_embedded[len(nodes_no_reactions):]
     mol_no_reactions = X_embedded_no_reactions[molecule_mask]
     prot_no_reactions = X_embedded_no_reactions[protein_mask]
