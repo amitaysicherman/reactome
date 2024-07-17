@@ -70,7 +70,7 @@ def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, spl
 
 
 class PairsDataset(Dataset):
-    def __init__(self, reactions, nodes_index_manager: NodesIndexManager, neg_count=5, test_mode=False, split="train"):
+    def __init__(self, reactions, nodes_index_manager: NodesIndexManager, neg_count=1, test_mode=False, split="train"):
         self.nodes_index_manager = nodes_index_manager
         if test_mode:
             self.data = get_two_pairs_without_share_nodes(nodes_index_manager, split)
@@ -152,13 +152,16 @@ class SameNameBatchSampler(Sampler):
         self.all_to_one = None
 
     def __iter__(self):
-        for name in self.names:
-            indices = self.name_to_indices[name]
-            if self.batch_size > len(indices):
-                yield indices
-                continue
-            for i in range(0, len(indices) - self.batch_size, self.batch_size):
-                yield indices[i:i + self.batch_size]
+        for _ in range(100):
+            for name in self.names:
+                indices = self.name_to_indices[name]
+                if self.batch_size > len(indices):
+                    yield indices
+                    continue
+                random_indexes = random.choices(range(len(indices)), k=self.batch_size)
+                yield [indices[i] for i in random_indexes]
+            # for i in range(0, len(indices) - self.batch_size, self.batch_size):
+            #     yield indices[i:i + self.batch_size]
 
     def __len__(self):
         return len(self.dataset) // self.batch_size
