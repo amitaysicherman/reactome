@@ -164,4 +164,4 @@ class SameNameBatchSampler(Sampler):
             #     yield indices[i:i + self.batch_size]
 
     def __len__(self):
-        return len(self.dataset) // self.batch_size
+        return 1+len(self.dataset) // self.batch_size

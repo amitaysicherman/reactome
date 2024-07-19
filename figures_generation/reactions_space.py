@@ -54,8 +54,12 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
     plt.scatter(mol_no_reactions[:, 0], mol_no_reactions[:, 1], c='gray', marker='+', s=5, label='Molecule')
     plt.scatter(prot_no_reactions[:, 0], prot_no_reactions[:, 1], c='gray', marker='x', s=5, label='Protein')
     for i, (name, ids) in enumerate(reactoins_to_indexes.items()):
+
         x = X_embedded_in_reactions[[node_index_to_array_index[id_] for id_ in ids]]
+
         plt.scatter(x[:, 0], x[:, 1], c=COLORS[i], marker='X', s=50, edgecolor='k', label=name)
+        for j, id_ in enumerate(ids):
+            plt.text(x[j, 0], x[j, 1], index_manager.index_to_node[id_].name.replace(" ", "\n"), fontsize=8)
     plt.legend()
     plt.show()
     #
