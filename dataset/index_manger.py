@@ -59,7 +59,7 @@ class NodesIndexManager:
             with open(names_file) as f:
                 lines = f.read().splitlines()
 
-            if dt in EMBEDDING_DATA_TYPES:
+            if dt in  [PROTEIN,MOLECULE]:#EMBEDDING_DATA_TYPES:
                 if pretrained_method == NO_PRETRAINED_EMD:
                     vectors = np.stack([np.random.rand(self.type_to_vec_dim[dt]) for _ in range(len(lines))])
                 else:
