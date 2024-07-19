@@ -9,9 +9,9 @@ import math
 from common.data_types import Reaction
 from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
 from dataset.index_manger import NodesIndexManager
-from common.data_types import EMBEDDING_DATA_TYPES, DNA
+from common.data_types import MOLECULE,PROTEIN
 
-EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
+EMBEDDING_DATA_TYPES = [MOLECULE,PROTEIN]
 
 
 def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager):
