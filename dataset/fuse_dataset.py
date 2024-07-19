@@ -5,7 +5,7 @@ from itertools import combinations
 import numpy as np
 from torch.utils.data import Dataset, Sampler
 from tqdm import tqdm
-
+import math
 from common.data_types import Reaction
 from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
 from dataset.index_manger import NodesIndexManager
@@ -164,4 +164,5 @@ class SameNameBatchSampler(Sampler):
             #     yield indices[i:i + self.batch_size]
 
     def __len__(self):
-        return 1+len(self.dataset) // self.batch_size
+
+        return math.ceil(len(self.dataset) /self.batch_size)
