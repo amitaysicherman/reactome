@@ -25,9 +25,9 @@ def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManag
     # for mod in sum([list(x.modifications) for x in reaction_elements], []):
     #     node = nodes_index_manager.name_to_node["TEXT@" + mod]
     #     elements.append(node.index)
-    for act in [x.activity for x in reaction.catalysis]:
-        node = nodes_index_manager.name_to_node["GO@" + act]
-        elements.append(node.index)
+    # for act in [x.activity for x in reaction.catalysis]:
+    #     node = nodes_index_manager.name_to_node["GO@" + act]
+    #     elements.append(node.index)
     elements = [e for e in elements if nodes_index_manager.index_to_node[e].have_seq]
     elements = list(set(elements))
     pairs = []
