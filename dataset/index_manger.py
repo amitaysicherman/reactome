@@ -43,7 +43,7 @@ class NodesIndexManager:
         self.type_to_vec_dim = get_type_to_vec_dim(prot_emd_type)
         self.bp_name_to_index = {"": -1}
         if fuse_model is not None:
-            self.fuse_model = fuse_model
+            self.fuse_model = fuse_model.eval()
         else:
             self.fuse_model = load_fuse_model(fuse_name, fuse_pretrained_start)
         if self.fuse_model is not None:
