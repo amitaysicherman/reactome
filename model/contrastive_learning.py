@@ -17,8 +17,8 @@ from common.path_manager import scores_path
 from figures_generation.reactions_space import plot_reaction_space
 
 PLOT_REACTION = True
-VECS=[]
-LABELS=[]
+VECS = []
+LABELS = []
 
 EMBEDDING_DATA_TYPES = [x for x in EMBEDDING_DATA_TYPES if x != DNA]
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
