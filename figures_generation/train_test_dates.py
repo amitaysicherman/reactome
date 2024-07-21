@@ -41,12 +41,12 @@ plt.bar(test_years_unique, test_counts, label='Testing', color=green)
 # plt.bar(2002, unknown_counts, label='Unknown Date', color=red)
 props = dict(boxstyle='round', alpha=0.5, facecolor='white')
 
-text = f"Train/Validation Cutoff:{train_valid_cutoff}\nValidation/Test Cutoff:{valid_test_cutoff}"
-plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, verticalalignment='top', bbox=props)
+# text = f"Train/Validation Cutoff:{train_valid_cutoff}\nValidation/Test Cutoff:{valid_test_cutoff}"
+# plt.text(0.05, 0.95, text, transform=plt.gca().transAxes, verticalalignment='top', bbox=props)
 
 plt.xlabel('Years')
 plt.ylabel('Reactions Counts')
-plt.title('Train')
+plt.title('Reactome Data Split by Dates')
 plt.legend()
 plt.tight_layout()
 output_file = os.path.join(figures_path, "train_test_dates.png")
