@@ -2,11 +2,13 @@ import matplotlib.pyplot as plt
 from sklearn.manifold import TSNE
 from sklearn.metrics.pairwise import cosine_distances
 import random
+
 from dataset.index_manger import NodesIndexManager
 from dataset.dataset_builder import get_reactions, get_reaction_entities
 import numpy as np
 import os
 from sklearn.decomposition import PCA
+from common.path_manager import figures_path
 
 PROTEIN = "protein"
 MOLECULE = "molecule"
@@ -61,4 +63,5 @@ def plot_reaction_space(counter, fuse_model, prot_emd_type, mol_emd_type, pretra
         plt.scatter(prot_no_reactions[:, 0], prot_no_reactions[:, 1], c='gray', marker='x', s=5, label='Protein')
 
     plt.legend()
+    plt.savefig(f'{figures_path}/reactions_space_{counter}.png')
     plt.show()
