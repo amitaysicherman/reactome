@@ -152,15 +152,16 @@ class SameNameBatchSampler(Sampler):
         self.all_to_one = None
 
     def __iter__(self):
-        for name in self.names:
-            indices = self.name_to_indices[name]
-            if self.batch_size > len(indices):
-                yield indices
-                continue
-            random_indexes = random.choices(range(len(indices)), k=self.batch_size)
-            yield [indices[i] for i in random_indexes]
-            # for i in range(0, len(indices) - self.batch_size, self.batch_size):
-            #     yield indices[i:i + self.batch_size]
+        for _ in range(10):
+            for name in self.names:
+                indices = self.name_to_indices[name]
+                if self.batch_size > len(indices):
+                    yield indices
+                    continue
+                random_indexes = random.choices(range(len(indices)), k=self.batch_size)
+                yield [indices[i] for i in random_indexes]
+                # for i in range(0, len(indices) - self.batch_size, self.batch_size):
+                #     yield indices[i:i + self.batch_size]
 
     def __len__(self):
 
