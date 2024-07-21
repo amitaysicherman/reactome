@@ -14,14 +14,16 @@ def get_years(reactions):
     return years, unknown_count
 
 
-sns.set()
-colors = sns.color_palette("tab10")
-blue = colors[0]
-orange = colors[1]
-green = colors[2]
-red = colors[3]
+sns.set_theme(style="white")
+
+# colors = sns.color_palette("tab10")
+# blue = colors[0]
+# orange = colors[1]
+# green = colors[2]
+# red = colors[3]
 
 train_lines, valid_lines, test_lines = get_reactions()
+
 train_years, unknown_train = get_years(train_lines)
 valid_years, unknown_valid = get_years(valid_lines)
 test_years, unknown_test = get_years(test_lines)
@@ -33,11 +35,11 @@ train_years_unique, train_counts = np.unique(train_years, return_counts=True)
 valid_years_unique, valid_counts = np.unique(valid_years, return_counts=True)
 test_years_unique, test_counts = np.unique(test_years, return_counts=True)
 
-plt.figure(figsize=(10, 4))
+plt.figure(figsize=(8, 3))
 
-plt.bar(train_years_unique, train_counts, label='Training', color=blue)
-plt.bar(valid_years_unique, valid_counts, label='Validation', color=orange)
-plt.bar(test_years_unique, test_counts, label='Testing', color=green)
+plt.bar(train_years_unique, train_counts, label='Train')
+plt.bar(valid_years_unique, valid_counts, label='Validation')
+plt.bar(test_years_unique, test_counts, label='Test')
 # plt.bar(2002, unknown_counts, label='Unknown Date', color=red)
 props = dict(boxstyle='round', alpha=0.5, facecolor='white')
 

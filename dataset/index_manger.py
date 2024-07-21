@@ -6,7 +6,7 @@ from common.utils import get_type_to_vec_dim, load_fuse_model
 from common.path_manager import item_path
 from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, EMBEDDING_DATA_TYPES, LOCATION, \
     DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS, NO_PRETRAINED_EMD, PRETRAINED_EMD, PRETRAINED_EMD_FUSE, MOLECULE, TEXT, \
-    P_T5_XL, PEBCHEM10M
+    P_T5_XL, ROBERTA
 from model.models import apply_model
 from functools import lru_cache
 import os
@@ -32,7 +32,7 @@ class NodeData:
 
 class NodesIndexManager:
     def __init__(self, pretrained_method=PRETRAINED_EMD, fuse_name="", fuse_pretrained_start=True,
-                 prot_emd_type=P_T5_XL, mol_emd_type=PEBCHEM10M, fuse_model=None):
+                 prot_emd_type=P_T5_XL, mol_emd_type=ROBERTA, fuse_model=None):
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
         self.nodes = [reaction_node, complex_node]

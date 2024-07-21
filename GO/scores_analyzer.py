@@ -2,8 +2,8 @@ import pandas as pd
 import scipy
 import argparse
 from common.data_types import NAME_TO_UI, PROT_UI_ORDER, ROBERTA
-
-tasks = ["CC", "BP", "MF"]
+from common.path_manager import data_path
+tasks = ["MF","CC", "BP"]
 
 OUR = "Our"
 PRE = "Pre-trained"
@@ -19,7 +19,7 @@ def calcualte_ttest(data, our_key, pre_key, metric):
 def main(args):
     our_key = 'True | True' if args.use_model else 'True | False'
     pre_key = 'False | True'
-    df = pd.read_csv(f"data/scores/go-{args.task}.csv")
+    df = pd.read_csv(f"{data_path}/scores/go-{args.task}.csv")
     df['protein_model'] = df.name.apply(lambda x: x.split("_")[1] if len(x.split("_")) == 3 else "")
     df['molecule_model'] = df.name.apply(lambda x: x.split("_")[2] if len(x.split("_")) == 3 else "")
     df = df[df['molecule_model'] == ROBERTA]
@@ -34,7 +34,7 @@ def main(args):
     if args.print_count:
         print(pd.pivot_table(df, index=['protein_model'], columns=['conf'], values=metric,
                              aggfunc="count"))
-    res = "$" + (p_mean * 100).round(2).astype(str) + " \pm " + (p_std * 100).round(2).astype(str) + "$"
+    res = (p_mean * 100).round(2).astype(str) + "(" + (p_std * 100).round(2).astype(str) + ")"
     p_values = df.groupby(['protein_model']).apply(calcualte_ttest, our_key=our_key, pre_key=pre_key, metric=metric)
     res = res[[pre_key, our_key]]
 
@@ -50,12 +50,12 @@ def to_latex(res):
     for i, _ in res.iterrows():
         for task in tasks:
             if res.loc[i, f"{STAT}_{task}"]:
-                a = float(res.loc[i, f"{OUR}_{task}"].split("\pm")[0][1:])
-                b = float(res.loc[i, f"{PRE}_{task}"].split("\pm")[0][1:])
+                a = float(res.loc[i, f"{OUR}_{task}"].split("(")[0])
+                b = float(res.loc[i, f"{PRE}_{task}"].split("(")[0])
                 if a > b:
-                    res.loc[i, f"{OUR}_{task}"] = "\\boldsymbol{" + res.loc[i, f"{OUR}_{task}"][1:-1] + "}"
+                    res.loc[i, f"{OUR}_{task}"] = "\\textbf{" + res.loc[i, f"{OUR}_{task}"] + "}"
                 else:
-                    res.loc[i, f"{PRE}_{task}"] = "\\boldsymbol{" + res.loc[i, f"{PRE}_{task}"][1:-1] + "}"
+                    res.loc[i, f"{PRE}_{task}"] = "\\textbf{" + res.loc[i, f"{PRE}_{task}"] + "}"
     for task in tasks:
         res.drop(columns=f"{STAT}_{task}", inplace=True)
 
@@ -65,12 +65,12 @@ def to_latex(res):
     res = res.T
     res = res[sorted(res.columns, key=PROT_UI_ORDER.index)]
     res.rename(columns={x: NAME_TO_UI[x] for x in res.columns}, inplace=True)
-    print(res.to_latex().replace("protein_model", ""))
+    print(res.T.reset_index().to_latex(index=False).replace("protein_model", ""))
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--use_model", type=int, default=0)
+    parser.add_argument("--use_model", type=int, default=1)
     parser.add_argument("--task", type=str, default="BP")
     parser.add_argument("--print_count", type=int, default=0)
     args = parser.parse_args()
@@ -78,6 +78,10 @@ if __name__ == "__main__":
     all_res = {}
     for task in tasks:
         args.task = task
+        if task == "CC":
+            args.use_model = 0
+        else:
+            args.use_model = 1
         res = main(args)
         res.set_index('protein_model', inplace=True, drop=True)
         all_res[task] = res
