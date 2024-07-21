@@ -38,7 +38,7 @@ plt.figure(figsize=(10, 4))
 plt.bar(train_years_unique, train_counts, label='Training', color=blue)
 plt.bar(valid_years_unique, valid_counts, label='Validation', color=orange)
 plt.bar(test_years_unique, test_counts, label='Testing', color=green)
-plt.bar(2002, unknown_counts, label='Unknown Date', color=red)
+# plt.bar(2002, unknown_counts, label='Unknown Date', color=red)
 props = dict(boxstyle='round', alpha=0.5, facecolor='white')
 
 text = f"Train/Validation Cutoff:{train_valid_cutoff}\nValidation/Test Cutoff:{valid_test_cutoff}"
