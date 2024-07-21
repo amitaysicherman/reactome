@@ -9,9 +9,9 @@ import math
 from common.data_types import Reaction
 from dataset.dataset_builder import have_unkown_nodes, have_dna_nodes
 from dataset.index_manger import NodesIndexManager
-from common.data_types import MOLECULE,PROTEIN
+from common.data_types import MOLECULE, PROTEIN
 
-EMBEDDING_DATA_TYPES = [MOLECULE,PROTEIN]
+EMBEDDING_DATA_TYPES = [MOLECULE, PROTEIN]
 
 
 def pairs_from_reaction(reaction: Reaction, nodes_index_manager: NodesIndexManager):
@@ -152,17 +152,16 @@ class SameNameBatchSampler(Sampler):
         self.all_to_one = None
 
     def __iter__(self):
-        for _ in range(10):
-            for name in self.names:
-                indices = self.name_to_indices[name]
-                if self.batch_size > len(indices):
-                    yield indices
-                    continue
-                random_indexes = random.choices(range(len(indices)), k=self.batch_size)
-                yield [indices[i] for i in random_indexes]
+        for name in self.names:
+            indices = self.name_to_indices[name]
+            if self.batch_size > len(indices):
+                yield indices
+                continue
+            random_indexes = random.choices(range(len(indices)), k=self.batch_size)
+            yield [indices[i] for i in random_indexes]
             # for i in range(0, len(indices) - self.batch_size, self.batch_size):
             #     yield indices[i:i + self.batch_size]
 
     def __len__(self):
 
-        return math.ceil(len(self.dataset) /self.batch_size)
+        return math.ceil(len(self.dataset) / self.batch_size)

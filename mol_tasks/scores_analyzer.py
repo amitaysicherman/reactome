@@ -3,7 +3,7 @@ import scipy
 import argparse
 from common.data_types import NAME_TO_UI, MOL_UI_ORDER
 from common.path_manager import data_path
-tasks = ["BACE", "BBBP", "ClinTox", "HIV", "SIDER"]
+tasks = ["BACE", "ClinTox", "HIV", "SIDER"]# "BBBP"
 OUR = "Our"
 PRE = "Pre-trained"
 STAT = "statistically significant"
