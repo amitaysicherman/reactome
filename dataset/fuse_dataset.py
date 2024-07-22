@@ -70,7 +70,8 @@ def get_two_pairs_without_share_nodes(node_index_manager: NodesIndexManager, spl
 
 
 class PairsDataset(Dataset):
-    def __init__(self, reactions, nodes_index_manager: NodesIndexManager, neg_count=1, test_mode=False, split="train"):
+    def __init__(self, reactions, nodes_index_manager: NodesIndexManager, neg_count=1, test_mode=False, split="train",
+                 triples=False):
         self.nodes_index_manager = nodes_index_manager
         if test_mode:
             self.data = get_two_pairs_without_share_nodes(nodes_index_manager, split)
@@ -97,17 +98,24 @@ class PairsDataset(Dataset):
             setattr(self, f"{dtype}_unique", dtype_unique)
             print(f"{dtype} unique: {len(dtype_unique)}")
         self.data = []
+
         for i in tqdm(range(len(self.all_pairs))):
             a, b = self.all_pairs[i]
             a_type = nodes_index_manager.index_to_node[a].type
             b_type = nodes_index_manager.index_to_node[b].type
-            self.data.append((a, b, 1))
-            self.data.append((b, a, 1))
-            for j in range(neg_count):
-                self.data.append((*self.sample_neg_pair(a_=a, other_dtype=b_type), -1))
-                self.data.append((*self.sample_neg_pair(b_=b, other_dtype=a_type), -1))
-                self.data.append((*self.sample_neg_pair(a_=b, other_dtype=a_type), -1))
-                self.data.append((*self.sample_neg_pair(b_=a, other_dtype=b_type), -1))
+            if triples:
+                fake_a = self.sample_neg_pair(b_=b, other_dtype=a_type)[0]
+                fake_b = self.sample_neg_pair(a_=a, other_dtype=b_type)[-1]
+                self.data.append((a, b, fake_b))
+                self.data.append((b, a, fake_a))
+            else:
+                self.data.append((a, b, 1))
+                self.data.append((b, a, 1))
+                for j in range(neg_count):
+                    self.data.append((*self.sample_neg_pair(a_=a, other_dtype=b_type), -1))
+                    self.data.append((*self.sample_neg_pair(b_=b, other_dtype=a_type), -1))
+                    self.data.append((*self.sample_neg_pair(a_=b, other_dtype=a_type), -1))
+                    self.data.append((*self.sample_neg_pair(b_=a, other_dtype=b_type), -1))
 
     def __len__(self):
         return len(self.data)
