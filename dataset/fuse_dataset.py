@@ -141,18 +141,19 @@ class SameNameBatchSampler(Sampler):
         self.dataset = dataset
         self.batch_size = batch_size
         self.name_to_indices = defaultdict(list)
-
+        self.shuffle = shuffle
         for idx in range(len(dataset)):
             idx1, idx2, _ = dataset[idx]
             type_1 = dataset.nodes_index_manager.index_to_node[idx1].type
             type_2 = dataset.nodes_index_manager.index_to_node[idx2].type
             self.name_to_indices[(type_1, type_2)].append(idx)
-        if shuffle:
-            for name in self.name_to_indices:
-                random.shuffle(self.name_to_indices[name])
         self.names = list(self.name_to_indices.keys())
+        self.name_to_indices = dict(self.name_to_indices)
         if shuffle:
             random.shuffle(self.names)
+            for name in self.name_to_indices:
+                random.shuffle(self.name_to_indices[name])
+                self.name_to_indices[name] = np.array(self.name_to_indices[name])
         self.names_probs = np.array([len(indices) for indices in self.name_to_indices.values()])
         for i in range(len(self.names_probs)):
             print(self.names[i], self.names_probs[i])
@@ -160,16 +161,14 @@ class SameNameBatchSampler(Sampler):
         self.all_to_one = None
 
     def __iter__(self):
-        for _ in range(10):
-            for name in self.names:
-                indices = self.name_to_indices[name]
-                if self.batch_size > len(indices):
-                    yield indices
-                    continue
-                random_indexes = random.choices(range(len(indices)), k=self.batch_size)
-                yield [indices[i] for i in random_indexes]
-                # for i in range(0, len(indices) - self.batch_size, self.batch_size):
-                #     yield indices[i:i + self.batch_size]
+
+        for name in self.names:
+            indices = self.name_to_indices[name]
+            if self.batch_size > len(indices):
+                yield indices
+                continue
+            for i in range(0, len(indices) - self.batch_size, self.batch_size):
+                yield indices[i:i + self.batch_size]
 
     def __len__(self):
 
