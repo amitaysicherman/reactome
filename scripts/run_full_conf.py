@@ -25,6 +25,20 @@ os.system(cmd)
 
 args.dp_print = 1
 
+if args.downstream_task == "cl":
+    if "Drug" in args.name or "Davis" in args.name or "KIBA" in args.name:
+        args.downstream_task = "pd"
+    elif "go" in args.name :
+        args.downstream_task = "go"
+    elif "loc" in args.name:
+        args.downstream_task = "loc"
+    elif "rrf" in args.name:
+        args.downstream_task = "rrf"
+    elif "mol" in args.name:
+        args.downstream_task = "mol"
+    else:
+        raise Exception("Unknown downstream task")
+
 if args.downstream_task == "pd":
     # run drug protein
     configs = [{"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
