@@ -63,7 +63,7 @@ def get_args():
     parser.add_argument("--all_to_prot", type=int, default=1)
 
     # drug protein args
-    parser.add_argument("--dp_fuse_base", type=str, default="data/models_checkpoints/fuse2_all-to-prot_best")
+    parser.add_argument("--dp_fuse_base", type=str, default="")
     parser.add_argument("--dp_m_fuse", type=int, default=1)
     parser.add_argument("--dp_p_fuse", type=int, default=1)
     parser.add_argument("--dp_m_model", type=int, default=0)
@@ -92,7 +92,12 @@ def get_args():
 
     # add tasks:
     parser.add_argument("--task_output_prefix", type=str, default="")
+
     args = parser.parse_args()
+    if args.dp_fuse_base == "":
+        args.dp_fuse_base = f'fuse2_{args.name}'
+    if args.fuse_all_to_one == "0":
+        args.fuse_all_to_one = ""
     if args.fuse_name == "" or args.fuse_name == "0":
         args.fuse_name = args.name
     return args
