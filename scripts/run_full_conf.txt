@@ -15,7 +15,7 @@
 --name NoAncKIBA --db_dataset KIBA --fuse_all_to_one '0'  --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
 --name NoAnc-go-CC --go_task CC  --fuse_all_to_one '0' --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
 --name NoAnc-go-MF --go_task MF  --fuse_all_to_one '0' --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-go-BP--go_task BP  --fuse_all_to_one '0' --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
+--name NoAnc-go-BP --go_task BP  --fuse_all_to_one '0' --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
 --name NoAnc-loc  --fuse_all_to_one '0' --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
 --name NoAnc-loc1   --fuse_all_to_one '0' --loc_bin 1 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
 --name NoAnc-Mol-BACE  --fuse_all_to_one '0' --mol_task BACE --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
