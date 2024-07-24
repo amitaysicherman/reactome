@@ -184,6 +184,8 @@ def main(args, fuse_model=None):
 
     if args.dp_print:
         print("Best Test scores\n", best_test_acc)
+        task_output_prefix = args.task_output_prefix
+        task_output_prefix = f"{scores_path}/{task_output_prefix}mol_{mol_task}"
         output_file = f"{scores_path}/mol_{mol_task}.csv"
         if not os.path.exists(output_file):
             names = "name,seed,use_fuse,use_model,"

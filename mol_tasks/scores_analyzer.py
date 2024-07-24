@@ -9,10 +9,10 @@ PRE = "Pre-trained"
 STAT = "statistically significant"
 
 
-def main(use_model, task, print_count) -> pd.DataFrame:
+def main(use_model, task, print_count,task_output_prefix) -> pd.DataFrame:
     our_key = 'True | True' if use_model else 'True | False'
     pre_key = 'False | True'
-    df = pd.read_csv(f"{data_path}/scores/mol_{task}.csv")
+    df = pd.read_csv(f"{data_path}/scores/{task_output_prefix}mol_{task}.csv")
     have_name = df.name.apply(lambda x: len(x.split("-")) > 1)
     print(len(df), have_name.sum())
     df = df[have_name]
@@ -86,7 +86,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     all_res = dict()
     for task in tasks:
-        res = main(args.use_model, task, args.print_count)
+        res = main(args.use_model, task, args.print_count,args.task_output_prefix)
         res.set_index('molecule_model', inplace=True, drop=True)
         all_res[task] = res
     final_res = all_res[tasks[0]]

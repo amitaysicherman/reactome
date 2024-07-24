@@ -205,7 +205,8 @@ def main(args, fuse_model=None):
 
     if args.dp_print:
         print("Best Test scores\n", best_test_score)
-        output_file = f"{scores_path}/go-{task}.csv"
+        task_output_prefix = args.task_output_prefix
+        output_file = f"{scores_path}/{task_output_prefix}go-{task}.csv"
         if not os.path.exists(output_file):
             names = "name,use_fuse,use_model,"
             with open(output_file, "w") as f:

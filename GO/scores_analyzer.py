@@ -19,7 +19,7 @@ def calcualte_ttest(data, our_key, pre_key, metric):
 def main(args):
     our_key = 'True | True' if args.use_model else 'True | False'
     pre_key = 'False | True'
-    df = pd.read_csv(f"{data_path}/scores/go-{args.task}.csv")
+    df = pd.read_csv(f"{data_path}/scores/{args.task_output_prefix}go-{args.task}.csv")
     df['protein_model'] = df.name.apply(lambda x: x.split("_")[1] if len(x.split("_")) == 3 else "")
     df['molecule_model'] = df.name.apply(lambda x: x.split("_")[2] if len(x.split("_")) == 3 else "")
     df = df[df['molecule_model'] == ROBERTA]

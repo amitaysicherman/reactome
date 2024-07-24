@@ -30,10 +30,11 @@ if args.downstream_task == "pd":
     configs = [{"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
                {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 0, "dp_p_model": 0},
                {"dp_m_fuse": 0, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1},
-               {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 0, "dp_p_model": 1},
-               {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 0},
-               {"dp_m_fuse": 0, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
-               {"dp_m_fuse": 1, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1}]
+               # {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 0, "dp_p_model": 1},
+               # {"dp_m_fuse": 1, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 0},
+               # {"dp_m_fuse": 0, "dp_p_fuse": 1, "dp_m_model": 1, "dp_p_model": 1},
+               # {"dp_m_fuse": 1, "dp_p_fuse": 0, "dp_m_model": 1, "dp_p_model": 1}
+               ]
 
     base_cmd = "python protein_drug/train_eval.py"
 elif args.downstream_task == "rrf":
@@ -52,8 +53,7 @@ else:
         base_cmd = "python mol_tasks/train_eval.py"
     else:
         raise Exception("Unknown downstream task")
-max_seed = 52 if args.downstream_task != "mol" else 142
-for random_seed in range(42, max_seed):
+for random_seed in range(42, 52):
     args.random_seed = random_seed
     for config in configs:
         for key, value in config.items():

@@ -13,7 +13,7 @@ STAT = "statistically significant"
 def main(args, ds) -> pd.DataFrame:
     our_key = 'True | True' if args.use_model else 'True | False'
     pre_key = 'False | True'
-    df = pd.read_csv(f"{data_path}/scores/{ds}.csv")
+    df = pd.read_csv(f"{data_path}/scores/{args.task_output_prefix}{ds}.csv")
     have_name = df.name.apply(lambda x: len(x.split("_")) > 1)
     print(len(df), have_name.sum())
     df = df[have_name]

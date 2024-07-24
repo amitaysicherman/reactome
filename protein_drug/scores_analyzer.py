@@ -13,8 +13,7 @@ STAT = "statistically significant"
 def main(args, ds):
     our_key = 'True | True | True | True' if args.use_model else 'True | True | False | False'
     pre_key = 'False | False | True | True'
-
-    df = pd.read_csv(f"{data_path}/scores/drug_protein_{ds}.csv")
+    df = pd.read_csv(f"{data_path}/scores/{args.task_output_prefix}drug_protein_{ds}.csv")
     df['name_len'] = df.name.apply(lambda x: len(x.split("_")))
     if args.mul_fuse:
         df = df[df.name_len == 4]
