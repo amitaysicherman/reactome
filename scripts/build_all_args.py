@@ -42,5 +42,5 @@ for p in PROT_UI_ORDER:
                     for k,v in {**config_args, **d_args}.items():
                         args_str+=f"--{k} {v} "
 
-                    print(f" --name {c}-{d}-{d_name}-{p}-{m} --downstream_task cl --fuse_train_all 0 --dp_print 0 {args_str}")
+                    print(f" --name {c}-{d}-{d_name}-{p}-{m} --downstream_task cl --fuse_train_all 0 --dp_print 0 {args_str} --protein_emd {p} --mol_emd {m}")
 

@@ -26,13 +26,13 @@ os.system(cmd)
 args.dp_print = 1
 
 if args.downstream_task == "cl":
-    if "mol" in args.dp_print:
+    if "mol" in args.name:
         args.downstream_task = "mol"
-    elif "go" in args.dp_print:
+    elif "go" in args.name:
         args.downstream_task = "go"
-    elif "loc" in args.dp_print:
+    elif "loc" in args.name:
         args.downstream_task = "loc"
-    elif "pd" in args.dp_print:
+    elif "pd" in args.name:
         args.downstream_task = "pd"
     else:
         raise Exception("Unknown downstream task")
