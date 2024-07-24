@@ -34,7 +34,7 @@ if args.downstream_task == "cl":
         args.downstream_task = "loc"
     elif "rrf" in args.name:
         args.downstream_task = "rrf"
-    elif "mol" in args.name:
+    elif "Mol" in args.name:
         args.downstream_task = "mol"
     else:
         raise Exception("Unknown downstream task")
