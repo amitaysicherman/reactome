@@ -1,239 +1,540 @@
---name CompDrugBank --db_dataset DrugBank --fuse_n_layers 4  --task_output_prefix comp__ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name CompDavis --db_dataset Davis --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name CompKIBA --db_dataset KIBA --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Comp-go-CC  --go_task CC --dp_bs 64 --dp_lr 0.00005 --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Comp-go-MF  --go_task MF --dp_bs 64 --dp_lr 0.00005 --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Comp-go-BP  --go_task BP --dp_bs 64 --dp_lr 0.00005 --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Comp-loc --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Comp-loc1 --loc_bin 1 --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Comp-Mol-BACE --mol_task BACE --dp_bs 64 --dp_lr 0.00005 --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Comp-Mol-ClinTox --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005 --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Comp-Mol-HIV --mol_task HIV --dp_bs 64 --dp_lr 0.00005 --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Comp-Mol-SIDER --mol_task SIDER --dp_bs 64 --dp_lr 0.00005 --fuse_n_layers 4  --task_output_prefix comp_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAncDrugBank --db_dataset DrugBank --fuse_all_to_one '0'  --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAncDavis --db_dataset Davis --fuse_all_to_one '0'  --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAncKIBA --db_dataset KIBA --fuse_all_to_one '0'  --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-go-CC --go_task CC  --fuse_all_to_one '0' --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-go-MF --go_task MF  --fuse_all_to_one '0' --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-go-BP --go_task BP  --fuse_all_to_one '0' --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-loc  --fuse_all_to_one '0' --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-loc1   --fuse_all_to_one '0' --loc_bin 1 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-Mol-BACE  --fuse_all_to_one '0' --mol_task BACE --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-Mol-ClinTox --fuse_all_to_one '0' --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-Mol-HIV  --fuse_all_to_one '0' --mol_task HIV --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name NoAnc-Mol-SIDER  --fuse_all_to_one '0' --mol_task SIDER --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name LongDrugBank --db_dataset DrugBank  --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name LongDavis --db_dataset Davis  --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name LongKIBA --db_dataset KIBA  --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Long-go-CC  --go_task CC --dp_bs 64 --dp_lr 0.00005 --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Long-go-MF  --go_task MF --dp_bs 64 --dp_lr 0.00005 --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Long-go-BP --go_task BP --dp_bs 64 --dp_lr 0.00005 --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Long-loc  --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Long-loc1 --loc_bin 1 --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Long-Mol-BACE  --mol_task BACE --dp_bs 64 --dp_lr 0.00005 --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Long-Mol-ClinTox --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005 --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Long-Mol-HIV --mol_task HIV --dp_bs 64 --dp_lr 0.00005 --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
---name Long-Mol-SIDER --mol_task SIDER --dp_bs 64 --dp_lr 0.00005 --task_output_prefix long_ --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
-
-
-
---name DrugBank_2l_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_2l_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_n_layers 2
---name DrugBank_notrain_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_notrain_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --gnn_sample -1
-
-
-
---name DrugBank_reg_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_dropout 0
---name DrugBank_reg_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ESM-1B_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ESM-1B_roberta --dp_fuse_base fuse2_DrugBank_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ESM-1B_chemberta --dp_fuse_base fuse2_DrugBank_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ESM2_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ESM2_roberta --dp_fuse_base fuse2_DrugBank_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ESM2_chemberta --dp_fuse_base fuse2_DrugBank_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ESM3_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ESM3_roberta --dp_fuse_base fuse2_DrugBank_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_reg_ESM3_chemberta --dp_fuse_base fuse2_DrugBank_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_protein_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ESM-1B_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ESM-1B_roberta --dp_fuse_base fuse2_DrugBank_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ESM-1B_chemberta --dp_fuse_base fuse2_DrugBank_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ESM2_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ESM2_roberta --dp_fuse_base fuse2_DrugBank_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ESM2_chemberta --dp_fuse_base fuse2_DrugBank_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ESM3_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ESM3_roberta --dp_fuse_base fuse2_DrugBank_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_protein_ESM3_chemberta --dp_fuse_base fuse2_DrugBank_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one protein
---name DrugBank_molecule_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ESM-1B_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ESM-1B_roberta --dp_fuse_base fuse2_DrugBank_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ESM-1B_chemberta --dp_fuse_base fuse2_DrugBank_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ESM2_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ESM2_roberta --dp_fuse_base fuse2_DrugBank_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ESM2_chemberta --dp_fuse_base fuse2_DrugBank_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ESM3_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ESM3_roberta --dp_fuse_base fuse2_DrugBank_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_molecule_ESM3_chemberta --dp_fuse_base fuse2_DrugBank_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_all_to_one molecule
---name DrugBank_recon_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ESM-1B_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ESM-1B_roberta --dp_fuse_base fuse2_DrugBank_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ESM-1B_chemberta --dp_fuse_base fuse2_DrugBank_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ESM2_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ESM2_roberta --dp_fuse_base fuse2_DrugBank_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ESM2_chemberta --dp_fuse_base fuse2_DrugBank_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ESM3_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ESM3_roberta --dp_fuse_base fuse2_DrugBank_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
---name DrugBank_recon_ESM3_chemberta --dp_fuse_base fuse2_DrugBank_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank --fuse_recon 1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
---name rrf-ProtBert-BFD-pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ProtBert-BFD-roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ProtBert-BFD-chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ProtBertT5-xl-pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ProtBertT5-xl-roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ProtBertT5-xl-chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ESM-1B-pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ESM-1B-roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ESM-1B-chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ESM2-pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ESM2-roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ESM2-chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ESM3-pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ESM3-roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
---name rrf-ESM3-chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --downstream_task rrf --gnn_pretrained_method 2  --seq_size s --fuse_train_all 0
-
---name go-CC_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-CC_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
---name go-MF_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-MF_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
---name go-BP_ProtBert-BFD_roberta --dp_fuse_base fuse2_go-BP_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
---name go-CC_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go-CC_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
---name go-MF_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go-MF_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
---name go-BP_ProtBertT5-xl_roberta --dp_fuse_base fuse2_go-BP_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
---name go-CC_ESM-1B_roberta --dp_fuse_base fuse2_go-CC_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
---name go-MF_ESM-1B_roberta --dp_fuse_base fuse2_go-MF_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
---name go-BP_ESM-1B_roberta --dp_fuse_base fuse2_go-BP_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
---name go-CC_ESM2_roberta --dp_fuse_base fuse2_go-CC_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
---name go-MF_ESM2_roberta --dp_fuse_base fuse2_go-MF_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
---name go-BP_ESM2_roberta --dp_fuse_base fuse2_go-BP_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
---name go-CC_ESM3_roberta --dp_fuse_base fuse2_go-CC_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task go --go_task CC --dp_bs 64 --dp_lr 0.00005
---name go-MF_ESM3_roberta --dp_fuse_base fuse2_go-MF_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task go --go_task MF --dp_bs 64 --dp_lr 0.00005
---name go-BP_ESM3_roberta --dp_fuse_base fuse2_go-BP_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task go --go_task BP --dp_bs 64 --dp_lr 0.00005
-
-
---name loc_ProtBert-BFD_roberta --dp_fuse_base fuse2_loc_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --downstream_task loc
---name loc_ProtBertT5-xl_roberta --dp_fuse_base fuse2_loc_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --downstream_task loc
---name loc_ESM-1B_roberta --dp_fuse_base fuse2_loc_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --downstream_task loc
---name loc_ESM2_roberta --dp_fuse_base fuse2_loc_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --downstream_task loc
---name loc_ESM3_roberta --dp_fuse_base fuse2_loc_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --downstream_task loc
---name loc1_ProtBert-BFD_roberta --dp_fuse_base fuse2_loc1_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --loc_bin 1 --downstream_task loc
---name loc1_ProtBertT5-xl_roberta --dp_fuse_base fuse2_loc1_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --loc_bin 1 --downstream_task loc
---name loc1_ESM-1B_roberta --dp_fuse_base fuse2_loc1_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --loc_bin 1 --downstream_task loc
---name loc1_ESM2_roberta --dp_fuse_base fuse2_loc1_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --loc_bin 1 --downstream_task loc
---name loc1_ESM3_roberta --dp_fuse_base fuse2_loc1_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --loc_bin 1 --downstream_task loc
-
---name DrugBank_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
---name DrugBank_ProtBert-BFD_roberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_ProtBert-BFD_chemberta --dp_fuse_base fuse2_DrugBank_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
---name DrugBank_ProtBertT5-xl_roberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_DrugBank_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_ESM-1B_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
---name DrugBank_ESM-1B_roberta --dp_fuse_base fuse2_DrugBank_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_ESM-1B_chemberta --dp_fuse_base fuse2_DrugBank_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_ESM2_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
---name DrugBank_ESM2_roberta --dp_fuse_base fuse2_DrugBank_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_ESM2_chemberta --dp_fuse_base fuse2_DrugBank_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_ESM3_pebchem10m --dp_fuse_base fuse2_DrugBank_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset DrugBank
---name DrugBank_ESM3_roberta --dp_fuse_base fuse2_DrugBank_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset DrugBank
---name DrugBank_ESM3_chemberta --dp_fuse_base fuse2_DrugBank_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset DrugBank
---name human_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_human_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset human
---name human_ProtBert-BFD_roberta --dp_fuse_base fuse2_human_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset human
---name human_ProtBert-BFD_chemberta --dp_fuse_base fuse2_human_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset human
---name human_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_human_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset human
---name human_ProtBertT5-xl_roberta --dp_fuse_base fuse2_human_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset human
---name human_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_human_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset human
---name human_ESM-1B_pebchem10m --dp_fuse_base fuse2_human_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset human
---name human_ESM-1B_roberta --dp_fuse_base fuse2_human_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset human
---name human_ESM-1B_chemberta --dp_fuse_base fuse2_human_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset human
---name human_ESM2_pebchem10m --dp_fuse_base fuse2_human_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset human
---name human_ESM2_roberta --dp_fuse_base fuse2_human_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset human
---name human_ESM2_chemberta --dp_fuse_base fuse2_human_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset human
---name human_ESM3_pebchem10m --dp_fuse_base fuse2_human_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset human
---name human_ESM3_roberta --dp_fuse_base fuse2_human_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset human
---name human_ESM3_chemberta --dp_fuse_base fuse2_human_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset human
---name Davis_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_Davis_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset Davis
---name Davis_ProtBert-BFD_roberta --dp_fuse_base fuse2_Davis_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset Davis
---name Davis_ProtBert-BFD_chemberta --dp_fuse_base fuse2_Davis_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset Davis
---name Davis_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_Davis_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset Davis
---name Davis_ProtBertT5-xl_roberta --dp_fuse_base fuse2_Davis_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset Davis
---name Davis_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_Davis_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset Davis
---name Davis_ESM-1B_pebchem10m --dp_fuse_base fuse2_Davis_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset Davis
---name Davis_ESM-1B_roberta --dp_fuse_base fuse2_Davis_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset Davis
---name Davis_ESM-1B_chemberta --dp_fuse_base fuse2_Davis_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset Davis
---name Davis_ESM2_pebchem10m --dp_fuse_base fuse2_Davis_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset Davis
---name Davis_ESM2_roberta --dp_fuse_base fuse2_Davis_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset Davis
---name Davis_ESM2_chemberta --dp_fuse_base fuse2_Davis_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset Davis
---name Davis_ESM3_pebchem10m --dp_fuse_base fuse2_Davis_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset Davis
---name Davis_ESM3_roberta --dp_fuse_base fuse2_Davis_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset Davis
---name Davis_ESM3_chemberta --dp_fuse_base fuse2_Davis_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset Davis
---name KIBA_ProtBert-BFD_pebchem10m --dp_fuse_base fuse2_KIBA_ProtBert-BFD_pebchem10m --protein_emd ProtBert-BFD --mol_emd pebchem10m --dp_print 0 --db_dataset KIBA
---name KIBA_ProtBert-BFD_roberta --dp_fuse_base fuse2_KIBA_ProtBert-BFD_roberta --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0 --db_dataset KIBA
---name KIBA_ProtBert-BFD_chemberta --dp_fuse_base fuse2_KIBA_ProtBert-BFD_chemberta --protein_emd ProtBert-BFD --mol_emd chemberta --dp_print 0 --db_dataset KIBA
---name KIBA_ProtBertT5-xl_pebchem10m --dp_fuse_base fuse2_KIBA_ProtBertT5-xl_pebchem10m --protein_emd ProtBertT5-xl --mol_emd pebchem10m --dp_print 0 --db_dataset KIBA
---name KIBA_ProtBertT5-xl_roberta --dp_fuse_base fuse2_KIBA_ProtBertT5-xl_roberta --protein_emd ProtBertT5-xl --mol_emd roberta --dp_print 0 --db_dataset KIBA
---name KIBA_ProtBertT5-xl_chemberta --dp_fuse_base fuse2_KIBA_ProtBertT5-xl_chemberta --protein_emd ProtBertT5-xl --mol_emd chemberta --dp_print 0 --db_dataset KIBA
---name KIBA_ESM-1B_pebchem10m --dp_fuse_base fuse2_KIBA_ESM-1B_pebchem10m --protein_emd ESM-1B --mol_emd pebchem10m --dp_print 0 --db_dataset KIBA
---name KIBA_ESM-1B_roberta --dp_fuse_base fuse2_KIBA_ESM-1B_roberta --protein_emd ESM-1B --mol_emd roberta --dp_print 0 --db_dataset KIBA
---name KIBA_ESM-1B_chemberta --dp_fuse_base fuse2_KIBA_ESM-1B_chemberta --protein_emd ESM-1B --mol_emd chemberta --dp_print 0 --db_dataset KIBA
---name KIBA_ESM2_pebchem10m --dp_fuse_base fuse2_KIBA_ESM2_pebchem10m --protein_emd ESM2 --mol_emd pebchem10m --dp_print 0 --db_dataset KIBA
---name KIBA_ESM2_roberta --dp_fuse_base fuse2_KIBA_ESM2_roberta --protein_emd ESM2 --mol_emd roberta --dp_print 0 --db_dataset KIBA
---name KIBA_ESM2_chemberta --dp_fuse_base fuse2_KIBA_ESM2_chemberta --protein_emd ESM2 --mol_emd chemberta --dp_print 0 --db_dataset KIBA
---name KIBA_ESM3_pebchem10m --dp_fuse_base fuse2_KIBA_ESM3_pebchem10m --protein_emd ESM3 --mol_emd pebchem10m --dp_print 0 --db_dataset KIBA
---name KIBA_ESM3_roberta --dp_fuse_base fuse2_KIBA_ESM3_roberta --protein_emd ESM3 --mol_emd roberta --dp_print 0 --db_dataset KIBA
---name KIBA_ESM3_chemberta --dp_fuse_base fuse2_KIBA_ESM3_chemberta --protein_emd ESM3 --mol_emd chemberta --dp_print 0 --db_dataset KIBA
-
-
---name mol-chemberta-BACE --dp_fuse_base fuse2_mol-chemberta-BACE --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task BACE --dp_bs 64 --dp_lr 0.00005
---name mol-chemberta-BBBP --dp_fuse_base fuse2_mol-chemberta-BBBP --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task BBBP --dp_bs 64 --dp_lr 0.00005
---name mol-chemberta-ClinTox --dp_fuse_base fuse2_mol-chemberta-ClinTox --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005
---name mol-chemberta-HIV --dp_fuse_base fuse2_mol-chemberta-HIV --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task HIV --dp_bs 64 --dp_lr 0.00005
---name mol-chemberta-SIDER --dp_fuse_base fuse2_mol-chemberta-SIDER --mol_emd chemberta --dp_print 0 --downstream_task mol --mol_task SIDER --dp_bs 64 --dp_lr 0.00005
---name mol-roberta-BACE --dp_fuse_base fuse2_mol-roberta-BACE --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task BACE --dp_bs 64 --dp_lr 0.00005
---name mol-roberta-BBBP --dp_fuse_base fuse2_mol-roberta-BBBP --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task BBBP --dp_bs 64 --dp_lr 0.00005
---name mol-roberta-ClinTox --dp_fuse_base fuse2_mol-roberta-ClinTox --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005
---name mol-roberta-HIV --dp_fuse_base fuse2_mol-roberta-HIV --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task HIV --dp_bs 64 --dp_lr 0.00005
---name mol-roberta-SIDER --dp_fuse_base fuse2_mol-roberta-SIDER --mol_emd roberta --dp_print 0 --downstream_task mol --mol_task SIDER --dp_bs 64 --dp_lr 0.00005
---name mol-pebchem10m-BACE --dp_fuse_base fuse2_mol-pebchem10m-BACE --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task BACE --dp_bs 64 --dp_lr 0.00005
---name mol-pebchem10m-BBBP --dp_fuse_base fuse2_mol-pebchem10m-BBBP --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task BBBP --dp_bs 64 --dp_lr 0.00005
---name mol-pebchem10m-ClinTox --dp_fuse_base fuse2_mol-pebchem10m-ClinTox --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005
---name mol-pebchem10m-HIV --dp_fuse_base fuse2_mol-pebchem10m-HIV --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task HIV --dp_bs 64 --dp_lr 0.00005
---name mol-pebchem10m-SIDER --dp_fuse_base fuse2_mol-pebchem10m-SIDER --mol_emd pebchem10m --dp_print 0 --downstream_task mol --mol_task SIDER --dp_bs 64 --dp_lr 0.00005
-
+ --name PROT-pd-DrugBank-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ESM2-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ESM2-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ESM2-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ProtBert-BFD-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ProtBert-BFD-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ProtBert-BFD-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ESM-1B-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ESM-1B-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ESM-1B-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ESM3-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ESM3-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ESM3-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ProtBertT5-xl-pebchem10m --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ProtBertT5-xl-chemberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name PROT-pd-DrugBank-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset DrugBank
+ --name PROT-pd-Davis-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset Davis
+ --name PROT-pd-KIBA-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --db_dataset KIBA
+ --name PROT-go-CC-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-BP-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name PROT-go-MF-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name PROT-loc-0-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 0
+ --name PROT-loc-1-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --loc_bin 1
+ --name PROT-mol-BACE-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-ClinTox-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-HIV-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name PROT-mol-SIDER-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1 --task_output_prefix PROT_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name NO-pd-DrugBank-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset DrugBank
+ --name NO-pd-Davis-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset Davis
+ --name NO-pd-KIBA-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --db_dataset KIBA
+ --name NO-go-CC-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-BP-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name NO-go-MF-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name NO-loc-0-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 0
+ --name NO-loc-1-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --loc_bin 1
+ --name NO-mol-BACE-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-ClinTox-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-HIV-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name NO-mol-SIDER-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one 0 --fuse_n_layers 1 --task_output_prefix NO_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
+ --name COMP-pd-DrugBank-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset DrugBank
+ --name COMP-pd-Davis-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset Davis
+ --name COMP-pd-KIBA-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --db_dataset KIBA
+ --name COMP-go-CC-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task CC --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-BP-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task BP --dp_bs 64 --dp_lr 5e-05
+ --name COMP-go-MF-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --go_task MF --dp_bs 64 --dp_lr 5e-05
+ --name COMP-loc-0-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 0
+ --name COMP-loc-1-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --loc_bin 1
+ --name COMP-mol-BACE-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task BACE --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-ClinTox-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task ClinTox --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-HIV-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task HIV --dp_bs 64 --dp_lr 5e-05
+ --name COMP-mol-SIDER-ProtBertT5-xl-roberta --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 4 --task_output_prefix COMP_ --mol_task SIDER --dp_bs 64 --dp_lr 5e-05
