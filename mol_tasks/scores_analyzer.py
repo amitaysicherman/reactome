@@ -82,6 +82,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--use_model", type=int, default=0)
     parser.add_argument("--task", type=str, default="BACE")
+    parser.add_argument("--task_output_prefix", type=str, default="")
+
     parser.add_argument("--print_count", type=int, default=1)
     args = parser.parse_args()
     all_res = dict()

@@ -91,6 +91,8 @@ if __name__ == "__main__":
     parser.add_argument("--dataset", type=str, default="DrugBank")
     parser.add_argument("--metric", type=str, default="auprc")
     parser.add_argument("--print_count", type=int, default=0)
+    parser.add_argument("--task_output_prefix", type=str, default="")
+
     parser.add_argument("--mul_fuse", type=int, default=0)
     args = parser.parse_args()
     all_res = dict()
