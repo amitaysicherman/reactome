@@ -22,7 +22,6 @@
 --name NoAnc-Mol-ClinTox --dp_fuse_base fuse2_NoAnc-Mol-ClinTox --mol_task ClinTox --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
 --name NoAnc-Mol-HIV --dp_fuse_base fuse2_NoAnc-Mol-HIV --mol_task HIV --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
 --name NoAnc-Mol-SIDER --dp_fuse_base fuse2_NoAnc-Mol-SIDER --mol_task SIDER --dp_bs 64 --dp_lr 0.00005 --task_output_prefix noanc --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
-
 --name Long-DrugBank --dp_fuse_base fuse2_LongDrugBank --db_dataset DrugBank  --task_output_prefix long --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
 --name Long-Davis --dp_fuse_base fuse2_LongDavis --db_dataset Davis  --task_output_prefix long --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
 --name Long-KIBA --dp_fuse_base fuse2_LongKIBA --db_dataset KIBA  --task_output_prefix long --downstream_task cl --fuse_train_all 0 --protein_emd ProtBert-BFD --mol_emd roberta --dp_print 0
