@@ -16,16 +16,16 @@ os.makedirs(base_dir, exist_ok=True)
 
 
 def get_vec(seq2vec, x, dtype):
-    if dtype == DataType.MOLECULE:
-        return seq2vec.to_vec(x.to_smiles(), MOLECULE)
-    elif task.dtype1 == DataType.PROTEIN:
-        try:
+    try:
+        if dtype == DataType.MOLECULE:
+            return seq2vec.to_vec(x.to_smiles(), MOLECULE)
+        elif task.dtype1 == DataType.PROTEIN:
             return seq2vec.to_vec(x.to_sequence().replace(".G", ""), PROTEIN)
-        except Exception:
-            print(f"Error processing {x.to_sequence()}")
-            return None
-    else:
-        raise Exception("dtype", dtype)
+        else:
+            raise Exception("dtype", dtype)
+    except Exception as e:
+        print(e)
+        return None
 
 
 def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
