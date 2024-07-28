@@ -43,6 +43,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         labels = labels.float().to(device)
         if labels.shape[1] == 1:
             labels = labels.squeeze(1).long()
+            print(labels)
 
         print(output.shape, labels.shape)
         loss = criterion(output, labels)
