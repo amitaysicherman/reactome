@@ -19,9 +19,9 @@ def load_data(task_name, mol_emd, protein_emd):
 
 class TaskPrepDataset(Dataset):
     def __init__(self, x1, x2, labels):
-        self.x1 = x1
-        self.x2 = x2
-        self.labels = labels
+        self.x1 = np.nan_to_num(x1)
+        self.x2 = np.nan_to_num(x2) if x2 is not None else None
+        self.labels = np.nan_to_num(labels)
 
     def __len__(self):
         return len(self.labels)
