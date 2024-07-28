@@ -1,14 +1,10 @@
 import torch
 from enum import Enum
 import os
+
+from common.data_types import Config
 from model.models import MultiModalLinearConfig, MiltyModalLinear
 from common.path_manager import model_path
-
-
-class Config(Enum):
-    PRE = "pre"
-    our = "our"
-    both = "both"
 
 
 class DataType(Enum):
@@ -65,7 +61,7 @@ class FuseModel(torch.nn.Module):
 
 class LinFuseModel(FuseModel):
     def __init__(self, input_dim: int, input_tpye: DataType, output_dim: int, conf: Config, hidden_dims=[512],
-                 fuse_model=None, fuse_base=""):
+                 fuse_model=None, fuse_base="", **kwargs):
         super().__init__(conf, fuse_model, fuse_base)
         self.input_dim = 0
         if self.use_fuse:
@@ -89,7 +85,7 @@ class PairTransFuseModel(FuseModel):
     def __init__(self, input_dim_1: int, dtpye_1: DataType, input_dim_2: int, dtype_2: DataType, output_dim: int,
                  conf: Config,
                  trans_dim=256, n_layers=2, nhead=2, dropout=0.5, fuse_model=None,
-                 fuse_base=""):
+                 fuse_base="", **kwargs):
         super().__init__(conf, fuse_model, fuse_base)
 
         if self.use_fuse:

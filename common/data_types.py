@@ -1,6 +1,7 @@
 import dataclasses
 import datetime
 from dataclasses import dataclass
+from enum import Enum
 from typing import List
 
 
@@ -212,3 +213,9 @@ mol_task_to_label_keys = {
               'Nervous system disorders',
               'Injury, poisoning and procedural complications']
 }
+
+
+class Config(Enum):
+    PRE = "pre"
+    our = "our"
+    both = "both"

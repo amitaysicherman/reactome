@@ -11,6 +11,7 @@ def get_args():
     parser.add_argument("--mol_emd", type=str, default="pebchem10m")
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
                         choices=["all", "protein", "molecule", "text", 'dna', "label"])
+    parser.add_argument("--task_name", type=str, default="BACE")
 
     parser.add_argument("--downstream_task", type=str, default="pd", choices=["pd", "loc", "go", "rrf", "cl", "mol"])
 
