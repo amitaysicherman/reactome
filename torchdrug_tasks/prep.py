@@ -75,12 +75,18 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser()
-    parser.add_argument("--tasks", type=str, default="all")
+    parser.add_argument("--task", type=str, default="all")
+    parser.add_argument("--protein_emd", type=str, default="ESM2")
+    parser.add_argument("--mol_emd", type=str, default="pebchem10m")
+    parser.add_argument("--self_token", type=str, default="")
+    parser.add_argument("--task_index", type=int, default=-1)
     args = parser.parse_args()
-    if args.tasks == "all":
+    if args.task_index >= 0:
+        names = sorted(list(name_to_task.keys()))
+        tasks = name_to_task[names[args.task_index]]
+    elif args.tasks == "all":
         tasks = name_to_task.values()
     else:
-        tasks = [name_to_task[task] for task in args.tasks.split(",")]
-
+        tasks = [name_to_task[args.task]]
     for task in tasks:
         prep_dataset(task)
