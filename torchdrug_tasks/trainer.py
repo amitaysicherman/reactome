@@ -16,7 +16,6 @@ def metric_prep_predictions(preds, metric):
     elif metric.__name__ == "accuracy":
         return torch.argmax(preds, dim=-1)
     else:
-        print("No special handling for metric", metric.__name__)
         return preds
 
 
