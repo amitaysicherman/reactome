@@ -1,3 +1,4 @@
+# sbatch --time=1-0 --array=1-21 --gres=gpu:A40:1 --mem=64G -c 4 --requeue --wrap="python3 GO/prep.py --task_index $SLURM_ARRAY_TASK_ID-1"
 from preprocessing.seq_to_vec import Seq2Vec
 import numpy as np
 from common.path_manager import data_path
@@ -78,9 +79,9 @@ if __name__ == "__main__":
 
     if args.task_index >= 0:
         names = sorted(list(name_to_task.keys()))
-        tasks = name_to_task[names[args.task_index]]
+        tasks = [name_to_task[names[args.task_index]]]
     elif args.tasks == "all":
-        tasks = name_to_task.values()
+        tasks = [name_to_task.values()]
     else:
         tasks = [name_to_task[args.task]]
     for task in tasks:
