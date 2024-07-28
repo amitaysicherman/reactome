@@ -16,11 +16,20 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         model.eval()
     reals = []
     preds = []
-    for mols, labels in loader:
-        mols = mols.to(device).float()
+    for *all_x, labels in loader:
+        if len(all_x) == 1:
+            x = all_x[0]
+            x = x.float().to(device)
+            output = model(x)
+
+        else:
+            x1, x2 = all_x
+            x1 = x1.float().to(device)
+            x2 = x2.float().to(device)
+            output = model(x1, x2)
+
         optimizer.zero_grad()
         labels = labels.float().to(device)
-        output = model(mols)
         loss = criterion(output, labels)
         if part == "train":
             loss.backward()
