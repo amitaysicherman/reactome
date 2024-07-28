@@ -18,25 +18,8 @@ class Task:
     dtype2: DataType = None
 
 def mse_metric(output, target):
-    """
-    Compute the Mean Squared Error (MSE) between output and target.
-
-    Parameters:
-    - output (torch.Tensor): The predicted values (model output).
-    - target (torch.Tensor): The true values.
-
-    Returns:
-    - mse (float): The computed mean squared error.
-    """
-    # Ensure the output and target have the same shape
-    assert output.shape == target.shape, "Output and target must have the same shape"
-
-    # Compute the squared differences
     squared_diff = (output - target) ** 2
-
-    # Compute the mean of the squared differences
     mse = torch.mean(squared_diff)
-
     return mse
 
 
