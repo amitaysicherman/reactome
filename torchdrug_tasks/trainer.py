@@ -46,6 +46,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
             print(labels)
 
         print(output.shape, labels.shape)
+        print(output, labels)
         loss = criterion(output, labels)
         print(loss.item())
         if part == "train":
