@@ -88,7 +88,7 @@ def main(args, fuse_model=None):
     else:
         conf = Config.PRE
     model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, fuse_model=fuse_model)
-
+    model = model.to(device)
     if args.dp_print:
         print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
