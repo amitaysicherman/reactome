@@ -60,7 +60,7 @@ class FuseModel(torch.nn.Module):
 
 
 class LinFuseModel(FuseModel):
-    def __init__(self, input_dim: int, input_tpye: DataType, output_dim: int, conf: Config, hidden_dims=[512],
+    def __init__(self, input_dim: int, input_type: DataType, output_dim: int, conf: Config, hidden_dims,
                  fuse_model=None, fuse_base=""):
         super().__init__(conf, fuse_model, fuse_base)
         self.input_dim = 0
@@ -68,8 +68,8 @@ class LinFuseModel(FuseModel):
             self.input_dim += self.fuse_dim
         if self.use_model:
             self.input_dim += input_dim
-        self.dtype = input_tpye
-        self.layers = get_layers([self.input_dim] + hidden_dims + [output_dim])
+        self.dtype = input_type
+        self.layers = get_layers([self.input_dim] + [512] + [output_dim])
 
     def forward(self, data):
         x = []
