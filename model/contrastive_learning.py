@@ -321,8 +321,8 @@ def main(args):
     print(model)
     print(sum(p.numel() for p in model.parameters() if p.requires_grad), "parameters")
     contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
-    best_valid_auc = 0
-    best_test_auc = 0
+    best_valid_auc = -1e6
+    best_test_auc = -1e6
     running_args = {"model": model, "reconstruction_model": reconstruction_model, "optimizer": optimizer,
                     "reconstruction_optimizer": reconstruction_optimizer, "contrastive_loss": contrastive_loss,
                     "recon": args.fuse_recon, "output_file": scores_file, "all_to_one": args.fuse_all_to_one,
