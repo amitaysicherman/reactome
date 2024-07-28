@@ -13,6 +13,33 @@ from common.data_types import MOLECULE, PROTEIN
 
 base_dir = f"{data_path}/torchdrug/"
 os.makedirs(base_dir, exist_ok=True)
+SIDER_LABELS = ['Hepatobiliary disorders',
+                'Metabolism and nutrition disorders',
+                'Product issues',
+                'Eye disorders',
+                'Investigations',
+                'Musculoskeletal and connective tissue disorders',
+                'Gastrointestinal disorders',
+                'Social circumstances',
+                'Immune system disorders',
+                'Reproductive system and breast disorders',
+                'Neoplasms benign, malignant and unspecified (incl cysts and polyps)',
+                'General disorders and administration site conditions',
+                'Endocrine disorders',
+                'Surgical and medical procedures',
+                'Vascular disorders',
+                'Blood and lymphatic system disorders',
+                'Skin and subcutaneous tissue disorders',
+                'Congenital, familial and genetic disorders',
+                'Infections and infestations',
+                'Respiratory, thoracic and mediastinal disorders',
+                'Psychiatric disorders',
+                'Renal and urinary disorders',
+                'Pregnancy, puerperium and perinatal conditions',
+                'Ear and labyrinth disorders',
+                'Cardiac disorders',
+                'Nervous system disorders',
+                'Injury, poisoning and procedural complications']
 
 
 def get_vec(seq2vec, x, dtype):
@@ -31,7 +58,8 @@ def get_vec(seq2vec, x, dtype):
 def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
     dataset = task.dataset(pjoin(base_dir, task.name))
     labels_keys = getattr(task.dataset, 'target_fields')
-
+    if task.name == "SIDER":
+        labels_keys = SIDER_LABELS
     if hasattr(task.dataset, "splits"):
         splits = dataset.split()
         if len(splits) == 3:
