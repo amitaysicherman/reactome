@@ -107,8 +107,8 @@ def main(args, fuse_model=None):
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
 
     no_improve = 0
-    best_valid_score = 0
-    best_test_score = 0
+    best_valid_score = -1e6
+    best_test_score = -1e6
     for epoch in range(250):
         train_score = run_epoch(model, train_loader, optimizer, criterion, metric, "train")
         with torch.no_grad():
