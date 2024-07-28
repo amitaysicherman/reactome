@@ -10,10 +10,10 @@ from torchdrug_tasks.tasks import name_to_task, Task
 from torchdrug_tasks.models import DataType
 from common.data_types import MOLECULE, PROTEIN
 
-base_dir = f"{data_path}/mol/"
+base_dir = f"{data_path}/torchdrug/"
 
 
-def get_vec(x, dtype):
+def get_vec(seq2vec,x, dtype):
     if dtype == DataType.MOLECULE:
         return seq2vec.to_vec(x.to_smiles(), MOLECULE)
     elif task.dtype1 == DataType.PROTEIN:
@@ -47,9 +47,9 @@ def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
         labels = []
         for i in tqdm(range(len(split))):
             key1 = "graph" if task.dtype2 is None else "graph1"
-            x1_vecs.append(get_vec(split[i][key1], task.dtype1))
+            x1_vecs.append(get_vec(seq2vec,split[i][key1], task.dtype1))
             if task.dtype2 is not None:
-                x2_vecs.append(get_vec(split[i]["graph2"], task.dtype2))
+                x2_vecs.append(get_vec(seq2vec,split[i]["graph2"], task.dtype2))
             label = [split[i][key] for key in labels_keys]
             labels.append(label)
         x2_vecs = np.array(x2_vecs)
