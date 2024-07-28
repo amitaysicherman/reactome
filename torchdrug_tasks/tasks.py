@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from torchdrug_tasks.models import DataType, LinFuseModel, PairTransFuseModel
+from torchdrug_tasks.models import DataType, LinFuseModel, PairTransFuseModel,FuseModel
 from torchdrug import datasets
 from torchdrug import metrics
 from torch import nn
@@ -10,7 +10,7 @@ import torch
 class Task:
     name: str
     dataset: object
-    model: object
+    model: FuseModel
     criterion: object
     metric: object
     dtype1: DataType

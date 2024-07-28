@@ -4,6 +4,7 @@ from common.data_types import Config
 from common.path_manager import scores_path
 from torchdrug_tasks.dataset import get_dataloaders
 from torchdrug_tasks.tasks import name_to_task, Task
+from torchdrug_tasks.models import LinFuseModel, PairTransFuseModel
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -47,8 +48,14 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, fuse_model):
         input_dim_2 = None
         dtype_2 = None
     output_dim = task.output_dim
-    return model_class(input_dim_1, dtype_1, input_dim_2, dtype_2, output_dim, conf, fuse_base=fuse_base,
-                       fuse_model=fuse_model)
+    if task.model == LinFuseModel:
+        return model_class(input_dim_1=input_dim_1, input_type=dtype_1, output_dim=output_dim, conf=conf,
+                           fuse_base=fuse_base, fuse_model=fuse_model)
+    elif task.model == PairTransFuseModel:
+        return model_class(input_dim_1=input_dim_1, input_type=dtype_1, input_dim_2=input_dim_2, input_type_2=dtype_2,
+                           output_dim=output_dim, conf=conf, fuse_base=fuse_base, fuse_model=fuse_model)
+    else:
+        raise ValueError("Unknown model")
 
 
 def main(args, fuse_model=None):

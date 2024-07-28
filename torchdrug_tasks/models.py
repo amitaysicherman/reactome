@@ -60,8 +60,7 @@ class FuseModel(torch.nn.Module):
 
 
 class LinFuseModel(FuseModel):
-    def __init__(self, input_dim: int, input_type: DataType, output_dim: int, conf: Config, hidden_dims,
-                 fuse_model=None, fuse_base=""):
+    def __init__(self, input_dim: int, input_type: DataType, output_dim: int, conf: Config,fuse_model=None, fuse_base=""):
         super().__init__(conf, fuse_model, fuse_base)
         self.input_dim = 0
         if self.use_fuse:
