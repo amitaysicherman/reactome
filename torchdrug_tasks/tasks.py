@@ -37,7 +37,7 @@ name_to_task = {
     #                            metrics.accuracy, DataType.PROTEIN, 2),
     # "SubcellularLocalization": Task("SubcellularLocalization", datasets.SubcellularLocalization, LinFuseModel,
     #                                 nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 10),
-    "Fold": Task("Fold", datasets.Fold, LinFuseModel, nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 1195),
+    "Fold": Task("Fold", datasets.Fold, LinFuseModel, nn.CrossEntropyLoss, metrics.area_under_roc, DataType.PROTEIN, 1195),
     "SecondaryStructure": Task("SecondaryStructure", datasets.SecondaryStructure, LinFuseModel, nn.CrossEntropyLoss,
                                metrics.accuracy, DataType.PROTEIN, 3),
     "ProteinNet": Task("ProteinNet", datasets.ProteinNet, PairTransFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
