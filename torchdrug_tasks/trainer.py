@@ -78,7 +78,7 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, fuse_model):
         return model_class(input_dim=input_dim_1, input_type=dtype_1, output_dim=output_dim, conf=conf,
                            fuse_base=fuse_base, fuse_model=fuse_model)
     elif task.model == PairTransFuseModel:
-        return model_class(input_dim_1=input_dim_1, input_type=dtype_1, input_dim_2=input_dim_2, input_type_2=dtype_2,
+        return model_class(input_dim_1=input_dim_1, dtpye_1=dtype_1, input_dim_2=input_dim_2, dtype_2=dtype_2,
                            output_dim=output_dim, conf=conf, fuse_base=fuse_base, fuse_model=fuse_model)
     else:
         raise ValueError("Unknown model")
