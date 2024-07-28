@@ -71,8 +71,16 @@ def prep_dataset(task: Task):
         np.savez(output_file, **x1_all, **labels_all)
 
 
-log_file = "log.txt"
-for name, task in name_to_task.items():
-    with open(log_file, "a") as f:
-        f.write(f"Processing {task}\n")
-    prep_dataset(task)
+if __name__ == "__main__":
+    import argparse
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--tasks", type=str, default="all")
+    args = parser.parse_args()
+    if args.tasks == "all":
+        tasks = name_to_task.values()
+    else:
+        tasks = [name_to_task[task] for task in args.tasks.split(",")]
+
+    for task in tasks:
+        prep_dataset(task)
