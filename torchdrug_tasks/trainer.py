@@ -41,7 +41,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         preds = torch.cat(preds, dim=0)
         if preds.shape[1] == 1:
             preds = torch.sigmoid(preds)
-        score = metric(reals, preds).item()
+        score = metric(preds,reals).item()
         return score
     else:
         return 0
