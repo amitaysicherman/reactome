@@ -22,7 +22,7 @@ def get_args():
     parser.add_argument("--max_no_improve", type=int, default=15)
     parser.add_argument("--random_seed", type=int, default=42)
 
-    parser.add_argument("--fuse_batch_size", type=int, default=8192)
+    parser.add_argument("--fuse_batch_size", type=int, default=128)
     parser.add_argument("--fuse_output_dim", type=int, default=1024)
     parser.add_argument("--fuse_dropout", type=float, default=0.3)
     parser.add_argument("--fuse_lr", type=float, default=1e-3)

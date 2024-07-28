@@ -146,5 +146,4 @@ def main(args, fuse_model=None):
 
 if __name__ == '__main__':
     from common.args_manager import get_args
-
     main(get_args())
