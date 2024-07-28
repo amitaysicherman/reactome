@@ -26,7 +26,7 @@ name_to_task = {
     "Stability": Task("Stability", datasets.Stability, LinFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
                       DataType.PROTEIN, 2),
     "Solubility": Task("Solubility", datasets.Stability, LinFuseModel, nn.MSELoss, metrics.r2,
-                       DataType.PROTEIN, 2),
+                       DataType.PROTEIN, 1),
     # "BinaryLocalization": Task("BinaryLocalization", datasets.BinaryLocalization, LinFuseModel, nn.CrossEntropyLoss,
     #                            metrics.accuracy, DataType.PROTEIN, 2),
     # "SubcellularLocalization": Task("SubcellularLocalization", datasets.SubcellularLocalization, LinFuseModel,
