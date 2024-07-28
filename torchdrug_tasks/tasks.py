@@ -33,7 +33,7 @@ name_to_task = {
                                     nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 10),
     "Fold": Task("Fold", datasets.Fold, LinFuseModel, nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 1195),
     "SecondaryStructure": Task("SecondaryStructure", datasets.SecondaryStructure, LinFuseModel, nn.CrossEntropyLoss,
-                               metrics.macro_acc, DataType.PROTEIN, 3),
+                               metrics.accuracy, DataType.PROTEIN, 3),
     "ProteinNet": Task("ProteinNet", datasets.ProteinNet, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.accuracy,
                        DataType.PROTEIN, 2, DataType.PROTEIN),
     "HumanPPI": Task("HumanPPI", datasets.HumanPPI, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.accuracy,
