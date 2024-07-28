@@ -13,13 +13,17 @@ from common.data_types import MOLECULE, PROTEIN
 base_dir = f"{data_path}/torchdrug/"
 
 
-def get_vec(seq2vec,x, dtype):
+def get_vec(seq2vec, x, dtype):
     if dtype == DataType.MOLECULE:
         return seq2vec.to_vec(x.to_smiles(), MOLECULE)
     elif task.dtype1 == DataType.PROTEIN:
-        return seq2vec.to_vec(x.to_sequence().replace(".G", ""), PROTEIN)
+        try:
+            return seq2vec.to_vec(x.to_sequence().replace(".G", ""), PROTEIN)
+        except ValueError:
+            print(f"Error processing {x.to_sequence()}")
+            return None
     else:
-        raise Exception("Unknow type", task.dtype1)
+        raise Exception("dtype", dtype)
 
 
 def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
@@ -47,9 +51,16 @@ def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
         labels = []
         for i in tqdm(range(len(split))):
             key1 = "graph" if task.dtype2 is None else "graph1"
-            x1_vecs.append(get_vec(seq2vec,split[i][key1], task.dtype1))
+            new_vec = get_vec(seq2vec, split[i][key1], task.dtype1)
+            if new_vec is None:
+                continue
             if task.dtype2 is not None:
-                x2_vecs.append(get_vec(seq2vec,split[i]["graph2"], task.dtype2))
+                new_vec_2 = get_vec(seq2vec, split[i]["graph2"], task.dtype2)
+                if new_vec_2 is None:
+                    continue
+                x2_vecs.append(new_vec_2)
+            x1_vecs.append(new_vec)
+
             label = [split[i][key] for key in labels_keys]
             labels.append(label)
         x2_vecs = np.array(x2_vecs)
