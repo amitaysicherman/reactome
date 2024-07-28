@@ -41,6 +41,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
 
         optimizer.zero_grad()
         labels = labels.float().to(device)
+        print(output.shape, labels.shape)
         loss = criterion(output, labels)
         if part == "train":
             loss.backward()
