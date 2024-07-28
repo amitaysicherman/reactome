@@ -73,7 +73,7 @@ class LinFuseModel(FuseModel):
     def forward(self, data):
         x = []
         if self.use_fuse:
-            x.append(self.fuse_model(data, self.dtype).detach())
+            x.append(self.fuse_model(data, self.dtype.value).detach())
         if self.use_model:
             x.append(data)
         x = torch.concat(x, dim=1)
