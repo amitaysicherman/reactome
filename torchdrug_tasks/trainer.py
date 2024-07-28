@@ -34,13 +34,14 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         if part == "train":
             loss.backward()
             optimizer.step()
-        output = torch.sigmoid(output).detach()
         reals.append(labels)
         preds.append(output)
     if part != "train":
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
-        score = metric(reals.flatten(), preds.flatten()).item()
+        if preds.shape[1] == 1:
+            preds = torch.sigmoid(preds)
+        score = metric(reals, preds).item()
         return score
     else:
         return 0
