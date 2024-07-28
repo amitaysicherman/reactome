@@ -11,9 +11,9 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 def metric_prep_predictions(preds, metric):
-    if isinstance(metric, metric.area_under_roc):
+    if isinstance(metric, metrics.area_under_roc):
         return torch.sigmoid(preds)
-    elif isinstance(metric, metric.accuracy):
+    elif isinstance(metric, metrics.accuracy):
         return torch.argmax(preds, dim=-1)
     else:
         return preds
