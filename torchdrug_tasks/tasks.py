@@ -58,7 +58,7 @@ name_to_task = {
                  1),
     "ClinTox": Task("ClinTox", datasets.ClinTox, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
                     DataType.MOLECULE,
-                    1),
+                    2),
     "HIV": Task("HIV", datasets.HIV, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.MOLECULE, 1),
     "SIDER": Task("SIDER", datasets.SIDER, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
                   DataType.MOLECULE, 27),
