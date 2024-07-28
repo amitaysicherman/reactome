@@ -7,7 +7,7 @@ from torchdrug_tasks.tasks import name_to_task, Task
 from torchdrug_tasks.models import LinFuseModel, PairTransFuseModel
 from torchdrug import metrics
 
-device = 'cpu'#'cuda' if torch.cuda.is_available() else 'cpu'
+device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 
 def metric_prep_predictions(preds, metric):
