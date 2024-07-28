@@ -40,7 +40,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
     if part != "train":
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
-        score = metric(reals.flatten(), preds.flatten())
+        score = metric(reals.flatten(), preds.flatten()).item()
         return score
     else:
         return 0
