@@ -105,9 +105,9 @@ class PairTransFuseModel(FuseModel):
     def forward(self, x1, x2):
         x = []
         if self.use_fuse:
-            x1_fuse = self.fuse_model(x1, self.x1_type).detach()
+            x1_fuse = self.fuse_model(x1, self.x1_type.value).detach()
             x.append(self.x1_fuse_linear(x1_fuse))
-            x2_fuse = self.fuse_model(x2, self.x2_type).detach()
+            x2_fuse = self.fuse_model(x2, self.x2_type.value).detach()
             x.append(self.x2_fuse_linear(x2_fuse))
         if self.use_model:
             x1_model = self.x1_model_linear(x1)
