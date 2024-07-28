@@ -42,10 +42,10 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
 
         labels = labels.float().to(device)
         # if labels.shape[1] == 1:
-            # labels = labels.squeeze(1)
-            # if labels.long().sum() == labels.sum():
-            #     print("Converting labels to long")
-            #     labels = labels.long()
+        # labels = labels.squeeze(1)
+        # if labels.long().sum() == labels.sum():
+        #     print("Converting labels to long")
+        #     labels = labels.long()
 
         loss = criterion(output, labels)
         if part == "train":
@@ -135,11 +135,11 @@ def main(args, fuse_model=None):
         task_output_prefix = args.task_output_prefix
         output_file = f"{scores_path}/{task_output_prefix}torchdrug.csv"
         if not os.path.exists(output_file):
-            names = "name,mol,prot,conf,prefix,score\n"
+            names = "name,mol,prot,conf,prefix,task,score\n"
             with open(output_file, "w") as f:
                 f.write(names)
         with open(output_file, "a") as f:
-            f.write(f'{args.name},{mol_emd},{protein_emd},{conf},{task_output_prefix},{best_test_score}\n')
+            f.write(f'{args.name},{mol_emd},{protein_emd},{conf},{task_output_prefix},{task_name},{best_test_score}\n')
     return best_valid_score, best_test_score
 
 
