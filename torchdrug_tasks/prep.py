@@ -56,6 +56,9 @@ def get_vec(seq2vec, x, dtype):
 
 
 def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
+    output_file = pjoin(base_dir, f"{task.name}_{protein_emd}_{mol_emd}.npz")
+    if os.path.exists(output_file):
+        return
     dataset = task.dataset(pjoin(base_dir, task.name))
     labels_keys = getattr(task.dataset, 'target_fields')
     if task.name == "SIDER":
@@ -74,7 +77,6 @@ def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
     x1_all = dict()
     x2_all = dict()
     labels_all = dict()
-    output_file = pjoin(base_dir, f"{task.name}_{protein_emd}_{mol_emd}.npz")
     for split, name in zip([train, valid, test], ["train", "valid", "test"]):
         x1_vecs = []
         x2_vecs = []
