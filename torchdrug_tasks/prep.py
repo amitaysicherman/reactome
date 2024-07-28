@@ -11,14 +11,6 @@ from common.data_types import MOLECULE, PROTEIN
 
 base_dir = f"{data_path}/mol/"
 
-from common.args_manager import get_args
-
-args = get_args()
-self_token = args.self_token
-protein_emd = args.protein_emd
-mol_emd = args.mol_emd
-seq2vec = Seq2Vec(self_token, protein_name=protein_emd, mol_name=mol_emd)
-
 
 def get_vec(x, dtype):
     if dtype == DataType.MOLECULE:
@@ -29,7 +21,7 @@ def get_vec(x, dtype):
         raise Exception("Unknow type", task.dtype1)
 
 
-def prep_dataset(task: Task):
+def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
     dataset = task.dataset(pjoin(base_dir, task.name))
     labels_keys = getattr(task.dataset, 'target_fields')
 
@@ -80,7 +72,10 @@ if __name__ == "__main__":
     parser.add_argument("--mol_emd", type=str, default="pebchem10m")
     parser.add_argument("--self_token", type=str, default="")
     parser.add_argument("--task_index", type=int, default=-1)
+
     args = parser.parse_args()
+    seq2vec = Seq2Vec(args.self_token, protein_name=args.protein_emd, mol_name=args.mol_emd)
+
     if args.task_index >= 0:
         names = sorted(list(name_to_task.keys()))
         tasks = name_to_task[names[args.task_index]]
@@ -89,4 +84,4 @@ if __name__ == "__main__":
     else:
         tasks = [name_to_task[args.task]]
     for task in tasks:
-        prep_dataset(task)
+        prep_dataset(task, seq2vec, args.protein_emd, args.mol_emd)
