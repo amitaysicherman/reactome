@@ -37,7 +37,7 @@ def mse_metric(output, target):
     # Compute the mean of the squared differences
     mse = torch.mean(squared_diff)
 
-    return mse.item()
+    return mse
 
 
 
