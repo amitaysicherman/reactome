@@ -3,6 +3,7 @@ from preprocessing.seq_to_vec import Seq2Vec
 import numpy as np
 from common.path_manager import data_path
 from os.path import join as pjoin
+import os
 from tqdm import tqdm
 from torchdrug import datasets
 from torchdrug.data import ordered_scaffold_split
@@ -11,7 +12,7 @@ from torchdrug_tasks.models import DataType
 from common.data_types import MOLECULE, PROTEIN
 
 base_dir = f"{data_path}/torchdrug/"
-
+os.makedirs(base_dir, exist_ok=True)
 
 def get_vec(seq2vec, x, dtype):
     if dtype == DataType.MOLECULE:
