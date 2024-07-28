@@ -19,9 +19,9 @@ class Task:
 
 
 name_to_task = {
-    "BetaLactamase": Task("BetaLactamase", datasets.BetaLactamase, LinFuseModel, nn.MSELoss, metrics.R2,
+    "BetaLactamase": Task("BetaLactamase", datasets.BetaLactamase, LinFuseModel, nn.MSELoss, metrics.r2,
                           DataType.PROTEIN, 1),
-    "Fluorescence": Task("Fluorescence", datasets.Fluorescence, LinFuseModel, nn.MSELoss, metrics.R2,
+    "Fluorescence": Task("Fluorescence", datasets.Fluorescence, LinFuseModel, nn.MSELoss, metrics.r2,
                          DataType.PROTEIN, 1),
     "Stability": Task("Stability", datasets.Stability, LinFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
                       DataType.PROTEIN, 2),
@@ -40,11 +40,11 @@ name_to_task = {
                      DataType.PROTEIN, 2, DataType.PROTEIN),
     "YeastPPI": Task("YeastPPI", datasets.YeastPPI, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.accuracy,
                      DataType.PROTEIN, 2, DataType.PROTEIN),
-    "PPIAffinity": Task("PPIAffinity", datasets.PPIAffinity, PairTransFuseModel, nn.MSELoss, metrics.R2,
+    "PPIAffinity": Task("PPIAffinity", datasets.PPIAffinity, PairTransFuseModel, nn.MSELoss, metrics.r2,
                         DataType.PROTEIN, 1, DataType.PROTEIN),
-    "BindingDB": Task("BindingDB", datasets.BindingDB, PairTransFuseModel, nn.MSELoss, metrics.R2, DataType.PROTEIN, 1,
+    "BindingDB": Task("BindingDB", datasets.BindingDB, PairTransFuseModel, nn.MSELoss, metrics.r2, DataType.PROTEIN, 1,
                       DataType.MOLECULE),
-    "PDBBind": Task("PDBBind", datasets.PDBBind, PairTransFuseModel, nn.MSELoss, metrics.R2, DataType.PROTEIN, 1,
+    "PDBBind": Task("PDBBind", datasets.PDBBind, PairTransFuseModel, nn.MSELoss, metrics.r2, DataType.PROTEIN, 1,
                     DataType.MOLECULE),
     "BACE": Task("BACE", datasets.BACE, LinFuseModel, nn.BCEWithLogitsLoss, metrics.roc_auc, DataType.MOLECULE, 2),
     "BBBP": Task("BBBP", datasets.BBBP, LinFuseModel, nn.BCEWithLogitsLoss, metrics.roc_auc, DataType.MOLECULE, 2),
