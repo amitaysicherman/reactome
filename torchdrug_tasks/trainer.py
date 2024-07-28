@@ -41,7 +41,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         optimizer.zero_grad()
 
         labels = labels.to(device)
-        if labels.long()==labels:
+        if labels.long().sum() == labels.sum():
             labels = labels.long()
         if labels.shape[1] == 1:
             labels = labels.squeeze(1)
