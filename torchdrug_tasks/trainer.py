@@ -40,7 +40,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
 
         optimizer.zero_grad()
 
-        labels = labels.flaot().to(device)
+        labels = labels.float().to(device)
         if labels.long().sum() == labels.sum():
             print("Converting labels to long")
             labels = labels.long()
