@@ -84,7 +84,7 @@ class PairTransFuseModel(FuseModel):
     def __init__(self, input_dim_1: int, dtpye_1: DataType, input_dim_2: int, dtype_2: DataType, output_dim: int,
                  conf: Config,
                  trans_dim=256, n_layers=2, nhead=2, dropout=0.5, fuse_model=None,
-                 fuse_base="", **kwargs):
+                 fuse_base=""):
         super().__init__(conf, fuse_model, fuse_base)
 
         if self.use_fuse:
