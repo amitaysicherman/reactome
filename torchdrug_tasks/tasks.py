@@ -17,15 +17,38 @@ class Task:
     output_dim: int
     dtype2: DataType = None
 
+def mse_metric(output, target):
+    """
+    Compute the Mean Squared Error (MSE) between output and target.
+
+    Parameters:
+    - output (torch.Tensor): The predicted values (model output).
+    - target (torch.Tensor): The true values.
+
+    Returns:
+    - mse (float): The computed mean squared error.
+    """
+    # Ensure the output and target have the same shape
+    assert output.shape == target.shape, "Output and target must have the same shape"
+
+    # Compute the squared differences
+    squared_diff = (output - target) ** 2
+
+    # Compute the mean of the squared differences
+    mse = torch.mean(squared_diff)
+
+    return mse.item()
+
+
 
 name_to_task = {
-    "BetaLactamase": Task("BetaLactamase", datasets.BetaLactamase, LinFuseModel, nn.MSELoss, metrics.r2,
+    "BetaLactamase": Task("BetaLactamase", datasets.BetaLactamase, LinFuseModel, nn.MSELoss, mse_metric,
                           DataType.PROTEIN, 1),
-    "Fluorescence": Task("Fluorescence", datasets.Fluorescence, LinFuseModel, nn.MSELoss, metrics.r2,
+    "Fluorescence": Task("Fluorescence", datasets.Fluorescence, LinFuseModel, nn.MSELoss, mse_metric,
                          DataType.PROTEIN, 1),
     "Stability": Task("Stability", datasets.Stability, LinFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
                       DataType.PROTEIN, 2),
-    "Solubility": Task("Solubility", datasets.Stability, LinFuseModel, nn.MSELoss, metrics.r2,
+    "Solubility": Task("Solubility", datasets.Stability, LinFuseModel, nn.MSELoss, mse_metric,
                        DataType.PROTEIN, 1),
     # "BinaryLocalization": Task("BinaryLocalization", datasets.BinaryLocalization, LinFuseModel, nn.CrossEntropyLoss,
     #                            metrics.accuracy, DataType.PROTEIN, 2),
@@ -40,11 +63,11 @@ name_to_task = {
                      DataType.PROTEIN, 2, DataType.PROTEIN),
     "YeastPPI": Task("YeastPPI", datasets.YeastPPI, PairTransFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
                      DataType.PROTEIN, 2, DataType.PROTEIN),
-    "PPIAffinity": Task("PPIAffinity", datasets.PPIAffinity, PairTransFuseModel, nn.MSELoss, metrics.r2,
+    "PPIAffinity": Task("PPIAffinity", datasets.PPIAffinity, PairTransFuseModel, nn.MSELoss, mse_metric,
                         DataType.PROTEIN, 1, DataType.PROTEIN),
-    "BindingDB": Task("BindingDB", datasets.BindingDB, PairTransFuseModel, nn.MSELoss, metrics.r2, DataType.PROTEIN, 1,
+    "BindingDB": Task("BindingDB", datasets.BindingDB, PairTransFuseModel, nn.MSELoss, mse_metric, DataType.PROTEIN, 1,
                       DataType.MOLECULE),
-    "PDBBind": Task("PDBBind", datasets.PDBBind, PairTransFuseModel, nn.MSELoss, metrics.r2, DataType.PROTEIN, 1,
+    "PDBBind": Task("PDBBind", datasets.PDBBind, PairTransFuseModel, nn.MSELoss, mse_metric, DataType.PROTEIN, 1,
                     DataType.MOLECULE),
     "BACE": Task("BACE", datasets.BACE, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.MOLECULE,
                  1),
