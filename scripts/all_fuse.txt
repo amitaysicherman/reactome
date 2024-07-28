@@ -1,5 +1,15 @@
---name ESM-1B --dp_fuse_base fuse2_ESM-1B --protein_emd ESM-1B --dp_print 0
---name ESM2 --dp_fuse_base fuse2_ESM2 --protein_emd ESM2 --dp_print 0
---name ESM3 --dp_fuse_base fuse2_ESM3 --protein_emd ESM3 --dp_print 0
---name ProtBert-BFD --dp_fuse_base fuse2_ProtBert-BFD --protein_emd ProtBert-BFD --dp_print 0
---name ProtBertT5-xl --dp_fuse_base fuse2_ProtBertT5-xl --protein_emd ProtBertT5-xl --dp_print 0
+--name ESM2-pebchem10m --mol_emd pebchem10m --protein_emd ESM2 --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ESM2-chemberta --mol_emd chemberta --protein_emd ESM2 --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ESM2-roberta --mol_emd roberta --protein_emd ESM2 --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ProtBert-BFD-pebchem10m --mol_emd pebchem10m --protein_emd ProtBert-BFD --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ProtBert-BFD-chemberta --mol_emd chemberta --protein_emd ProtBert-BFD --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ProtBert-BFD-roberta --mol_emd roberta --protein_emd ProtBert-BFD --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ESM-1B-pebchem10m --mol_emd pebchem10m --protein_emd ESM-1B --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ESM-1B-chemberta --mol_emd chemberta --protein_emd ESM-1B --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ESM-1B-roberta --mol_emd roberta --protein_emd ESM-1B --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ESM3-pebchem10m --mol_emd pebchem10m --protein_emd ESM3 --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ESM3-chemberta --mol_emd chemberta --protein_emd ESM3 --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ESM3-roberta --mol_emd roberta --protein_emd ESM3 --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ProtBertT5-xl-pebchem10m --mol_emd pebchem10m --protein_emd ProtBertT5-xl --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ProtBertT5-xl-chemberta --mol_emd chemberta --protein_emd ProtBertT5-xl --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
+--name ProtBertT5-xl-roberta --mol_emd roberta --protein_emd ProtBertT5-xl --downstream_task cl --fuse_train_all 0 --dp_print 0 --fuse_all_to_one protein --fuse_n_layers 1
