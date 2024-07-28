@@ -49,7 +49,7 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, fuse_model):
         dtype_2 = None
     output_dim = task.output_dim
     if task.model == LinFuseModel:
-        return model_class(input_dim_1=input_dim_1, input_type=dtype_1, output_dim=output_dim, conf=conf,
+        return model_class(input_dim=input_dim_1, input_type=dtype_1, output_dim=output_dim, conf=conf,
                            fuse_base=fuse_base, fuse_model=fuse_model)
     elif task.model == PairTransFuseModel:
         return model_class(input_dim_1=input_dim_1, input_type=dtype_1, input_dim_2=input_dim_2, input_type_2=dtype_2,
