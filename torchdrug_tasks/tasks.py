@@ -20,7 +20,7 @@ class Task:
 def mse_metric(output, target):
     squared_diff = (output - target) ** 2
     mse = torch.mean(squared_diff)
-    return mse
+    return -1*mse
 
 
 
