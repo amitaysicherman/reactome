@@ -5,8 +5,18 @@ from common.path_manager import scores_path
 from torchdrug_tasks.dataset import get_dataloaders
 from torchdrug_tasks.tasks import name_to_task, Task
 from torchdrug_tasks.models import LinFuseModel, PairTransFuseModel
+from torchdrug import metrics
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+
+def metric_prep_predictions(preds, metric):
+    if isinstance(metric, metric.area_under_roc):
+        return torch.sigmoid(preds)
+    elif isinstance(metric, metric.accuracy):
+        return torch.argmax(preds, dim=-1)
+    else:
+        return preds
 
 
 def run_epoch(model, loader, optimizer, criterion, metric, part):
@@ -39,8 +49,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
     if part != "train":
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
-        if preds.shape[1] == 1:
-            preds = torch.sigmoid(preds)
+        preds = metric_prep_predictions(preds, metric)
         score = metric(preds.flatten(), reals.flatten()).item()
         return score
     else:
