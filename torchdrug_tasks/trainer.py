@@ -42,7 +42,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         optimizer.zero_grad()
         labels = labels.float().to(device)
         if labels.shape[1] == 1:
-            labels = labels.squeeze(1).long()
+            labels = labels.squeeze(1)
             print(labels)
 
         print(output.shape, labels.shape)
