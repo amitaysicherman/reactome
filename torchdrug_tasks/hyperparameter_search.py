@@ -45,7 +45,7 @@ def main(args):
     scheduler = ASHAScheduler(
         metric="valid_score",
         mode="max",
-        max_t=250,  # Maximum number of epochs
+        max_t=50,  # Maximum number of epochs
         grace_period=5,  # Minimum epochs before stopping
         reduction_factor=2,  # Halving rate for early stopping
         brackets=1  # Number of brackets for successive halving
@@ -69,7 +69,7 @@ def main(args):
         config=search_space,
         search_alg=optuna_search,  # Use OptunaSearch instead of BayesOptSearch
         scheduler=scheduler,  # Use ASHAScheduler
-        num_samples=5,
+        num_samples=50,
         resources_per_trial={"cpu": os.cpu_count(), "gpu": torch.cuda.device_count()},
         callbacks=[csv_logger],
     )
