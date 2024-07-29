@@ -5,8 +5,6 @@ from common.path_manager import scores_path
 from torchdrug_tasks.dataset import get_dataloaders
 from torchdrug_tasks.tasks import name_to_task, Task
 from torchdrug_tasks.models import LinFuseModel, PairTransFuseModel
-from ray import train
-
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
@@ -102,8 +100,8 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
         if print_output:
             print("No model selected")
         if tune_mode:
-            train.report(dict(valid_score=-1e6, test_score=-1e6))
-        return dict(valid_score=-1e6, test_score=-1e6)
+            return dict(valid_score=-1e6, test_score=-1e6)
+        return -1e6, -1e6
 
     model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, fuse_model=fuse_model)
     model = model.to(device)
@@ -129,20 +127,17 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
             no_improve += 1
             if no_improve > max_no_improve:
                 break
-    if tune_mode:
-        train.report(dict(valid_score=best_valid_score, test_score=best_test_score))
-    else:
-        if print_output:
-            print("Best Test scores\n", best_test_score)
-            task_output_prefix = f"{task_name}_{mol_emd}_{protein_emd}"
-            output_file = f"{scores_path}/{task_output_prefix}torchdrug.csv"
-            if not os.path.exists(output_file):
-                names = "name,mol,prot,conf,prefix,task,bs,lr,score\n"
-                with open(output_file, "w") as f:
-                    f.write(names)
-            with open(output_file, "a") as f:
-                f.write(
-                    f'{task_name},{mol_emd},{protein_emd},{conf},{task_output_prefix},{task_name},{bs},{lr},{best_test_score}\n')
+    if print_output:
+        print("Best Test scores\n", best_test_score)
+        task_output_prefix = f"{task_name}_{mol_emd}_{protein_emd}"
+        output_file = f"{scores_path}/{task_output_prefix}torchdrug.csv"
+        if not os.path.exists(output_file):
+            names = "name,mol,prot,conf,prefix,task,bs,lr,score\n"
+            with open(output_file, "w") as f:
+                f.write(names)
+        with open(output_file, "a") as f:
+            f.write(
+                f'{task_name},{mol_emd},{protein_emd},{conf},{task_output_prefix},{task_name},{bs},{lr},{best_test_score}\n')
     if tune_mode:
         return dict(valid_score=best_valid_score, test_score=best_test_score)
     return best_valid_score, best_test_score
