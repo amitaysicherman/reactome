@@ -41,14 +41,6 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         labels = labels.float().to(device)
         if isinstance(criterion, torch.nn.CrossEntropyLoss):
             labels = labels.squeeze(1).long()
-            # labels = torch.argmax(labels, dim=-1)
-        #     labels = torch.argmax(labels, dim=-1)
-
-        # if labels.shape[1] == 1:
-        # labels = labels.squeeze(1)
-        # if labels.long().sum() == labels.sum():
-        #     print("Converting labels to long")
-        #     labels = labels.long()
 
         loss = criterion(output, labels)
         if part == "train":
