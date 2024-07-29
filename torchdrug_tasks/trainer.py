@@ -5,7 +5,6 @@ from common.path_manager import scores_path
 from torchdrug_tasks.dataset import get_dataloaders
 from torchdrug_tasks.tasks import name_to_task, Task
 from torchdrug_tasks.models import LinFuseModel, PairTransFuseModel
-from torchdrug import metrics
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 

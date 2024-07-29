@@ -1,6 +1,6 @@
 from os.path import join as pjoin
 import numpy as np
-from common.path_manager import data_path, scores_path, model_path
+from common.path_manager import data_path
 from torch.utils.data import Dataset, DataLoader
 import os
 
