@@ -4,6 +4,13 @@ from torchdrug import datasets
 from torchdrug import metrics
 from torch import nn
 import torch
+import enum
+
+
+class PrepType(enum.Enum):
+    torchdrug = "torchdrug"
+    download = "download"
+    drugtarget = "drugtarget"
 
 
 @dataclass
@@ -16,6 +23,7 @@ class Task:
     dtype1: DataType
     output_dim: int
     dtype2: DataType = None
+    prep_type: PrepType = PrepType.torchdrug
 
 
 def mse_metric(output, target):
@@ -35,8 +43,8 @@ name_to_task = {
                        DataType.PROTEIN, 1),
     # "BinaryLocalization": Task("BinaryLocalization", datasets.BinaryLocalization, LinFuseModel, nn.CrossEntropyLoss,
     #                            metrics.accuracy, DataType.PROTEIN, 2),
-    # "SubcellularLocalization": Task("SubcellularLocalization", datasets.SubcellularLocalization, LinFuseModel,
-    #                                 nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 10),
+    "SubcellularLocalization": Task("SubcellularLocalization", datasets.SubcellularLocalization, LinFuseModel,
+                                    nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 10),
     # "Fold": Task("Fold", datasets.Fold, LinFuseModel, nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 1195),
     # "SecondaryStructure": Task("SecondaryStructure", datasets.SecondaryStructure, LinFuseModel, nn.CrossEntropyLoss,
     #                            metrics.accuracy, DataType.PROTEIN, 3),

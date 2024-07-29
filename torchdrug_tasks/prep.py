@@ -6,8 +6,10 @@ from os.path import join as pjoin
 import os
 from tqdm import tqdm
 from torchdrug import datasets
+from torchdrug.transforms import ProteinView
+
 from torchdrug.data import ordered_scaffold_split
-from torchdrug_tasks.tasks import name_to_task, Task
+from torchdrug_tasks.tasks import name_to_task, Task, PrepType
 from torchdrug_tasks.models import DataType
 from common.data_types import MOLECULE, PROTEIN
 
@@ -59,7 +61,12 @@ def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
     output_file = pjoin(base_dir, f"{task.name}_{protein_emd}_{mol_emd}.npz")
     if os.path.exists(output_file):
         return
-    dataset = task.dataset(pjoin(base_dir, task.name))
+    if task.dtype1 == DataType.PROTEIN:
+        args = dict(transform=ProteinView(view="residue"),
+                    atom_feature=None, bond_feature=None)
+    else:
+        args = dict()
+    dataset = task.dataset(pjoin(base_dir, task.name), **args)
     labels_keys = getattr(task.dataset, 'target_fields')
     if task.name == "SIDER":
         labels_keys = SIDER_LABELS

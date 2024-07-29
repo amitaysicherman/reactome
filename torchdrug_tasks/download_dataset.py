@@ -1,3 +1,8 @@
+from os.path import join as pjoin
+from common.path_manager import data_path
+from common.data_types import PROTEIN
+import pickle
+import lmdb
 import os
 import struct
 
@@ -106,3 +111,32 @@ def extract(zip_file, member=None):
         return save_files[0]
     else:
         return save_path
+
+
+def get_dataset(dataset):
+    url = dataset.url
+    dir=url.split("/")[-1].split(".")[0]
+    md5 = dataset.md5
+    splits = dataset.splits
+    target_fields = dataset.target_fields
+    output_dir = "localization"
+    path = pjoin(data_path, output_dir)
+
+    if not os.path.exists(pjoin(data_path, output_dir, dir, f'{dir}_train.lmdb')):
+        zip_file = download(url, path, md5=md5)
+        extract(zip_file)
+        os.remove(zip_file)
+    sequence_field = "primary"
+
+    sequences = []
+    locations = []
+
+    for split in splits:
+        input_file = pjoin(data_path, output_dir, dir, f'{dir}_{split}.lmdb')
+        env = lmdb.open(input_file, readonly=True, lock=False, readahead=False, meminit=False)
+        with env.begin(write=False) as txn:
+            num_sample = pickle.loads(txn.get("num_examples".encode()))
+            for i in range(num_sample):
+                item = pickle.loads(txn.get(str(i).encode()))
+                sequences.append(item[sequence_field])
+                locations.append(item[output_dir])
