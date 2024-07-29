@@ -20,7 +20,7 @@ def load_data(task_name, mol_emd, protein_emd):
     data = np.load(data_file)
     if task_name in ["DrugBank", "Davis", "KIBA"]:
         x1, x2, labels = [data[f"{x}"] for x in ["x1", "x2", "label"]]
-        labels = labels.astype(np.float32)
+        labels = labels.astype(np.float32).reshape(-1, 1)
         shuffle_index = np.random.permutation(len(x1))
         x1 = x1[shuffle_index]
         x2 = x2[shuffle_index]
