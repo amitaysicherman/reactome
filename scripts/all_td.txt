@@ -1,39 +1,39 @@
---task_name BACE --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
---task_name BACE --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
---task_name BACE --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
---task_name BBBP --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
---task_name BBBP --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
---task_name BBBP --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
---task_name ClinTox --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
---task_name ClinTox --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
---task_name ClinTox --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
---task_name BetaLactamase --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
---task_name BetaLactamase --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
---task_name BetaLactamase --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
---task_name Tox21 --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
---task_name Tox21 --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
---task_name Tox21 --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
---task_name HIV --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
---task_name HIV --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
---task_name HIV --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
---task_name PPIAffinity --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
---task_name PPIAffinity --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
---task_name PPIAffinity --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
---task_name Solubility --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
---task_name Solubility --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
---task_name Solubility --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
---task_name Stability --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
---task_name Stability --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
---task_name Stability --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
---task_name SIDER --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
---task_name SIDER --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
---task_name SIDER --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
---task_name Fluorescence --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
---task_name Fluorescence --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
---task_name Fluorescence --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
+--task_name BACE --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
+--task_name BACE --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
+--task_name BACE --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
+--task_name BBBP --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
+--task_name BBBP --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
+--task_name BBBP --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
+--task_name ClinTox --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
+--task_name ClinTox --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
+--task_name ClinTox --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
+--task_name BetaLactamase --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
+--task_name BetaLactamase --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
+--task_name BetaLactamase --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
+--task_name Tox21 --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
+--task_name Tox21 --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
+--task_name Tox21 --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
+--task_name HIV --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
+--task_name HIV --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
+--task_name HIV --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
+--task_name PPIAffinity --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
+--task_name PPIAffinity --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
+--task_name PPIAffinity --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
+--task_name Solubility --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
+--task_name Solubility --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
+--task_name Solubility --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
+--task_name Stability --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
+--task_name Stability --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
+--task_name Stability --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
+--task_name SIDER --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
+--task_name SIDER --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
+--task_name SIDER --mol_emd pebchem10m --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
+--task_name Fluorescence --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
+--task_name Fluorescence --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
+--task_name Fluorescence --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
 --task_name BindingDB --protein_emd ESM2 --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
 --task_name BindingDB --protein_emd ESM2 --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
 --task_name BindingDB --protein_emd ESM2 --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
---task_name YeastPPI --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 1
---task_name YeastPPI --protein_emd ESM2 --cafa_use_fuse 0 --cafa_use_model 1
---task_name YeastPPI --protein_emd ESM2 --cafa_use_fuse 1 --cafa_use_model 0
+--task_name YeastPPI --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 1
+--task_name YeastPPI --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 0 --cafa_use_model 1
+--task_name YeastPPI --protein_emd ESM2  --mol_emd pebchem10m --cafa_use_fuse 1 --cafa_use_model 0
