@@ -64,4 +64,10 @@ name_to_task = {
                   DataType.MOLECULE, 27),
     "Tox21": Task("Tox21", datasets.Tox21, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
                   DataType.MOLECULE, 12),
+    "DrugBank": Task("DrugBank", None, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
+                     DataType.PROTEIN, 1, DataType.MOLECULE),
+    "Davis": Task("Davis", None, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.PROTEIN,
+                  1, DataType.MOLECULE),
+    "KIBA": Task("KIBA", None, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.PROTEIN, 1,
+                 DataType.MOLECULE),
 }

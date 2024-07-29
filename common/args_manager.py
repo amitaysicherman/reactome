@@ -34,7 +34,7 @@ def get_args():
     parser.add_argument("--fuse_train_all", type=int, default=1)
     parser.add_argument("--fuse_max_no_improve", type=int, default=5)
 
-    parser.add_argument("--fuse_epochs", type=int, default=50)
+    parser.add_argument("--fuse_epochs", type=int, default=1)
     parser.add_argument("--fuse_name", type=str, default="")
     parser.add_argument("--fuse_pretrained_start", type=int, default=1)
 
