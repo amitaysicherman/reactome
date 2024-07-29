@@ -130,7 +130,7 @@ if __name__ == "__main__":
     if args.task_index >= 0:
         names = sorted(list(name_to_task.keys()))
         tasks = [name_to_task[names[args.task_index]]]
-    elif args.tasks == "all":
+    elif args.task == "all":
         tasks = [name_to_task.values()]
     else:
         tasks = [name_to_task[args.task]]
