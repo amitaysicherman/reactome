@@ -42,7 +42,7 @@ def main(args):
         'drop_out': tune.uniform(0.0, 0.5)
     }
 
-    optuna_search = g(metric="valid_score", mode="max")
+    optuna_search = OptunaSearch(metric="valid_score", mode="max")
 
     # Use Async HyperBand with early stopping
     scheduler = ASHAScheduler(
