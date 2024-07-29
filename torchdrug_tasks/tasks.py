@@ -67,9 +67,9 @@ name_to_task = {
     "Tox21": Task("Tox21", datasets.Tox21, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
                   DataType.MOLECULE, 12),
     "DrugBank": Task("DrugBank", None, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
-                     DataType.PROTEIN, 1, DataType.MOLECULE),
+                     DataType.PROTEIN, 1, DataType.MOLECULE, PrepType.drugtarget),
     "Davis": Task("Davis", None, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.PROTEIN,
-                  1, DataType.MOLECULE),
+                  1, DataType.MOLECULE, PrepType.drugtarget),
     "KIBA": Task("KIBA", None, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.PROTEIN, 1,
-                 DataType.MOLECULE),
+                 DataType.MOLECULE, PrepType.drugtarget),
 }
