@@ -138,9 +138,10 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
 
 
 def main(args, fuse_model=None):
+
     config = {
-        "use_fuse": args.use_fuse,
-        "use_model": args.use_model,
+        "use_fuse": args.cafa_use_fuse,
+        "use_model": args.cafa_use_model,
         "bs": args.bs,
         "lr": args.lr
     }
