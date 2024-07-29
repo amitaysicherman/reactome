@@ -11,7 +11,8 @@ from common.path_manager import scores_path
 import pandas as pd
 
 config_cols = ['bs', 'lr', 'use_fuse', 'use_model', 'n_layers', 'hidden_dim', 'drop_out']
-n_max=5
+n_max = 5
+
 
 class CSVLoggerCallback(tune.Callback):
     def __init__(self, name):
@@ -41,7 +42,7 @@ def main(args):
         'drop_out': tune.uniform(0.0, 0.5)
     }
 
-    optuna_search = OptunaSearch(metric="valid_score", mode="max")
+    optuna_search = g(metric="valid_score", mode="max")
 
     # Use Async HyperBand with early stopping
     scheduler = ASHAScheduler(
@@ -72,7 +73,7 @@ def main(args):
         search_alg=optuna_search,  # Use OptunaSearch instead of BayesOptSearch
         scheduler=scheduler,  # Use ASHAScheduler
         num_samples=n_max,
-        resources_per_trial={"cpu": os.cpu_count(), "gpu": torch.cuda.device_count()},
+        resources_per_trial={"cpu": 1, "gpu": 0},
         callbacks=[csv_logger],
     )
 
