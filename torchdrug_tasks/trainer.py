@@ -38,9 +38,9 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
             output = model(x1, x2)
 
         optimizer.zero_grad()
-
+        print(labels)
         labels = labels.float().to(device)
-
+        print(criterion,criterion.__str__())
         if labels.shape[1] > 1 and criterion.__str__() == "CrossEntropyLoss()":
             labels = torch.argmax(labels, dim=-1)
         # if labels.shape[1] == 1:
