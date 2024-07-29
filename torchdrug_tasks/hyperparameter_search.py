@@ -2,10 +2,12 @@
 
 import ray
 from ray import tune
-from ray.tune.search.bayesopt import BayesOptSearch
-from ray.tune.stopper import TrialPlateauStopper
-from trainer import train_model_with_config
+from ray.tune.search.optuna import OptunaSearch
+from ray.tune.schedulers import ASHAScheduler
+
+from trainer import main as train_model_with_args
 from common.args_manager import get_args
+
 
 def main(args):
     search_space = {
@@ -15,22 +17,25 @@ def main(args):
         'use_model': tune.choice([True, False]),
     }
 
-    bayesopt_search = BayesOptSearch(metric="best_valid_score", mode="max")
+    optuna_search = OptunaSearch(metric="best_valid_score", mode="max")
 
-    # Implement early stopping
-    stopper = TrialPlateauStopper(
-        metric="validation_score",
+    # Use Async HyperBand with early stopping
+    scheduler = ASHAScheduler(
+        metric="best_valid_score",
         mode="max",
-        num_results=10,  # Number of results without improvement before stopping
-        grace_period=5,  # Minimum number of results before early stopping is considered
+        max_t=250,  # Maximum number of epochs
+        grace_period=5,  # Minimum epochs before stopping
+        reduction_factor=2,  # Halving rate for early stopping
+        brackets=1  # Number of brackets for successive halving
     )
 
     tune.run(
-        tune.with_parameters(train_model_with_config, args=args),
+        tune.with_parameters(train_model_with_args, args=args, tune_mode=True),
         config=search_space,
-        search_alg=bayesopt_search,
-        num_samples=100,  # Set a higher number for broader exploration
-        stop=stopper,  # Add the early stopping policy
+        search_alg=optuna_search,  # Use OptunaSearch instead of BayesOptSearch
+        scheduler=scheduler,  # Use ASHAScheduler
+        num_samples=50,
+        resources_per_trial={"cpu": 2, "gpu": 1},
     )
 
 
