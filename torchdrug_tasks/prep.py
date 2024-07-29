@@ -79,7 +79,14 @@ def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
         return
 
     if task.dtype1 == DataType.PROTEIN:
-        args = dict(transform=ProteinView(view="residue"),
+        if task.dtype2 is None:
+            keys = ["graph"]
+        elif task.dtype2 == DataType.MOLECULE:
+            keys = ["graph1"]
+        else:
+            keys = ["graph1", "graph2"]
+
+        args = dict(transform=ProteinView(view="residue", keys=keys),
                     atom_feature=None, bond_feature=None)
     else:
         args = dict()
