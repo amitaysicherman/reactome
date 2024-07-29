@@ -5,6 +5,7 @@ from common.path_manager import scores_path
 from torchdrug_tasks.dataset import get_dataloaders
 from torchdrug_tasks.tasks import name_to_task, Task
 from torchdrug_tasks.models import LinFuseModel, PairTransFuseModel
+from ray import tune
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -58,7 +59,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         return 0
 
 
-def get_model_from_task(task: Task, dataset, conf, fuse_base, fuse_model):
+def get_model_from_task(task: Task, dataset, conf, fuse_base, fuse_model=None):
     model_class = task.model
     input_dim_1 = dataset.x1.shape[1]
     dtype_1 = task.dtype1
@@ -79,18 +80,14 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, fuse_model):
         raise ValueError("Unknown model")
 
 
-def main(args, fuse_model=None):
-    fuse_base = args.dp_fuse_base
-    use_fuse = bool(args.cafa_use_fuse)
-    use_model = bool(args.cafa_use_model)
-    bs = args.dp_bs
-    lr = args.dp_lr
-    mol_emd = args.mol_emd
-    protein_emd = args.protein_emd
-    task_name = args.task_name
-    train_loader, valid_loader, test_loader = get_dataloaders(task_name, mol_emd, protein_emd, bs)
-
+def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_emd: str, protein_emd: str,
+                            print_output=False, max_no_improve=10, tune_mode=False, fuse_model=None):
+    use_fuse = config["use_fuse"]
+    use_model = config["use_model"]
+    bs = config["bs"]
+    lr = config["lr"]
     task = name_to_task[task_name]
+    train_loader, valid_loader, test_loader = get_dataloaders(task_name, mol_emd, protein_emd, bs)
     metric = task.metric
     criterion = task.criterion()
     if use_fuse and use_model:
@@ -101,10 +98,9 @@ def main(args, fuse_model=None):
         conf = Config.PRE
     model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, fuse_model=fuse_model)
     model = model.to(device)
-    if args.dp_print:
-        print(model)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
-
+    if print_output:
+        print(model)
     no_improve = 0
     best_valid_score = -1e6
     best_test_score = -1e6
@@ -114,7 +110,7 @@ def main(args, fuse_model=None):
             val_score = run_epoch(model, valid_loader, optimizer, criterion, metric, "val")
             test_score = run_epoch(model, test_loader, optimizer, criterion, metric, "test")
 
-        if args.dp_print:
+        if print_output:
             print(epoch, train_score, val_score, test_score)
         if val_score > best_valid_score:
             best_valid_score = val_score
@@ -122,21 +118,34 @@ def main(args, fuse_model=None):
             no_improve = 0
         else:
             no_improve += 1
-            if no_improve > args.max_no_improve:
+            if no_improve > max_no_improve:
                 break
-
-    if args.dp_print:
-        print("Best Test scores\n", best_test_score)
-        task_output_prefix = args.task_output_prefix
-        output_file = f"{scores_path}/{task_output_prefix}torchdrug.csv"
-        if not os.path.exists(output_file):
-            names = "name,mol,prot,conf,prefix,task,bs,lr,score\n"
-            with open(output_file, "w") as f:
-                f.write(names)
-        with open(output_file, "a") as f:
-            f.write(
-                f'{args.name},{mol_emd},{protein_emd},{conf},{task_output_prefix},{task_name},{bs},{lr},{best_test_score}\n')
+    if tune_mode:
+        tune.report(best_valid_score=best_valid_score, best_test_score=best_test_score)
+    else:
+        if print_output:
+            print("Best Test scores\n", best_test_score)
+            task_output_prefix = f"{task_name}_{mol_emd}_{protein_emd}"
+            output_file = f"{scores_path}/{task_output_prefix}torchdrug.csv"
+            if not os.path.exists(output_file):
+                names = "name,mol,prot,conf,prefix,task,bs,lr,score\n"
+                with open(output_file, "w") as f:
+                    f.write(names)
+            with open(output_file, "a") as f:
+                f.write(
+                    f'{task_name},{mol_emd},{protein_emd},{conf},{task_output_prefix},{task_name},{bs},{lr},{best_test_score}\n')
     return best_valid_score, best_test_score
+
+
+def main(args, fuse_model=None):
+    config = {
+        "use_fuse": args.use_fuse,
+        "use_model": args.use_model,
+        "bs": args.bs,
+        "lr": args.lr
+    }
+    train_model_with_config(config, args.task_name, args.fuse_base, args.mol_emd, args.protein_emd, args.dp_print,
+                            args.max_no_improve, fuse_model=fuse_model)
 
 
 if __name__ == '__main__':
