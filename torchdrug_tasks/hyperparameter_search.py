@@ -45,7 +45,6 @@ def main(args):
         "print_output": False,
         "max_no_improve": args.max_no_improve,
         "fuse_model": None,
-        "tune_mode": True
     }
     name = f'{args["task_name"]}_{args["protein_emd"]}_{args["mol_emd"]}'
     filename = f'{scores_path}/hp_{name}_torchdrug.csv'
