@@ -11,11 +11,11 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 def metric_prep_predictions(preds, metric):
     if metric.__name__ == "area_under_roc":
-        return torch.sigmoid(preds)
+        return torch.sigmoid(preds).flatten()
     elif metric.__name__ == "accuracy":
-        return torch.argmax(preds, dim=-1)
-    else:
         return preds
+    else:
+        return preds.flatten()
 
 
 def run_epoch(model, loader, optimizer, criterion, metric, part):
@@ -52,7 +52,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
         preds = metric_prep_predictions(preds, metric)
-        score = metric(preds.flatten(), reals.flatten()).item()
+        score = metric(preds, reals.flatten()).item()
         return score
     else:
         return 0
