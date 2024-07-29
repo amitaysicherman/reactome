@@ -55,7 +55,7 @@ def main(args):
         f.write(",".join(all_cols) + "\n")
 
 
-    for option in tqdm(all_options):
+    for option in tqdm(all_options[:1]):
         val_score, test_score = train_model_with_config(option, **args)
         values = [val_score, test_score] + [option.get(col, None) for col in config_cols]
         with open(filename, "a") as f:
@@ -73,7 +73,6 @@ def main(args):
     print(f"Best config: {best_config}")
     best_config['use_fuse'] = False
     best_config['use_model'] = True
-    args["tune_mode"] = False
     _, best_model_test_score = train_model_with_config(best_config, **args)
 
     header = ['task', 'mol_emd', 'protein_emd', 'score_model', 'score_fuse'] + config_cols
