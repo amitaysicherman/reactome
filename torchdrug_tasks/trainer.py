@@ -94,8 +94,14 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
         conf = Config.both
     elif use_fuse:
         conf = Config.our
-    else:
+    elif use_model:
         conf = Config.PRE
+    else:
+        if print_output:
+            print("No model selected")
+        if tune_mode:
+            tune.report(best_valid_score=-1e6, best_test_score=-1e6)
+        return -1e6, -1e6
     model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, fuse_model=fuse_model)
     model = model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
