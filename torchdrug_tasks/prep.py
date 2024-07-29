@@ -59,8 +59,25 @@ def get_vec(seq2vec, x, dtype):
 
 def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
     output_file = pjoin(base_dir, f"{task.name}_{protein_emd}_{mol_emd}.npz")
+
     if os.path.exists(output_file):
         return
+
+    if task.prep_type == PrepType.torchdrug:
+        input_file = os.path.join(data_path, "protein_drug", f"{task.name}.txt")
+        with open(input_file) as f:
+            lines = f.read().splitlines()
+        proteins = []
+        molecules = []
+        labels = []
+        for line in tqdm(lines):
+            _, _, smiles, fasta, label = line.split(" ")
+            proteins.append(seq2vec.to_vec(fasta, PROTEIN))
+            molecules.append(seq2vec.to_vec(smiles, MOLECULE))
+            labels.append(label)
+        np.savez(output_file, x1=np.array(proteins)[:, 0, :], x2=np.array(molecules)[:, 0, :], label=np.array(labels))
+        return
+
     if task.dtype1 == DataType.PROTEIN:
         args = dict(transform=ProteinView(view="residue"),
                     atom_feature=None, bond_feature=None)

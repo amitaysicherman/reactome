@@ -9,7 +9,6 @@ import enum
 
 class PrepType(enum.Enum):
     torchdrug = "torchdrug"
-    download = "download"
     drugtarget = "drugtarget"
 
 
@@ -41,13 +40,8 @@ name_to_task = {
                       DataType.PROTEIN, 1),
     "Solubility": Task("Solubility", datasets.Stability, LinFuseModel, nn.MSELoss, mse_metric,
                        DataType.PROTEIN, 1),
-    # "BinaryLocalization": Task("BinaryLocalization", datasets.BinaryLocalization, LinFuseModel, nn.CrossEntropyLoss,
-    #                            metrics.accuracy, DataType.PROTEIN, 2),
     "SubcellularLocalization": Task("SubcellularLocalization", datasets.SubcellularLocalization, LinFuseModel,
                                     nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 10),
-    # "Fold": Task("Fold", datasets.Fold, LinFuseModel, nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 1195),
-    "SecondaryStructure": Task("SecondaryStructure", datasets.SecondaryStructure, LinFuseModel, nn.CrossEntropyLoss,
-                               metrics.accuracy, DataType.PROTEIN, 3),
     "ProteinNet": Task("ProteinNet", datasets.ProteinNet, PairTransFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
                        DataType.PROTEIN, 2, DataType.PROTEIN),
     "HumanPPI": Task("HumanPPI", datasets.HumanPPI, PairTransFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
