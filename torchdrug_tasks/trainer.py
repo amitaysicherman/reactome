@@ -103,7 +103,8 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
             print("No model selected")
         if tune_mode:
             train.report(dict(valid_score=-1e6, test_score=-1e6))
-        return -1e6, -1e6
+        return dict(valid_score=-1e6, test_score=-1e6)
+
     model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, fuse_model=fuse_model)
     model = model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
@@ -142,6 +143,8 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
             with open(output_file, "a") as f:
                 f.write(
                     f'{task_name},{mol_emd},{protein_emd},{conf},{task_output_prefix},{task_name},{bs},{lr},{best_test_score}\n')
+    if tune_mode:
+        return dict(valid_score=best_valid_score, test_score=best_test_score)
     return best_valid_score, best_test_score
 
 
