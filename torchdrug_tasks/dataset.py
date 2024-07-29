@@ -4,6 +4,7 @@ from common.path_manager import data_path
 from torch.utils.data import Dataset, DataLoader
 import os
 
+
 def split_train_val_test(data, val_size=0.16, test_size=0.20):
     train_val_index = int((1 - val_size - test_size) * len(data))
     val_test_index = int((1 - test_size) * len(data))
@@ -17,6 +18,9 @@ def load_data(task_name, mol_emd, protein_emd):
     base_dir = f"{data_path}/torchdrug/"
     data_file = pjoin(base_dir, f"{task_name}_{protein_emd}_{mol_emd}.npz")
     data = np.load(data_file)
+    for key in data.keys():
+        data[key] = np.nan_to_num(data[key])
+        data[key] = data[key].astype(np.float32)
     if task_name in ["DrugBank", "Davis", "KIBA"]:
         x1, x2, labels = [data[f"{x}"] for x in ["x1", "x2", "label"]]
         shuffle_index = np.random.permutation(len(x1))
@@ -52,11 +56,7 @@ class TaskPrepDataset(Dataset):
             return self.x1[idx], self.labels[idx]
 
 
-
-
-
 def get_dataloaders(task_name, mol_emd, protein_emd, batch_size):
-
     x1_train, x2_train, labels_train, x1_valid, x2_valid, labels_valid, x1_test, x2_test, labels_test = load_data(
         task_name, mol_emd, protein_emd)
     train_loader = DataLoader(TaskPrepDataset(x1_train, x2_train, labels_train), batch_size=batch_size, shuffle=True)

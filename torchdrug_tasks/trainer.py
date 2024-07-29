@@ -26,7 +26,6 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
     reals = []
     preds = []
     for *all_x, labels in loader:
-        labels = torch.tensor(labels)
         if len(all_x) == 1:
             x = all_x[0]
             x = x.float().to(device)
