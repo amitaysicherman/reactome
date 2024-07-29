@@ -3,7 +3,7 @@ import subprocess
 
 def submit_slurm_job(command, i):
     """Submits a Slurm job using sbatch --wrap"""
-    slurm_command = f"sbatch job-name td-{i} --time=1-00 --mem=64G --requeue --cpus-per-task=8 --wrap 'python torchdrug_tasks/hyperparameter_search.py {command}'"
+    slurm_command = f"sbatch --job-name td-{i} --time=1-00 --mem=64G --requeue --cpus-per-task=8 --wrap 'python torchdrug_tasks/hyperparameter_search.py {command}'"
     subprocess.run(slurm_command, shell=True, check=True)
 
 
