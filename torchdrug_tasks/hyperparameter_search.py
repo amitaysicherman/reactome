@@ -35,7 +35,6 @@ def main(args):
         search_alg=optuna_search,  # Use OptunaSearch instead of BayesOptSearch
         scheduler=scheduler,  # Use ASHAScheduler
         num_samples=50,
-        resources_per_trial={"cpu": 2, "gpu": 1},
     )
 
 
