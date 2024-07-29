@@ -1,6 +1,5 @@
 # hyperparameter_search.py
 
-import ray
 from ray import tune
 from ray.tune.search.optuna import OptunaSearch
 from ray.tune.schedulers import ASHAScheduler
@@ -8,6 +7,24 @@ import os
 import torch
 from trainer import train_model_with_config
 from common.args_manager import get_args
+from common.path_manager import scores_path
+import pandas as pd
+
+
+class CSVLoggerCallback(tune.Callback):
+    def __init__(self, task_name):
+        self.filename = f'{scores_path}/{task_name}_torchdrug.csv'
+
+    def on_trial_result(self, iteration, trials, trial, result, **info):
+        config_cols = list(trial.config.keys())
+        all_cols = ["trial_id", "iteration", "valid_score", "test_score"] + config_cols
+        if not os.path.exists(self.filename):
+            with open(self.filename, "w") as f:
+                f.write(",".join(all_cols) + "\n")
+        values = [trial.trial_id, iteration, result.get("valid_score", None), result.get("test_score", None)] + [
+            trial.config[col] for col in config_cols]
+        with open(self.filename, "a") as f:
+            f.write(",".join(map(str, values)) + "\n")
 
 
 def main(args):
@@ -51,7 +68,7 @@ def main(args):
         scheduler=scheduler,  # Use ASHAScheduler
         num_samples=50,
         resources_per_trial={"cpu": os.cpu_count(), "gpu": torch.cuda.device_count()},
-
+        callbacks=[CSVLoggerCallback(args['task_name'])],
     )
 
 
