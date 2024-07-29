@@ -25,7 +25,7 @@ def load_data(task_name, mol_emd, protein_emd):
         labels = labels[shuffle_index]
         x1_train, x1_valid, x1_test = split_train_val_test(x1)
         x2_train, x2_valid, x2_test = split_train_val_test(x2)
-        labels_train, labels_valabels_validl, labels_test = split_train_val_test(labels)
+        labels_train, labels_valid, labels_test = split_train_val_test(labels)
     else:
         x1_train, x1_valid, x1_test = [data[f"x1_{x}"] for x in ["train", "valid", "test"]]
         if "x2_train" in data:
