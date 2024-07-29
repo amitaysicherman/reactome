@@ -5,7 +5,7 @@ from ray import tune
 from ray.tune.search.optuna import OptunaSearch
 from ray.tune.schedulers import ASHAScheduler
 
-from trainer import main as train_model_with_args
+from trainer import train_model_with_config
 from common.args_manager import get_args
 
 
@@ -29,8 +29,24 @@ def main(args):
         brackets=1  # Number of brackets for successive halving
     )
 
+    config = {
+        "use_fuse": args.cafa_use_fuse,
+        "use_model": args.cafa_use_model,
+        "bs": args.dp_bs,
+        "lr": args.dp_lr
+    }
+    args = {
+        "task_name": args.task_name,
+        "fuse_base": args.dp_fuse_base,
+        "mol_emd": args.mol_emd,
+        "protein_emd": args.protein_emd,
+        "print_output": args.dp_print,
+        "max_no_improve": args.max_no_improve,
+        "fuse_model": None,
+        "tune_mode": True
+    }
     tune.run(
-        tune.with_parameters(train_model_with_args, args=args, tune_mode=True),
+        tune.with_parameters(train_model_with_config(), **args),
         config=search_space,
         search_alg=optuna_search,  # Use OptunaSearch instead of BayesOptSearch
         scheduler=scheduler,  # Use ASHAScheduler
