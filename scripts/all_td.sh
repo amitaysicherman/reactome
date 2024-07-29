@@ -1,9 +1,9 @@
 #!/bin/sh
 #SBATCH --time=3-00
-#SBATCH --array=1-19
+#SBATCH --array=1-20
 #SBATCH --mem=64G
 #SBATCH --requeue
-#SBATCH --nodes=1
+#SBATCH --nodes=20
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=8
 
