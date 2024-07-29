@@ -142,8 +142,8 @@ def main(args, fuse_model=None):
     config = {
         "use_fuse": args.cafa_use_fuse,
         "use_model": args.cafa_use_model,
-        "bs": args.bs,
-        "lr": args.lr
+        "bs": args.dp_bs,
+        "lr": args.dp_lr
     }
     train_model_with_config(config, args.task_name, args.fuse_base, args.mol_emd, args.protein_emd, args.dp_print,
                             args.max_no_improve, fuse_model=fuse_model)
