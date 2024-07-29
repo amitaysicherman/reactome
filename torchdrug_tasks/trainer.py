@@ -102,7 +102,7 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
         if print_output:
             print("No model selected")
         if tune_mode:
-            train.report(valid_score=-1e6, test_score=-1e6)
+            train.report(dict(valid_score=-1e6, test_score=-1e6))
         return -1e6, -1e6
     model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, fuse_model=fuse_model)
     model = model.to(device)
@@ -129,7 +129,7 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
             if no_improve > max_no_improve:
                 break
     if tune_mode:
-        train.report(valid_score=best_valid_score, test_score=best_test_score)
+        train.report(dict(valid_score=best_valid_score, test_score=best_test_score))
     else:
         if print_output:
             print("Best Test scores\n", best_test_score)
