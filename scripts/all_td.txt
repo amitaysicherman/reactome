@@ -18,10 +18,6 @@
 --task_name SubcellularLocalization --protein_emd ProtBert-BFD  --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m
 --task_name SubcellularLocalization --protein_emd ESM-1B  --mol_emd pebchem10m --name ESM-1B-pebchem10m
 --task_name SubcellularLocalization --protein_emd ProtBertT5-xl  --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m
---task_name HumanPPI --protein_emd ESM2  --mol_emd pebchem10m --name ESM2-pebchem10m
---task_name HumanPPI --protein_emd ProtBert-BFD  --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m
---task_name HumanPPI --protein_emd ESM-1B  --mol_emd pebchem10m --name ESM-1B-pebchem10m
---task_name HumanPPI --protein_emd ProtBertT5-xl  --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m
 --task_name YeastPPI --protein_emd ESM2  --mol_emd pebchem10m --name ESM2-pebchem10m
 --task_name YeastPPI --protein_emd ProtBert-BFD  --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m
 --task_name YeastPPI --protein_emd ESM-1B  --mol_emd pebchem10m --name ESM-1B-pebchem10m
@@ -72,6 +68,10 @@
 --task_name Tox21 --mol_emd pebchem10m --protein_emd ESM2 --name ESM2-pebchem10m
 --task_name Tox21 --mol_emd chemberta --protein_emd ESM2 --name ESM2-chemberta
 --task_name Tox21 --mol_emd roberta --protein_emd ESM2 --name ESM2-roberta
+--task_name HumanPPI --protein_emd ESM2  --mol_emd pebchem10m --name ESM2-pebchem10m
+--task_name HumanPPI --protein_emd ProtBert-BFD  --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m
+--task_name HumanPPI --protein_emd ESM-1B  --mol_emd pebchem10m --name ESM-1B-pebchem10m
+--task_name HumanPPI --protein_emd ProtBertT5-xl  --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m
 --task_name DrugBank --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m
 --task_name DrugBank --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta
 --task_name DrugBank --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta
