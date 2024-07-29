@@ -18,11 +18,11 @@ def main(args):
         'use_model': tune.choice([True, False]),
     }
 
-    optuna_search = OptunaSearch(metric="best_valid_score", mode="max")
+    optuna_search = OptunaSearch(metric="valid_score", mode="max")
 
     # Use Async HyperBand with early stopping
     scheduler = ASHAScheduler(
-        metric="best_valid_score",
+        metric="valid_score",
         mode="max",
         max_t=250,  # Maximum number of epochs
         grace_period=5,  # Minimum epochs before stopping
