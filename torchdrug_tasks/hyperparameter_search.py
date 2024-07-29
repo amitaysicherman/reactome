@@ -11,8 +11,8 @@ from common.args_manager import get_args
 
 def main(args):
     search_space = {
-        "batch_size": tune.choice([32, 64, 128]),
-        "learning_rate": tune.loguniform(1e-4, 1e-2),
+        "bs": tune.choice([8,64,256,1024]),
+        "lr": tune.loguniform(1e-5, 1e-2),
         'use_fuse': tune.choice([True, False]),
         'use_model': tune.choice([True, False]),
     }
@@ -29,12 +29,6 @@ def main(args):
         brackets=1  # Number of brackets for successive halving
     )
 
-    config = {
-        "use_fuse": args.cafa_use_fuse,
-        "use_model": args.cafa_use_model,
-        "bs": args.dp_bs,
-        "lr": args.dp_lr
-    }
     args = {
         "task_name": args.task_name,
         "fuse_base": args.dp_fuse_base,
