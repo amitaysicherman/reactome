@@ -63,7 +63,7 @@ def prep_dataset(task: Task, seq2vec, protein_emd, mol_emd):
     if os.path.exists(output_file):
         return
 
-    if task.prep_type == PrepType.torchdrug:
+    if task.prep_type == PrepType.drugtarget:
         input_file = os.path.join(data_path, "protein_drug", f"{task.name}.txt")
         with open(input_file) as f:
             lines = f.read().splitlines()
