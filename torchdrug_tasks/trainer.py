@@ -5,7 +5,8 @@ from common.path_manager import scores_path
 from torchdrug_tasks.dataset import get_dataloaders
 from torchdrug_tasks.tasks import name_to_task, Task
 from torchdrug_tasks.models import LinFuseModel, PairTransFuseModel
-from ray import tune
+from ray import train
+
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
@@ -101,7 +102,7 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
         if print_output:
             print("No model selected")
         if tune_mode:
-            tune.report(best_valid_score=-1e6, best_test_score=-1e6)
+            train.report(best_valid_score=-1e6, best_test_score=-1e6)
         return -1e6, -1e6
     model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, fuse_model=fuse_model)
     model = model.to(device)
