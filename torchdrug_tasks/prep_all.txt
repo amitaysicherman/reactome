@@ -1,19 +1,133 @@
 --task BetaLactamase --protein_emd ESM2
+--task BetaLactamase --protein_emd ProtBert-BFD
+--task BetaLactamase --protein_emd ESM-1B
+--task BetaLactamase --protein_emd ESM3
+--task BetaLactamase --protein_emd ProtBertT5-xl
 --task Fluorescence --protein_emd ESM2
+--task Fluorescence --protein_emd ProtBert-BFD
+--task Fluorescence --protein_emd ESM-1B
+--task Fluorescence --protein_emd ESM3
+--task Fluorescence --protein_emd ProtBertT5-xl
 --task Stability --protein_emd ESM2
+--task Stability --protein_emd ProtBert-BFD
+--task Stability --protein_emd ESM-1B
+--task Stability --protein_emd ESM3
+--task Stability --protein_emd ProtBertT5-xl
 --task Solubility --protein_emd ESM2
+--task Solubility --protein_emd ProtBert-BFD
+--task Solubility --protein_emd ESM-1B
+--task Solubility --protein_emd ESM3
+--task Solubility --protein_emd ProtBertT5-xl
 --task SubcellularLocalization --protein_emd ESM2
+--task SubcellularLocalization --protein_emd ProtBert-BFD
+--task SubcellularLocalization --protein_emd ESM-1B
+--task SubcellularLocalization --protein_emd ESM3
+--task SubcellularLocalization --protein_emd ProtBertT5-xl
 --task HumanPPI --protein_emd ESM2
+--task HumanPPI --protein_emd ProtBert-BFD
+--task HumanPPI --protein_emd ESM-1B
+--task HumanPPI --protein_emd ESM3
+--task HumanPPI --protein_emd ProtBertT5-xl
 --task YeastPPI --protein_emd ESM2
+--task YeastPPI --protein_emd ProtBert-BFD
+--task YeastPPI --protein_emd ESM-1B
+--task YeastPPI --protein_emd ESM3
+--task YeastPPI --protein_emd ProtBertT5-xl
 --task PPIAffinity --protein_emd ESM2
+--task PPIAffinity --protein_emd ProtBert-BFD
+--task PPIAffinity --protein_emd ESM-1B
+--task PPIAffinity --protein_emd ESM3
+--task PPIAffinity --protein_emd ProtBertT5-xl
 --task BindingDB --protein_emd ESM2 --mol_emd pebchem10m
+--task BindingDB --protein_emd ESM2 --mol_emd chemberta
+--task BindingDB --protein_emd ESM2 --mol_emd roberta
+--task BindingDB --protein_emd ProtBert-BFD --mol_emd pebchem10m
+--task BindingDB --protein_emd ProtBert-BFD --mol_emd chemberta
+--task BindingDB --protein_emd ProtBert-BFD --mol_emd roberta
+--task BindingDB --protein_emd ESM-1B --mol_emd pebchem10m
+--task BindingDB --protein_emd ESM-1B --mol_emd chemberta
+--task BindingDB --protein_emd ESM-1B --mol_emd roberta
+--task BindingDB --protein_emd ESM3 --mol_emd pebchem10m
+--task BindingDB --protein_emd ESM3 --mol_emd chemberta
+--task BindingDB --protein_emd ESM3 --mol_emd roberta
+--task BindingDB --protein_emd ProtBertT5-xl --mol_emd pebchem10m
+--task BindingDB --protein_emd ProtBertT5-xl --mol_emd chemberta
+--task BindingDB --protein_emd ProtBertT5-xl --mol_emd roberta
 --task PDBBind --protein_emd ESM2 --mol_emd pebchem10m
+--task PDBBind --protein_emd ESM2 --mol_emd chemberta
+--task PDBBind --protein_emd ESM2 --mol_emd roberta
+--task PDBBind --protein_emd ProtBert-BFD --mol_emd pebchem10m
+--task PDBBind --protein_emd ProtBert-BFD --mol_emd chemberta
+--task PDBBind --protein_emd ProtBert-BFD --mol_emd roberta
+--task PDBBind --protein_emd ESM-1B --mol_emd pebchem10m
+--task PDBBind --protein_emd ESM-1B --mol_emd chemberta
+--task PDBBind --protein_emd ESM-1B --mol_emd roberta
+--task PDBBind --protein_emd ESM3 --mol_emd pebchem10m
+--task PDBBind --protein_emd ESM3 --mol_emd chemberta
+--task PDBBind --protein_emd ESM3 --mol_emd roberta
+--task PDBBind --protein_emd ProtBertT5-xl --mol_emd pebchem10m
+--task PDBBind --protein_emd ProtBertT5-xl --mol_emd chemberta
+--task PDBBind --protein_emd ProtBertT5-xl --mol_emd roberta
 --task BACE --mol_emd pebchem10m
+--task BACE --mol_emd chemberta
+--task BACE --mol_emd roberta
 --task BBBP --mol_emd pebchem10m
+--task BBBP --mol_emd chemberta
+--task BBBP --mol_emd roberta
 --task ClinTox --mol_emd pebchem10m
+--task ClinTox --mol_emd chemberta
+--task ClinTox --mol_emd roberta
 --task HIV --mol_emd pebchem10m
+--task HIV --mol_emd chemberta
+--task HIV --mol_emd roberta
 --task SIDER --mol_emd pebchem10m
+--task SIDER --mol_emd chemberta
+--task SIDER --mol_emd roberta
 --task Tox21 --mol_emd pebchem10m
+--task Tox21 --mol_emd chemberta
+--task Tox21 --mol_emd roberta
 --task DrugBank --protein_emd ESM2 --mol_emd pebchem10m
+--task DrugBank --protein_emd ESM2 --mol_emd chemberta
+--task DrugBank --protein_emd ESM2 --mol_emd roberta
+--task DrugBank --protein_emd ProtBert-BFD --mol_emd pebchem10m
+--task DrugBank --protein_emd ProtBert-BFD --mol_emd chemberta
+--task DrugBank --protein_emd ProtBert-BFD --mol_emd roberta
+--task DrugBank --protein_emd ESM-1B --mol_emd pebchem10m
+--task DrugBank --protein_emd ESM-1B --mol_emd chemberta
+--task DrugBank --protein_emd ESM-1B --mol_emd roberta
+--task DrugBank --protein_emd ESM3 --mol_emd pebchem10m
+--task DrugBank --protein_emd ESM3 --mol_emd chemberta
+--task DrugBank --protein_emd ESM3 --mol_emd roberta
+--task DrugBank --protein_emd ProtBertT5-xl --mol_emd pebchem10m
+--task DrugBank --protein_emd ProtBertT5-xl --mol_emd chemberta
+--task DrugBank --protein_emd ProtBertT5-xl --mol_emd roberta
 --task Davis --protein_emd ESM2 --mol_emd pebchem10m
+--task Davis --protein_emd ESM2 --mol_emd chemberta
+--task Davis --protein_emd ESM2 --mol_emd roberta
+--task Davis --protein_emd ProtBert-BFD --mol_emd pebchem10m
+--task Davis --protein_emd ProtBert-BFD --mol_emd chemberta
+--task Davis --protein_emd ProtBert-BFD --mol_emd roberta
+--task Davis --protein_emd ESM-1B --mol_emd pebchem10m
+--task Davis --protein_emd ESM-1B --mol_emd chemberta
+--task Davis --protein_emd ESM-1B --mol_emd roberta
+--task Davis --protein_emd ESM3 --mol_emd pebchem10m
+--task Davis --protein_emd ESM3 --mol_emd chemberta
+--task Davis --protein_emd ESM3 --mol_emd roberta
+--task Davis --protein_emd ProtBertT5-xl --mol_emd pebchem10m
+--task Davis --protein_emd ProtBertT5-xl --mol_emd chemberta
+--task Davis --protein_emd ProtBertT5-xl --mol_emd roberta
 --task KIBA --protein_emd ESM2 --mol_emd pebchem10m
+--task KIBA --protein_emd ESM2 --mol_emd chemberta
+--task KIBA --protein_emd ESM2 --mol_emd roberta
+--task KIBA --protein_emd ProtBert-BFD --mol_emd pebchem10m
+--task KIBA --protein_emd ProtBert-BFD --mol_emd chemberta
+--task KIBA --protein_emd ProtBert-BFD --mol_emd roberta
+--task KIBA --protein_emd ESM-1B --mol_emd pebchem10m
+--task KIBA --protein_emd ESM-1B --mol_emd chemberta
+--task KIBA --protein_emd ESM-1B --mol_emd roberta
+--task KIBA --protein_emd ESM3 --mol_emd pebchem10m
+--task KIBA --protein_emd ESM3 --mol_emd chemberta
+--task KIBA --protein_emd ESM3 --mol_emd roberta
+--task KIBA --protein_emd ProtBertT5-xl --mol_emd pebchem10m
+--task KIBA --protein_emd ProtBertT5-xl --mol_emd chemberta
+--task KIBA --protein_emd ProtBertT5-xl --mol_emd roberta
