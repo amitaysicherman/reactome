@@ -16,13 +16,12 @@ class CSVLoggerCallback(tune.Callback):
         self.filename = f'{scores_path}/hp_{name}_torchdrug.csv'
 
     def on_trial_result(self, iteration, trials, trial, result, **info):
-        config_cols = list(trial.config.keys())
-        all_cols = ["trial_id", "iteration", "valid_score", "test_score"] + config_cols
+        all_cols = ["trial_id", "iteration", "valid_score", "test_score", "config"]
         if not os.path.exists(self.filename):
             with open(self.filename, "w") as f:
                 f.write(",".join(all_cols) + "\n")
-        values = [trial.trial_id, iteration, result.get("valid_score", None), result.get("test_score", None)] + [
-            trial.config[col] for col in config_cols]
+        values = [trial.trial_id, iteration, result.get("valid_score", None), result.get("test_score", None),
+                  trial.config]
         with open(self.filename, "a") as f:
             f.write(",".join(map(str, values)) + "\n")
 
@@ -61,15 +60,37 @@ def main(args):
         "tune_mode": True
     }
     name = f'{args["task_name"]}_{args["protein_emd"]}_{args["mol_emd"]}'
+    csv_logger = CSVLoggerCallback(name)
+
     tune.run(
         tune.with_parameters(train_model_with_config, **args),
         config=search_space,
         search_alg=optuna_search,  # Use OptunaSearch instead of BayesOptSearch
         scheduler=scheduler,  # Use ASHAScheduler
-        num_samples=50,
+        num_samples=5,
         resources_per_trial={"cpu": os.cpu_count(), "gpu": torch.cuda.device_count()},
-        callbacks=[CSVLoggerCallback(name)],
+        callbacks=[csv_logger],
     )
+
+    df = pd.read_csv(csv_logger.filename)
+    df = df.sort_values("valid_score", ascending=False)
+    best_config = eval(df.iloc[0]["config"])
+    best_fuse_test_score = df.iloc[0]["test_score"]
+    print(f"Best config: {best_config}")
+    best_config['use_fuse'] = False
+    best_config['use_model'] = True
+    args["tune_mode"] = False
+    _, best_model_test_score = train_model_with_config(best_config, **args)
+
+    header = ['task', 'mol_emd', 'protein_emd', 'conf', 'score_model', 'score_fuse']
+    output_file = f"{scores_path}/torchdrug.csv"
+    if not os.path.exists(output_file):
+        with open(output_file, "w") as f:
+            f.write(",".join(header) + "\n")
+    values = [args["task_name"], args["mol_emd"], args["protein_emd"], best_config, best_model_test_score,
+              best_fuse_test_score]
+    with open(output_file, "a") as f:
+        f.write(",".join(map(str, values)) + "\n")
 
 
 if __name__ == '__main__':
