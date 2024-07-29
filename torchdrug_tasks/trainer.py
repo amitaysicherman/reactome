@@ -26,7 +26,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
     reals = []
     preds = []
     for *all_x, labels in loader:
-        labels=torch.tensor(labels)
+        labels = torch.tensor(labels)
         if len(all_x) == 1:
             x = all_x[0]
             x = x.float().to(device)
@@ -39,11 +39,12 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
             output = model(x1, x2)
 
         optimizer.zero_grad()
-        print(labels)
         labels = labels.float().to(device)
-        print(criterion,criterion.__str__())
-        if labels.shape[1] > 1 and criterion.__str__() == "CrossEntropyLoss()":
-            labels = torch.argmax(labels, dim=-1)
+        if isinstance(criterion, torch.nn.CrossEntropyLoss):
+            labels = labels.squeeze(1).long()
+            # labels = torch.argmax(labels, dim=-1)
+        #     labels = torch.argmax(labels, dim=-1)
+
         # if labels.shape[1] == 1:
         # labels = labels.squeeze(1)
         # if labels.long().sum() == labels.sum():
