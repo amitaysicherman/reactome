@@ -41,7 +41,8 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         optimizer.zero_grad()
 
         labels = labels.float().to(device)
-        if labels.shape[1] > 1 and isinstance(criterion, torch.nn.CrossEntropyLoss):
+
+        if labels.shape[1] > 1 and criterion.__str__() == "CrossEntropyLoss()":
             labels = torch.argmax(labels, dim=-1)
         # if labels.shape[1] == 1:
         # labels = labels.squeeze(1)
@@ -148,4 +149,5 @@ def main(args, fuse_model=None):
 
 if __name__ == '__main__':
     from common.args_manager import get_args
+
     main(get_args())
