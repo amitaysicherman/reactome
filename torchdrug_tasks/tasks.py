@@ -31,7 +31,7 @@ name_to_task = {
                          DataType.PROTEIN, 1),
     "Stability": Task("Stability", datasets.Stability, LinFuseModel, nn.MSELoss, mse_metric,
                       DataType.PROTEIN, 1),
-    "Solubility": Task("Solubility", datasets.Stability, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
+    "Solubility": Task("Solubility", datasets.Stability, LinFuseModel, nn.MSELoss, mse_metric,
                        DataType.PROTEIN, 1),
     # "BinaryLocalization": Task("BinaryLocalization", datasets.BinaryLocalization, LinFuseModel, nn.CrossEntropyLoss,
     #                            metrics.accuracy, DataType.PROTEIN, 2),
