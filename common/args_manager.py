@@ -6,7 +6,7 @@ def get_args():
 
     # preproccecing args
 
-    parser.add_argument("--self_token", type=str, default="")
+    parser.add_argument("--self_token", type=str, default="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")
     parser.add_argument("--protein_emd", type=str, default="ProtBertT5-xl")
     parser.add_argument("--mol_emd", type=str, default="pebchem10m")
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
@@ -22,7 +22,7 @@ def get_args():
     parser.add_argument("--max_no_improve", type=int, default=15)
     parser.add_argument("--random_seed", type=int, default=42)
 
-    parser.add_argument("--fuse_batch_size", type=int, default=128)
+    parser.add_argument("--fuse_batch_size", type=int, default=8192)
     parser.add_argument("--fuse_output_dim", type=int, default=1024)
     parser.add_argument("--fuse_dropout", type=float, default=0.3)
     parser.add_argument("--fuse_lr", type=float, default=1e-3)
@@ -71,7 +71,7 @@ def get_args():
     parser.add_argument("--dp_p_model", type=int, default=0)
     parser.add_argument("--dp_only_rand", type=int, default=0)
     parser.add_argument("--dp_fuse_freeze", type=int, default=1)
-    parser.add_argument("--dp_bs", type=int, default=1024)
+    parser.add_argument("--dp_bs", type=int, default=64)
     parser.add_argument("--dp_lr", type=float, default=1e-4)
     parser.add_argument("--dp_print", type=int, default=1)
     parser.add_argument("--db_dataset", type=str, default="DrugBank", choices=["Davis", "DrugBank", "KIBA", "human"])
