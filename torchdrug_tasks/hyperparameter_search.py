@@ -4,7 +4,8 @@ import ray
 from ray import tune
 from ray.tune.search.optuna import OptunaSearch
 from ray.tune.schedulers import ASHAScheduler
-
+import os
+import torch
 from trainer import train_model_with_config
 from common.args_manager import get_args
 
@@ -39,12 +40,15 @@ def main(args):
         "fuse_model": None,
         "tune_mode": True
     }
+
     tune.run(
         tune.with_parameters(train_model_with_config, **args),
         config=search_space,
         search_alg=optuna_search,  # Use OptunaSearch instead of BayesOptSearch
         scheduler=scheduler,  # Use ASHAScheduler
         num_samples=50,
+        resources_per_trial={"cpu": os.cpu_count(), "gpu": torch.cuda.device_count()},
+
     )
 
 
