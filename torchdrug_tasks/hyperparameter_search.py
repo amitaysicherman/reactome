@@ -12,8 +12,8 @@ import pandas as pd
 
 
 class CSVLoggerCallback(tune.Callback):
-    def __init__(self, task_name):
-        self.filename = f'{scores_path}/{task_name}_torchdrug.csv'
+    def __init__(self, name):
+        self.filename = f'{scores_path}/hp_{name}_torchdrug.csv'
 
     def on_trial_result(self, iteration, trials, trial, result, **info):
         config_cols = list(trial.config.keys())
@@ -55,12 +55,12 @@ def main(args):
         "fuse_base": args.dp_fuse_base,
         "mol_emd": args.mol_emd,
         "protein_emd": args.protein_emd,
-        "print_output": args.dp_print,
+        "print_output": False,
         "max_no_improve": args.max_no_improve,
         "fuse_model": None,
         "tune_mode": True
     }
-
+    name = f'{args["task_name"]}_{args["protein_emd"]}_{args["mol_emd"]}'
     tune.run(
         tune.with_parameters(train_model_with_config, **args),
         config=search_space,
@@ -68,7 +68,7 @@ def main(args):
         scheduler=scheduler,  # Use ASHAScheduler
         num_samples=50,
         resources_per_trial={"cpu": os.cpu_count(), "gpu": torch.cuda.device_count()},
-        callbacks=[CSVLoggerCallback(args['task_name'])],
+        callbacks=[CSVLoggerCallback(name)],
     )
 
 
