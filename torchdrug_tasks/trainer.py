@@ -145,7 +145,7 @@ def main(args, fuse_model=None):
         "bs": args.dp_bs,
         "lr": args.dp_lr
     }
-    train_model_with_config(config, args.task_name, args.fuse_base, args.mol_emd, args.protein_emd, args.dp_print,
+    train_model_with_config(config, args.task_name, args.dp_fuse_base, args.mol_emd, args.protein_emd, args.dp_print,
                             args.max_no_improve, fuse_model=fuse_model)
 
 
