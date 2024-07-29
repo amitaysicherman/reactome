@@ -19,11 +19,10 @@ def main(args):
 
     # Implement early stopping
     stopper = TrialPlateauStopper(
-        metric="best_valid_score",
+        metric="validation_score",
         mode="max",
-        num_results=10,  # Number of trials without improvement before stopping
+        num_results=10,  # Number of results without improvement before stopping
         grace_period=5,  # Minimum number of results before early stopping is considered
-        patience=5,      # Number of results to wait for improvement
     )
 
     tune.run(
