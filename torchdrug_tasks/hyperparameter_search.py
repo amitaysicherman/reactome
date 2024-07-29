@@ -48,13 +48,14 @@ def main(args):
     }
     name = f'{args["task_name"]}_{args["protein_emd"]}_{args["mol_emd"]}'
     filename = f'{scores_path}/hp_{name}_torchdrug.csv'
+    if os.path.exists(filename):
+        os.remove(filename)
     all_cols = ["valid_score", "test_score"] + config_cols
     with open(filename, "w") as f:
         f.write(",".join(all_cols) + "\n")
 
-    if os.path.exists(filename):
-        os.remove(filename)
-    for option in tqdm(all_options):
+
+    for option in tqdm(all_options[:1]):
         val_score, test_score = train_model_with_config(option, **args)
         values = [val_score, test_score] + [option.get(col, None) for col in config_cols]
         with open(filename, "a") as f:
