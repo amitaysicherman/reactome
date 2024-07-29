@@ -11,7 +11,7 @@ from common.path_manager import scores_path
 import pandas as pd
 
 config_cols = ['bs', 'lr', 'use_fuse', 'use_model', 'n_layers', 'hidden_dim', 'drop_out']
-n_max = 5
+n_max = 100
 
 
 class CSVLoggerCallback(tune.Callback):
