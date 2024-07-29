@@ -46,7 +46,7 @@ def main(args):
         "tune_mode": True
     }
     tune.run(
-        tune.with_parameters(train_model_with_config(), **args),
+        tune.with_parameters(train_model_with_config, **args),
         config=search_space,
         search_alg=optuna_search,  # Use OptunaSearch instead of BayesOptSearch
         scheduler=scheduler,  # Use ASHAScheduler
