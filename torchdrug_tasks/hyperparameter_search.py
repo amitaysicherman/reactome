@@ -55,7 +55,7 @@ def main(args):
         f.write(",".join(all_cols) + "\n")
 
 
-    for option in tqdm(all_options[:1]):
+    for option in tqdm(all_options):
         val_score, test_score = train_model_with_config(option, **args)
         values = [val_score, test_score] + [option.get(col, None) for col in config_cols]
         with open(filename, "a") as f:
