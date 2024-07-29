@@ -10,6 +10,8 @@ from common.args_manager import get_args
 from common.path_manager import scores_path
 import pandas as pd
 
+config_cols = ['bs', 'lr', 'use_fuse', 'use_model', 'n_layers', 'hidden_dim', 'drop_out']
+
 
 class CSVLoggerCallback(tune.Callback):
     def __init__(self, name):
@@ -18,12 +20,12 @@ class CSVLoggerCallback(tune.Callback):
             os.remove(self.filename)
 
     def on_trial_result(self, iteration, trials, trial, result, **info):
-        all_cols = ["trial_id", "iteration", "valid_score", "test_score", "config"]
+        all_cols = ["trial_id", "iteration", "valid_score", "test_score"] + config_cols
         if not os.path.exists(self.filename):
             with open(self.filename, "w") as f:
                 f.write(",".join(all_cols) + "\n")
-        values = [trial.trial_id, iteration, result.get("valid_score", None), result.get("test_score", None),
-                  trial.config]
+        values = [trial.trial_id, iteration, result.get("valid_score", None), result.get("test_score", None)]
+        values += [trial.config.get(col, None) for col in config_cols]
         with open(self.filename, "a") as f:
             f.write(",".join(map(str, values)) + "\n")
 
@@ -76,7 +78,7 @@ def main(args):
 
     df = pd.read_csv(csv_logger.filename)
     df = df.sort_values("valid_score", ascending=False)
-    best_config = eval(df.iloc[0]["config"])
+    best_config = {col: df.iloc[0][col] for col in config_cols}
     best_fuse_test_score = df.iloc[0]["test_score"]
     print(f"Best config: {best_config}")
     best_config['use_fuse'] = False
@@ -84,13 +86,13 @@ def main(args):
     args["tune_mode"] = False
     _, best_model_test_score = train_model_with_config(best_config, **args)
 
-    header = ['task', 'mol_emd', 'protein_emd', 'conf', 'score_model', 'score_fuse']
+    header = ['task', 'mol_emd', 'protein_emd', 'score_model', 'score_fuse'] + config_cols
     output_file = f"{scores_path}/torchdrug.csv"
     if not os.path.exists(output_file):
         with open(output_file, "w") as f:
             f.write(",".join(header) + "\n")
-    values = [args["task_name"], args["mol_emd"], args["protein_emd"], best_config, best_model_test_score,
-              best_fuse_test_score]
+    values = [args["task_name"], args["mol_emd"], args["protein_emd"], best_model_test_score,
+              best_fuse_test_score] + [best_config.get(col, None) for col in config_cols]
     with open(output_file, "a") as f:
         f.write(",".join(map(str, values)) + "\n")
 
