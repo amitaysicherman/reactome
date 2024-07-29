@@ -129,7 +129,7 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
             if no_improve > max_no_improve:
                 break
     if tune_mode:
-        tune.report(best_valid_score=best_valid_score, best_test_score=best_test_score)
+        train.report(best_valid_score=best_valid_score, best_test_score=best_test_score)
     else:
         if print_output:
             print("Best Test scores\n", best_test_score)
