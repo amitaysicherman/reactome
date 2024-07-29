@@ -11,6 +11,8 @@ def main(args):
     search_space = {
         "batch_size": tune.choice([32, 64, 128]),
         "learning_rate": tune.loguniform(1e-4, 1e-2),
+        'use_fuse': tune.choice([True, False]),
+        'use_model': tune.choice([True, False]),
     }
 
     bayesopt_search = BayesOptSearch(metric="best_valid_score", mode="max")
