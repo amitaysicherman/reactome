@@ -18,11 +18,9 @@ def load_data(task_name, mol_emd, protein_emd):
     base_dir = f"{data_path}/torchdrug/"
     data_file = pjoin(base_dir, f"{task_name}_{protein_emd}_{mol_emd}.npz")
     data = np.load(data_file)
-    for key in data.keys():
-        data[key] = np.nan_to_num(data[key])
-        data[key] = data[key].astype(float)
     if task_name in ["DrugBank", "Davis", "KIBA"]:
         x1, x2, labels = [data[f"{x}"] for x in ["x1", "x2", "label"]]
+        labels = labels.astype(np.float32)
         shuffle_index = np.random.permutation(len(x1))
         x1 = x1[shuffle_index]
         x2 = x2[shuffle_index]
