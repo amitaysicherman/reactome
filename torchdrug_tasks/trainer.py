@@ -83,7 +83,7 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, drop_out, n_layers
 
 
 def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_emd: str, protein_emd: str,
-                            print_output=False, max_no_improve=10, tune_mode=False, fuse_model=None):
+                            print_output=False, max_no_improve=10, fuse_model=None):
     use_fuse = config["use_fuse"]
     use_model = config["use_model"]
     bs = config["bs"]
@@ -106,8 +106,6 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
     else:
         if print_output:
             print("No model selected")
-        if tune_mode:
-            return dict(valid_score=-1e6, test_score=-1e6)
         return -1e6, -1e6
 
     model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, drop_out=drop_out,
@@ -146,8 +144,6 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
         with open(output_file, "a") as f:
             f.write(
                 f'{task_name},{mol_emd},{protein_emd},{conf},{task_output_prefix},{task_name},{bs},{lr},{best_test_score}\n')
-    if tune_mode:
-        return dict(valid_score=best_valid_score, test_score=best_test_score)
     return best_valid_score, best_test_score
 
 

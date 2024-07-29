@@ -1,10 +1,5 @@
-# hyperparameter_search.py
-
-from ray import tune
-from ray.tune.search.optuna import OptunaSearch
-from ray.tune.schedulers import ASHAScheduler
+from tqdm import tqdm
 import os
-import torch
 from trainer import train_model_with_config
 from common.args_manager import get_args
 from common.path_manager import scores_path
@@ -14,45 +9,33 @@ config_cols = ['bs', 'lr', 'use_fuse', 'use_model', 'n_layers', 'hidden_dim', 'd
 n_max = 100
 
 
-class CSVLoggerCallback(tune.Callback):
-    def __init__(self, name):
-        self.filename = f'{scores_path}/hp_{name}_torchdrug.csv'
-        if os.path.exists(self.filename):
-            os.remove(self.filename)
-
-    def on_trial_result(self, iteration, trials, trial, result, **info):
-        all_cols = ["trial_id", "iteration", "valid_score", "test_score"] + config_cols
-        if not os.path.exists(self.filename):
-            with open(self.filename, "w") as f:
-                f.write(",".join(all_cols) + "\n")
-        values = [trial.trial_id, iteration, result.get("valid_score", None), result.get("test_score", None)]
-        values += [trial.config.get(col, None) for col in config_cols]
-        with open(self.filename, "a") as f:
-            f.write(",".join(map(str, values)) + "\n")
-
-
 def main(args):
     search_space = {
-        "bs": tune.choice([8, 64, 256, 1024]),
-        "lr": tune.loguniform(1e-5, 1e-2),
-        'use_fuse': tune.choice([True]),
-        'use_model': tune.choice([True, False]),
-        'n_layers': tune.choice([1, 2, 3]),
-        'hidden_dim': tune.choice([128, 256, 512, 1024]),
-        'drop_out': tune.uniform(0.0, 0.5)
+        "bs": [8, 256, 1024],
+        "lr": [5e-5, 5e-3],
+        'use_fuse': [True],
+        'use_model': [True, False],
+        'n_layers': [1, 2],
+        'hidden_dim': [256, 512],
+        'drop_out': [0, 0.1, 0.5]
     }
-
-    optuna_search = OptunaSearch(metric="valid_score", mode="max")
-
-    # Use Async HyperBand with early stopping
-    scheduler = ASHAScheduler(
-        metric="valid_score",
-        mode="max",
-        max_t=n_max,  # Maximum number of epochs
-        grace_period=5,  # Minimum epochs before stopping
-        reduction_factor=2,  # Halving rate for early stopping
-        brackets=1  # Number of brackets for successive halving
-    )
+    all_options = []
+    for bs in search_space["bs"]:
+        for lr in search_space["lr"]:
+            for use_fuse in search_space["use_fuse"]:
+                for use_model in search_space["use_model"]:
+                    for n_layers in search_space["n_layers"]:
+                        for hidden_dim in search_space["hidden_dim"]:
+                            for drop_out in search_space["drop_out"]:
+                                all_options.append({
+                                    "bs": bs,
+                                    "lr": lr,
+                                    "use_fuse": use_fuse,
+                                    "use_model": use_model,
+                                    "n_layers": n_layers,
+                                    "hidden_dim": hidden_dim,
+                                    "drop_out": drop_out
+                                })
 
     args = {
         "task_name": args.task_name,
@@ -65,19 +48,20 @@ def main(args):
         "tune_mode": True
     }
     name = f'{args["task_name"]}_{args["protein_emd"]}_{args["mol_emd"]}'
-    csv_logger = CSVLoggerCallback(name)
+    filename = f'{scores_path}/hp_{name}_torchdrug.csv'
+    all_cols = ["valid_score", "test_score"] + config_cols
+    with open(filename, "w") as f:
+        f.write(",".join(all_cols) + "\n")
 
-    tune.run(
-        tune.with_parameters(train_model_with_config, **args),
-        config=search_space,
-        search_alg=optuna_search,  # Use OptunaSearch instead of BayesOptSearch
-        scheduler=scheduler,  # Use ASHAScheduler
-        num_samples=n_max,
-        resources_per_trial={"cpu": 1, "gpu": 0},
-        callbacks=[csv_logger],
-    )
+    if os.path.exists(filename):
+        os.remove(filename)
+    for option in tqdm(all_options):
+        val_score, test_score = train_model_with_config(option, **args)
+        values = [val_score, test_score] + [option.get(col, None) for col in config_cols]
+        with open(filename, "a") as f:
+            f.write(",".join(map(str, values)) + "\n")
 
-    df = pd.read_csv(csv_logger.filename)
+    df = pd.read_csv(filename)
     df = df.sort_values("valid_score", ascending=False)
     best_config = {col: df.iloc[0][col] for col in config_cols}
     for col in ["bs", "n_layers", "hidden_dim"]:
