@@ -17,7 +17,7 @@ def main(args):
 
     # Implement early stopping
     stopper = TrialPlateauStopper(
-        metric="validation_score",
+        metric="best_valid_score",
         mode="max",
         num_results=10,  # Number of trials without improvement before stopping
         grace_period=5,  # Minimum number of results before early stopping is considered
