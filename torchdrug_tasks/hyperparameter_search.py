@@ -14,6 +14,8 @@ import pandas as pd
 class CSVLoggerCallback(tune.Callback):
     def __init__(self, name):
         self.filename = f'{scores_path}/hp_{name}_torchdrug.csv'
+        if os.path.exists(self.filename):
+            os.remove(self.filename)
 
     def on_trial_result(self, iteration, trials, trial, result, **info):
         all_cols = ["trial_id", "iteration", "valid_score", "test_score", "config"]
