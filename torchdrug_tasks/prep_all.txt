@@ -3,7 +3,6 @@
 --task Stability --protein_emd ESM2
 --task Solubility --protein_emd ESM2
 --task SubcellularLocalization --protein_emd ESM2
---task ProteinNet --protein_emd ESM2
 --task HumanPPI --protein_emd ESM2
 --task YeastPPI --protein_emd ESM2
 --task PPIAffinity --protein_emd ESM2

@@ -42,8 +42,6 @@ name_to_task = {
                        DataType.PROTEIN, 1),
     "SubcellularLocalization": Task("SubcellularLocalization", datasets.SubcellularLocalization, LinFuseModel,
                                     nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 10),
-    "ProteinNet": Task("ProteinNet", datasets.ProteinNet, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
-                       DataType.PROTEIN, 1, DataType.PROTEIN),
     "HumanPPI": Task("HumanPPI", datasets.HumanPPI, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
                      DataType.PROTEIN, 1, DataType.PROTEIN),
     "YeastPPI": Task("YeastPPI", datasets.YeastPPI, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
