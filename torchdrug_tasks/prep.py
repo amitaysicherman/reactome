@@ -114,7 +114,7 @@ if __name__ == "__main__":
     parser.add_argument("--task", type=str, default="all")
     parser.add_argument("--protein_emd", type=str, default="ESM2")
     parser.add_argument("--mol_emd", type=str, default="pebchem10m")
-    parser.add_argument("--self_token", type=str, default="")
+    parser.add_argument("--self_token", type=str, default="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")
     parser.add_argument("--task_index", type=int, default=-1)
 
     args = parser.parse_args()

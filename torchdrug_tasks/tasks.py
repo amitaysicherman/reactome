@@ -17,11 +17,11 @@ class Task:
     output_dim: int
     dtype2: DataType = None
 
+
 def mse_metric(output, target):
     squared_diff = (output - target) ** 2
     mse = torch.mean(squared_diff)
-    return -1*mse
-
+    return -1 * mse
 
 
 name_to_task = {
@@ -38,20 +38,20 @@ name_to_task = {
     # "SubcellularLocalization": Task("SubcellularLocalization", datasets.SubcellularLocalization, LinFuseModel,
     #                                 nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 10),
     # "Fold": Task("Fold", datasets.Fold, LinFuseModel, nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 1195),
-    "SecondaryStructure": Task("SecondaryStructure", datasets.SecondaryStructure, LinFuseModel, nn.CrossEntropyLoss,
-                               metrics.accuracy, DataType.PROTEIN, 3),
-    "ProteinNet": Task("ProteinNet", datasets.ProteinNet, PairTransFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
-                       DataType.PROTEIN, 2, DataType.PROTEIN),
-    "HumanPPI": Task("HumanPPI", datasets.HumanPPI, PairTransFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
-                     DataType.PROTEIN, 2, DataType.PROTEIN),
+    # "SecondaryStructure": Task("SecondaryStructure", datasets.SecondaryStructure, LinFuseModel, nn.CrossEntropyLoss,
+    #                            metrics.accuracy, DataType.PROTEIN, 3),
+    # "ProteinNet": Task("ProteinNet", datasets.ProteinNet, PairTransFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
+    #                    DataType.PROTEIN, 2, DataType.PROTEIN),
+    # "HumanPPI": Task("HumanPPI", datasets.HumanPPI, PairTransFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
+    #                  DataType.PROTEIN, 2, DataType.PROTEIN),
     "YeastPPI": Task("YeastPPI", datasets.YeastPPI, PairTransFuseModel, nn.CrossEntropyLoss, metrics.accuracy,
                      DataType.PROTEIN, 2, DataType.PROTEIN),
     "PPIAffinity": Task("PPIAffinity", datasets.PPIAffinity, PairTransFuseModel, nn.MSELoss, mse_metric,
                         DataType.PROTEIN, 1, DataType.PROTEIN),
     "BindingDB": Task("BindingDB", datasets.BindingDB, PairTransFuseModel, nn.MSELoss, mse_metric, DataType.PROTEIN, 1,
                       DataType.MOLECULE),
-    "PDBBind": Task("PDBBind", datasets.PDBBind, PairTransFuseModel, nn.MSELoss, mse_metric, DataType.PROTEIN, 1,
-                    DataType.MOLECULE),
+    # "PDBBind": Task("PDBBind", datasets.PDBBind, PairTransFuseModel, nn.MSELoss, mse_metric, DataType.PROTEIN, 1,
+    #                 DataType.MOLECULE),
     "BACE": Task("BACE", datasets.BACE, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.MOLECULE,
                  1),
     "BBBP": Task("BBBP", datasets.BBBP, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.MOLECULE,
