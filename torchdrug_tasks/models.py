@@ -27,13 +27,15 @@ def load_fuse_model(base_dir):
     return model, dim
 
 
-def get_layers(dims):
+def get_layers(dims, dropout):
     layers = torch.nn.Sequential()
     for i in range(len(dims) - 1):
         layers.add_module(f"linear_{i}", torch.nn.Linear(dims[i], dims[i + 1]))
+        layers.add_module(f"bn_{i}", torch.nn.BatchNorm1d(dims[i + 1]))
         if i < len(dims) - 2:
             layers.add_module(f"relu_{i}", torch.nn.ReLU())
-        layers.add_module(f"bn_{i}", torch.nn.BatchNorm1d(dims[i + 1]))
+        if dropout > 0:
+            layers.add_module(f"dropout_{i}", torch.nn.Dropout(dropout))
     return layers
 
 
@@ -60,7 +62,8 @@ class FuseModel(torch.nn.Module):
 
 
 class LinFuseModel(FuseModel):
-    def __init__(self, input_dim: int, input_type: DataType, output_dim: int, conf: Config,fuse_model=None, fuse_base=""):
+    def __init__(self, input_dim: int, input_type: DataType, output_dim: int, conf: Config, fuse_model=None,
+                 fuse_base="", n_layers=2, drop_out=0.0, hidden_dim=512):
         super().__init__(conf, fuse_model, fuse_base)
         self.input_dim = 0
         if self.use_fuse:
@@ -68,7 +71,8 @@ class LinFuseModel(FuseModel):
         if self.use_model:
             self.input_dim += input_dim
         self.dtype = input_type
-        self.layers = get_layers([self.input_dim] + [512] + [output_dim])
+        hidden_layers = [hidden_dim] * (n_layers - 1)
+        self.layers = get_layers([self.input_dim] + hidden_layers + [output_dim], dropout=drop_out)
 
     def forward(self, data):
         x = []
@@ -83,21 +87,31 @@ class LinFuseModel(FuseModel):
 class PairTransFuseModel(FuseModel):
     def __init__(self, input_dim_1: int, dtpye_1: DataType, input_dim_2: int, dtype_2: DataType, output_dim: int,
                  conf: Config,
-                 trans_dim=256, n_layers=2, nhead=2, dropout=0.5, fuse_model=None,
+                 hidden_dim=256, n_layers=2, drop_out=0.5, fuse_model=None,
                  fuse_base=""):
         super().__init__(conf, fuse_model, fuse_base)
 
         if self.use_fuse:
-            self.x1_fuse_linear = torch.nn.Linear(self.fuse_dim, trans_dim)
-            self.x2_fuse_linear = torch.nn.Linear(self.fuse_dim, trans_dim)
+            self.x1_fuse_linear = torch.nn.Linear(self.fuse_dim, hidden_dim)
+            self.x2_fuse_linear = torch.nn.Linear(self.fuse_dim, hidden_dim)
         if self.use_model:
-            self.x1_model_linear = torch.nn.Linear(input_dim_1, trans_dim)
-            self.x2_model_linear = torch.nn.Linear(input_dim_2, trans_dim)
-        encoder_layer = torch.nn.TransformerEncoderLayer(d_model=trans_dim, nhead=nhead, dim_feedforward=trans_dim * 2,
-                                                         batch_first=True, dropout=dropout)
+            self.x1_model_linear = torch.nn.Linear(input_dim_1, hidden_dim)
+            self.x2_model_linear = torch.nn.Linear(input_dim_2, hidden_dim)
+        if hidden_dim <= 64:
+            nhead = 1
+        elif hidden_dim <= 256:
+            nhead = 2
+        elif hidden_dim <= 1024:
+            nhead = 4
+        else:
+            nhead = 8
+
+        encoder_layer = torch.nn.TransformerEncoderLayer(d_model=hidden_dim, nhead=nhead,
+                                                         dim_feedforward=hidden_dim * 2,
+                                                         batch_first=True, dropout=drop_out)
         self.trans = torch.nn.Sequential(
             torch.nn.TransformerEncoder(encoder_layer, num_layers=n_layers),
-            torch.nn.Linear(trans_dim, output_dim)
+            torch.nn.Linear(hidden_dim, output_dim)
         )
         self.x1_type = dtpye_1
         self.x2_type = dtype_2

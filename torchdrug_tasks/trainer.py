@@ -59,7 +59,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
         return 0
 
 
-def get_model_from_task(task: Task, dataset, conf, fuse_base, fuse_model=None):
+def get_model_from_task(task: Task, dataset, conf, fuse_base, drop_out, n_layers, hidden_dim, fuse_model=None):
     model_class = task.model
     input_dim_1 = dataset.x1.shape[1]
     dtype_1 = task.dtype1
@@ -72,10 +72,12 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, fuse_model=None):
     output_dim = task.output_dim
     if task.model == LinFuseModel:
         return model_class(input_dim=input_dim_1, input_type=dtype_1, output_dim=output_dim, conf=conf,
-                           fuse_base=fuse_base, fuse_model=fuse_model)
+                           fuse_base=fuse_base, fuse_model=fuse_model, drop_out=drop_out, n_layers=n_layers,
+                           hidden_dim=hidden_dim)
     elif task.model == PairTransFuseModel:
         return model_class(input_dim_1=input_dim_1, dtpye_1=dtype_1, input_dim_2=input_dim_2, dtype_2=dtype_2,
-                           output_dim=output_dim, conf=conf, fuse_base=fuse_base, fuse_model=fuse_model)
+                           output_dim=output_dim, conf=conf, fuse_base=fuse_base, fuse_model=fuse_model,
+                           drop_out=drop_out, n_layers=n_layers, hidden_dim=hidden_dim)
     else:
         raise ValueError("Unknown model")
 
@@ -86,6 +88,11 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
     use_model = config["use_model"]
     bs = config["bs"]
     lr = config["lr"]
+
+    drop_out = config["drop_out"]
+    n_layers = config["n_layers"]
+    hidden_dim = config["hidden_dim"]
+
     task = name_to_task[task_name]
     train_loader, valid_loader, test_loader = get_dataloaders(task_name, mol_emd, protein_emd, bs)
     metric = task.metric
@@ -103,7 +110,8 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
             return dict(valid_score=-1e6, test_score=-1e6)
         return -1e6, -1e6
 
-    model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, fuse_model=fuse_model)
+    model = get_model_from_task(task, train_loader.dataset, conf, fuse_base=fuse_base, drop_out=drop_out,
+                                n_layers=n_layers, hidden_dim=hidden_dim, fuse_model=fuse_model)
     model = model.to(device)
     optimizer = torch.optim.Adam(model.parameters(), lr=lr)
     if print_output:

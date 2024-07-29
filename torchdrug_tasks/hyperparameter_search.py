@@ -16,6 +16,9 @@ def main(args):
         "lr": tune.loguniform(1e-5, 1e-2),
         'use_fuse': tune.choice([True]),
         'use_model': tune.choice([True, False]),
+        'n_layers': tune.choice([1, 2, 3]),
+        'hidden_dim': tune.choice([128, 256, 512, 1024]),
+        'drop_out': tune.uniform(0.0, 0.5)
     }
 
     optuna_search = OptunaSearch(metric="valid_score", mode="max")
