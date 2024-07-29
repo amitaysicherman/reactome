@@ -12,9 +12,9 @@ from common.args_manager import get_args
 
 def main(args):
     search_space = {
-        "bs": tune.choice([8,64,256,1024]),
+        "bs": tune.choice([8, 64, 256, 1024]),
         "lr": tune.loguniform(1e-5, 1e-2),
-        'use_fuse': tune.choice([True, False]),
+        'use_fuse': tune.choice([True]),
         'use_model': tune.choice([True, False]),
     }
 

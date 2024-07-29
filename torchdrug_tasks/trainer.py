@@ -8,6 +8,7 @@ from torchdrug_tasks.models import LinFuseModel, PairTransFuseModel
 from ray import tune
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
+print(device)
 
 
 def metric_prep_predictions(preds, metric):
@@ -143,8 +144,7 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
     return best_valid_score, best_test_score
 
 
-def main(args, fuse_model=None,tune_mode=False):
-
+def main(args, fuse_model=None, tune_mode=False):
     config = {
         "use_fuse": args.cafa_use_fuse,
         "use_model": args.cafa_use_model,
