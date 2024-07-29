@@ -80,6 +80,11 @@ def main(args):
     df = pd.read_csv(csv_logger.filename)
     df = df.sort_values("valid_score", ascending=False)
     best_config = {col: df.iloc[0][col] for col in config_cols}
+    for col in ["bs", "n_layers", "hidden_dim"]:
+        best_config[col] = int(best_config[col])
+    for col in ["lr", "drop_out"]:
+        best_config[col] = float(best_config[col])
+
     best_fuse_test_score = df.iloc[0]["test_score"]
     print(f"Best config: {best_config}")
     best_config['use_fuse'] = False
