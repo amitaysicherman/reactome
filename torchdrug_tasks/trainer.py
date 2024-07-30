@@ -204,16 +204,16 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
                 break
     if print_output:
         print("Best Test scores\n", scores_manager.test_scores)
-        output_file = f"{scores_path}/torchdrug.csv"
+    output_file = f"{scores_path}/torchdrug.csv"
 
-        if not os.path.exists(output_file):
-            names = ["task_name", "mol_emd", "protein_emd", "conf"] + scores_manager.test_scores.get_metrics_names()
-            with open(output_file, "w") as f:
-                f.write(",".join(names) + "\n")
-        values = [task_name, mol_emd, protein_emd, conf.value] + scores_manager.test_scores.get_metrics()
-        with open(output_file, "a") as f:
-            f.write(",".join(map(str, values)) + "\n")
-        return scores_manager.test_scores.get_metrics()
+    if not os.path.exists(output_file):
+        names = ["task_name", "mol_emd", "protein_emd", "conf"] + scores_manager.test_scores.get_metrics_names()
+        with open(output_file, "w") as f:
+            f.write(",".join(names) + "\n")
+    values = [task_name, mol_emd, protein_emd, conf.value] + scores_manager.test_scores.get_metrics()
+    with open(output_file, "a") as f:
+        f.write(",".join(map(str, values)) + "\n")
+    return scores_manager.test_scores.get_metrics()
 
 
 def main(args, fuse_model=None):
