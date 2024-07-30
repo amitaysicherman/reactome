@@ -32,7 +32,7 @@ class Scores:
             self.calcualte(preds, reals)
 
     def calcualte(self, preds, reals):
-        preds = preds.flatten()
+        reals= reals.flatten()
         auc_pred = metric_prep_predictions(preds, metrics.area_under_roc)
         auprc_pred = metric_prep_predictions(preds, metrics.area_under_prc)
         acc_pred = metric_prep_predictions(preds, metrics.accuracy)
