@@ -39,14 +39,10 @@ class Scores:
         acc_pred = metric_prep_predictions(preds, metrics.accuracy)
         f1_max_pred = metric_prep_predictions(preds, metrics.f1_max)
 
-        if reals.shape[1] == 1:
-            real_acc = torch.nn.functional.one_hot(reals.long(), num_classes=2)
-        else:
-            real_acc = reals
 
         self.auc = metrics.area_under_roc(auc_pred, reals.flatten()).item()
         self.auprc = metrics.area_under_prc(auprc_pred, reals.flatten()).item()
-        self.acc = metrics.accuracy(acc_pred, real_acc).item()
+        self.acc = metrics.accuracy(acc_pred, reals.flatten()).item()
         self.f1_max = metrics.f1_max(f1_max_pred, reals).item()
 
     def __repr__(self):
