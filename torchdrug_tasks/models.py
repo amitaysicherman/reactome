@@ -97,15 +97,7 @@ class PairTransFuseModel(FuseModel):
         if self.use_model:
             self.x1_model_linear = torch.nn.Linear(input_dim_1, hidden_dim)
             self.x2_model_linear = torch.nn.Linear(input_dim_2, hidden_dim)
-        if hidden_dim <= 64:
-            nhead = 1
-        elif hidden_dim <= 256:
-            nhead = 2
-        elif hidden_dim <= 1024:
-            nhead = 4
-        else:
-            nhead = 8
-
+        nhead = 2
         encoder_layer = torch.nn.TransformerEncoderLayer(d_model=hidden_dim, nhead=nhead,
                                                          dim_feedforward=hidden_dim * 2,
                                                          batch_first=True, dropout=drop_out)
