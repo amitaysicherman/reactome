@@ -147,7 +147,7 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
     return best_valid_score, best_test_score
 
 
-def main(args, fuse_model=None, tune_mode=False):
+def main(args, fuse_model=None):
     config = {
         "use_fuse": args.cafa_use_fuse,
         "use_model": args.cafa_use_model,
@@ -155,7 +155,7 @@ def main(args, fuse_model=None, tune_mode=False):
         "lr": args.dp_lr
     }
     train_model_with_config(config, args.task_name, args.dp_fuse_base, args.mol_emd, args.protein_emd, args.dp_print,
-                            args.max_no_improve, fuse_model=fuse_model, tune_mode=tune_mode)
+                            args.max_no_improve, fuse_model=fuse_model)
 
 
 if __name__ == '__main__':
