@@ -25,8 +25,6 @@ def metric_prep(preds, reals, metric):
             reals = reals.flatten()
         else:
             reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=reals.shape[1]).flatten()
-
-        reals = reals.flatten()
     elif metric.__name__ == "f1_max" or metric.__name__ == "accuracy":
         is_multilabel = reals.shape[1] > 1
         is_binary = preds.shape[1] <= 1
