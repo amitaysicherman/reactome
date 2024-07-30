@@ -1,110 +1,110 @@
---task_name BetaLactamase --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name BetaLactamase --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name BetaLactamase --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name BetaLactamase --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Fluorescence --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Fluorescence --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Fluorescence --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Fluorescence --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Stability --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Stability --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Stability --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Stability --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Solubility --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Solubility --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Solubility --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Solubility --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name SubcellularLocalization --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name SubcellularLocalization --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name SubcellularLocalization --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name SubcellularLocalization --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name HumanPPI --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name HumanPPI --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name HumanPPI --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name HumanPPI --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name YeastPPI --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name YeastPPI --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name YeastPPI --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name YeastPPI --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PPIAffinity --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PPIAffinity --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PPIAffinity --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PPIAffinity --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
 --task_name BindingDB --protein_emd ESM-1B --mol_emd chemberta --name ESM-1B-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ESM-1B --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BindingDB --protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
 --task_name PDBBind --protein_emd ESM-1B --mol_emd chemberta --name ESM-1B-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ESM-1B --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name PDBBind --protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
---task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name HIV --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name HIV --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name HIV --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name Tox21 --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name Tox21 --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name Tox21 --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
 --task_name DrugBank --protein_emd ESM-1B --mol_emd chemberta --name ESM-1B-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ESM-1B --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name DrugBank --protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
 --task_name Davis --protein_emd ESM-1B --mol_emd chemberta --name ESM-1B-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ESM-1B --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name Davis --protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name KIBA --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
---task_name KIBA --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name KIBA --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name KIBA --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
---task_name KIBA --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name KIBA --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name KIBA --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
 --task_name KIBA --protein_emd ESM-1B --mol_emd chemberta --name ESM-1B-chemberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BindingDB --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name DrugBank --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name KIBA --protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BetaLactamase --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Fluorescence --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Stability --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Solubility --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name SubcellularLocalization --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name HumanPPI --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name YeastPPI --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PPIAffinity --protein_emd ESM-1B  --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name BindingDB --protein_emd ESM-1B --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ESM-1B --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name DrugBank --protein_emd ESM-1B --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ESM-1B --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
 --task_name KIBA --protein_emd ESM-1B --mol_emd roberta --name ESM-1B-roberta --dp_drop_out 0 --dp_hidden_dim 512
---task_name KIBA --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BindingDB --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name DrugBank --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name KIBA --protein_emd ESM2 --mol_emd chemberta --name ESM2-chemberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BindingDB --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name DrugBank --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name KIBA --protein_emd ESM2 --mol_emd pebchem10m --name ESM2-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BetaLactamase --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Fluorescence --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Stability --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Solubility --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name SubcellularLocalization --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name HumanPPI --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name YeastPPI --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PPIAffinity --protein_emd ESM2  --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name BindingDB --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name DrugBank --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name KIBA --protein_emd ESM2 --mol_emd roberta --name ESM2-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BindingDB --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name DrugBank --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name KIBA --protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD-chemberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BindingDB --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name DrugBank --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name KIBA --protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BetaLactamase --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Fluorescence --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Stability --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Solubility --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name SubcellularLocalization --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name HumanPPI --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name YeastPPI --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PPIAffinity --protein_emd ProtBert-BFD  --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name BindingDB --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name DrugBank --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name KIBA --protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BindingDB --protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl-chemberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name HIV --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Tox21 --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-chemberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name DrugBank --protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl-chemberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl-chemberta --dp_drop_out 0 --dp_hidden_dim 512
 --task_name KIBA --protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl-chemberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BindingDB --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name HIV --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Tox21 --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl-pebchem10m --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name DrugBank --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name KIBA --protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl-pebchem10m --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BetaLactamase --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Fluorescence --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Stability --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Solubility --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name SubcellularLocalization --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name HumanPPI --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name YeastPPI --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PPIAffinity --protein_emd ProtBertT5-xl  --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name BindingDB --protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name PDBBind --protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0.5 --dp_hidden_dim 256
+--task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name HIV --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Tox21 --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl-roberta --dp_bs 64 --dp_lr 0.00005 --dp_drop_out 0 --dp_hidden_dim 512
+--task_name DrugBank --protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
+--task_name Davis --protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
 --task_name KIBA --protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl-roberta --dp_drop_out 0 --dp_hidden_dim 512
