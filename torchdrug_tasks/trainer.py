@@ -83,7 +83,7 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, drop_out, n_layers
 
 
 def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_emd: str, protein_emd: str,
-                            print_output=False, max_no_improve=10, fuse_model=None):
+                            print_output=False, max_no_improve=15, fuse_model=None):
     use_fuse = config["use_fuse"]
     use_model = config["use_model"]
     bs = config["bs"]
