@@ -7,13 +7,13 @@
 #SBATCH --requeue
 
 args=$(sed -n "$SLURM_ARRAY_TASK_ID"p scripts/all_td.txt)
-python python torchdrug_tasks/trainer.py $args
-python python torchdrug_tasks/trainer.py $args
-python python torchdrug_tasks/trainer.py $args
-python python torchdrug_tasks/trainer.py $args
-python python torchdrug_tasks/trainer.py $args
-python python torchdrug_tasks/trainer.py $args
-python python torchdrug_tasks/trainer.py $args
-python python torchdrug_tasks/trainer.py $args
-python python torchdrug_tasks/trainer.py $args
-python python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
+python torchdrug_tasks/trainer.py $args
