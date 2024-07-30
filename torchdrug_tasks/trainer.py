@@ -134,17 +134,20 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
             if no_improve > max_no_improve:
                 break
     if print_output:
+        config_cols = ["bs", "lr", "use_fuse", "use_model", "n_layers", "hidden_dim", "drop_out"]
+        config_values = [str(config[col]) for col in config_cols]
         print("Best Test scores\n", best_test_score)
         task_output_prefix = f"{task_name}_{mol_emd}_{protein_emd}"
         output_file = f"{scores_path}/{task_output_prefix}torchdrug.csv"
+
         if not os.path.exists(output_file):
-            names = "name,mol,prot,conf,prefix,task,bs,lr,score\n"
+            names = [task_name, mol_emd, protein_emd, best_test_score, best_valid_score] + config_cols
             with open(output_file, "w") as f:
-                f.write(names)
+                f.write(",".join(names) + "\n")
+        values = [task_name, mol_emd, protein_emd, best_test_score, best_valid_score] + config_values
         with open(output_file, "a") as f:
-            f.write(
-                f'{task_name},{mol_emd},{protein_emd},{conf},{task_output_prefix},{task_name},{bs},{lr},{best_test_score}\n')
-    return best_valid_score, best_test_score
+            f.write(",".join(map(str, values)) + "\n")
+        return best_valid_score, best_test_score
 
 
 def main(args, fuse_model=None):
