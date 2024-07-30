@@ -28,11 +28,11 @@ def metric_prep(preds, reals, metric):
 
         if metric.__name__ == "accuracy":
             if is_multilabel:
-                preds = torch.sigmoid(preds).flatten()
+                preds = torch.sigmoid(preds).flatten().unsqueeze(1)
                 preds = one_into_two(preds)
                 reals = reals.flatten()
             elif is_binary:
-                preds = torch.sigmoid(preds).flatten()
+                preds = torch.sigmoid(preds).flatten().unsqueeze(1)
                 preds = one_into_two(preds)
                 reals = reals.flatten()
             else:
@@ -40,7 +40,7 @@ def metric_prep(preds, reals, metric):
                 reals = reals.long().flatten()
         else: # f1_max
             if is_binary:
-                preds = torch.sigmoid(preds).flatten()
+                preds = torch.sigmoid(preds).flatten().unsqueeze(1)
                 preds = one_into_two(preds)
                 reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=2)
             elif is_multilabel:
