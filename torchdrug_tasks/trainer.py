@@ -32,15 +32,22 @@ class Scores:
             self.calcualte(preds, reals)
 
     def calcualte(self, preds, reals):
-        reals = reals.flatten()
+
+
         auc_pred = metric_prep_predictions(preds, metrics.area_under_roc)
         auprc_pred = metric_prep_predictions(preds, metrics.area_under_prc)
         acc_pred = metric_prep_predictions(preds, metrics.accuracy)
         f1_max_pred = metric_prep_predictions(preds, metrics.f1_max)
-        self.auc = metrics.area_under_roc(auc_pred, reals).item()
-        self.auprc = metrics.area_under_prc(auprc_pred, reals).item()
-        self.acc = metrics.accuracy(acc_pred, reals).item()
-        self.f1_max = metrics.f1_max(f1_max_pred, reals.unsqueeze(1)).item()
+
+        if reals.shape[1] == 1:
+            real_acc = torch.nn.functional.one_hot(reals.long(), num_classes=2)
+        else:
+            real_acc = reals
+
+        self.auc = metrics.area_under_roc(auc_pred, real_acc).item()
+        self.auprc = metrics.area_under_prc(auprc_pred, reals.flatten()).item()
+        self.acc = metrics.accuracy(acc_pred, reals.flatten).item()
+        self.f1_max = metrics.f1_max(f1_max_pred, reals).item()
 
     def __repr__(self):
         return f"AUC: {self.auc}, AUPRC: {self.auprc}, ACC: {self.acc}, F1: {self.f1_max}\n"
