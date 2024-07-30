@@ -16,6 +16,10 @@ def metric_prep_predictions(preds, metric):
     if metric.__name__ == "area_under_roc" or metric.__name__ == "area_under_prc":
         return torch.sigmoid(preds).flatten()
     elif metric.__name__ == "accuracy" or metric.__name__ == "f1_max":
+        if preds.shape[1] == 1:
+            probs_class_1 = torch.sigmoid(preds)
+            probs_class_0 = 1 - probs_class_1
+            preds = torch.cat((probs_class_0, probs_class_1), dim=1)
         return preds
     else:
         return preds.flatten()
@@ -32,13 +36,10 @@ class Scores:
             self.calcualte(preds, reals)
 
     def calcualte(self, preds, reals):
-
-
         auc_pred = metric_prep_predictions(preds, metrics.area_under_roc)
         auprc_pred = metric_prep_predictions(preds, metrics.area_under_prc)
         acc_pred = metric_prep_predictions(preds, metrics.accuracy)
         f1_max_pred = metric_prep_predictions(preds, metrics.f1_max)
-
 
         self.auc = metrics.area_under_roc(auc_pred, reals.flatten()).item()
         self.auprc = metrics.area_under_prc(auprc_pred, reals.flatten()).item()
