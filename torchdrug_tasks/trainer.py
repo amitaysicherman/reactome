@@ -1,3 +1,4 @@
+import dataclasses
 import os
 import torch
 from common.data_types import Config
@@ -5,6 +6,7 @@ from common.path_manager import scores_path
 from torchdrug_tasks.dataset import get_dataloaders
 from torchdrug_tasks.tasks import name_to_task, Task
 from torchdrug_tasks.models import LinFuseModel, PairTransFuseModel
+from torchdrug import metrics
 
 device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
@@ -17,6 +19,63 @@ def metric_prep_predictions(preds, metric):
         return preds
     else:
         return preds.flatten()
+
+
+class Scores:
+
+    def __init__(self, preds=None, reals=None):
+        self.auc: float = 0
+        self.auprc: float = 0
+        self.acc: float = 0
+        self.f1_max: float = 0
+        if preds is not None:
+            self.calcualte(preds, reals)
+
+    def calcualte(self, preds, reals):
+        preds = preds.flatten()
+        auc_pred = metric_prep_predictions(preds, metrics.area_under_roc)
+        auprc_pred = metric_prep_predictions(preds, metrics.area_under_prc)
+        acc_pred = metric_prep_predictions(preds, metrics.accuracy)
+        f1_max_pred = metric_prep_predictions(preds, metrics.f1_max)
+        self.auc = metrics.area_under_roc(auc_pred, reals).item()
+        self.auprc = metrics.area_under_prc(auprc_pred, reals).item()
+        self.acc = metrics.accuracy(acc_pred, reals.flatten()).item()
+        self.f1_max = metrics.f1_max(f1_max_pred, reals.flatten()).item()
+
+    def __repr__(self):
+        return f"AUC: {self.auc}, AUPRC: {self.auprc}, ACC: {self.acc}, F1: {self.f1_max}\n"
+
+    def get_metrics(self):
+        return [self.auc, self.auprc, self.acc, self.f1_max]
+
+    def get_metrics_names(self):
+        return ["auc", "auprc", "acc", "f1_max"]
+
+
+class ScoresManager:
+    def __init__(self):
+        self.valid_scores = Scores()
+        self.test_scores = Scores()
+
+    def update(self, valid_score: Scores, test_score: Scores):
+        improved = False
+        if valid_score.auc > self.valid_scores.auc:
+            self.valid_scores.auc = valid_score.auc
+            self.test_scores.auc = test_score.auc
+            improved = True
+        if valid_score.auprc > self.valid_scores.auprc:
+            self.valid_scores.auprc = valid_score.auprc
+            self.test_scores.auprc = test_score.auprc
+            improved = True
+        if valid_score.acc > self.valid_scores.acc:
+            self.valid_scores.acc = valid_score.acc
+            self.test_scores.acc = test_score.acc
+            improved = True
+        if valid_score.f1_max > self.valid_scores.f1_max:
+            self.valid_scores.f1_max = valid_score.f1_max
+            self.test_scores.f1_max = test_score.f1_max
+            improved = True
+        return improved
 
 
 def run_epoch(model, loader, optimizer, criterion, metric, part):
@@ -52,11 +111,9 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
     if part != "train":
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
-        preds = metric_prep_predictions(preds, metric)
-        score = metric(preds, reals.flatten()).item()
-        return score
+        return Scores(preds, reals)
     else:
-        return 0
+        return None
 
 
 def get_model_from_task(task: Task, dataset, conf, fuse_base, drop_out, n_layers, hidden_dim, fuse_model=None):
@@ -122,36 +179,36 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
     if print_output:
         print(model)
     no_improve = 0
-    best_valid_score = -1e6
-    best_test_score = -1e6
+    scores_manager = ScoresManager()
+    # best_valid_score = -1e6
+    # best_test_score = -1e6
     for epoch in range(250):
-        train_score = run_epoch(model, train_loader, optimizer, criterion, metric, "train")
+        _ = run_epoch(model, train_loader, optimizer, criterion, metric, "train")
         with torch.no_grad():
             val_score = run_epoch(model, valid_loader, optimizer, criterion, metric, "val")
             test_score = run_epoch(model, test_loader, optimizer, criterion, metric, "test")
 
         if print_output:
-            print(epoch, train_score, val_score, test_score)
-        if val_score > best_valid_score:
-            best_valid_score = val_score
-            best_test_score = test_score
+            print(epoch, val_score, test_score)
+        improved = scores_manager.update(val_score, test_score)
+        if improved:
             no_improve = 0
         else:
             no_improve += 1
             if no_improve > max_no_improve:
                 break
     if print_output:
-        print("Best Test scores\n", best_test_score)
+        print("Best Test scores\n", scores_manager.test_scores)
         output_file = f"{scores_path}/torchdrug.csv"
 
         if not os.path.exists(output_file):
-            names = ["task_name", "mol_emd", "protein_emd", "conf", "best_test_score", "best_valid_score"]
+            names = ["task_name", "mol_emd", "protein_emd", "conf"] + scores_manager.test_scores.get_metrics_names()
             with open(output_file, "w") as f:
                 f.write(",".join(names) + "\n")
-        values = [task_name, mol_emd, protein_emd, conf.value, best_test_score, best_valid_score]
+        values = [task_name, mol_emd, protein_emd, conf.value] + scores_manager.test_scores.get_metrics()
         with open(output_file, "a") as f:
             f.write(",".join(map(str, values)) + "\n")
-        return best_valid_score, best_test_score
+        return scores_manager.test_scores.get_metrics()
 
 
 def main(args, fuse_model=None):
