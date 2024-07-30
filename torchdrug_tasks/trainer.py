@@ -25,7 +25,6 @@ def metric_prep(preds, reals, metric):
             reals = reals.long().flatten()
         else:
             reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=2)
-        print(preds.shape, reals.shape)
     else:
         preds = preds.flatten()
         reals = reals.flatten()
