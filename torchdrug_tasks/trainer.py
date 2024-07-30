@@ -82,17 +82,23 @@ class Scores:
         else:
             return f"AUC: {self.auc}, AUPRC: {self.auprc}, ACC: {self.acc}, F1: {self.f1_max}\n"
 
-    def get_metrics(self):
+    def get_regression_metrics(self):
         if self.mode == "regression":
             return [self.mse, self.mae, self.r2, self.pearsonr, self.spearmanr]
         else:
+            return [0, 0, 0, 0, 0]
+
+    def get_classification_metrics(self):
+        if self.mode == "classification":
             return [self.auc, self.auprc, self.acc, self.f1_max]
+        else:
+            return [0, 0, 0, 0]
+
+    def get_metrics(self):
+        return self.get_regression_metrics() + self.get_classification_metrics()
 
     def get_metrics_names(self):
-        if self.mode == "regression":
-            return ["mse", "mae", "r2", "pearsonr", "spearmanr"]
-        else:
-            return ["auc", "auprc", "acc", "f1_max"]
+        return ["mse", "mae", "r2", "pearsonr", "spearmanr"] + ["auc", "auprc", "acc", "f1_max"]
 
 
 class ScoresManager:
