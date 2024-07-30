@@ -46,8 +46,8 @@ class FuseModel(torch.nn.Module):
             self.use_fuse = True
             self.use_model = True
         elif conf == Config.PRE:
-            self.use_fuse = True
-            self.use_model = False
+            self.use_fuse = False
+            self.use_model = True
         else:
             self.use_fuse = False
             self.use_model = True
