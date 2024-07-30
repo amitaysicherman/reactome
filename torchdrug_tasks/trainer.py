@@ -12,15 +12,38 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
 
 
+def one_into_two(preds):
+    probs_class_1 = torch.sigmoid(preds)
+    probs_class_0 = 1 - probs_class_1
+    return torch.cat((probs_class_0, probs_class_1), dim=1)
+
+
 def metric_prep(preds, reals, metric):
     if metric.__name__ == "area_under_roc" or metric.__name__ == "area_under_prc":
         preds = torch.sigmoid(preds).flatten()
         reals = reals.flatten()
+    elif metric.__name__ == "accuracy":
+        if preds.shape[1] == 1:
+            preds = one_into_two(preds)
+        else:
+            preds = torch.argmax(preds, dim=1)
+        reals = reals.long().flatten()
+    elif metric.__name__ == "f1_max":
+        if preds.shape[1] == 1:
+            preds = one_into_two(preds)
+        else:
+            preds = torch.argmax(preds, dim=1)
+        reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=2)
 
-    elif preds.shape[1] == 1 and (metric.__name__ == "accuracy" or metric.__name__ == "f1_max"):
-        probs_class_1 = torch.sigmoid(preds)
-        probs_class_0 = 1 - probs_class_1
-        preds = torch.cat((probs_class_0, probs_class_1), dim=1)
+
+
+    elif metric.__name__ == "accuracy" or metric.__name__ == "f1_max":
+        if preds.shape[1] == 1:
+            probs_class_1 = torch.sigmoid(preds)
+            probs_class_0 = 1 - probs_class_1
+            preds = torch.cat((probs_class_0, probs_class_1), dim=1)
+        else:
+
         if metric.__name__ == "accuracy":
             reals = reals.long().flatten()
         else:
