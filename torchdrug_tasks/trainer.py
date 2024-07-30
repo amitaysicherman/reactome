@@ -21,7 +21,7 @@ def metric_prep(preds, reals, metric):
         probs_class_1 = torch.sigmoid(preds)
         probs_class_0 = 1 - probs_class_1
         preds = torch.cat((probs_class_0, probs_class_1), dim=1)
-        reals = torch.nn.functional.one_hot(reals.long(), num_classes=2)
+        reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=2)
         print(preds.shape, reals.shape)
     else:
         preds = preds.flatten()
