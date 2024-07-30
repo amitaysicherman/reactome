@@ -63,17 +63,17 @@ class Scores:
     def __init__(self, mode, preds=None, reals=None):
         self.mode = mode
         if mode == "classification":
-            self.auc: float = 0
-            self.auprc: float = 0
-            self.acc: float = 0
-            self.f1_max: float = 0
+            self.auc: float = -1e6
+            self.auprc: float = -1e6
+            self.acc: float = -1e6
+            self.f1_max: float = -1e6
 
         else:
             self.mse: float = 1e6
             self.mae: float = 1e6
-            self.r2: float = 0
-            self.pearsonr: float = 0
-            self.spearmanr: float = 0
+            self.r2: float = -1e6
+            self.pearsonr: float = -1e6
+            self.spearmanr: float = -1e6
 
         if preds is not None:
             self.calcualte(preds, reals)
