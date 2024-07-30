@@ -40,10 +40,10 @@ class Scores:
             self.calcualte(preds, reals)
 
     def calcualte(self, preds, reals):
-        self.auc = metrics.area_under_roc(metric_prep(preds, reals, metrics.area_under_roc)).item()
-        self.auprc = metrics.area_under_prc(metric_prep(preds, reals, metrics.area_under_prc)).item()
-        self.acc = metrics.accuracy(metric_prep(preds, reals, metrics.accuracy)).item()
-        self.f1_max = metrics.f1_max(metric_prep(preds, reals, metrics.f1_max)).item()
+        self.auc = metrics.area_under_roc(*metric_prep(preds, reals, metrics.area_under_roc)).item()
+        self.auprc = metrics.area_under_prc(*metric_prep(preds, reals, metrics.area_under_prc)).item()
+        self.acc = metrics.accuracy(*metric_prep(preds, reals, metrics.accuracy)).item()
+        self.f1_max = metrics.f1_max(*metric_prep(preds, reals, metrics.f1_max)).item()
 
     def __repr__(self):
         return f"AUC: {self.auc}, AUPRC: {self.auprc}, ACC: {self.acc}, F1: {self.f1_max}\n"
