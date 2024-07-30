@@ -20,8 +20,6 @@ def metric_prep_predictions(preds, metric):
             probs_class_1 = torch.sigmoid(preds)
             probs_class_0 = 1 - probs_class_1
             preds = torch.cat((probs_class_0, probs_class_1), dim=1)
-            print(preds.shape)
-            print(preds)
         return preds
     else:
         return preds.flatten()
@@ -46,6 +44,7 @@ class Scores:
         self.auc = metrics.area_under_roc(auc_pred, reals.flatten()).item()
         self.auprc = metrics.area_under_prc(auprc_pred, reals.flatten()).item()
         self.acc = metrics.accuracy(acc_pred, reals.flatten()).item()
+        print(f1_max_pred.shape, reals.shape)
         self.f1_max = metrics.f1_max(f1_max_pred, reals).item()
 
     def __repr__(self):
