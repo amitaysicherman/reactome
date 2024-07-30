@@ -22,26 +22,33 @@ def metric_prep(preds, reals, metric):
     if metric.__name__ == "area_under_roc" or metric.__name__ == "area_under_prc":
         preds = torch.sigmoid(preds).flatten()
         reals = reals.flatten()
-    elif metric.__name__ == "accuracy":
+    elif metric.__name__ == "f1_max" or metric.__name__ == "accuracy":
+        is_multilabel = reals.shape[1] > 1
+        is_binary = preds.shape[1] <= 1
 
-        if preds.shape[1] == 1:
-            preds = one_into_two(preds)
-
-        else:
-            if reals.shape[1] == 1:
-                preds = torch.argmax(preds, dim=1)
-            else:  # multi-label classification
-                preds = one_into_two(preds.flatten())
-        reals = reals.long().flatten()
-
-    elif metric.__name__ == "f1_max":
-        n = reals.max().item() + 1
-        reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=n)
-
-        if preds.shape[1] == 1:
-            preds = one_into_two(preds)
-        else:
-            preds = torch.sigmoid(preds)
+        if metric.__name__ == "accuracy":
+            if is_multilabel:
+                preds = torch.sigmoid(preds).flatten()
+                preds = one_into_two(preds)
+                reals = reals.flatten()
+            elif is_binary:
+                preds = torch.sigmoid(preds).flatten()
+                preds = one_into_two(preds)
+                reals = reals.flatten()
+            else:
+                preds = torch.softmax(preds, dim=1)
+                reals = reals.long().flatten()
+        else: # f1_max
+            if is_binary:
+                preds = torch.sigmoid(preds).flatten()
+                preds = one_into_two(preds)
+                reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=2)
+            elif is_multilabel:
+                preds = torch.sigmoid(preds)
+                reals = reals
+            else:
+                preds = torch.softmax(preds, dim=1)
+                reals = reals
     else:
         raise ValueError("Unknown metric")
     return preds, reals
