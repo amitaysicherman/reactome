@@ -40,7 +40,7 @@ name_to_task = {
                          DataType.PROTEIN, 1),
     "Stability": Task("Stability", datasets.Stability, LinFuseModel, nn.MSELoss, regression,
                       DataType.PROTEIN, 1),
-    "Solubility": Task("Solubility", datasets.Solubility, LinFuseModel, nn.CrossEntropyLoss, classification,
+    "Solubility": Task("Solubility", datasets.Solubility, LinFuseModel, nn.BCEWithLogitsLoss, classification,
                        DataType.PROTEIN, 1),
     "SubcellularLocalization": Task("SubcellularLocalization", datasets.SubcellularLocalization, LinFuseModel,
                                     nn.CrossEntropyLoss, classification, DataType.PROTEIN, 10),
