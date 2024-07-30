@@ -57,7 +57,7 @@ class TaskPrepDataset(Dataset):
 def get_dataloaders(task_name, mol_emd, protein_emd, batch_size):
     x1_train, x2_train, labels_train, x1_valid, x2_valid, labels_valid, x1_test, x2_test, labels_test = load_data(
         task_name, mol_emd, protein_emd)
-    train_loader = DataLoader(TaskPrepDataset(x1_train, x2_train, labels_train), batch_size=batch_size, shuffle=True)
-    valid_loader = DataLoader(TaskPrepDataset(x1_valid, x2_valid, labels_valid), batch_size=batch_size, shuffle=False)
-    test_loader = DataLoader(TaskPrepDataset(x1_test, x2_test, labels_test), batch_size=batch_size, shuffle=False)
+    train_loader = DataLoader(TaskPrepDataset(x1_train, x2_train, labels_train), batch_size=batch_size, shuffle=True,drop_last=True)
+    valid_loader = DataLoader(TaskPrepDataset(x1_valid, x2_valid, labels_valid), batch_size=batch_size, shuffle=False,drop_last=True)
+    test_loader = DataLoader(TaskPrepDataset(x1_test, x2_test, labels_test), batch_size=batch_size, shuffle=False,drop_last=True)
     return train_loader, valid_loader, test_loader
