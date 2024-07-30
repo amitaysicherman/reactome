@@ -20,6 +20,8 @@ def metric_prep_predictions(preds, metric):
             probs_class_1 = torch.sigmoid(preds)
             probs_class_0 = 1 - probs_class_1
             preds = torch.cat((probs_class_0, probs_class_1), dim=1)
+            print(preds.shape)
+            print(preds)
         return preds
     else:
         return preds.flatten()
