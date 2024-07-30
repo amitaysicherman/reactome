@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from torchdrug_tasks.models import DataType, LinFuseModel, PairTransFuseModel, FuseModel
 from torchdrug import datasets
-from torchdrug import metrics
 from torch import nn
 import torch
 import enum
@@ -31,44 +30,46 @@ def mse_metric(output, target):
     mse = torch.mean(squared_diff)
     return -1 * mse
 
+classification="classification"
+regression="regression"
 
 name_to_task = {
-    "BetaLactamase": Task("BetaLactamase", datasets.BetaLactamase, LinFuseModel, nn.MSELoss, mse_metric,
+    "BetaLactamase": Task("BetaLactamase", datasets.BetaLactamase, LinFuseModel, nn.MSELoss, regression,
                           DataType.PROTEIN, 1),
-    "Fluorescence": Task("Fluorescence", datasets.Fluorescence, LinFuseModel, nn.MSELoss, mse_metric,
+    "Fluorescence": Task("Fluorescence", datasets.Fluorescence, LinFuseModel, nn.MSELoss, regression,
                          DataType.PROTEIN, 1),
-    "Stability": Task("Stability", datasets.Stability, LinFuseModel, nn.MSELoss, mse_metric,
+    "Stability": Task("Stability", datasets.Stability, LinFuseModel, nn.MSELoss, regression,
                       DataType.PROTEIN, 1),
-    "Solubility": Task("Solubility", datasets.Stability, LinFuseModel, nn.MSELoss, mse_metric,
+    "Solubility": Task("Solubility", datasets.Solubility, LinFuseModel, nn.CrossEntropyLoss, classification,
                        DataType.PROTEIN, 1),
     "SubcellularLocalization": Task("SubcellularLocalization", datasets.SubcellularLocalization, LinFuseModel,
-                                    nn.CrossEntropyLoss, metrics.accuracy, DataType.PROTEIN, 10),
-    "HumanPPI": Task("HumanPPI", datasets.HumanPPI, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
+                                    nn.CrossEntropyLoss, classification, DataType.PROTEIN, 10),
+    "HumanPPI": Task("HumanPPI", datasets.HumanPPI, PairTransFuseModel, nn.BCEWithLogitsLoss, classification,
                      DataType.PROTEIN, 1, DataType.PROTEIN),
-    "YeastPPI": Task("YeastPPI", datasets.YeastPPI, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
+    "YeastPPI": Task("YeastPPI", datasets.YeastPPI, PairTransFuseModel, nn.BCEWithLogitsLoss, classification,
                      DataType.PROTEIN, 1, DataType.PROTEIN),
-    "PPIAffinity": Task("PPIAffinity", datasets.PPIAffinity, PairTransFuseModel, nn.MSELoss, mse_metric,
+    "PPIAffinity": Task("PPIAffinity", datasets.PPIAffinity, PairTransFuseModel, nn.MSELoss, regression,
                         DataType.PROTEIN, 1, DataType.PROTEIN),
-    "BindingDB": Task("BindingDB", datasets.BindingDB, PairTransFuseModel, nn.MSELoss, mse_metric, DataType.PROTEIN, 1,
+    "BindingDB": Task("BindingDB", datasets.BindingDB, PairTransFuseModel, nn.MSELoss, regression, DataType.PROTEIN, 1,
                       DataType.MOLECULE),
-    "PDBBind": Task("PDBBind", datasets.PDBBind, PairTransFuseModel, nn.MSELoss, mse_metric, DataType.PROTEIN, 1,
+    "PDBBind": Task("PDBBind", datasets.PDBBind, PairTransFuseModel, nn.MSELoss, regression, DataType.PROTEIN, 1,
                     DataType.MOLECULE),
-    "BACE": Task("BACE", datasets.BACE, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.MOLECULE,
+    "BACE": Task("BACE", datasets.BACE, LinFuseModel, nn.BCEWithLogitsLoss, classification, DataType.MOLECULE,
                  1),
-    "BBBP": Task("BBBP", datasets.BBBP, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.MOLECULE,
+    "BBBP": Task("BBBP", datasets.BBBP, LinFuseModel, nn.BCEWithLogitsLoss, classification, DataType.MOLECULE,
                  1),
-    "ClinTox": Task("ClinTox", datasets.ClinTox, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
+    "ClinTox": Task("ClinTox", datasets.ClinTox, LinFuseModel, nn.BCEWithLogitsLoss, classification,
                     DataType.MOLECULE,
                     2),
-    "HIV": Task("HIV", datasets.HIV, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc, DataType.MOLECULE, 1),
-    "SIDER": Task("SIDER", datasets.SIDER, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
+    "HIV": Task("HIV", datasets.HIV, LinFuseModel, nn.BCEWithLogitsLoss, classification, DataType.MOLECULE, 1),
+    "SIDER": Task("SIDER", datasets.SIDER, LinFuseModel, nn.BCEWithLogitsLoss, classification,
                   DataType.MOLECULE, 27),
-    "Tox21": Task("Tox21", datasets.Tox21, LinFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_roc,
+    "Tox21": Task("Tox21", datasets.Tox21, LinFuseModel, nn.BCEWithLogitsLoss, classification,
                   DataType.MOLECULE, 12),
-    "DrugBank": Task("DrugBank", None, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_prc,
+    "DrugBank": Task("DrugBank", None, PairTransFuseModel, nn.BCEWithLogitsLoss, classification,
                      DataType.PROTEIN, 1, DataType.MOLECULE, PrepType.drugtarget),
-    "Davis": Task("Davis", None, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_prc, DataType.PROTEIN,
+    "Davis": Task("Davis", None, PairTransFuseModel, nn.BCEWithLogitsLoss, classification, DataType.PROTEIN,
                   1, DataType.MOLECULE, PrepType.drugtarget),
-    "KIBA": Task("KIBA", None, PairTransFuseModel, nn.BCEWithLogitsLoss, metrics.area_under_prc, DataType.PROTEIN, 1,
+    "KIBA": Task("KIBA", None, PairTransFuseModel, nn.BCEWithLogitsLoss, classification, DataType.PROTEIN, 1,
                  DataType.MOLECULE, PrepType.drugtarget),
 }

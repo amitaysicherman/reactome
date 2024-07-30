@@ -31,38 +31,76 @@ def metric_prep(preds, reals, metric):
     return preds, reals
 
 
+def mse_metric(output, target):
+    squared_diff = (output - target) ** 2
+    mse = torch.mean(squared_diff)
+    return mse
+
+
+def mae_metric(output, target):
+    abs_diff = torch.abs(output - target)
+    mae = torch.mean(abs_diff)
+    return mae
+
+
 class Scores:
 
-    def __init__(self, preds=None, reals=None):
-        self.auc: float = 0
-        self.auprc: float = 0
-        self.acc: float = 0
-        self.f1_max: float = 0
+    def __init__(self, mode, preds=None, reals=None):
+        self.mode = mode
+        if mode == "classification":
+            self.auc: float = 0
+            self.auprc: float = 0
+            self.acc: float = 0
+            self.f1_max: float = 0
+
+        else:
+            self.mse: float = 0
+            self.mae: float = 0
+            self.r2: float = 0
+            self.pearsonr: float = 0
+            self.spearmanr: float = 0
+
         if preds is not None:
             self.calcualte(preds, reals)
 
     def calcualte(self, preds, reals):
-        self.auc = metrics.area_under_roc(*metric_prep(preds, reals, metrics.area_under_roc)).item()
-        self.auprc = metrics.area_under_prc(*metric_prep(preds, reals, metrics.area_under_prc)).item()
-        self.acc = metrics.accuracy(*metric_prep(preds, reals, metrics.accuracy)).item()
-        self.f1_max = metrics.f1_max(*metric_prep(preds, reals, metrics.f1_max)).item()
+        if self.mode == "classification":
+            self.auc = metrics.area_under_roc(*metric_prep(preds, reals, metrics.area_under_roc)).item()
+            self.auprc = metrics.area_under_prc(*metric_prep(preds, reals, metrics.area_under_prc)).item()
+            self.acc = metrics.accuracy(*metric_prep(preds, reals, metrics.accuracy)).item()
+            self.f1_max = metrics.f1_max(*metric_prep(preds, reals, metrics.f1_max)).item()
+        else:
+            self.mse = mse_metric(preds.flatten(), reals.flatten()).item()
+            self.mae = mae_metric(preds.flatten(), reals.flatten()).item()
+            self.r2 = metrics.r2_score(preds.flatten(), reals.flatten()).item()
+            self.pearsonr = metrics.pearsonr(preds.flatten(), reals.flatten()).item()
+            self.spearmanr = metrics.spearmanr(preds.flatten(), reals.flatten()).item()
 
     def __repr__(self):
-        return f"AUC: {self.auc}, AUPRC: {self.auprc}, ACC: {self.acc}, F1: {self.f1_max}\n"
+        if self.mode == "regression":
+            return f"MSE: {self.mse}, MAE: {self.mae}, R2: {self.r2}, Pearsonr: {self.pearsonr}, Spearmanr: {self.spearmanr}\n"
+        else:
+            return f"AUC: {self.auc}, AUPRC: {self.auprc}, ACC: {self.acc}, F1: {self.f1_max}\n"
 
     def get_metrics(self):
-        return [self.auc, self.auprc, self.acc, self.f1_max]
+        if self.mode == "regression":
+            return [self.mse, self.mae, self.r2, self.pearsonr, self.spearmanr]
+        else:
+            return [self.auc, self.auprc, self.acc, self.f1_max]
 
     def get_metrics_names(self):
-        return ["auc", "auprc", "acc", "f1_max"]
+        if self.mode == "regression":
+            return ["mse", "mae", "r2", "pearsonr", "spearmanr"]
+        else:
+            return ["auc", "auprc", "acc", "f1_max"]
 
 
 class ScoresManager:
-    def __init__(self):
-        self.valid_scores = Scores()
-        self.test_scores = Scores()
+    def __init__(self, mode):
+        self.valid_scores = Scores(mode=mode)
+        self.test_scores = Scores(mode=mode)
 
-    def update(self, valid_score: Scores, test_score: Scores):
+    def update_classification(self, valid_score: Scores, test_score: Scores):
         improved = False
         if valid_score.auc > self.valid_scores.auc:
             self.valid_scores.auc = valid_score.auc
@@ -82,8 +120,38 @@ class ScoresManager:
             improved = True
         return improved
 
+    def update_regression(self, valid_score: Scores, test_score: Scores):
+        improved = False
+        if valid_score.mse < self.valid_scores.mse:
+            self.valid_scores.mse = valid_score.mse
+            self.test_scores.mse = test_score.mse
+            improved = True
+        if valid_score.mae < self.valid_scores.mae:
+            self.valid_scores.mae = valid_score.mae
+            self.test_scores.mae = test_score.mae
+            improved = True
+        if valid_score.r2 > self.valid_scores.r2:
+            self.valid_scores.r2 = valid_score.r2
+            self.test_scores.r2 = test_score.r2
+            improved = True
+        if valid_score.pearsonr > self.valid_scores.pearsonr:
+            self.valid_scores.pearsonr = valid_score.pearsonr
+            self.test_scores.pearsonr = test_score.pearsonr
+            improved = True
+        if valid_score.spearmanr > self.valid_scores.spearmanr:
+            self.valid_scores.spearmanr = valid_score.spearmanr
+            self.test_scores.spearmanr = test_score.spearmanr
+            improved = True
+        return improved
 
-def run_epoch(model, loader, optimizer, criterion, metric, part):
+    def update(self, valid_score: Scores, test_score: Scores):
+        if valid_score.mode == "classification":
+            return self.update_classification(valid_score, test_score)
+        else:
+            return self.update_regression(valid_score, test_score)
+
+
+def run_epoch(model, loader, optimizer, criterion, mode, part):
     if part == "train":
         model.train()
     else:
@@ -116,7 +184,7 @@ def run_epoch(model, loader, optimizer, criterion, metric, part):
     if part != "train":
         reals = torch.cat(reals, dim=0)
         preds = torch.cat(preds, dim=0)
-        return Scores(preds, reals)
+        return Scores(mode, preds, reals)
     else:
         return None
 
@@ -157,7 +225,6 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
 
     task = name_to_task[task_name]
     train_loader, valid_loader, test_loader = get_dataloaders(task_name, mol_emd, protein_emd, bs)
-    metric = task.metric
     if task.criterion == torch.nn.CrossEntropyLoss:
         train_labels = train_loader.dataset.labels
         positive_sample_weight = train_labels.sum() / len(train_labels)
@@ -184,14 +251,14 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
     if print_output:
         print(model)
     no_improve = 0
-    scores_manager = ScoresManager()
+    scores_manager = ScoresManager(mode=task.metric)
     # best_valid_score = -1e6
     # best_test_score = -1e6
     for epoch in range(250):
-        _ = run_epoch(model, train_loader, optimizer, criterion, metric, "train")
+        _ = run_epoch(model, train_loader, optimizer, criterion, task.metric, "train")
         with torch.no_grad():
-            val_score = run_epoch(model, valid_loader, optimizer, criterion, metric, "val")
-            test_score = run_epoch(model, test_loader, optimizer, criterion, metric, "test")
+            val_score = run_epoch(model, valid_loader, optimizer, criterion, task.metric, "val")
+            test_score = run_epoch(model, test_loader, optimizer, criterion, task.metric, "test")
 
         if print_output:
             print(epoch, val_score, test_score)
