@@ -231,12 +231,12 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
 
     task = name_to_task[task_name]
     train_loader, valid_loader, test_loader = get_dataloaders(task_name, mol_emd, protein_emd, bs)
-    if task.criterion == torch.nn.CrossEntropyLoss:
+    if task.criterion == torch.nn.BCEWithLogitsLoss:
         train_labels = train_loader.dataset.labels
         positive_sample_weight = train_labels.sum() / len(train_labels)
         negative_sample_weight = 1 - positive_sample_weight
         pos_weight = negative_sample_weight / positive_sample_weight
-        criterion = task.criterion(pos_weight=pos_weight)
+        criterion = task.criterion(pos_weight=torch.tensor(pos_weight).to(device))
     else:
         criterion = task.criterion()
     if use_fuse and use_model:
