@@ -25,7 +25,8 @@ def metric_prep(preds, reals, metric):
             if reals.shape[1] > 1:
                 reals = reals.flatten()
             else:
-                reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=reals.shape[1]).flatten()
+
+                reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=reals.shape[1]+1).flatten()
         else:
             reals = reals.flatten()
     elif metric.__name__ == "f1_max" or metric.__name__ == "accuracy":
