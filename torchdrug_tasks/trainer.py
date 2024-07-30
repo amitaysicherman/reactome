@@ -11,7 +11,7 @@ print(device)
 
 
 def metric_prep_predictions(preds, metric):
-    if metric.__name__ == "area_under_roc":
+    if metric.__name__ == "area_under_roc" or metric.__name__ == "area_under_prc":
         return torch.sigmoid(preds).flatten()
     elif metric.__name__ == "accuracy":
         return preds
