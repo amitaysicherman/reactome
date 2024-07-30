@@ -39,8 +39,8 @@ class Scores:
         f1_max_pred = metric_prep_predictions(preds, metrics.f1_max)
         self.auc = metrics.area_under_roc(auc_pred, reals).item()
         self.auprc = metrics.area_under_prc(auprc_pred, reals).item()
-        self.acc = metrics.accuracy(acc_pred, reals.flatten()).item()
-        self.f1_max = metrics.f1_max(f1_max_pred, reals.flatten()).item()
+        self.acc = metrics.accuracy(acc_pred, reals).item()
+        self.f1_max = metrics.f1_max(f1_max_pred, reals).item()
 
     def __repr__(self):
         return f"AUC: {self.auc}, AUPRC: {self.auprc}, ACC: {self.acc}, F1: {self.f1_max}\n"
