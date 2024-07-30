@@ -72,7 +72,7 @@ class Scores:
         else:
             self.mse = mse_metric(preds.flatten(), reals.flatten()).item()
             self.mae = mae_metric(preds.flatten(), reals.flatten()).item()
-            self.r2 = metrics.r2_score(preds.flatten(), reals.flatten()).item()
+            self.r2 = metrics.r2(preds.flatten(), reals.flatten()).item()
             self.pearsonr = metrics.pearsonr(preds.flatten(), reals.flatten()).item()
             self.spearmanr = metrics.spearmanr(preds.flatten(), reals.flatten()).item()
 
