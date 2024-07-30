@@ -44,9 +44,9 @@ class Scores:
         else:
             real_acc = reals
 
-        self.auc = metrics.area_under_roc(auc_pred, real_acc).item()
+        self.auc = metrics.area_under_roc(auc_pred, reals.flatten()).item()
         self.auprc = metrics.area_under_prc(auprc_pred, reals.flatten()).item()
-        self.acc = metrics.accuracy(acc_pred, reals.flatten).item()
+        self.acc = metrics.accuracy(acc_pred, real_acc).item()
         self.f1_max = metrics.f1_max(f1_max_pred, reals).item()
 
     def __repr__(self):
