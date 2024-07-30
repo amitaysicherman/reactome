@@ -12,17 +12,21 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 print(device)
 
 
-def metric_prep_predictions(preds, metric):
+def metric_prep(preds, reals, metric):
     if metric.__name__ == "area_under_roc" or metric.__name__ == "area_under_prc":
-        return torch.sigmoid(preds).flatten()
-    elif metric.__name__ == "accuracy" or metric.__name__ == "f1_max":
-        if preds.shape[1] == 1:
-            probs_class_1 = torch.sigmoid(preds)
-            probs_class_0 = 1 - probs_class_1
-            preds = torch.cat((probs_class_0, probs_class_1), dim=1)
-        return preds
+        preds = torch.sigmoid(preds).flatten()
+        reals = reals.flatten()
+
+    elif preds.shape[1] == 1 and (metric.__name__ == "accuracy" or metric.__name__ == "f1_max"):
+        probs_class_1 = torch.sigmoid(preds)
+        probs_class_0 = 1 - probs_class_1
+        preds = torch.cat((probs_class_0, probs_class_1), dim=1)
+        preds = preds
+        reals = torch.nn.functional.one_hot(reals.long(), num_classes=2)
     else:
-        return preds.flatten()
+        preds = preds.flatten()
+        reals = reals.flatten()
+    return preds, reals
 
 
 class Scores:
@@ -36,16 +40,10 @@ class Scores:
             self.calcualte(preds, reals)
 
     def calcualte(self, preds, reals):
-        auc_pred = metric_prep_predictions(preds, metrics.area_under_roc)
-        auprc_pred = metric_prep_predictions(preds, metrics.area_under_prc)
-        acc_pred = metric_prep_predictions(preds, metrics.accuracy)
-        f1_max_pred = metric_prep_predictions(preds, metrics.f1_max)
-
-        self.auc = metrics.area_under_roc(auc_pred, reals.flatten()).item()
-        self.auprc = metrics.area_under_prc(auprc_pred, reals.flatten()).item()
-        self.acc = metrics.accuracy(acc_pred, reals.flatten()).item()
-        print(f1_max_pred.shape, reals.shape)
-        self.f1_max = metrics.f1_max(f1_max_pred, reals).item()
+        self.auc = metrics.area_under_roc(metric_prep(preds, reals, metrics.area_under_roc)).item()
+        self.auprc = metrics.area_under_prc(metric_prep(preds, reals, metrics.area_under_prc)).item()
+        self.acc = metrics.accuracy(metric_prep(preds, reals, metrics.accuracy)).item()
+        self.f1_max = metrics.f1_max(metric_prep(preds, reals, metrics.f1_max)).item()
 
     def __repr__(self):
         return f"AUC: {self.auc}, AUPRC: {self.auprc}, ACC: {self.acc}, F1: {self.f1_max}\n"
