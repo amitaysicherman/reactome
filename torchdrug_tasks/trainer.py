@@ -21,14 +21,8 @@ def one_into_two(preds):
 def metric_prep(preds, reals, metric):
     if metric.__name__ == "area_under_roc" or metric.__name__ == "area_under_prc":
         preds = torch.sigmoid(preds).flatten()
-        if reals.dim() > 1:
-            if reals.shape[1] > 1:
-                reals = reals.flatten()
-            else:
+        reals = reals.flatten()
 
-                reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=reals.shape[1]+1).flatten()
-        else:
-            reals = reals.flatten()
     elif metric.__name__ == "f1_max" or metric.__name__ == "accuracy":
         is_multilabel = reals.shape[1] > 1
         is_binary = preds.shape[1] <= 1
