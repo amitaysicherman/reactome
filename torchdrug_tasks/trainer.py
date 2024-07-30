@@ -23,34 +23,26 @@ def metric_prep(preds, reals, metric):
         preds = torch.sigmoid(preds).flatten()
         reals = reals.flatten()
     elif metric.__name__ == "accuracy":
-        if preds.shape[1] == 1:
-            preds = one_into_two(preds)
-        else:
-            preds = torch.argmax(preds, dim=1)
         reals = reals.long().flatten()
+
+        if preds.shape[1] == 1:
+            preds = one_into_two(preds)
+
+        else:
+            if reals.shape[1] == 1:
+                preds = torch.argmax(preds, dim=1)
+            else:  # multi-label classification
+                preds = one_into_two(preds.flatten())
     elif metric.__name__ == "f1_max":
+        n = reals.max().item() + 1
+        reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=n)
+
         if preds.shape[1] == 1:
             preds = one_into_two(preds)
         else:
-            preds = torch.argmax(preds, dim=1)
-        reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=2)
-
-
-
-    elif metric.__name__ == "accuracy" or metric.__name__ == "f1_max":
-        if preds.shape[1] == 1:
-            probs_class_1 = torch.sigmoid(preds)
-            probs_class_0 = 1 - probs_class_1
-            preds = torch.cat((probs_class_0, probs_class_1), dim=1)
-        else:
-
-        if metric.__name__ == "accuracy":
-            reals = reals.long().flatten()
-        else:
-            reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=2)
+            preds = torch.sigmoid(preds)
     else:
-        preds = preds.flatten()
-        reals = reals.flatten()
+        raise ValueError("Unknown metric")
     return preds, reals
 
 
