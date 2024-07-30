@@ -69,8 +69,8 @@ class Scores:
             self.f1_max: float = 0
 
         else:
-            self.mse: float = 0
-            self.mae: float = 0
+            self.mse: float = 1e6
+            self.mae: float = 1e6
             self.r2: float = 0
             self.pearsonr: float = 0
             self.spearmanr: float = 0
