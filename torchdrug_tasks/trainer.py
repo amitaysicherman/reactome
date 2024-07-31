@@ -247,7 +247,7 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, drop_out, n_layers
 
 
 def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_emd: str, protein_emd: str,
-                            print_output=False, max_no_improve=15, fuse_model=None):
+                            print_output=False, max_no_improve=15, fuse_model=None,return_valid=False):
     use_fuse = config["use_fuse"]
     use_model = config["use_model"]
     bs = config["bs"]
@@ -305,15 +305,17 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
                 break
     if print_output:
         print("Best Test scores\n", scores_manager.test_scores)
-    output_file = f"{scores_path}/torchdrug.csv"
+        output_file = f"{scores_path}/torchdrug.csv"
 
-    if not os.path.exists(output_file):
-        names = ["task_name", "mol_emd", "protein_emd", "conf"] + scores_manager.test_scores.get_metrics_names()
-        with open(output_file, "w") as f:
-            f.write(",".join(names) + "\n")
-    values = [task_name, mol_emd, protein_emd, conf.value] + scores_manager.test_scores.get_metrics()
-    with open(output_file, "a") as f:
-        f.write(",".join(map(str, values)) + "\n")
+        if not os.path.exists(output_file):
+            names = ["task_name", "mol_emd", "protein_emd", "conf"] + scores_manager.test_scores.get_metrics_names()
+            with open(output_file, "w") as f:
+                f.write(",".join(names) + "\n")
+        values = [task_name, mol_emd, protein_emd, conf.value] + scores_manager.test_scores.get_metrics()
+        with open(output_file, "a") as f:
+            f.write(",".join(map(str, values)) + "\n")
+    if return_valid:
+        return scores_manager.test_scores.get_metrics(),scores_manager.valid_scores.get_metrics()
     return scores_manager.test_scores.get_metrics()
 
 
