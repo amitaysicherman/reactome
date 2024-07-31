@@ -79,30 +79,30 @@ def main(args):
         with open(filename, "a") as f:
             f.write(",".join(map(str, values)) + "\n")
 
-    df = pd.read_csv(filename)
-    df = df.sort_values("valid_score", ascending=False)
-    best_config = {col: df.iloc[0][col] for col in config_cols}
-    for col in ["bs", "n_layers", "hidden_dim"]:
-        best_config[col] = int(best_config[col])
-    for col in ["lr", "drop_out"]:
-        best_config[col] = float(best_config[col])
-
-    best_fuse_test_score = df.iloc[0]["test_score"]
-    print(f"Best config: {best_config}")
-    best_config['use_fuse'] = False
-    best_config['use_model'] = True
-    model_scores_test, model_scores_valid = train_model_with_config(best_config, **args, return_valid=True)
-    best_model_test_score = model_scores_test[metric_index]
-
-    header = ['task', 'mol_emd', 'protein_emd', 'score_model', 'score_fuse'] + config_cols
-    output_file = f"{scores_path}/torchdrug.csv"
-    if not os.path.exists(output_file):
-        with open(output_file, "w") as f:
-            f.write(",".join(header) + "\n")
-    values = [args["task_name"], args["mol_emd"], args["protein_emd"], best_model_test_score,
-              best_fuse_test_score] + [best_config.get(col, None) for col in config_cols]
-    with open(output_file, "a") as f:
-        f.write(",".join(map(str, values)) + "\n")
+    # df = pd.read_csv(filename)
+    # df = df.sort_values("valid_score", ascending=False)
+    # best_config = {col: df.iloc[0][col] for col in config_cols}
+    # for col in ["bs", "n_layers", "hidden_dim"]:
+    #     best_config[col] = int(best_config[col])
+    # for col in ["lr", "drop_out"]:
+    #     best_config[col] = float(best_config[col])
+    #
+    # best_fuse_test_score = df.iloc[0]["test_score"]
+    # print(f"Best config: {best_config}")
+    # best_config['use_fuse'] = False
+    # best_config['use_model'] = True
+    # model_scores_test, model_scores_valid = train_model_with_config(best_config, **args, return_valid=True)
+    # best_model_test_score = model_scores_test[metric_index]
+    #
+    # header = ['task', 'mol_emd', 'protein_emd', 'score_model', 'score_fuse'] + config_cols
+    # output_file = f"{scores_path}/torchdrug.csv"
+    # if not os.path.exists(output_file):
+    #     with open(output_file, "w") as f:
+    #         f.write(",".join(header) + "\n")
+    # values = [args["task_name"], args["mol_emd"], args["protein_emd"], best_model_test_score,
+    #           best_fuse_test_score] + [best_config.get(col, None) for col in config_cols]
+    # with open(output_file, "a") as f:
+    #     f.write(",".join(map(str, values)) + "\n")
 
 
 if __name__ == '__main__':
