@@ -131,14 +131,23 @@ class PairTransFuseModel(FuseModel):
         x = []
         if self.use_fuse:
             x1_fuse = self.fuse_model(x1, self.x1_type.value).detach()
-            x.append(self.x1_fuse_linear(x1_fuse))
+            x.append(x1_fuse)
             x2_fuse = self.fuse_model(x2, self.x2_type.value).detach()
-            x.append(self.x2_fuse_linear(x2_fuse))
+            x.append(x2_fuse)
         if self.use_model:
-            x1_model = self.x1_model_linear(x1)
-            x.append(x1_model)
-            x2_model = self.x2_model_linear(x2)
-            x.append(x2_model)
+            x.append(x1)
+            x.append(x2)
+        # if self.use_fuse:
+        #     x1_fuse = self.fuse_model(x1, self.x1_type.value).detach()
+        #     x.append(self.x1_fuse_linear(x1_fuse))
+        #     x2_fuse = self.fuse_model(x2, self.x2_type.value).detach()
+        #     x.append(self.x2_fuse_linear(x2_fuse))
+        # if self.use_model:
+        #     x1_model = self.x1_model_linear(x1)
+        #     x.append(x1_model)
+        #     x2_model = self.x2_model_linear(x2)
+        #     x.append(x2_model)
+
         # x = torch.stack(x, dim=1)
         x = torch.cat(x, dim=1)
         return self.layers(x)
