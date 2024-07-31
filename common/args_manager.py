@@ -75,7 +75,7 @@ def get_args():
     parser.add_argument("--dp_lr", type=float, default=5e-5)
     parser.add_argument("--dp_n_layers", type=int, default=1)
     parser.add_argument("--dp_hidden_dim", type=int, default=-1)
-    parser.add_argument("--dp_drop_out", type=float, default=0.1)
+    parser.add_argument("--dp_drop_out", type=float, default=0.0)
     parser.add_argument("--dp_print", type=int, default=1)
     parser.add_argument("--db_dataset", type=str, default="DrugBank", choices=["Davis", "DrugBank", "KIBA", "human"])
 
