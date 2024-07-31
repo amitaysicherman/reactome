@@ -27,11 +27,11 @@ def main(args):
         'drop_out': [0, 0.1, 0.5]
     }
     all_options = []
-    for bs in search_space["bs"]:
-        for lr in search_space["lr"]:
-            for use_fuse in search_space["use_fuse"]:
-                for use_model in search_space["use_model"]:
-                    for n_layers in search_space["n_layers"]:
+    for use_fuse in search_space["use_fuse"]:
+        for n_layers in search_space["n_layers"]:
+            for bs in search_space["bs"]:
+                for lr in search_space["lr"]:
+                    for use_model in search_space["use_model"]:
                         for hidden_dim in search_space["hidden_dim"]:
                             for drop_out in search_space["drop_out"]:
                                 all_options.append({
