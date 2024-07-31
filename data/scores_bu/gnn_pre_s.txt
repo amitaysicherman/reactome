@@ -1,0 +1,300 @@
+0
+{'train/loss': 0.12699182197833672, 'train/fake_all': 0.4944449520873696, 'train/fake_location': nan, 'train/fake_protein': 0.4944449520873696, 'train/fake_molecule': nan, 'train/fake_text': nan}
+0
+{'valid/loss': 0.12671038011709848, 'valid/fake_all': 0.5193381338529216, 'valid/fake_location': nan, 'valid/fake_protein': 0.5193381338529216, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+0
+{'test/loss': 0.1281793713569641, 'test/fake_all': 0.5247895467514151, 'test/fake_location': nan, 'test/fake_protein': 0.5247895467514151, 'test/fake_molecule': nan, 'test/fake_text': nan}
+1
+{'train/loss': 0.12659032394488653, 'train/fake_all': 0.513923547576244, 'train/fake_location': nan, 'train/fake_protein': 0.513923547576244, 'train/fake_molecule': nan, 'train/fake_text': nan}
+1
+{'valid/loss': 0.12645013961527082, 'valid/fake_all': 0.5821270450029944, 'valid/fake_location': nan, 'valid/fake_protein': 0.5821270450029944, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+1
+{'test/loss': 0.12789344953166115, 'test/fake_all': 0.5746831079368266, 'test/fake_location': nan, 'test/fake_protein': 0.5746831079368266, 'test/fake_molecule': nan, 'test/fake_text': nan}
+2
+{'train/loss': 0.12541932058640015, 'train/fake_all': 0.5734905031446301, 'train/fake_location': nan, 'train/fake_protein': 0.5734905031446301, 'train/fake_molecule': nan, 'train/fake_text': nan}
+2
+{'valid/loss': 0.1244601317577892, 'valid/fake_all': 0.6291384880114905, 'valid/fake_location': nan, 'valid/fake_protein': 0.6291384880114905, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+2
+{'test/loss': 0.12634591261545816, 'test/fake_all': 0.6054520278880328, 'test/fake_location': nan, 'test/fake_protein': 0.6054520278880328, 'test/fake_molecule': nan, 'test/fake_text': nan}
+3
+{'train/loss': 0.12093815608666493, 'train/fake_all': 0.6377799524060113, 'train/fake_location': nan, 'train/fake_protein': 0.6377799524060113, 'train/fake_molecule': nan, 'train/fake_text': nan}
+3
+{'valid/loss': 0.11985702067613602, 'valid/fake_all': 0.667886634225764, 'valid/fake_location': nan, 'valid/fake_protein': 0.667886634225764, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+3
+{'test/loss': 0.12334941327571869, 'test/fake_all': 0.625462610096652, 'test/fake_location': nan, 'test/fake_protein': 0.625462610096652, 'test/fake_molecule': nan, 'test/fake_text': nan}
+4
+{'train/loss': 0.11398604875191665, 'train/fake_all': 0.6988271756638716, 'train/fake_location': nan, 'train/fake_protein': 0.6988271756638716, 'train/fake_molecule': nan, 'train/fake_text': nan}
+4
+{'valid/loss': 0.11541844656070073, 'valid/fake_all': 0.7280315965161339, 'valid/fake_location': nan, 'valid/fake_protein': 0.7280315965161339, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+4
+{'test/loss': 0.11913519518242942, 'test/fake_all': 0.687684508122951, 'test/fake_location': nan, 'test/fake_protein': 0.687684508122951, 'test/fake_molecule': nan, 'test/fake_text': nan}
+5
+{'train/loss': 0.1074629878768554, 'train/fake_all': 0.750326312851102, 'train/fake_location': nan, 'train/fake_protein': 0.750326312851102, 'train/fake_molecule': nan, 'train/fake_text': nan}
+5
+{'valid/loss': 0.11243055346939299, 'valid/fake_all': 0.7502758574958003, 'valid/fake_location': nan, 'valid/fake_protein': 0.7502758574958003, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+5
+{'test/loss': 0.1153664779331949, 'test/fake_all': 0.7185122299367621, 'test/fake_location': nan, 'test/fake_protein': 0.7185122299367621, 'test/fake_molecule': nan, 'test/fake_text': nan}
+6
+{'train/loss': 0.1015935175311871, 'train/fake_all': 0.7851968670852384, 'train/fake_location': nan, 'train/fake_protein': 0.7851968670852384, 'train/fake_molecule': nan, 'train/fake_text': nan}
+6
+{'valid/loss': 0.10699248810609181, 'valid/fake_all': 0.7835735400342647, 'valid/fake_location': nan, 'valid/fake_protein': 0.7835735400342647, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+6
+{'test/loss': 0.11156374630000856, 'test/fake_all': 0.7457152263010417, 'test/fake_location': nan, 'test/fake_protein': 0.7457152263010417, 'test/fake_molecule': nan, 'test/fake_text': nan}
+7
+{'train/loss': 0.09716447194417317, 'train/fake_all': 0.8081800737187841, 'train/fake_location': nan, 'train/fake_protein': 0.8081800737187841, 'train/fake_molecule': nan, 'train/fake_text': nan}
+7
+{'valid/loss': 0.10498478677537706, 'valid/fake_all': 0.7919693126521188, 'valid/fake_location': nan, 'valid/fake_protein': 0.7919693126521188, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+7
+{'test/loss': 0.11261312580770916, 'test/fake_all': 0.7502434801175273, 'test/fake_location': nan, 'test/fake_protein': 0.7502434801175273, 'test/fake_molecule': nan, 'test/fake_text': nan}
+8
+{'train/loss': 0.0940998735336157, 'train/fake_all': 0.8223287387249527, 'train/fake_location': nan, 'train/fake_protein': 0.8223287387249527, 'train/fake_molecule': nan, 'train/fake_text': nan}
+8
+{'valid/loss': 0.1032228238052792, 'valid/fake_all': 0.7934000640588273, 'valid/fake_location': nan, 'valid/fake_protein': 0.7934000640588273, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+8
+{'test/loss': 0.10962318049536811, 'test/fake_all': 0.7609446535177337, 'test/fake_location': nan, 'test/fake_protein': 0.7609446535177337, 'test/fake_molecule': nan, 'test/fake_text': nan}
+9
+{'train/loss': 0.09143629097021543, 'train/fake_all': 0.8330592761149689, 'train/fake_location': nan, 'train/fake_protein': 0.8330592761149689, 'train/fake_molecule': nan, 'train/fake_text': nan}
+9
+{'valid/loss': 0.10085470643308428, 'valid/fake_all': 0.8123090538144196, 'valid/fake_location': nan, 'valid/fake_protein': 0.8123090538144196, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+9
+{'test/loss': 0.10904764963520898, 'test/fake_all': 0.7728809850300878, 'test/fake_location': nan, 'test/fake_protein': 0.7728809850300878, 'test/fake_molecule': nan, 'test/fake_text': nan}
+10
+{'train/loss': 0.08927228053410848, 'train/fake_all': 0.8414702486053229, 'train/fake_location': nan, 'train/fake_protein': 0.8414702486053229, 'train/fake_molecule': nan, 'train/fake_text': nan}
+10
+{'valid/loss': 0.10048506326145595, 'valid/fake_all': 0.8136657372019972, 'valid/fake_location': nan, 'valid/fake_protein': 0.8136657372019972, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+10
+{'test/loss': 0.11123043960995144, 'test/fake_all': 0.7708342548815115, 'test/fake_location': nan, 'test/fake_protein': 0.7708342548815115, 'test/fake_molecule': nan, 'test/fake_text': nan}
+11
+{'train/loss': 0.08563684232724018, 'train/fake_all': 0.8545190085934015, 'train/fake_location': nan, 'train/fake_protein': 0.8545190085934015, 'train/fake_molecule': nan, 'train/fake_text': nan}
+11
+{'valid/loss': 0.09790844718615214, 'valid/fake_all': 0.8269113594317448, 'valid/fake_location': nan, 'valid/fake_protein': 0.8269113594317448, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+11
+{'test/loss': 0.10936598148610857, 'test/fake_all': 0.7838648539672224, 'test/fake_location': nan, 'test/fake_protein': 0.7838648539672224, 'test/fake_molecule': nan, 'test/fake_text': nan}
+12
+{'train/loss': 0.08344466563982841, 'train/fake_all': 0.8625961095577598, 'train/fake_location': nan, 'train/fake_protein': 0.8625961095577598, 'train/fake_molecule': nan, 'train/fake_text': nan}
+12
+{'valid/loss': 0.09750783029529783, 'valid/fake_all': 0.8297037988219181, 'valid/fake_location': nan, 'valid/fake_protein': 0.8297037988219181, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+12
+{'test/loss': 0.11068237572908401, 'test/fake_all': 0.7872873350357872, 'test/fake_location': nan, 'test/fake_protein': 0.7872873350357872, 'test/fake_molecule': nan, 'test/fake_text': nan}
+13
+{'train/loss': 0.08245087510500199, 'train/fake_all': 0.8659039175363166, 'train/fake_location': nan, 'train/fake_protein': 0.8659039175363166, 'train/fake_molecule': nan, 'train/fake_text': nan}
+13
+{'valid/loss': 0.09755349159240723, 'valid/fake_all': 0.8254408006352499, 'valid/fake_location': nan, 'valid/fake_protein': 0.8254408006352499, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+13
+{'test/loss': 0.11027082635296716, 'test/fake_all': 0.7838265530071677, 'test/fake_location': nan, 'test/fake_protein': 0.7838265530071677, 'test/fake_molecule': nan, 'test/fake_text': nan}
+14
+{'train/loss': 0.08143546088383748, 'train/fake_all': 0.8695618401304483, 'train/fake_location': nan, 'train/fake_protein': 0.8695618401304483, 'train/fake_molecule': nan, 'train/fake_text': nan}
+14
+{'valid/loss': 0.09566711303260592, 'valid/fake_all': 0.8314926290643574, 'valid/fake_location': nan, 'valid/fake_protein': 0.8314926290643574, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+14
+{'test/loss': 0.10636723455455568, 'test/fake_all': 0.7963169830837781, 'test/fake_location': nan, 'test/fake_protein': 0.7963169830837781, 'test/fake_molecule': nan, 'test/fake_text': nan}
+15
+{'train/loss': 0.07987341915185635, 'train/fake_all': 0.8729151947777885, 'train/fake_location': nan, 'train/fake_protein': 0.8729151947777885, 'train/fake_molecule': nan, 'train/fake_text': nan}
+15
+{'valid/loss': 0.09802080111371146, 'valid/fake_all': 0.8348279211409144, 'valid/fake_location': nan, 'valid/fake_protein': 0.8348279211409144, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+15
+{'test/loss': 0.11275354276100795, 'test/fake_all': 0.7877103256496063, 'test/fake_location': nan, 'test/fake_protein': 0.7877103256496063, 'test/fake_molecule': nan, 'test/fake_text': nan}
+16
+{'train/loss': 0.07847680839208457, 'train/fake_all': 0.8777492607324024, 'train/fake_location': nan, 'train/fake_protein': 0.8777492607324024, 'train/fake_molecule': nan, 'train/fake_text': nan}
+16
+{'valid/loss': 0.0988743437661065, 'valid/fake_all': 0.8275884395503204, 'valid/fake_location': nan, 'valid/fake_protein': 0.8275884395503204, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+16
+{'test/loss': 0.10929105016920301, 'test/fake_all': 0.7960441339346931, 'test/fake_location': nan, 'test/fake_protein': 0.7960441339346931, 'test/fake_molecule': nan, 'test/fake_text': nan}
+17
+{'train/loss': 0.07789090275764465, 'train/fake_all': 0.8795225079269253, 'train/fake_location': nan, 'train/fake_protein': 0.8795225079269253, 'train/fake_molecule': nan, 'train/fake_text': nan}
+17
+{'valid/loss': 0.09728568875127369, 'valid/fake_all': 0.834177219413161, 'valid/fake_location': nan, 'valid/fake_protein': 0.834177219413161, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+17
+{'test/loss': 0.10662704954544704, 'test/fake_all': 0.8096738314910876, 'test/fake_location': nan, 'test/fake_protein': 0.8096738314910876, 'test/fake_molecule': nan, 'test/fake_text': nan}
+18
+{'train/loss': 0.07705935071676205, 'train/fake_all': 0.8823807622136088, 'train/fake_location': nan, 'train/fake_protein': 0.8823807622136088, 'train/fake_molecule': nan, 'train/fake_text': nan}
+18
+{'valid/loss': 0.09988920390605927, 'valid/fake_all': 0.8336970909952306, 'valid/fake_location': nan, 'valid/fake_protein': 0.8336970909952306, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+18
+{'test/loss': 0.11492431908845901, 'test/fake_all': 0.7960457714549175, 'test/fake_location': nan, 'test/fake_protein': 0.7960457714549175, 'test/fake_molecule': nan, 'test/fake_text': nan}
+19
+{'train/loss': 0.07586920547943848, 'train/fake_all': 0.8858116564822196, 'train/fake_location': nan, 'train/fake_protein': 0.8858116564822196, 'train/fake_molecule': nan, 'train/fake_text': nan}
+19
+{'valid/loss': 0.09896339641677009, 'valid/fake_all': 0.837874218657467, 'valid/fake_location': nan, 'valid/fake_protein': 0.837874218657467, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+19
+{'test/loss': 0.11291515082120895, 'test/fake_all': 0.8058680218245293, 'test/fake_location': nan, 'test/fake_protein': 0.8058680218245293, 'test/fake_molecule': nan, 'test/fake_text': nan}
+20
+{'train/loss': 0.07502256238307708, 'train/fake_all': 0.8889885208885788, 'train/fake_location': nan, 'train/fake_protein': 0.8889885208885788, 'train/fake_molecule': nan, 'train/fake_text': nan}
+20
+{'valid/loss': 0.09672293149762684, 'valid/fake_all': 0.8405849997247472, 'valid/fake_location': nan, 'valid/fake_protein': 0.8405849997247472, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+20
+{'test/loss': 0.10846477167473899, 'test/fake_all': 0.8105781679849058, 'test/fake_location': nan, 'test/fake_protein': 0.8105781679849058, 'test/fake_molecule': nan, 'test/fake_text': nan}
+21
+{'train/loss': 0.07358330602829273, 'train/fake_all': 0.8929031522240611, 'train/fake_location': nan, 'train/fake_protein': 0.8929031522240611, 'train/fake_molecule': nan, 'train/fake_text': nan}
+21
+{'valid/loss': 0.09681583940982819, 'valid/fake_all': 0.8412306968566133, 'valid/fake_location': nan, 'valid/fake_protein': 0.8412306968566133, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+21
+{'test/loss': 0.111322696838114, 'test/fake_all': 0.8015812916079003, 'test/fake_location': nan, 'test/fake_protein': 0.8015812916079003, 'test/fake_molecule': nan, 'test/fake_text': nan}
+22
+{'train/loss': 0.07226246920151588, 'train/fake_all': 0.8958832373147252, 'train/fake_location': nan, 'train/fake_protein': 0.8958832373147252, 'train/fake_molecule': nan, 'train/fake_text': nan}
+22
+{'valid/loss': 0.09669091469711727, 'valid/fake_all': 0.8424785511361266, 'valid/fake_location': nan, 'valid/fake_protein': 0.8424785511361266, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+22
+{'test/loss': 0.10993144495619668, 'test/fake_all': 0.8086266266743113, 'test/fake_location': nan, 'test/fake_protein': 0.8086266266743113, 'test/fake_molecule': nan, 'test/fake_text': nan}
+23
+{'train/loss': 0.07276729838206218, 'train/fake_all': 0.8944025574900047, 'train/fake_location': nan, 'train/fake_protein': 0.8944025574900047, 'train/fake_molecule': nan, 'train/fake_text': nan}
+23
+{'valid/loss': 0.09919171118073994, 'valid/fake_all': 0.8377522107802332, 'valid/fake_location': nan, 'valid/fake_protein': 0.8377522107802332, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+23
+{'test/loss': 0.11301201250818041, 'test/fake_all': 0.8029578931877457, 'test/fake_location': nan, 'test/fake_protein': 0.8029578931877457, 'test/fake_molecule': nan, 'test/fake_text': nan}
+24
+{'train/loss': 0.07091646584180686, 'train/fake_all': 0.899926452938925, 'train/fake_location': nan, 'train/fake_protein': 0.899926452938925, 'train/fake_molecule': nan, 'train/fake_text': nan}
+24
+{'valid/loss': 0.09905770338243908, 'valid/fake_all': 0.837891776448038, 'valid/fake_location': nan, 'valid/fake_protein': 0.837891776448038, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+24
+{'test/loss': 0.11492972986565696, 'test/fake_all': 0.8060948502753585, 'test/fake_location': nan, 'test/fake_protein': 0.8060948502753585, 'test/fake_molecule': nan, 'test/fake_text': nan}
+25
+{'train/loss': 0.07019261958507392, 'train/fake_all': 0.9020130965514583, 'train/fake_location': nan, 'train/fake_protein': 0.9020130965514583, 'train/fake_molecule': nan, 'train/fake_text': nan}
+25
+{'valid/loss': 0.09397622280650669, 'valid/fake_all': 0.8464083474991201, 'valid/fake_location': nan, 'valid/fake_protein': 0.8464083474991201, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+25
+{'test/loss': 0.10893378655115764, 'test/fake_all': 0.8103816868244696, 'test/fake_location': nan, 'test/fake_protein': 0.8103816868244696, 'test/fake_molecule': nan, 'test/fake_text': nan}
+26
+{'train/loss': 0.0703058789173762, 'train/fake_all': 0.9009574092567866, 'train/fake_location': nan, 'train/fake_protein': 0.9009574092567866, 'train/fake_molecule': nan, 'train/fake_text': nan}
+26
+{'valid/loss': 0.09537289788325627, 'valid/fake_all': 0.8509536257463104, 'valid/fake_location': nan, 'valid/fake_protein': 0.8509536257463104, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+26
+{'test/loss': 0.11059586620993084, 'test/fake_all': 0.813847147482302, 'test/fake_location': nan, 'test/fake_protein': 0.813847147482302, 'test/fake_molecule': nan, 'test/fake_text': nan}
+27
+{'train/loss': 0.07019955827257572, 'train/fake_all': 0.9011298945353537, 'train/fake_location': nan, 'train/fake_protein': 0.9011298945353537, 'train/fake_molecule': nan, 'train/fake_text': nan}
+27
+{'valid/loss': 0.09983094119363362, 'valid/fake_all': 0.8458375316332165, 'valid/fake_location': nan, 'valid/fake_protein': 0.8458375316332165, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+27
+{'test/loss': 0.11646686991055806, 'test/fake_all': 0.8080184686761521, 'test/fake_location': nan, 'test/fake_protein': 0.8080184686761521, 'test/fake_molecule': nan, 'test/fake_text': nan}
+28
+{'train/loss': 0.06907273790775201, 'train/fake_all': 0.9044457525074423, 'train/fake_location': nan, 'train/fake_protein': 0.9044457525074423, 'train/fake_molecule': nan, 'train/fake_text': nan}
+28
+{'valid/loss': 0.10799029221137364, 'valid/fake_all': 0.842877313165924, 'valid/fake_location': nan, 'valid/fake_protein': 0.842877313165924, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+28
+{'test/loss': 0.12351586338546541, 'test/fake_all': 0.8112586533373938, 'test/fake_location': nan, 'test/fake_protein': 0.8112586533373938, 'test/fake_molecule': nan, 'test/fake_text': nan}
+29
+{'train/loss': 0.06795555716141677, 'train/fake_all': 0.9082570380679404, 'train/fake_location': nan, 'train/fake_protein': 0.9082570380679404, 'train/fake_molecule': nan, 'train/fake_text': nan}
+29
+{'valid/loss': 0.10139693568150203, 'valid/fake_all': 0.8422942568925798, 'valid/fake_location': nan, 'valid/fake_protein': 0.8422942568925798, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+29
+{'test/loss': 0.11455935653713015, 'test/fake_all': 0.8121837033987264, 'test/fake_location': nan, 'test/fake_protein': 0.8121837033987264, 'test/fake_molecule': nan, 'test/fake_text': nan}
+30
+{'train/loss': 0.06676791856686275, 'train/fake_all': 0.910610211070487, 'train/fake_location': nan, 'train/fake_protein': 0.910610211070487, 'train/fake_molecule': nan, 'train/fake_text': nan}
+30
+{'valid/loss': 0.10195368197229174, 'valid/fake_all': 0.844084922153511, 'valid/fake_location': nan, 'valid/fake_protein': 0.844084922153511, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+30
+{'test/loss': 0.11841796007421282, 'test/fake_all': 0.8107325627489244, 'test/fake_location': nan, 'test/fake_protein': 0.8107325627489244, 'test/fake_molecule': nan, 'test/fake_text': nan}
+31
+{'train/loss': 0.0665388901073199, 'train/fake_all': 0.9109961537859774, 'train/fake_location': nan, 'train/fake_protein': 0.9109961537859774, 'train/fake_molecule': nan, 'train/fake_text': nan}
+31
+{'valid/loss': 0.10729609760973188, 'valid/fake_all': 0.8434292366823533, 'valid/fake_location': nan, 'valid/fake_protein': 0.8434292366823533, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+31
+{'test/loss': 0.12636877430809867, 'test/fake_all': 0.8101831215473844, 'test/fake_location': nan, 'test/fake_protein': 0.8101831215473844, 'test/fake_molecule': nan, 'test/fake_text': nan}
+32
+{'train/loss': 0.06893708318089828, 'train/fake_all': 0.9040721051601242, 'train/fake_location': nan, 'train/fake_protein': 0.9040721051601242, 'train/fake_molecule': nan, 'train/fake_text': nan}
+32
+{'valid/loss': 0.10362815525796679, 'valid/fake_all': 0.8376330596931516, 'valid/fake_location': nan, 'valid/fake_protein': 0.8376330596931516, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+32
+{'test/loss': 0.11674610773722331, 'test/fake_all': 0.8119646372190907, 'test/fake_location': nan, 'test/fake_protein': 0.8119646372190907, 'test/fake_molecule': nan, 'test/fake_text': nan}
+33
+{'train/loss': 0.06648262131672639, 'train/fake_all': 0.911355143619593, 'train/fake_location': nan, 'train/fake_protein': 0.911355143619593, 'train/fake_molecule': nan, 'train/fake_text': nan}
+33
+{'valid/loss': 0.09956924865643184, 'valid/fake_all': 0.8493437098068393, 'valid/fake_location': nan, 'valid/fake_protein': 0.8493437098068393, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+33
+{'test/loss': 0.11488632361094157, 'test/fake_all': 0.8177647125875541, 'test/fake_location': nan, 'test/fake_protein': 0.8177647125875541, 'test/fake_molecule': nan, 'test/fake_text': nan}
+34
+{'train/loss': 0.06634243367574154, 'train/fake_all': 0.9111865659937287, 'train/fake_location': nan, 'train/fake_protein': 0.9111865659937287, 'train/fake_molecule': nan, 'train/fake_text': nan}
+34
+{'valid/loss': 0.10296361562278536, 'valid/fake_all': 0.8444843097577942, 'valid/fake_location': nan, 'valid/fake_protein': 0.8444843097577942, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+34
+{'test/loss': 0.12233391818073061, 'test/fake_all': 0.8072674423550348, 'test/fake_location': nan, 'test/fake_protein': 0.8072674423550348, 'test/fake_molecule': nan, 'test/fake_text': nan}
+35
+{'train/loss': 0.06607771187256543, 'train/fake_all': 0.9115115126928115, 'train/fake_location': nan, 'train/fake_protein': 0.9115115126928115, 'train/fake_molecule': nan, 'train/fake_text': nan}
+35
+{'valid/loss': 0.10213062829441494, 'valid/fake_all': 0.8435816474796021, 'valid/fake_location': nan, 'valid/fake_protein': 0.8435816474796021, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+35
+{'test/loss': 0.11554842359489864, 'test/fake_all': 0.8144065414041672, 'test/fake_location': nan, 'test/fake_protein': 0.8144065414041672, 'test/fake_molecule': nan, 'test/fake_text': nan}
+36
+{'train/loss': 0.0655730393452522, 'train/fake_all': 0.9127356430969826, 'train/fake_location': nan, 'train/fake_protein': 0.9127356430969826, 'train/fake_molecule': nan, 'train/fake_text': nan}
+36
+{'valid/loss': 0.10674259811639786, 'valid/fake_all': 0.8474010090933507, 'valid/fake_location': nan, 'valid/fake_protein': 0.8474010090933507, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+36
+{'test/loss': 0.12811304877201715, 'test/fake_all': 0.809488132444337, 'test/fake_location': nan, 'test/fake_protein': 0.809488132444337, 'test/fake_molecule': nan, 'test/fake_text': nan}
+37
+{'train/loss': 0.06490409976014724, 'train/fake_all': 0.9146642843595818, 'train/fake_location': nan, 'train/fake_protein': 0.9146642843595818, 'train/fake_molecule': nan, 'train/fake_text': nan}
+37
+{'valid/loss': 0.10392912394470638, 'valid/fake_all': 0.8493286751666947, 'valid/fake_location': nan, 'valid/fake_protein': 0.8493286751666947, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+37
+{'test/loss': 0.12043762538168165, 'test/fake_all': 0.8183862472119623, 'test/fake_location': nan, 'test/fake_protein': 0.8183862472119623, 'test/fake_molecule': nan, 'test/fake_text': nan}
+38
+{'train/loss': 0.06450167966958804, 'train/fake_all': 0.9163284158856768, 'train/fake_location': nan, 'train/fake_protein': 0.9163284158856768, 'train/fake_molecule': nan, 'train/fake_text': nan}
+38
+{'valid/loss': 0.11530755791399214, 'valid/fake_all': 0.8369175901536244, 'valid/fake_location': nan, 'valid/fake_protein': 0.8369175901536244, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+38
+{'test/loss': 0.13162537084685433, 'test/fake_all': 0.8100926751381047, 'test/fake_location': nan, 'test/fake_protein': 0.8100926751381047, 'test/fake_molecule': nan, 'test/fake_text': nan}
+39
+{'train/loss': 0.06445479574493873, 'train/fake_all': 0.9160929550058977, 'train/fake_location': nan, 'train/fake_protein': 0.9160929550058977, 'train/fake_molecule': nan, 'train/fake_text': nan}
+39
+{'valid/loss': 0.10852859086460537, 'valid/fake_all': 0.8421001411296039, 'valid/fake_location': nan, 'valid/fake_protein': 0.8421001411296039, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+39
+{'test/loss': 0.12612146056360668, 'test/fake_all': 0.8088425028794837, 'test/fake_location': nan, 'test/fake_protein': 0.8088425028794837, 'test/fake_molecule': nan, 'test/fake_text': nan}
+40
+{'train/loss': 0.0634272619126699, 'train/fake_all': 0.9180202997597022, 'train/fake_location': nan, 'train/fake_protein': 0.9180202997597022, 'train/fake_molecule': nan, 'train/fake_text': nan}
+40
+{'valid/loss': 0.11620121449232101, 'valid/fake_all': 0.8360734816473128, 'valid/fake_location': nan, 'valid/fake_protein': 0.8360734816473128, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+40
+{'test/loss': 0.13193705015712315, 'test/fake_all': 0.8116373883721604, 'test/fake_location': nan, 'test/fake_protein': 0.8116373883721604, 'test/fake_molecule': nan, 'test/fake_text': nan}
+41
+{'train/loss': 0.06366458783547084, 'train/fake_all': 0.9174856658979836, 'train/fake_location': nan, 'train/fake_protein': 0.9174856658979836, 'train/fake_molecule': nan, 'train/fake_text': nan}
+41
+{'valid/loss': 0.10556285331646602, 'valid/fake_all': 0.8451397658516405, 'valid/fake_location': nan, 'valid/fake_protein': 0.8451397658516405, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+41
+{'test/loss': 0.1226971364683575, 'test/fake_all': 0.815412723149347, 'test/fake_location': nan, 'test/fake_protein': 0.815412723149347, 'test/fake_molecule': nan, 'test/fake_text': nan}
+42
+{'train/loss': 0.063213561494381, 'train/fake_all': 0.9181308283269713, 'train/fake_location': nan, 'train/fake_protein': 0.9181308283269713, 'train/fake_molecule': nan, 'train/fake_text': nan}
+42
+{'valid/loss': 0.11406147811147901, 'valid/fake_all': 0.8379180922814118, 'valid/fake_location': nan, 'valid/fake_protein': 0.8379180922814118, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+42
+{'test/loss': 0.13372355699539185, 'test/fake_all': 0.8096667922807721, 'test/fake_location': nan, 'test/fake_protein': 0.8096667922807721, 'test/fake_molecule': nan, 'test/fake_text': nan}
+43
+{'train/loss': 0.06341288678157024, 'train/fake_all': 0.9176830767727826, 'train/fake_location': nan, 'train/fake_protein': 0.9176830767727826, 'train/fake_molecule': nan, 'train/fake_text': nan}
+43
+{'valid/loss': 0.10789560857746336, 'valid/fake_all': 0.8424002709154573, 'valid/fake_location': nan, 'valid/fake_protein': 0.8424002709154573, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+43
+{'test/loss': 0.13087939305437934, 'test/fake_all': 0.8113018455916254, 'test/fake_location': nan, 'test/fake_protein': 0.8113018455916254, 'test/fake_molecule': nan, 'test/fake_text': nan}
+44
+{'train/loss': 0.0624697649708161, 'train/fake_all': 0.9203496919861447, 'train/fake_location': nan, 'train/fake_protein': 0.9203496919861447, 'train/fake_molecule': nan, 'train/fake_text': nan}
+44
+{'valid/loss': 0.112390645676189, 'valid/fake_all': 0.8371845227867591, 'valid/fake_location': nan, 'valid/fake_protein': 0.8371845227867591, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+44
+{'test/loss': 0.13712897400061289, 'test/fake_all': 0.8040708965444495, 'test/fake_location': nan, 'test/fake_protein': 0.8040708965444495, 'test/fake_molecule': nan, 'test/fake_text': nan}
+45
+{'train/loss': 0.06225486663289559, 'train/fake_all': 0.9205859599641136, 'train/fake_location': nan, 'train/fake_protein': 0.9205859599641136, 'train/fake_molecule': nan, 'train/fake_text': nan}
+45
+{'valid/loss': 0.12128190779023701, 'valid/fake_all': 0.8335235774853239, 'valid/fake_location': nan, 'valid/fake_protein': 0.8335235774853239, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+45
+{'test/loss': 0.14328169739908642, 'test/fake_all': 0.8044808295294661, 'test/fake_location': nan, 'test/fake_protein': 0.8044808295294661, 'test/fake_molecule': nan, 'test/fake_text': nan}
+46
+{'train/loss': 0.061811089515686035, 'train/fake_all': 0.9215795550771055, 'train/fake_location': nan, 'train/fake_protein': 0.9215795550771055, 'train/fake_molecule': nan, 'train/fake_text': nan}
+46
+{'valid/loss': 0.1132654415236579, 'valid/fake_all': 0.8410275936735234, 'valid/fake_location': nan, 'valid/fake_protein': 0.8410275936735234, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+46
+{'test/loss': 0.1434288298090299, 'test/fake_all': 0.8006580917317563, 'test/fake_location': nan, 'test/fake_protein': 0.8006580917317563, 'test/fake_molecule': nan, 'test/fake_text': nan}
+47
+{'train/loss': 0.061495289588585876, 'train/fake_all': 0.923167205940548, 'train/fake_location': nan, 'train/fake_protein': 0.923167205940548, 'train/fake_molecule': nan, 'train/fake_text': nan}
+47
+{'valid/loss': 0.10854542503754298, 'valid/fake_all': 0.848884162789495, 'valid/fake_location': nan, 'valid/fake_protein': 0.848884162789495, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+47
+{'test/loss': 0.13264558464288712, 'test/fake_all': 0.8092258102109806, 'test/fake_location': nan, 'test/fake_protein': 0.8092258102109806, 'test/fake_molecule': nan, 'test/fake_text': nan}
+48
+{'train/loss': 0.06100626738789754, 'train/fake_all': 0.9238633548419595, 'train/fake_location': nan, 'train/fake_protein': 0.9238633548419595, 'train/fake_molecule': nan, 'train/fake_text': nan}
+48
+{'valid/loss': 0.12025795545842913, 'valid/fake_all': 0.838970996698635, 'valid/fake_location': nan, 'valid/fake_protein': 0.838970996698635, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+48
+{'test/loss': 0.14663525339629915, 'test/fake_all': 0.8026468281445918, 'test/fake_location': nan, 'test/fake_protein': 0.8026468281445918, 'test/fake_molecule': nan, 'test/fake_text': nan}
+49
+{'train/loss': 0.06045066527067087, 'train/fake_all': 0.9251149971818344, 'train/fake_location': nan, 'train/fake_protein': 0.9251149971818344, 'train/fake_molecule': nan, 'train/fake_text': nan}
+49
+{'valid/loss': 0.11428021887938182, 'valid/fake_all': 0.849842876541624, 'valid/fake_location': nan, 'valid/fake_protein': 0.849842876541624, 'valid/fake_molecule': nan, 'valid/fake_text': nan}
+49
+{'test/loss': 0.14375119242403242, 'test/fake_all': 0.8106909229489315, 'test/fake_location': nan, 'test/fake_protein': 0.8106909229489315, 'test/fake_molecule': nan, 'test/fake_text': nan}

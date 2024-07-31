@@ -1,0 +1,4 @@
+,molecule_model,Pre-trained,Our,statistically significant
+0,chemberta,87.7(2.27),89.0(2.52),True
+1,pebchem10m,88.3(2.42),90.4(2.34),True
+2,roberta,88.8(2.37),90.5(2.03),True

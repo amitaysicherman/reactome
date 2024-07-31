@@ -1,0 +1,16 @@
+,protein_model,molecule_model,Pre-trained,Our,statistically significant
+0,ESM-1B,chemberta,89.4(0.69),91.1(0.41),True
+1,ESM-1B,pebchem10m,90.0(0.37),91.9(0.3),True
+2,ESM-1B,roberta,89.7(0.78),92.2(0.33),True
+3,ESM2,chemberta,89.7(0.45),90.3(0.35),True
+4,ESM2,pebchem10m,89.8(0.52),90.9(0.45),True
+5,ESM2,roberta,89.6(0.58),90.8(0.39),True
+6,ESM3,chemberta,89.9(0.36),90.8(0.36),True
+7,ESM3,pebchem10m,90.1(0.42),91.5(0.48),True
+8,ESM3,roberta,90.1(0.54),91.4(0.52),True
+9,ProtBert-BFD,chemberta,90.2(0.36),90.3(0.53),False
+10,ProtBert-BFD,pebchem10m,91.0(0.33),91.0(0.46),False
+11,ProtBert-BFD,roberta,90.8(0.28),91.0(0.31),False
+12,ProtBertT5-xl,chemberta,90.6(0.37),91.4(0.39),True
+13,ProtBertT5-xl,pebchem10m,91.2(0.25),92.1(0.54),True
+14,ProtBertT5-xl,roberta,91.0(0.58),91.9(0.48),True

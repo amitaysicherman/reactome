@@ -1,0 +1,5 @@
+,protein_model,molecule_model,Pre-trained,Our,statistically significant
+0,ESM-1B,roberta,51.4(1.89),54.2(1.28),True
+1,ESM2,roberta,48.4(0.44),48.5(0.63),False
+2,ProtBert-BFD,roberta,56.7(0.32),56.9(0.33),False
+3,ProtBertT5-xl,roberta,64.0(0.45),64.1(0.31),False
