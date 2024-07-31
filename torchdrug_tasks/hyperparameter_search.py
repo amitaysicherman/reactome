@@ -8,10 +8,12 @@ import pandas as pd
 config_cols = ['bs', 'lr', 'use_fuse', 'use_model', 'n_layers', 'hidden_dim', 'drop_out']
 n_max = 100
 
-task_name = "BACE"
-metric = "auc"
 all_metrics = ["mse", "mae", "r2", "pearsonr", "spearmanr"] + ["auc", "auprc", "acc", "f1_max"]
-metric_index = all_metrics.index(metric)
+name_to_type = {'BetaLactamase': "P", 'Fluorescence': "P", 'Stability': "P", 'Solubility': "P", 'HumanPPI': "PPI",
+                'YeastPPI': "PPI", 'PPIAffinity': "PPIA", 'BindingDB': "PDA", 'PDBBind': "PDA", 'BACE': "M",
+                'BBBP': "M", 'ClinTox': "M", 'HIV': "M", 'SIDER': "M", 'Tox21': "M", 'DrugBank': "PD", 'Davis': "PD",
+                'KIBA': "PD"}
+type_to_metric = {'M': 'auc', 'P': "pearsonr", 'PD': "auc", 'PDA': "pearsonr", 'PPI': "auc", 'PPIA': "mse"}
 
 
 def main(args):
@@ -58,6 +60,8 @@ def main(args):
     all_cols = ["test_score", 'valid_score'] + config_cols
     with open(filename, "w") as f:
         f.write(",".join(all_cols) + "\n")
+
+    metric_index = all_metrics.index(type_to_metric[name_to_type[args["task_name"]]])
 
     for option in tqdm(all_options):
         #
