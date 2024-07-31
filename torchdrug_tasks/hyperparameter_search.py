@@ -66,6 +66,7 @@ def main(args):
         valid_score = scores_valid[metric_index]
 
         values = [test_score, valid_score] + [option.get(col, None) for col in config_cols]
+        print(f"Test score: {test_score}, valid score: {valid_score}")
         with open(filename, "a") as f:
             f.write(",".join(map(str, values)) + "\n")
 
