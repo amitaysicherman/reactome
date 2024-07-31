@@ -12,7 +12,7 @@ def get_args():
     parser.add_argument("--prep_reactome_dtype", type=str, default="all",
                         choices=["all", "protein", "molecule", "text", 'dna', "label"])
     parser.add_argument("--task_name", type=str, default="BACE")
-
+    parser.add_argument("--task_suffix", type=str, default="")
     parser.add_argument("--downstream_task", type=str, default="pd", choices=["pd", "loc", "go", "rrf", "cl", "mol"])
 
     parser.add_argument("--name", type=str, default="default")

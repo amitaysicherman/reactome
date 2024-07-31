@@ -247,7 +247,7 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, drop_out, n_layers
 
 
 def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_emd: str, protein_emd: str,
-                            print_output=False, max_no_improve=15, fuse_model=None,return_valid=False):
+                            print_output=False, max_no_improve=15, fuse_model=None,return_valid=False,task_suffix=""):
     use_fuse = config["use_fuse"]
     use_model = config["use_model"]
     bs = config["bs"]
@@ -311,7 +311,7 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
             names = ["task_name", "mol_emd", "protein_emd", "conf"] + scores_manager.test_scores.get_metrics_names()
             with open(output_file, "w") as f:
                 f.write(",".join(names) + "\n")
-        values = [task_name, mol_emd, protein_emd, conf.value] + scores_manager.test_scores.get_metrics()
+        values = [task_name+task_suffix, mol_emd, protein_emd, conf.value] + scores_manager.test_scores.get_metrics()
         with open(output_file, "a") as f:
             f.write(",".join(map(str, values)) + "\n")
     if return_valid:
@@ -330,7 +330,7 @@ def main(args, fuse_model=None):
         'drop_out': args.dp_drop_out
     }
     train_model_with_config(config, args.task_name, args.dp_fuse_base, args.mol_emd, args.protein_emd, args.dp_print,
-                            args.max_no_improve, fuse_model=fuse_model)
+                            args.max_no_improve, fuse_model=fuse_model,task_suffix=args.task_suffix)
 
 
 if __name__ == '__main__':
