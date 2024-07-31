@@ -2,7 +2,8 @@
 #!/bin/sh
 #SBATCH --time=3-00
 #SBATCH --array=1-106
-#SBATCH --mem=64G
+#SBATCH --mem=16G
+#SBATCH -c 2
 #SBATCH --requeue
 
 args=$(sed -n "$SLURM_ARRAY_TASK_ID"p scripts/all_td.txt)
