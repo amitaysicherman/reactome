@@ -49,8 +49,8 @@ class FuseModel(torch.nn.Module):
             self.use_fuse = False
             self.use_model = True
         else:
-            self.use_fuse = False
-            self.use_model = True
+            self.use_fuse = True
+            self.use_model = False
 
         if self.use_fuse:
             if fuse_model is None:
@@ -130,9 +130,9 @@ class PairTransFuseModel(FuseModel):
     def forward(self, x1, x2):
         x = []
         if self.use_fuse:
-            x1_fuse = self.fuse_model(x1, self.x1_type.value).detach()
+            x1_fuse = self.fuse_model(x1, self.x1_dtype.value).detach()
             x.append(x1_fuse)
-            x2_fuse = self.fuse_model(x2, self.x2_type.value).detach()
+            x2_fuse = self.fuse_model(x2, self.x2_dtype.value).detach()
             x.append(x2_fuse)
         if self.use_model:
             x.append(x1)
