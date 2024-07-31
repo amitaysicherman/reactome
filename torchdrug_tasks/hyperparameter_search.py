@@ -18,12 +18,12 @@ type_to_metric = {'M': 'auc', 'P': "pearsonr", 'PD': "auc", 'PDA': "pearsonr", '
 
 def main(args):
     search_space = {
-        "bs": [8, 256, 1024],
-        "lr": [5e-5, 5e-3],
+        "bs": [64],
+        "lr": [5e-5],
         'use_fuse': [True],
         'use_model': [True, False],
         'n_layers': [1, 2, 3],
-        'hidden_dim': [256, 512],
+        'hidden_dim': [-1],
         'drop_out': [0, 0.1, 0.5]
     }
     all_options = []
@@ -70,7 +70,12 @@ def main(args):
         valid_score = scores_valid[metric_index]
 
         values = [test_score, valid_score] + [option.get(col, None) for col in config_cols]
-        print(f"Test score: {test_score}, valid score: {valid_score}")
+        model_config = {col: option[col] for col in config_cols}
+        model_config['use_fuse'] = False
+        model_config['use_model'] = True
+        model_scores_test, model_scores_valid = train_model_with_config(model_config, **args, return_valid=True)
+        model_scores_test = model_scores_test[metric_index]
+        print(f"Test score: {test_score}, valid score: {valid_score}, model test {model_scores_test}", option)
         with open(filename, "a") as f:
             f.write(",".join(map(str, values)) + "\n")
 
@@ -86,8 +91,8 @@ def main(args):
     print(f"Best config: {best_config}")
     best_config['use_fuse'] = False
     best_config['use_model'] = True
-    scores_test, best_model_test_score = train_model_with_config(best_config, **args, return_valid=True)
-    best_model_test_score = scores_test[metric_index]
+    model_scores_test, model_scores_valid = train_model_with_config(best_config, **args, return_valid=True)
+    best_model_test_score = model_scores_test[metric_index]
 
     header = ['task', 'mol_emd', 'protein_emd', 'score_model', 'score_fuse'] + config_cols
     output_file = f"{scores_path}/torchdrug.csv"
