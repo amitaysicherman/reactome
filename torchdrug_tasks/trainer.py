@@ -33,7 +33,7 @@ def metric_prep(preds, reals, metric):
 
         if metric.__name__ == "accuracy":
             if is_multilabel:
-                preds = torch.sigmoid(preds).flatten().unsqueeze(1)
+                preds = preds.flatten().unsqueeze(1)
                 preds = one_into_two(preds)
                 reals = reals.flatten()
             elif is_binary:
