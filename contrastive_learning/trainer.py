@@ -179,7 +179,9 @@ def main(args):
         with torch.no_grad():
             valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
             test_auc = run_epoch(**running_args, loader=test_loader, part="test")
-
+        if args.fuse_train_all:
+            save_fuse_model(model, save_dir, epoch)
+            continue
         if valid_auc > best_valid_auc:
             best_valid_auc = valid_auc
             best_test_auc = test_auc
