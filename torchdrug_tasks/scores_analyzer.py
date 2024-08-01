@@ -226,7 +226,7 @@ for i, row in format_results_df.iterrows():
         format_results_df.loc[i, 'protein_emd'] = "-"
 
 
-format_results_df(columns=COLS_TO_NAME, inplace=True)
+format_results_df.rename(columns=COLS_TO_NAME, inplace=True)
 
 index_cols_print = [COLS_TO_NAME[x] for x in ['task_type', 'task_name', 'protein_emd', 'mol_emd']]
 format_results_df.set_index(index_cols_print, inplace=True)
