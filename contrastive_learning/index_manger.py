@@ -7,7 +7,7 @@ from common.path_manager import item_path
 from common.data_types import REACTION, COMPLEX, UNKNOWN_ENTITY_TYPE, PROTEIN, EMBEDDING_DATA_TYPES, LOCATION, \
     DATA_TYPES, NodeTypes, BIOLOGICAL_PROCESS, NO_PRETRAINED_EMD, PRETRAINED_EMD, PRETRAINED_EMD_FUSE, MOLECULE, TEXT, \
     P_T5_XL, ROBERTA
-from model.models import apply_model
+from contrastive_learning.model import apply_model
 from functools import lru_cache
 import os
 import torch
