@@ -202,7 +202,7 @@ if args.ablation == 1:
         'task_name': 'Task',
         'noport': 'No Proteins Anchors',
         'long': 'Long Traning',
-        'comp': 'Complex Model',
+        # 'comp': 'Complex Model',
         'no': 'No Triplet',
     })
     format_results_df.set_index(['Task Type', "Task"], inplace=True)
