@@ -3,10 +3,11 @@ from scipy.stats import ttest_ind
 from common.data_types import NAME_TO_UI, MOL_UI_ORDER, PROT_UI_ORDER
 import argparse
 
+no = 'no'
 parser = argparse.ArgumentParser()
-parser.add_argument("--ablation", type=str, default="NO")
+parser.add_argument("--ablation", type=int, default=0)
 parser.add_argument("--print_csv", type=int, default=0)
-
+ablations = [no, 'noport', 'long', 'comp', 'trip']
 args = parser.parse_args()
 
 # Configuration Constants
@@ -14,6 +15,7 @@ our = "our"
 both = "both"
 pre = "pre"
 SELECTED_METRIC = "selected_metric"
+ablation_col = "ablation"
 
 # Define columns and mappings
 index_cols = ['task_name', 'protein_emd', 'mol_emd']
@@ -47,6 +49,7 @@ METRIC_TO_NAME = {
 COLS_TO_NAME = {
     'task_name': 'Task', 'protein_emd': 'Protein Embedding', 'mol_emd': 'Molecule Embedding'
 }
+lower_is_better_metrics = {'mse', 'mae'}
 
 
 def name_to_type(x):
@@ -85,52 +88,35 @@ def round_num(x):
 
     return abs(round(x * 100, 2))  # for mse and mae
 
+
 def get_format_results_agg_ablations(group):
-    group = group[group['conf'] == our]#[SELECTED_METRIC]
+    group = group[group['conf'] == our]
 
-    no_ab = group[group['ablation'] == 'NO'][SELECTED_METRIC]
-    ab = group[group['ablation'] == args.ablation][SELECTED_METRIC]
-
-
-    no_ab_mean, no_ab_std = no_ab.mean(), no_ab.std()
-    ab_mean, ab_std = ab.mean(), ab.std()
-
-    lower_is_better_metrics = {'mse', 'mae'}
-
-    # Perform t-test between 'pre' and 'best'
-    t_stat, p_value = ttest_ind(no_ab, ab, equal_var=False, nan_policy='omit')
-    significant = p_value < 0.05
-    if significant:
-        if (SELECTED_METRIC in lower_is_better_metrics and no_ab_mean > ab_mean) or \
-                (SELECTED_METRIC not in lower_is_better_metrics and no_ab_mean < ab_mean):
-            # If the best is significantly better, bold the best
-            ab_res = f"\\textbf{{{round_num(ab_mean)}}}({round_num(ab_std)})"
-            no_ab_res = f"{round_num(no_ab_mean)}({round_num(no_ab_std)})"
-        else:
-            # If pre is significantly better, bold pre
-            ab_res = f"{round_num(ab_mean)}({round_num(ab_std)})"
-            no_ab_res = f"\\textbf{{{round_num(no_ab_mean)}}}({round_num(no_ab_std)})"
-    else:
-        # No significant difference, just format normally
-        ab_res = f"{round_num(ab_mean)}({round_num(ab_std)})"
-        no_ab_res = f"{round_num(no_ab_mean)}({round_num(no_ab_std)})"
-
-    return no_ab_res, ab_res
+    ablations_data = {
+        ablation: group[group[ablation_col] == ablation][SELECTED_METRIC] for ablation in ablations
+    }
+    ablations_means = {ablation: data.mean() for ablation, data in ablations_data.items()}
+    ablations_stds = {ablation: data.std() for ablation, data in ablations_data.items()}
+    ablations_p_values = {
+        ablation: ttest_ind(ablations_data[no], ablations_data[ablation], equal_var=False, nan_policy='omit')[1]
+        for ablation in ablations
+    }
+    ablations_significant = {ablation: p_value < 0.05 for ablation, p_value in ablations_p_values.items()}
+    format_results = []
+    for ablation in ablations:
+        format_results.append(f"{round_num(ablations_means[ablation])}({round_num(ablations_stds[ablation])})")
+    return format_results
 
 
 def get_format_results_agg_no_ablations(group):
     pre_values = group[group['conf'] == pre]
-    ablation_data = group[group["ablation"] == args.ablation]
+    ablation_data = group[group[ablation_col] == no]
     our_values = ablation_data[ablation_data['conf'] == our][SELECTED_METRIC]
     both_values = ablation_data[ablation_data['conf'] == both][SELECTED_METRIC]
     # Calculate mean and standard deviation for each configuration
     pre_mean, pre_std = pre_values.mean(), pre_values.std()
     our_mean, our_std = our_values.mean(), our_values.std()
     both_mean, both_std = both_values.mean(), both_values.std()
-
-    # Determine whether lower values are better for the metric
-    lower_is_better_metrics = {'mse', 'mae'}
-
     # Determine the best configuration based on the metric
     if SELECTED_METRIC in lower_is_better_metrics:
         best_mean, best_std = (our_mean, our_std) if our_mean < both_mean else (both_mean, both_std)
@@ -164,16 +150,15 @@ def get_format_results_agg_no_ablations(group):
     return pre_result, best_result
 
 
-
 def get_format_results_agg(group):
-    if args.ablation == "NO":
+    if args.ablation == 0:
         return get_format_results_agg_no_ablations(group)
     else:
         return get_format_results_agg_ablations(group)
 
 
 def add_ablation_col(data):
-    data['ablation'] = data['task_name'].apply(lambda x: x.split("_")[1] if len(x.split("_")) > 1 else 'NO')
+    data[ablation_col] = data['task_name'].apply(lambda x: x.split("_")[1] if len(x.split("_")) > 1 else no)
     data['task_name'] = data['task_name'].apply(lambda x: x.split("_")[0])
     return data
 
@@ -188,7 +173,7 @@ data = df_to_selected_matic(data)
 format_results = data.groupby(index_cols).apply(get_format_results_agg)
 
 # Convert the results to a DataFrame for easy handling
-columns_names=['Pretrained Models', 'Our'] if args.ablation == "NO" else ['FULL', args.ablation]
+columns_names = ['Pretrained Models', 'Our'] if args.ablation == 0 else ablations
 format_results_df = pd.DataFrame(format_results.tolist(), columns=columns_names,
                                  index=format_results.index)
 
@@ -221,7 +206,7 @@ def print_format_latex(data: pd.DataFrame):
     len_index = len(index_cols_print)
     col_format = 'l' * len_index + "|" + 'l' * len(data.columns)
 
-    print("----------------\n"*5)
+    print("----------------\n" * 5)
     print(caption)
     print("----------------\n" * 5)
 
