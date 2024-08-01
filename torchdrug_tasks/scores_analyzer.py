@@ -85,9 +85,40 @@ def round_num(x):
 
     return abs(round(x * 100, 2))  # for mse and mae
 
+def get_format_results_agg_ablations(group):
+    group = group[group['conf'] == our][SELECTED_METRIC]
 
-def get_format_results_agg(group):
-    # Extract values for each configuration
+    no_ab = group[group['ablation'] == 'NO'][SELECTED_METRIC]
+    ab = group[group['ablation'] == args.ablation][SELECTED_METRIC]
+
+
+    no_ab_mean, no_ab_std = no_ab.mean(), no_ab.std()
+    ab_mean, ab_std = ab.mean(), ab.std()
+
+    lower_is_better_metrics = {'mse', 'mae'}
+
+    # Perform t-test between 'pre' and 'best'
+    t_stat, p_value = ttest_ind(no_ab, ab, equal_var=False, nan_policy='omit')
+    significant = p_value < 0.05
+    if significant:
+        if (SELECTED_METRIC in lower_is_better_metrics and no_ab_mean > ab_mean) or \
+                (SELECTED_METRIC not in lower_is_better_metrics and no_ab_mean < ab_mean):
+            # If the best is significantly better, bold the best
+            ab_res = f"\\textbf{{{round_num(ab_mean)}}}({round_num(ab_std)})"
+            no_ab_res = f"{round_num(no_ab_mean)}({round_num(no_ab_std)})"
+        else:
+            # If pre is significantly better, bold pre
+            ab_res = f"{round_num(ab_mean)}({round_num(ab_std)})"
+            no_ab_res = f"\\textbf{{{round_num(no_ab_mean)}}}({round_num(no_ab_std)})"
+    else:
+        # No significant difference, just format normally
+        ab_res = f"{round_num(ab_mean)}({round_num(ab_std)})"
+        no_ab_res = f"{round_num(no_ab_mean)}({round_num(no_ab_std)})"
+
+    return no_ab_res, ab_res
+
+
+def get_format_results_agg_no_ablations(group):
     pre_values = group[group['conf'] == pre][SELECTED_METRIC]
     ablation_data = group[group["ablation"] == args.ablation]
     our_values = ablation_data[ablation_data['conf'] == our][SELECTED_METRIC]
@@ -133,6 +164,14 @@ def get_format_results_agg(group):
     return pre_result, best_result
 
 
+
+def get_format_results_agg(group):
+    if args.ablation == "NO":
+        return get_format_results_agg_no_ablations(group)
+    else:
+        return get_format_results_agg_ablations(group)
+
+
 def add_ablation_col(data):
     data['ablation'] = data['task_name'].apply(lambda x: x.split("_")[1] if len(x.split("_")) > 1 else 'NO')
     data['task_name'] = data['task_name'].apply(lambda x: x.split("_")[0])
@@ -149,6 +188,7 @@ data = df_to_selected_matic(data)
 format_results = data.groupby(index_cols).apply(get_format_results_agg)
 
 # Convert the results to a DataFrame for easy handling
+columns_names=['Pretrained Models', 'Our'] if args.ablation == "NO" else ['FULL', args.ablation]
 format_results_df = pd.DataFrame(format_results.tolist(), columns=['Pretrained Models', 'Our'],
                                  index=format_results.index)
 
