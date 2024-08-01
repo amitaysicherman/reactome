@@ -230,37 +230,37 @@ data.rename(columns=COLS_TO_NAME, inplace=True)
 index_cols_print = [COLS_TO_NAME[x] for x in ['task_type', 'task_name', 'protein_emd', 'mol_emd']]
 
 print(format_results_df)
+print(format_results_df.to_latex(index=True, escape=False, caption="Results",label="tab:results", column_format="llll|cc").replace("begin{table}", "begin{table}\n\centering"))
 
-
-def print_format_latex(data: pd.DataFrame):
-    tast_type = data['task_type'].iloc[0]
-    caption = f'{METRIC_TO_NAME[type_to_metric[tast_type]]},{TYPE_TO_NAME[tast_type]}'
-    label = f'tab:{tast_type}_results'
-    index_cols_print = index_cols[:]
-    data = data.drop(columns=['task_type'])
-    if data['task_name'].nunique() == 1:
-        data = data.drop(columns=['task_name'])
-        index_cols_print.remove('task_name')
-    if data['protein_emd'].nunique() == 1:
-        data = data.drop(columns=['protein_emd'])
-        index_cols_print.remove('protein_emd')
-    if data['mol_emd'].nunique() == 1:
-        data = data.drop(columns=['mol_emd'])
-        index_cols_print.remove('mol_emd')
-    data.rename(columns=COLS_TO_NAME, inplace=True)
-    index_cols_print = [COLS_TO_NAME[x] for x in index_cols_print]
-    data = data.set_index(index_cols_print)
-    len_index = len(index_cols_print)
-    col_format = 'l' * len_index + "|" + 'l' * len(data.columns)
-
-    print("----------------\n" * 5)
-    print(caption)
-    print("----------------\n" * 5)
-
-    if args.print_csv:
-        print(data)
-    print(data.to_latex(index=True, escape=False, caption=caption, label=label, column_format=col_format).replace(
-        "begin{table}", "begin{table}\n\centering"))
-
-
-format_results_df.groupby('task_type').apply(print_format_latex)
+# def print_format_latex(data: pd.DataFrame):
+#     tast_type = data['task_type'].iloc[0]
+#     caption = f'{METRIC_TO_NAME[type_to_metric[tast_type]]},{TYPE_TO_NAME[tast_type]}'
+#     label = f'tab:{tast_type}_results'
+#     index_cols_print = index_cols[:]
+#     data = data.drop(columns=['task_type'])
+#     if data['task_name'].nunique() == 1:
+#         data = data.drop(columns=['task_name'])
+#         index_cols_print.remove('task_name')
+#     if data['protein_emd'].nunique() == 1:
+#         data = data.drop(columns=['protein_emd'])
+#         index_cols_print.remove('protein_emd')
+#     if data['mol_emd'].nunique() == 1:
+#         data = data.drop(columns=['mol_emd'])
+#         index_cols_print.remove('mol_emd')
+#     data.rename(columns=COLS_TO_NAME, inplace=True)
+#     index_cols_print = [COLS_TO_NAME[x] for x in index_cols_print]
+#     data = data.set_index(index_cols_print)
+#     len_index = len(index_cols_print)
+#     col_format = 'l' * len_index + "|" + 'l' * len(data.columns)
+#
+#     print("----------------\n" * 5)
+#     print(caption)
+#     print("----------------\n" * 5)
+#
+#     if args.print_csv:
+#         print(data)
+#     print(data.to_latex(index=True, escape=False, caption=caption, label=label, column_format=col_format).replace(
+#         "begin{table}", "begin{table}\n\centering"))
+#
+#
+# format_results_df.groupby('task_type').apply(print_format_latex)
