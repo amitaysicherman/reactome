@@ -213,18 +213,15 @@ if args.ablation == 1:
                                                                                                     "begin{table}\n\centering"))
     exit(0)
 
-
-
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['task_type'] = format_results_df['task_type'].apply(lambda x: TYPE_TO_NAME[x])
 format_results_df = format_results_df.sort_values(by=['task_type', 'task_name', 'protein_emd', 'mol_emd'])
 for i, row in format_results_df.iterrows():
-    if row['task_type'] in ["P", "PPI", "PPIA"]:
+    if row['task_type'] in [TYPE_TO_NAME[x] for x in ["P", "PPI", "PPIA"]]:
         format_results_df.loc[i, 'mol_emd'] = "-"
-    elif row['task_type'] == "M":
+    elif row['task_type'] == TYPE_TO_NAME["M"]:
         format_results_df.loc[i, 'protein_emd'] = "-"
-
 
 format_results_df.rename(columns=COLS_TO_NAME, inplace=True)
 
@@ -232,7 +229,8 @@ index_cols_print = [COLS_TO_NAME[x] for x in ['task_type', 'task_name', 'protein
 format_results_df.set_index(index_cols_print, inplace=True)
 
 print(format_results_df)
-print(format_results_df.to_latex(index=True, escape=False, caption="Results",label="tab:results", column_format="llll|cc").replace("begin{table}", "begin{table}\n\centering"))
+print(format_results_df.to_latex(index=True, escape=False, caption="Results", label="tab:results",
+                                 column_format="llll|cc").replace("begin{table}", "begin{table}\n\centering"))
 
 # def print_format_latex(data: pd.DataFrame):
 #     tast_type = data['task_type'].iloc[0]
