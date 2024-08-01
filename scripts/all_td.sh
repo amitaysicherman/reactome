@@ -20,3 +20,18 @@ python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 0
 
 python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 1
 python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 0
+
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 1
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 0
+
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 1
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 0
+
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 1
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 0
+
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 1
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 0
+
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 1
+python torchdrug_tasks/trainer.py $args --cafa_use_fuse 1 --cafa_use_model 0
