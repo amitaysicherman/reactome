@@ -168,9 +168,10 @@ def add_ablation_col(data):
 
 # Load data
 data = pd.read_csv("data/scores/torchdrug.csv", on_bad_lines='warn')
-data=data[data['task_name'] != 'BACE']
 data = data.dropna()
 data = add_ablation_col(data)
+data = data[data['task_name'] != 'BACE']
+
 data = df_to_selected_matic(data)
 
 # Group by and apply aggregation
