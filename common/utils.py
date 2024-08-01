@@ -10,7 +10,7 @@ from matplotlib import pyplot as plt
 from common.data_types import CatalystOBJ, Entity, Reaction, UNKNOWN_ENTITY_TYPE, DNA, PROTEIN, MOLECULE, TEXT, \
     NodeTypes, P_T5_XL, P_BFD, ESM_1B, ESM_2, ESM_3
 from common.path_manager import model_path, scores_path,fuse_path
-from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
+from contrastive_learning.model import MiltyModalLinear, MultiModalLinearConfig
 
 
 def get_type_to_vec_dim(prot_emd_type=P_T5_XL):
