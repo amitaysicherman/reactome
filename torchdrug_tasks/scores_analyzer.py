@@ -220,6 +220,9 @@ def print_format_latex(data: pd.DataFrame):
     data = data.set_index(index_cols_print)
     len_index = len(index_cols_print)
     col_format = 'l' * len_index + "|" + 'l' * len(data.columns)
+
+    print("----------------\n"*5)
+
     if args.print_csv:
         print(data.to_csv())
         print(data)
