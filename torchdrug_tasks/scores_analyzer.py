@@ -181,6 +181,7 @@ columns_names = ['Pretrained Models', 'Our'] if args.ablation == 0 else ablation
 format_results_df = pd.DataFrame(format_results.tolist(), columns=columns_names,
                                  index=format_results.index)
 format_results_df = format_results_df.reset_index()
+format_results_df['task_type'] = format_results_df['task_name'].apply(name_to_type)
 
 if args.ablation == 1:
     filter_bool=[]
@@ -192,7 +193,6 @@ if args.ablation == 1:
         else:
             filter_bool.append(row['protein_emd'] == ablation_config_prot and row['mol_emd'] == ablation_config_mol)
     format_results_df = format_results_df[filter_bool]
-format_results_df['task_type'] = format_results_df['task_name'].apply(name_to_type)
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df = format_results_df.sort_values(by=['task_type', 'task_name', 'protein_emd', 'mol_emd'])
