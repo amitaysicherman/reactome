@@ -141,7 +141,7 @@ def build_models(type_to_vec_dim, all_to_protein, fuse_output_dim, fuse_n_layers
 
 
 def main(args):
-    save_dir = f"{fuse_path}/{args.fuse_name}"
+    save_dir = f"{fuse_path}/{args.name}"
     os.makedirs(save_dir, exist_ok=True)
     node_index_manager = NodesIndexManager(PRETRAINED_EMD, prot_emd_type=args.protein_emd, mol_emd_type=args.mol_emd)
     train_reactions, validation_reactions, test_reaction = get_reactions()

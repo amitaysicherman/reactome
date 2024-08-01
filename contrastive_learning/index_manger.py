@@ -31,7 +31,7 @@ class NodeData:
 
 
 class NodesIndexManager:
-    def __init__(self, pretrained_method=PRETRAINED_EMD, fuse_name="", fuse_pretrained_start=True,
+    def __init__(self, pretrained_method=PRETRAINED_EMD, fuse_name="",
                  prot_emd_type=P_T5_XL, mol_emd_type=ROBERTA, fuse_model=None):
         reaction_node = NodeData(REACTION_NODE_ID, REACTION, NodeTypes.reaction)
         complex_node = NodeData(COMPLEX_NODE_ID, COMPLEX, NodeTypes.complex)
@@ -45,7 +45,7 @@ class NodesIndexManager:
         if fuse_model is not None:
             self.fuse_model = fuse_model.eval()
         else:
-            self.fuse_model = load_fuse_model(fuse_name, fuse_pretrained_start)
+            self.fuse_model = load_fuse_model(fuse_name)
         if self.fuse_model is not None:
             self.fuse_model.to(device)
         with open(f'{item_path}/{BIOLOGICAL_PROCESS}.txt') as f:
@@ -71,12 +71,8 @@ class NodesIndexManager:
                     pretrained_vec_file = f'{item_path}/{dt}_{prefix}vec.npy'
                     vectors = np.load(pretrained_vec_file)
                     if pretrained_method == PRETRAINED_EMD_FUSE:
-                        if fuse_pretrained_start:
-                            with torch.no_grad():
-                                vectors = apply_model(self.fuse_model, vectors, dt).detach().cpu().numpy()
-                        else:
-                            vectors = self.fuse_model.emd.weight.detach().cpu().numpy()[
-                                      self.index_count:self.index_count + len(lines)]
+                        with torch.no_grad():
+                            vectors = apply_model(self.fuse_model, vectors, dt).detach().cpu().numpy()
             elif dt == UNKNOWN_ENTITY_TYPE:
                 vectors = [np.zeros(self.type_to_vec_dim[PROTEIN]) for _ in range(len(lines))]
             else:
@@ -171,7 +167,7 @@ class NodesIndexManager:
 
 def get_from_args(args):
     return NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name,
-                             fuse_pretrained_start=args.fuse_pretrained_start, prot_emd_type=args.protein_emd,
+                             prot_emd_type=args.protein_emd,
                              mol_emd_type=args.mol_emd)
 
 

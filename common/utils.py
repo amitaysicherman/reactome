@@ -9,7 +9,7 @@ from matplotlib import pyplot as plt
 
 from common.data_types import CatalystOBJ, Entity, Reaction, UNKNOWN_ENTITY_TYPE, DNA, PROTEIN, MOLECULE, TEXT, \
     NodeTypes, P_T5_XL, P_BFD, ESM_1B, ESM_2, ESM_3
-from common.path_manager import model_path, scores_path
+from common.path_manager import model_path, scores_path,fuse_path
 from model.models import MultiModalLinearConfig, MiltyModalLinear, EmbModel
 
 
@@ -88,25 +88,17 @@ color_palette = plt.get_cmap("tab10")
 node_colors = {node_type: color_palette(i) for i, node_type in enumerate(get_node_types())}
 
 
-def load_fuse_model(name, fuse_pretrained_start):
-    model_cp = glob.glob(f'{model_path}/fuse2_{name}/fuse_*.pt')
-    print(f"{model_path}/fuse2_{name}/fuse_*.pt")
-    print(f"Found {len(model_cp)} models for {name}")
+def load_fuse_model(name):
+    model_cp = glob.glob(f'{fuse_path}/{name}/fuse_*.pt')
     if len(model_cp) == 0:
         return None
     if len(model_cp) > 1:
         print(f"More than one model found for {name}")
     model_cp = model_cp[0]
     cp_data = torch.load(model_cp, map_location=torch.device('cpu'))
-
-    if fuse_pretrained_start:
-        config_file = f'{model_path}/fuse2_{name}/config.txt'
-        config = MultiModalLinearConfig.load_from_file(config_file)
-        model = MiltyModalLinear(config)
-    else:
-        x, y = cp_data['emd.weight'].shape
-        model = EmbModel(x, y)
-
+    config_file = f'{fuse_path}/{name}/config.txt'
+    config = MultiModalLinearConfig.load_from_file(config_file)
+    model = MiltyModalLinear(config)
     model.load_state_dict(cp_data)
     model.eval()
     return model

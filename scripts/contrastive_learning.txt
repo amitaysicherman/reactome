@@ -1,0 +1,60 @@
+--protein_emd ESM2 --mol_emd pebchem10m --name ESM2_pebchem10m --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM2 --mol_emd pebchem10m --name ESM2_pebchem10m_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM2 --mol_emd pebchem10m --name ESM2_pebchem10m_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ESM2 --mol_emd pebchem10m --name ESM2_pebchem10m_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ESM2 --mol_emd pebchem10m --name ESM2_pebchem10m_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ESM2 --mol_emd chemberta --name ESM2_chemberta --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM2 --mol_emd chemberta --name ESM2_chemberta_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM2 --mol_emd chemberta --name ESM2_chemberta_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ESM2 --mol_emd chemberta --name ESM2_chemberta_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ESM2 --mol_emd chemberta --name ESM2_chemberta_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ESM2 --mol_emd roberta --name ESM2_roberta --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM2 --mol_emd roberta --name ESM2_roberta_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM2 --mol_emd roberta --name ESM2_roberta_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ESM2 --mol_emd roberta --name ESM2_roberta_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ESM2 --mol_emd roberta --name ESM2_roberta_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD_pebchem10m --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD_pebchem10m_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD_pebchem10m_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD_pebchem10m_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ProtBert-BFD --mol_emd pebchem10m --name ProtBert-BFD_pebchem10m_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD_chemberta --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD_chemberta_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD_chemberta_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD_chemberta_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ProtBert-BFD --mol_emd chemberta --name ProtBert-BFD_chemberta_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD_roberta --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD_roberta_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD_roberta_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD_roberta_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ProtBert-BFD --mol_emd roberta --name ProtBert-BFD_roberta_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B_pebchem10m --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B_pebchem10m_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B_pebchem10m_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B_pebchem10m_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ESM-1B --mol_emd pebchem10m --name ESM-1B_pebchem10m_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ESM-1B --mol_emd chemberta --name ESM-1B_chemberta --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM-1B --mol_emd chemberta --name ESM-1B_chemberta_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM-1B --mol_emd chemberta --name ESM-1B_chemberta_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ESM-1B --mol_emd chemberta --name ESM-1B_chemberta_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ESM-1B --mol_emd chemberta --name ESM-1B_chemberta_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ESM-1B --mol_emd roberta --name ESM-1B_roberta --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM-1B --mol_emd roberta --name ESM-1B_roberta_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ESM-1B --mol_emd roberta --name ESM-1B_roberta_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ESM-1B --mol_emd roberta --name ESM-1B_roberta_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ESM-1B --mol_emd roberta --name ESM-1B_roberta_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl_pebchem10m --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl_pebchem10m_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl_pebchem10m_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl_pebchem10m_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ProtBertT5-xl --mol_emd pebchem10m --name ProtBertT5-xl_pebchem10m_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl_chemberta --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl_chemberta_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl_chemberta_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl_chemberta_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ProtBertT5-xl --mol_emd chemberta --name ProtBertT5-xl_chemberta_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1
+--protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl_roberta --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl_roberta_noport --fuse_train_all 1 --fuse_all_to_one 0 --fuse_n_layers 1 --fuse_epochs 1
+--protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl_roberta_comp --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 5 --fuse_epochs 1
+--protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl_roberta_long --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 150 --fuse_train_all 0
+--protein_emd ProtBertT5-xl --mol_emd roberta --name ProtBertT5-xl_roberta_trip --fuse_train_all 1 --fuse_all_to_one protein --fuse_n_layers 1 --fuse_epochs 1 --fuse_triples 1

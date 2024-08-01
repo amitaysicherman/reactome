@@ -80,17 +80,6 @@ def round_num(x):
 
 
 def get_format_results_agg(group):
-    """
-    This function aggregates the data by calculating the mean and standard deviation
-    for each configuration ('pre', 'our', and 'both'). It then selects the best
-    configuration between 'our' and 'both' based on the selected metric.
-    The function also performs a t-test to check if the difference is statistically significant.
-
-    The function returns two string values:
-    - The first is the formatted mean and standard deviation for the 'pre' configuration.
-    - The second is the formatted mean and standard deviation for the best of 'our' and 'both',
-      possibly bolded if statistically significant.
-    """
     # Extract values for each configuration
     pre_values = group[group['conf'] == pre][SELECTED_METRIC]
     our_values = group[group['conf'] == our][SELECTED_METRIC]

@@ -3,8 +3,8 @@ from enum import Enum
 import os
 
 from common.data_types import Config
-from model.models import MultiModalLinearConfig, MiltyModalLinear
-from common.path_manager import model_path
+from contrastive_learning.model import MultiModalLinearConfig, MiltyModalLinear
+from common.path_manager import fuse_path
 
 
 class DataType(Enum):
@@ -12,13 +12,13 @@ class DataType(Enum):
     PROTEIN = 'protein_protein'
 
 
-def load_fuse_model(base_dir):
-    base_dir = str(os.path.join(model_path, base_dir))
-    cp_names = os.listdir(base_dir)
+def load_fuse_model(name):
+    name = str(os.path.join(fuse_path, name))
+    cp_names = os.listdir(name)
     cp_name = [x for x in cp_names if x.endswith(".pt")][0]
-    print(f"Load model {base_dir}/{cp_name}")
-    cp_data = torch.load(f"{base_dir}/{cp_name}", map_location=torch.device('cpu'))
-    config_file = os.path.join(base_dir, 'config.txt')
+    print(f"Load model {name}/{cp_name}")
+    cp_data = torch.load(f"{name}/{cp_name}", map_location=torch.device('cpu'))
+    config_file = os.path.join(name, 'config.txt')
     config = MultiModalLinearConfig.load_from_file(config_file)
     dim = config.output_dim[0]
     model = MiltyModalLinear(config)
