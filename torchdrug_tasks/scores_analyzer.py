@@ -174,6 +174,7 @@ data = df_to_selected_matic(data)
 
 # Group by and apply aggregation
 print(data, data.columns)
+print(index_cols)
 format_results = data.groupby(index_cols).apply(get_format_results_agg)
 
 # Convert the results to a DataFrame for easy handling
