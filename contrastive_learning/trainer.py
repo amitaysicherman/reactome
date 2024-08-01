@@ -164,7 +164,7 @@ def main(args):
         contrastive_loss = nn.TripletMarginWithDistanceLoss(
             distance_function=lambda x1, x2: 1 - F.cosine_similarity(x1, x2))
     else:
-        contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0, reduction='none')
+        contrastive_loss = nn.CosineEmbeddingLoss(margin=0.0)
 
     best_valid_auc = -1e6
     best_test_auc = -1e6
