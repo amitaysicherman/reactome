@@ -189,7 +189,7 @@ format_results = data.groupby(index_cols).apply(get_format_results_agg)
 
 # Convert the results to a DataFrame for easy handling
 columns_names=['Pretrained Models', 'Our'] if args.ablation == "NO" else ['FULL', args.ablation]
-format_results_df = pd.DataFrame(format_results.tolist(), columns=['Pretrained Models', 'Our'],
+format_results_df = pd.DataFrame(format_results.tolist(), columns=columns_names,
                                  index=format_results.index)
 
 # Display the first 20 rows of the results
