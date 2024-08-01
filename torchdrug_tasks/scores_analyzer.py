@@ -183,8 +183,8 @@ format_results_df = pd.DataFrame(format_results.tolist(), columns=columns_names,
 format_results_df = format_results_df.reset_index()
 
 if args.ablation == 1:
-    format_results = format_results_df[format_results_df['protein_emd'] == ablation_config_prot]
-    format_results = format_results[format_results['mol_emd'] == ablation_config_mol]
+    format_results_df = format_results_df[format_results_df['protein_emd'] == ablation_config_prot]
+    format_results_df = format_results_df[format_results_df['mol_emd'] == ablation_config_mol]
 
 format_results_df['task_type'] = format_results_df['task_name'].apply(name_to_type)
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
