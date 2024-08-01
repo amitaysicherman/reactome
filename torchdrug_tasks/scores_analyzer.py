@@ -90,7 +90,6 @@ def get_format_results_agg(group):
     ablation_data = group[group["ablation"] == args.ablation]
     our_values = ablation_data[ablation_data['conf'] == our][SELECTED_METRIC]
     both_values = ablation_data[ablation_data['conf'] == both][SELECTED_METRIC]
-    print(group.index[0], len(pre_values), len(our_values), len(both_values))
     # Calculate mean and standard deviation for each configuration
     pre_mean, pre_std = pre_values.mean(), pre_values.std()
     our_mean, our_std = our_values.mean(), our_values.std()
