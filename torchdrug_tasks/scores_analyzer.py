@@ -126,9 +126,16 @@ def get_format_results_agg(group):
     return pre_result, best_result
 
 
+def add_ablation_col(data):
+    data['ablation'] = data['task_name'].apply(lambda x: x.split("_")[1] if len(x.split("_")) > 1 else 'NO')
+    data['task_name'] = data['task_name'].apply(lambda x: x.split("_")[0])
+    return data
+
+
 # Load data
-data = pd.read_csv("data/scores/torchdrug.csv",on_bad_lines='warn')
+data = pd.read_csv("data/scores/torchdrug.csv", on_bad_lines='warn')
 data = data.dropna()
+data = add_ablation_col(data)
 data = df_to_selected_matic(data)
 
 # Group by and apply aggregation
