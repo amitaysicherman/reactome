@@ -51,7 +51,7 @@ METRIC_TO_NAME = {
 }
 
 COLS_TO_NAME = {
-    'task_name': 'Task', 'protein_emd': 'Protein Embedding', 'mol_emd': 'Molecule Embedding'
+    'task_name': 'Task', 'protein_emd': 'Protein Embedding', 'mol_emd': 'Molecule Embedding', 'task_type': 'Task Type'
 }
 lower_is_better_metrics = {'mse', 'mae'}
 
@@ -211,9 +211,28 @@ if args.ablation == 1:
                                      label="tab:ablation_results", column_format="ll|llll").replace("begin{table}",
                                                                                                     "begin{table}\n\centering"))
     exit(0)
+
+for i, row in format_results_df.iterrows():
+    if row['task_type'] in ["P", "PPI", "PPIA"]:
+        format_results_df.loc[i, 'mol_emd'] = "-"
+    elif row['task_type'] == "M":
+        format_results_df.loc[i, 'protein_emd'] = "-"
+
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
+format_results_df['task_type'] = format_results_df['task_type'].apply(lambda x: TYPE_TO_NAME[x])
 format_results_df = format_results_df.sort_values(by=['task_type', 'task_name', 'protein_emd', 'mol_emd'])
+
+format_results_df.rename(columns={
+    "Pro"
+
+})
+
+format_results_df.set_index(['task_type', 'task_name', 'protein_emd', 'mol_emd'], inplace=True)
+data.rename(columns=COLS_TO_NAME, inplace=True)
+index_cols_print = [COLS_TO_NAME[x] for x in ['task_type', 'task_name', 'protein_emd', 'mol_emd']]
+
+print(format_results_df)
 
 
 def print_format_latex(data: pd.DataFrame):
