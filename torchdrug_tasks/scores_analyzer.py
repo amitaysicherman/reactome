@@ -180,12 +180,12 @@ format_results = data.groupby(index_cols).apply(get_format_results_agg)
 columns_names = ['Pretrained Models', 'Our'] if args.ablation == 0 else ablations
 format_results_df = pd.DataFrame(format_results.tolist(), columns=columns_names,
                                  index=format_results.index)
+format_results_df = format_results_df.reset_index()
 
 if args.ablation == 1:
     format_results = format_results_df[format_results_df['protein_emd'] == ablation_config_prot]
     format_results = format_results[format_results['mol_emd'] == ablation_config_mol]
 
-format_results_df = format_results_df.reset_index()
 format_results_df['task_type'] = format_results_df['task_name'].apply(name_to_type)
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
