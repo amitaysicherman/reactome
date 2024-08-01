@@ -225,9 +225,9 @@ for i, row in format_results_df.iterrows():
         format_results_df.loc[i, 'protein_emd'] = "-"
 
 
-format_results_df.set_index(['task_type', 'task_name', 'protein_emd', 'mol_emd'], inplace=True)
 data.rename(columns=COLS_TO_NAME, inplace=True)
 index_cols_print = [COLS_TO_NAME[x] for x in ['task_type', 'task_name', 'protein_emd', 'mol_emd']]
+format_results_df.set_index(index_cols_print, inplace=True)
 
 print(format_results_df)
 print(format_results_df.to_latex(index=True, escape=False, caption="Results",label="tab:results", column_format="llll|cc").replace("begin{table}", "begin{table}\n\centering"))
