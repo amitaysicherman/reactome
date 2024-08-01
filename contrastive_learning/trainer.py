@@ -40,6 +40,8 @@ def save_fuse_model(model: MiltyModalLinear, save_dir, epoch):
 
 def run_epoch(model, node_index_manager, optimizer, loader, contrastive_loss, part="train", all_to_protein=True,
               triples=False):
+    if len(loader) == 0:
+        return 0
     is_train = part == "train"
     if is_train:
         model.train()
