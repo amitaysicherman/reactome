@@ -33,6 +33,8 @@ def save_fuse_model(model: MiltyModalLinear, save_dir, epoch):
             cp_to_remove.append(f"{save_dir}/{file_name}")
 
     output_file = f"{save_dir}/fuse_{epoch}.pt"
+    if output_file in cp_to_remove:
+        cp_to_remove.remove(output_file)
     torch.save(model.state_dict(), output_file)
     for cp in cp_to_remove:
         os.remove(cp)
@@ -179,7 +181,7 @@ def main(args):
         with torch.no_grad():
             valid_auc = run_epoch(**running_args, loader=valid_loader, part="valid")
             test_auc = run_epoch(**running_args, loader=test_loader, part="test")
-        if args.fuse_train_all:
+        if args.fuse_train_all or epoch == 0:
             save_fuse_model(model, save_dir, epoch)
             continue
         if valid_auc > best_valid_auc:
