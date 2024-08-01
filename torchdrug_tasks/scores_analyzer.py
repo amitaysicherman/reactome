@@ -86,7 +86,7 @@ def round_num(x):
     return abs(round(x * 100, 2))  # for mse and mae
 
 def get_format_results_agg_ablations(group):
-    group = group[group['conf'] == our][SELECTED_METRIC]
+    group = group[group['conf'] == our]#[SELECTED_METRIC]
 
     no_ab = group[group['ablation'] == 'NO'][SELECTED_METRIC]
     ab = group[group['ablation'] == args.ablation][SELECTED_METRIC]
@@ -119,7 +119,7 @@ def get_format_results_agg_ablations(group):
 
 
 def get_format_results_agg_no_ablations(group):
-    pre_values = group[group['conf'] == pre][SELECTED_METRIC]
+    pre_values = group[group['conf'] == pre]
     ablation_data = group[group["ablation"] == args.ablation]
     our_values = ablation_data[ablation_data['conf'] == our][SELECTED_METRIC]
     both_values = ablation_data[ablation_data['conf'] == both][SELECTED_METRIC]
