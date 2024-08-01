@@ -49,7 +49,7 @@ TYPE_TO_NAME = {
 #     'auprc': 'Area Under the PR Curve (AUPRC)',
 #     'acc': 'Accuracy', 'f1_max': 'F1 Max Score'
 # }
-METRIC_TO_NAME = {
+METRIC_TO_NAME={
     'mse': 'MSE', 'mae': 'MAE', 'r2': 'R2', 'pearsonr': 'Pearson', 'spearmanr': 'Spearman',
     'auc': 'AUC', 'auprc': 'AUPRC', 'acc': 'Accuracy', 'f1_max': 'F1 Max'
 }
@@ -220,7 +220,7 @@ if args.ablation == 1:
 
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
-format_results_df['Metric'] = format_results_df['task_type'].apply(lambda x: METRIC_TO_NAME[task_to_selected_matic(x)])
+format_results_df['Metric'] = format_results_df['task_name'].apply(lambda x:METRIC_TO_NAME[task_to_selected_matic(x)])
 format_results_df['task_type'] = format_results_df['task_name'].apply(lambda x: TYPE_TO_NAME[x])
 format_results_df = format_results_df.sort_values(by=['task_type', 'task_name', 'protein_emd', 'mol_emd'])
 for i, row in format_results_df.iterrows():
@@ -233,7 +233,7 @@ format_results_df.rename(columns=COLS_TO_NAME, inplace=True)
 
 index_cols_print = [COLS_TO_NAME[x] for x in ['task_type', 'task_name', 'protein_emd', 'mol_emd']]
 format_results_df.set_index(index_cols_print, inplace=True)
-format_results_df = format_results_df[['Metric', 'Pretrained Models', 'Our']]
+format_results_df=format_results_df[['Metric', 'Pretrained Models', 'Our']]
 print(format_results_df)
 print(format_results_df.to_latex(index=True, escape=False, caption="Results", label="tab:results",
                                  column_format="llll|cc").replace("begin{table}", "begin{table}\n\centering"))
