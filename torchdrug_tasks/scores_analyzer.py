@@ -231,7 +231,7 @@ index_cols_print = [COLS_TO_NAME[x] for x in ['task_type', 'task_name', 'protein
 format_results_df.set_index(index_cols_print, inplace=True)
 
 print(format_results_df)
-print(format_results_df.to_latex(index=True, escape=False, caption="Results", label="tab:results",
+print(format_results_df.reset_index().to_latex(index=False, escape=False, caption="Results", label="tab:results",
                                  column_format="llll|cc").replace("begin{table}", "begin{table}\n\centering"))
 
 # def print_format_latex(data: pd.DataFrame):
