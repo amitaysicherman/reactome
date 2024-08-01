@@ -5,7 +5,9 @@ import torch
 from torch import nn as nn
 from torch.nn import functional as F
 
-from common.data_types import  DNA
+from common.data_types import DNA
+
+
 @dataclasses.dataclass
 class MultiModalLinearConfig:
     embedding_dim: List[int]
@@ -76,6 +78,10 @@ class MiltyModalLinear(nn.Module):
     def forward(self, x, type_):
         if isinstance(type_, tuple):
             type_ = "_".join(type_)
+
+        if not self.have_type(type_):
+            type_ = type_.split("_")[0]
+
         if isinstance(x, np.ndarray):
             x = torch.Tensor(x).float()
         x = self.layers_dict[type_](x)
@@ -83,6 +89,7 @@ class MiltyModalLinear(nn.Module):
             return F.normalize(x, dim=-1)
         else:
             return x
+
 
 def concat_all_to_one_typs(model: MiltyModalLinear, x, src_type):
     res = []
