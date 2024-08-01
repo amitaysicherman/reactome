@@ -212,21 +212,18 @@ if args.ablation == 1:
                                                                                                     "begin{table}\n\centering"))
     exit(0)
 
+
+
+format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
+format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
+format_results_df['task_type'] = format_results_df['task_type'].apply(lambda x: TYPE_TO_NAME[x])
+format_results_df = format_results_df.sort_values(by=['task_type', 'task_name', 'protein_emd', 'mol_emd'])
 for i, row in format_results_df.iterrows():
     if row['task_type'] in ["P", "PPI", "PPIA"]:
         format_results_df.loc[i, 'mol_emd'] = "-"
     elif row['task_type'] == "M":
         format_results_df.loc[i, 'protein_emd'] = "-"
 
-format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
-format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
-format_results_df['task_type'] = format_results_df['task_type'].apply(lambda x: TYPE_TO_NAME[x])
-format_results_df = format_results_df.sort_values(by=['task_type', 'task_name', 'protein_emd', 'mol_emd'])
-
-format_results_df.rename(columns={
-    "Pro"
-
-})
 
 format_results_df.set_index(['task_type', 'task_name', 'protein_emd', 'mol_emd'], inplace=True)
 data.rename(columns=COLS_TO_NAME, inplace=True)
