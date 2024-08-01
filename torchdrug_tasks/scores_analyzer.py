@@ -109,10 +109,10 @@ def get_format_results_agg_ablations(group):
 
 
 def get_format_results_agg_no_ablations(group):
+    group=group[group[ablation_col]==no]
     pre_values = group[group['conf'] == pre]
-    ablation_data = group[group[ablation_col] == no]
-    our_values = ablation_data[ablation_data['conf'] == our][SELECTED_METRIC]
-    both_values = ablation_data[ablation_data['conf'] == both][SELECTED_METRIC]
+    our_values = group[group['conf'] == our][SELECTED_METRIC]
+    both_values = group[group['conf'] == both][SELECTED_METRIC]
     # Calculate mean and standard deviation for each configuration
     pre_mean, pre_std = pre_values.mean(), pre_values.std()
     our_mean, our_std = our_values.mean(), our_values.std()
