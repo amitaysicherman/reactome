@@ -1,77 +1,182 @@
 import pandas as pd
-from common.data_types import NAME_TO_UI
+from scipy.stats import ttest_ind
+from common.data_types import NAME_TO_UI, MOL_UI_ORDER, PROT_UI_ORDER
 
-data = pd.read_csv("data/scores/torchdrug.csv")
-data = data.dropna()
+# Configuration Constants
+our = "our"
+both = "both"
+pre = "pre"
+SELECTED_METRIC = "selected_metric"
+
+# Define columns and mappings
 index_cols = ['task_name', 'protein_emd', 'mol_emd']
 conf = ['conf']
 metrics_cols = ['mse', 'mae', 'r2', 'pearsonr', 'spearmanr', 'auc', 'auprc', 'acc', 'f1_max']
 all_cols = index_cols + conf + metrics_cols
-name_to_type = {'BetaLactamase': "P", 'Fluorescence': "P", 'Stability': "P", 'Solubility': "P", 'HumanPPI': "PPI",
-                'YeastPPI': "PPI", 'PPIAffinity': "PPIA", 'BindingDB': "PDA", 'PDBBind': "PDA", 'BACE': "M",
-                'BBBP': "M", 'ClinTox': "M", 'HIV': "M", 'SIDER': "M", 'Tox21': "M", 'DrugBank': "PD", 'Davis': "PD",
-                'KIBA': "PD"}
-
-type_to_metric = {'M': 'auprc', 'P': "mse", 'PD': "auprc", 'PDA': "pearsonr", 'PPI': "auprc", 'PPIA': "pearsonr"}
-
 conf_cols = ['pre', 'our', 'both']
-OUR_FINAL = "Our"
-our = "our"
-both = "both"
-pre = "pre"
-diff = "diff"
+type_to_metric = {'M': 'f1_max', 'P': "mse", 'PD': "auprc", 'PDA': "pearsonr", 'PPI': "auprc", 'PPIA': "pearsonr"}
 
-tasks_to_skip = ["YeastPPI"]
-mean_values = data.groupby(index_cols + conf)[metrics_cols].mean().reset_index().pivot(index=index_cols, columns=conf,
-                                                                                       values=metrics_cols).dropna()
-std_values = data.groupby(index_cols + conf)[metrics_cols].std().reset_index().pivot(index=index_cols, columns=conf,
-                                                                                     values=metrics_cols).dropna()
+# Mapping from task names to types
+name_to_type_dict = {
+    'BetaLactamase': "P", 'Fluorescence': "P", 'Stability': "P", 'Solubility': "P",
+    'HumanPPI': "PPI", 'YeastPPI': "PPI", 'PPIAffinity': "PPIA", 'BindingDB': "PDA",
+    'PDBBind': "PDA", 'BACE': "M", 'BBBP': "M", 'ClinTox': "M", 'HIV': "M",
+    'SIDER': "M", 'Tox21': "M", 'DrugBank': "PD", 'Davis': "PD", 'KIBA': "PD"
+}
 
-for m in metrics_cols:
-    mean_values[[(m, x) for x in conf_cols]] = mean_values[[(m, x) for x in conf_cols]].round(4) * 100
+TYPE_TO_NAME = {
+    'P': 'Protein Function Prediction', 'PPI': 'Protein-Protein Interaction Prediction',
+    "PPIA": 'Protein-Protein Interaction Affinity Prediction',
+    'M': 'Molecule Property Prediction', 'PD': 'Protein-Drug Interaction Prediction',
+    "PDA": 'Protein-Drug Interaction Affinity Prediction'
+}
+METRIC_TO_NAME = {
+    'mse': 'Mean Squared Error', 'mae': 'Mean Absolute Error', 'r2': 'R2', 'pearsonr': 'Pearson Correlation',
+    'spearmanr': 'Spearman Correlation', 'auc': 'Area Under the ROC Curve (AUC)',
+    'auprc': 'Area Under the PR Curve (AUPRC)',
+    'acc': 'Accuracy', 'f1_max': 'F1 Max Score'
+}
 
-    if m not in ['mse', 'mae']:
-        diffa = mean_values[(m, our)] - mean_values[(m, pre)]
-        diffb = mean_values[(m, both)] - mean_values[(m, pre)]
-        mean_values[(m, OUR_FINAL)] = mean_values[[(m, both), (m, our)]].max(axis=1)
+COLS_TO_NAME = {
+    'task_name': 'Task', 'protein_emd': 'Protein Embedding', 'mol_emd': 'Molecule Embedding'
+}
+
+
+def name_to_type(x):
+    return name_to_type_dict[x.split("_")[0]]
+
+
+def task_to_selected_matic(task):
+    if task in name_to_type_dict:
+        return type_to_metric[name_to_type_dict[task]]
+    elif task.split("_")[0] in name_to_type_dict:
+        return type_to_metric[name_to_type(task.split("_")[0])]
     else:
-        diffa = mean_values[(m, pre)] - mean_values[(m, our)]
-        diffb = mean_values[(m, pre)] - mean_values[(m, both)]
-        mean_values[(m, OUR_FINAL)] = mean_values[[(m, both), (m, our)]].min(axis=1)
-    mean_values[(m, diff)] = pd.concat([diffa, diffb], axis=1).max(axis=1)
+        return None
 
-for T in set(name_to_type.values()):
 
-    task_data = mean_values.reset_index()
+def df_to_selected_matic(df):
+    bool_filter = []
+    for i, row in df.iterrows():
+        metric = task_to_selected_matic(row['task_name'])
+        if metric is None:
+            bool_filter.append(False)
+            continue
+        else:
+            bool_filter.append(True)
+        if metric in ['mse', 'mae']:
+            df.loc[i, SELECTED_METRIC] = -1 * df.loc[i, metric]
+        else:
+            df.loc[i, SELECTED_METRIC] = df.loc[i, metric]
+    df = df[bool_filter]
+    return df
 
-    task_data = task_data[task_data['task_name'].apply(lambda x: name_to_type[x] == T)].set_index(index_cols)
-    print(T, len(task_data), type_to_metric[T])
 
-    if len(task_data) == 0:
-        continue
-    for col in metrics_cols:
-        print(col, sum(task_data[(col, diff)] > 0), task_data[(col, diff)].mean())
-    print_data = task_data[
-        [(type_to_metric[T], x) for x in conf_cols] + [(type_to_metric[T], diff)] + [(type_to_metric[T], OUR_FINAL)]]
-    print_data.columns = [x[1] for x in print_data.columns]
-    print(print_data)
-    print_data[pre] = print_data[pre].round(2).astype(str)
-    print_data[OUR_FINAL] = print_data[OUR_FINAL].round(2).astype(str)
-    print_data = print_data.reset_index()
-    print_data['protein_emd'] = print_data['protein_emd'].apply(lambda x: NAME_TO_UI[x])
-    print_data['mol_emd'] = print_data['mol_emd'].apply(lambda x: NAME_TO_UI[x])
-    index_to_use = index_cols[:]
-    if print_data['protein_emd'].nunique() == 1:
-        index_to_use.remove('protein_emd')
-    if print_data['mol_emd'].nunique() == 1:
-        index_to_use.remove('mol_emd')
-    if print_data['task_name'].nunique() == 1:
-        index_to_use.remove('task_name')
+def round_num(x):
+    if pd.isna(x):
+        return 0
 
-    print(print_data[index_to_use + [pre, OUR_FINAL]].to_latex(index=False, float_format=".2f").replace("protein_emd",
-                                                                                                        "Protein").replace(
-        "mol_emd", "Molecule").replace("task_name", "Task").replace("pre", "Pretrained"))
+    return abs(round(x * 100, 2))  # for mse and mae
 
-    print("--------")
 
-    # print(mean_values)
+def get_format_results_agg(group):
+    """
+    This function aggregates the data by calculating the mean and standard deviation
+    for each configuration ('pre', 'our', and 'both'). It then selects the best
+    configuration between 'our' and 'both' based on the selected metric.
+    The function also performs a t-test to check if the difference is statistically significant.
+
+    The function returns two string values:
+    - The first is the formatted mean and standard deviation for the 'pre' configuration.
+    - The second is the formatted mean and standard deviation for the best of 'our' and 'both',
+      possibly bolded if statistically significant.
+    """
+    # Extract values for each configuration
+    pre_values = group[group['conf'] == pre][SELECTED_METRIC]
+    our_values = group[group['conf'] == our][SELECTED_METRIC]
+    both_values = group[group['conf'] == both][SELECTED_METRIC]
+
+    # Calculate mean and standard deviation for each configuration
+    pre_mean, pre_std = pre_values.mean(), pre_values.std()
+    our_mean, our_std = our_values.mean(), our_values.std()
+    both_mean, both_std = both_values.mean(), both_values.std()
+
+    # Determine whether lower values are better for the metric
+    lower_is_better_metrics = {'mse', 'mae'}
+
+    # Determine the best configuration based on the metric
+    if SELECTED_METRIC in lower_is_better_metrics:
+        best_mean, best_std = (our_mean, our_std) if our_mean < both_mean else (both_mean, both_std)
+        best_values = our_values if our_mean < both_mean else both_values
+    else:
+        best_mean, best_std = (our_mean, our_std) if our_mean > both_mean else (both_mean, both_std)
+        best_values = our_values if our_mean > both_mean else both_values
+
+    # Perform t-test between 'pre' and 'best'
+    t_stat, p_value = ttest_ind(pre_values, best_values, equal_var=False, nan_policy='omit')
+
+    # Check if the difference is statistically significant
+    significant = p_value < 0.05
+
+    # Format the results with potential bolding for statistical significance
+    if significant:
+        if (SELECTED_METRIC in lower_is_better_metrics and pre_mean > best_mean) or \
+                (SELECTED_METRIC not in lower_is_better_metrics and pre_mean < best_mean):
+            # If the best is significantly better, bold the best
+            best_result = f"\\textbf{{{round_num(best_mean)}}}({round_num(best_std)})"
+            pre_result = f"{round_num(pre_mean)}({round_num(pre_std)})"
+        else:
+            # If pre is significantly better, bold pre
+            best_result = f"{round_num(best_mean)}({round_num(best_std)})"
+            pre_result = f"\\textbf{{{round_num(pre_mean)}}}({round_num(pre_std)})"
+    else:
+        # No significant difference, just format normally
+        pre_result = f"{round_num(pre_mean)}({round_num(pre_std)})"
+        best_result = f"{round_num(best_mean)}({round_num(best_std)})"
+
+    return pre_result, best_result
+
+
+# Load data
+data = pd.read_csv("data/scores/torchdrug.csv")
+data = data.dropna()
+data = df_to_selected_matic(data)
+
+# Group by and apply aggregation
+format_results = data.groupby(index_cols).apply(get_format_results_agg)
+
+# Convert the results to a DataFrame for easy handling
+format_results_df = pd.DataFrame(format_results.tolist(), columns=['Pretrained Models', 'Our'], index=format_results.index)
+
+# Display the first 20 rows of the results
+format_results_df = format_results_df.reset_index()
+format_results_df['task_type'] = format_results_df['task_name'].apply(name_to_type)
+format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
+format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
+format_results_df = format_results_df.sort_values(by=['task_type', 'task_name', 'protein_emd', 'mol_emd'])
+
+
+def print_format_latex(data: pd.DataFrame):
+    tast_type = data['task_type'].iloc[0]
+    caption = f'{METRIC_TO_NAME[type_to_metric[tast_type]]},{TYPE_TO_NAME[tast_type]}'
+    label = f'tab:{tast_type}_results'
+    index_cols_print = index_cols[:]
+    data = data.drop(columns=['task_type'])
+    if data['task_name'].nunique() == 1:
+        data = data.drop(columns=['task_name'])
+        index_cols_print.remove('task_name')
+    if data['protein_emd'].nunique() == 1:
+        data = data.drop(columns=['protein_emd'])
+        index_cols_print.remove('protein_emd')
+    if data['mol_emd'].nunique() == 1:
+        data = data.drop(columns=['mol_emd'])
+        index_cols_print.remove('mol_emd')
+    data.rename(columns=COLS_TO_NAME, inplace=True)
+    index_cols_print = [COLS_TO_NAME[x] for x in index_cols_print]
+    data = data.set_index(index_cols_print)
+    len_index = len(index_cols_print)
+    col_format = 'l' * len_index + "|" + 'l' * len(data.columns)
+    print(data.to_latex(index=True, escape=False, caption=caption, label=label, column_format=col_format).replace("begin{table}","begin{table}\n\centering"))
+
+
+format_results_df.groupby('task_type').apply(print_format_latex)

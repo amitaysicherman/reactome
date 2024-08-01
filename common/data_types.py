@@ -165,14 +165,14 @@ ROBERTA = "roberta"
 CHEMBERTA = "chemberta"
 
 NAME_TO_UI = {
-    PEBCHEM10M: "PubChem-10M",
-    ROBERTA: "Roberta-100M",
-    CHEMBERTA: "ChemBerta-50M",
-    P_BFD: "ProtBertBFD-0.5B",
-    P_T5_XL: "ProtBertT5-3B",
-    ESM_1B: "ESM-1B",
-    ESM_2: "ESM2-35M",
-    ESM_3: "ESM3-1.4B",
+    PEBCHEM10M: "PubChem",
+    ROBERTA: "Roberta",
+    CHEMBERTA: "ChemBerta",
+    P_BFD: "ProtBertBFD",
+    P_T5_XL: "ProtBertT5",
+    ESM_1B: "ESM1",
+    ESM_2: "ESM2",
+    ESM_3: "ESM3",
 }
 
 PROT_UI_ORDER = [ESM_2, P_BFD, ESM_1B, ESM_3, P_T5_XL]

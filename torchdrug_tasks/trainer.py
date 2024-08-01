@@ -21,7 +21,7 @@ def one_into_two(preds):
 def metric_prep(preds, reals, metric):
     if metric.__name__ == "area_under_roc" or metric.__name__ == "area_under_prc":
         if preds.dim() > 1 and preds.shape[1] > 1:
-            reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=preds.shape[1]+1).flatten()
+            reals = torch.nn.functional.one_hot(reals.long().flatten(), num_classes=preds.shape[1] + 1).flatten()
         else:
             reals = reals.flatten()
         preds = torch.sigmoid(preds).flatten()
@@ -43,7 +43,7 @@ def metric_prep(preds, reals, metric):
             else:
                 preds = torch.softmax(preds, dim=1)
                 reals = reals.long().flatten()
-        else: # f1_max
+        else:  # f1_max
             if is_binary:
                 preds = preds.flatten().unsqueeze(1)
                 preds = one_into_two(preds)
@@ -247,17 +247,18 @@ def get_model_from_task(task: Task, dataset, conf, fuse_base, drop_out, n_layers
 
 
 def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_emd: str, protein_emd: str,
-                            print_output=False, max_no_improve=15, fuse_model=None,return_valid=False,task_suffix=""):
+                            print_output=False, max_no_improve=15, fuse_model=None, return_valid=False, task_suffix=""):
     use_fuse = config["use_fuse"]
     use_model = config["use_model"]
     bs = config["bs"]
     lr = config["lr"]
 
     drop_out = config["drop_out"]
-    n_layers = config["n_layers"]
+    # n_layers = config["n_layers"]
     hidden_dim = config["hidden_dim"]
 
     task = name_to_task[task_name]
+    n_layers = task.n_layers
     train_loader, valid_loader, test_loader = get_dataloaders(task_name, mol_emd, protein_emd, bs)
     if task.criterion == torch.nn.BCEWithLogitsLoss:
         train_labels = train_loader.dataset.labels
@@ -311,11 +312,11 @@ def train_model_with_config(config: dict, task_name: str, fuse_base: str, mol_em
             names = ["task_name", "mol_emd", "protein_emd", "conf"] + scores_manager.test_scores.get_metrics_names()
             with open(output_file, "w") as f:
                 f.write(",".join(names) + "\n")
-        values = [task_name+task_suffix, mol_emd, protein_emd, conf.value] + scores_manager.test_scores.get_metrics()
+        values = [task_name + task_suffix, mol_emd, protein_emd, conf.value] + scores_manager.test_scores.get_metrics()
         with open(output_file, "a") as f:
             f.write(",".join(map(str, values)) + "\n")
     if return_valid:
-        return scores_manager.test_scores.get_metrics(),scores_manager.valid_scores.get_metrics()
+        return scores_manager.test_scores.get_metrics(), scores_manager.valid_scores.get_metrics()
     return scores_manager.test_scores.get_metrics()
 
 
@@ -325,12 +326,12 @@ def main(args, fuse_model=None):
         "use_model": args.cafa_use_model,
         "bs": args.dp_bs,
         "lr": args.dp_lr,
-        'n_layers': args.dp_n_layers,
+        # 'n_layers': args.dp_n_layers,
         'hidden_dim': args.dp_hidden_dim,
         'drop_out': args.dp_drop_out
     }
     train_model_with_config(config, args.task_name, args.dp_fuse_base, args.mol_emd, args.protein_emd, args.dp_print,
-                            args.max_no_improve, fuse_model=fuse_model,task_suffix=args.task_suffix)
+                            args.max_no_improve, fuse_model=fuse_model, task_suffix=args.task_suffix)
 
 
 if __name__ == '__main__':
