@@ -95,7 +95,7 @@ def get_format_results_agg(group):
     pre_values = group[group['conf'] == pre][SELECTED_METRIC]
     our_values = group[group['conf'] == our][SELECTED_METRIC]
     both_values = group[group['conf'] == both][SELECTED_METRIC]
-
+    print(group.index[0], len(pre_values), len(our_values), len(both_values))
     # Calculate mean and standard deviation for each configuration
     pre_mean, pre_std = pre_values.mean(), pre_values.std()
     our_mean, our_std = our_values.mean(), our_values.std()
@@ -146,7 +146,8 @@ data = df_to_selected_matic(data)
 format_results = data.groupby(index_cols).apply(get_format_results_agg)
 
 # Convert the results to a DataFrame for easy handling
-format_results_df = pd.DataFrame(format_results.tolist(), columns=['Pretrained Models', 'Our'], index=format_results.index)
+format_results_df = pd.DataFrame(format_results.tolist(), columns=['Pretrained Models', 'Our'],
+                                 index=format_results.index)
 
 # Display the first 20 rows of the results
 format_results_df = format_results_df.reset_index()
@@ -176,7 +177,8 @@ def print_format_latex(data: pd.DataFrame):
     data = data.set_index(index_cols_print)
     len_index = len(index_cols_print)
     col_format = 'l' * len_index + "|" + 'l' * len(data.columns)
-    print(data.to_latex(index=True, escape=False, caption=caption, label=label, column_format=col_format).replace("begin{table}","begin{table}\n\centering"))
+    print(data.to_latex(index=True, escape=False, caption=caption, label=label, column_format=col_format).replace(
+        "begin{table}", "begin{table}\n\centering"))
 
 
 format_results_df.groupby('task_type').apply(print_format_latex)
