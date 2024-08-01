@@ -1,9 +1,9 @@
 #!/bin/sh
 #!/bin/sh
 #SBATCH --time=3-00
-#SBATCH --array=1-70
+#SBATCH --array=1-64
 #SBATCH --mem=16G
-#SBATCH -c 2
+#SBATCH --gres=gpu:A4000:1
 #SBATCH --requeue
 
 args=$(sed -n "$SLURM_ARRAY_TASK_ID"p scripts/all_td.txt)
