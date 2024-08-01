@@ -1,6 +1,11 @@
 import pandas as pd
 from scipy.stats import ttest_ind
 from common.data_types import NAME_TO_UI, MOL_UI_ORDER, PROT_UI_ORDER
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--ablation", type=str, default="NO")
+args = parser.parse_args()
 
 # Configuration Constants
 our = "our"
@@ -82,8 +87,9 @@ def round_num(x):
 def get_format_results_agg(group):
     # Extract values for each configuration
     pre_values = group[group['conf'] == pre][SELECTED_METRIC]
-    our_values = group[group['conf'] == our][SELECTED_METRIC]
-    both_values = group[group['conf'] == both][SELECTED_METRIC]
+    ablation_data = group[group["ablation"] == args.ablation]
+    our_values = ablation_data[ablation_data['conf'] == our][SELECTED_METRIC]
+    both_values = ablation_data[ablation_data['conf'] == both][SELECTED_METRIC]
     print(group.index[0], len(pre_values), len(our_values), len(both_values))
     # Calculate mean and standard deviation for each configuration
     pre_mean, pre_std = pre_values.mean(), pre_values.std()
