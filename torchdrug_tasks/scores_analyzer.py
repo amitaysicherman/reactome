@@ -3,7 +3,7 @@ from scipy.stats import ttest_ind
 from common.data_types import NAME_TO_UI, MOL_UI_ORDER, PROT_UI_ORDER
 import argparse
 
-no = 'no'
+no = 'trip'
 parser = argparse.ArgumentParser()
 parser.add_argument("--ablation", type=int, default=0)
 parser.add_argument("--print_csv", type=int, default=0)
