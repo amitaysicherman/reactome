@@ -69,7 +69,7 @@ def task_to_selected_matic(task):
     elif task.split("_")[0] in name_to_type_dict:
         return type_to_metric[name_to_type(task.split("_")[0])]
     else:
-        return None
+        return "mse"
 
 
 def df_to_selected_matic(df):
