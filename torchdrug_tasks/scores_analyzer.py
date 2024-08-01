@@ -222,9 +222,10 @@ def print_format_latex(data: pd.DataFrame):
     col_format = 'l' * len_index + "|" + 'l' * len(data.columns)
 
     print("----------------\n"*5)
+    print(caption)
+    print("----------------\n" * 5)
 
     if args.print_csv:
-        print(data.to_csv())
         print(data)
     print(data.to_latex(index=True, escape=False, caption=caption, label=label, column_format=col_format).replace(
         "begin{table}", "begin{table}\n\centering"))
