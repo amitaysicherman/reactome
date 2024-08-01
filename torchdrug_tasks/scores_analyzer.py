@@ -194,7 +194,12 @@ if args.ablation == 1:
     format_results_df = format_results_df[filter_bool]
     format_results_df = format_results_df.drop(columns=['protein_emd', 'mol_emd'])
     format_results_df = format_results_df.sort_values(by=['task_type', 'task_name'])
+    format_results_df['task_type'] = format_results_df['task_type'].apply(lambda x: TYPE_TO_NAME[x])
+    format_results_df.set_index(['task_type', 'task_name'], inplace=True)
     print(format_results_df)
+    print(format_results_df.to_latex(index=True, escape=False, caption="Ablation Study Results",
+                                     label="tab:ablation_results", column_format="ll|llll").replace("begin{table}",
+                                                                                                    "begin{table}\n\centering"))
     exit(0)
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
