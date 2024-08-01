@@ -171,7 +171,8 @@ def main(args):
     best_valid_auc = -1e6
     best_test_auc = -1e6
     running_args = {"model": model, "node_index_manager": node_index_manager, "optimizer": optimizer,
-                    "contrastive_loss": contrastive_loss, "all_to_protein": len(args.fuse_all_to_one)}
+                    "contrastive_loss": contrastive_loss, "all_to_protein": len(args.fuse_all_to_one),
+                    'triples': args.fuse_triples}
     no_improve_count = 0
     for epoch in range(args.fuse_epochs):
         _ = run_epoch(**running_args, loader=train_loader, part="train")
