@@ -101,14 +101,13 @@ def get_format_results_agg_ablations(group):
     }
     ablations_means = {ablation: data.mean() for ablation, data in ablations_data.items()}
     ablations_stds = {ablation: data.std() for ablation, data in ablations_data.items()}
-    ablations_p_values = {
-        ablation: ttest_ind(ablations_data[no], ablations_data[ablation], equal_var=False, nan_policy='omit')[1]
-        for ablation in ablations
-    }
-    ablations_significant = {ablation: p_value < 0.05 for ablation, p_value in ablations_p_values.items()}
+    ablations_is_max = {ablation: ablations_means[ablation] == max(ablations_means.values()) for ablation in ablations}
     format_results = []
     for ablation in ablations:
-        format_results.append(f"{round_num(ablations_means[ablation])}({round_num(ablations_stds[ablation])})")
+        format_value = f"{round_num(ablations_means[ablation])}({round_num(ablations_stds[ablation])})"
+        if ablations_is_max[ablation]:
+            format_value = f"\\textbf{{{format_value}}}"
+        format_results.append(format_value)
     return format_results
 
 
