@@ -237,7 +237,7 @@ format_results_df = format_results_df[
     [COLS_TO_NAME['protein_emd'], COLS_TO_NAME['mol_emd'], 'Metric', 'Pretrained Models', 'Our']]
 print(format_results_df)
 print(format_results_df.to_latex(index=True, escape=False, caption="Results", label="tab:results",
-                                 column_format="llll|cc").replace("begin{table}", "begin{table}\n\centering"))
+                                 column_format="llll|c|cc").replace("begin{table}", "begin{table}\n\centering"))
 
 # def print_format_latex(data: pd.DataFrame):
 #     tast_type = data['task_type'].iloc[0]
