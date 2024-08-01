@@ -14,7 +14,7 @@ conf = ['conf']
 metrics_cols = ['mse', 'mae', 'r2', 'pearsonr', 'spearmanr', 'auc', 'auprc', 'acc', 'f1_max']
 all_cols = index_cols + conf + metrics_cols
 conf_cols = ['pre', 'our', 'both']
-type_to_metric = {'M': 'f1_max', 'P': "mse", 'PD': "auprc", 'PDA': "pearsonr", 'PPI': "auprc", 'PPIA': "pearsonr"}
+type_to_metric = {'M': 'acc', 'P': "pearsonr", 'PD': "auprc", 'PDA': "pearsonr", 'PPI': "auprc", 'PPIA': "pearsonr"}
 
 # Mapping from task names to types
 name_to_type_dict = {
