@@ -1,240 +1,240 @@
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m
---task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta
---task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta
---task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m
---task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta
---task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta
---task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_noport
---task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_noport
---task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_noport
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_noport
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_noport
---task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_noport
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_noport
---task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_noport
---task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_noport
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport
---task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_comp
---task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_comp
---task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_comp
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_comp
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_comp
---task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_comp
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_comp
---task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_comp
---task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_comp
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp
---task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_long
---task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_long
---task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_long
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_long
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_long
---task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_long
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_long
---task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_long
---task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_long
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long
---task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_trip
---task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_trip
---task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_trip
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_trip
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_trip
---task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_trip
---task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_trip
---task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_trip
---task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_trip
---task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip
---task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip
---task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip
---task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m
---task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta
---task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta
---task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport
---task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport
---task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport
---task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp
---task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp
---task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp
---task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long
---task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long
---task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long
---task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip
---task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip
---task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip
---task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m
---task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta
---task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta
---task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport
---task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport
---task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport
---task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp
---task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp
---task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp
---task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long
---task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long
---task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long
---task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip
---task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip
---task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip
---task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m
---task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta
---task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta
---task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport
---task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport
---task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport
---task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp
---task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp
---task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp
---task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long
---task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long
---task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long
---task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip
---task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip
---task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip
---task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m
---task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta
---task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta
---task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport
---task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport
---task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport
---task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp
---task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp
---task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp
---task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long
---task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long
---task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long
---task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip
---task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip
---task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m
---task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta
---task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta
---task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m
---task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta
---task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta
---task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_noport
---task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_noport
---task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_noport
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_noport
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_noport
---task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_noport
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_noport
---task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_noport
---task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_noport
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport
---task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_comp
---task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_comp
---task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_comp
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_comp
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_comp
---task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_comp
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_comp
---task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_comp
---task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_comp
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp
---task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_long
---task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_long
---task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_long
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_long
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_long
---task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_long
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_long
---task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_long
---task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_long
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long
---task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_trip
---task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_trip
---task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_trip
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_trip
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_trip
---task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_trip
---task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_trip
---task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_trip
---task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_trip
---task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip
---task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip
---task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip
---task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m
---task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta
---task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m
---task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta
---task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta
---task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m
---task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta
---task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m
---task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta
---task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta
---task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_noport
---task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_noport
---task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_noport
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_noport
---task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_noport
---task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_noport
---task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_noport
---task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_noport
---task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_noport
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport
---task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport
---task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport
---task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_comp
---task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_comp
---task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_comp
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_comp
---task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_comp
---task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_comp
---task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_comp
---task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_comp
---task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_comp
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp
---task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp
---task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp
---task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_long
---task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_long
---task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_long
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_long
---task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_long
---task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_long
---task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_long
---task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_long
---task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_long
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long
---task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long
---task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long
---task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_trip
---task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_trip
---task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_trip
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_trip
---task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_trip
---task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_trip
---task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_trip
---task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_trip
---task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_trip
---task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip
---task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip
---task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m --task_suffix
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta --task_suffix
+--task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta --task_suffix
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m --task_suffix
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta --task_suffix
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta --task_suffix
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m --task_suffix
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta --task_suffix
+--task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta --task_suffix
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m --task_suffix
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta --task_suffix
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta --task_suffix
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_noport --task_suffix _noport
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_noport --task_suffix _noport
+--task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_noport --task_suffix _noport
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_noport --task_suffix _noport
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_noport --task_suffix _noport
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_noport --task_suffix _noport
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_noport --task_suffix _noport
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_noport --task_suffix _noport
+--task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_noport --task_suffix _noport
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport --task_suffix _noport
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport --task_suffix _noport
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport --task_suffix _noport
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_comp --task_suffix _comp
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_comp --task_suffix _comp
+--task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_comp --task_suffix _comp
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_comp --task_suffix _comp
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_comp --task_suffix _comp
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_comp --task_suffix _comp
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_comp --task_suffix _comp
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_comp --task_suffix _comp
+--task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_comp --task_suffix _comp
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp --task_suffix _comp
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp --task_suffix _comp
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp --task_suffix _comp
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_long --task_suffix _long
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_long --task_suffix _long
+--task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_long --task_suffix _long
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_long --task_suffix _long
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_long --task_suffix _long
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_long --task_suffix _long
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_long --task_suffix _long
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_long --task_suffix _long
+--task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_long --task_suffix _long
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long --task_suffix _long
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long --task_suffix _long
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long --task_suffix _long
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_trip --task_suffix _trip
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_trip --task_suffix _trip
+--task_name BindingDB --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_trip --task_suffix _trip
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_trip --task_suffix _trip
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_trip --task_suffix _trip
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_trip --task_suffix _trip
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_trip --task_suffix _trip
+--task_name BindingDB --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_trip --task_suffix _trip
+--task_name BindingDB --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_trip --task_suffix _trip
+--task_name BindingDB --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip --task_suffix _trip
+--task_name BindingDB --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip --task_suffix _trip
+--task_name BindingDB --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip --task_suffix _trip
+--task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m --task_suffix
+--task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta --task_suffix
+--task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta --task_suffix
+--task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport --task_suffix _noport
+--task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport --task_suffix _noport
+--task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport --task_suffix _noport
+--task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp --task_suffix _comp
+--task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp --task_suffix _comp
+--task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp --task_suffix _comp
+--task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long --task_suffix _long
+--task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long --task_suffix _long
+--task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long --task_suffix _long
+--task_name BACE --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip --task_suffix _trip
+--task_name BACE --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip --task_suffix _trip
+--task_name BACE --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip --task_suffix _trip
+--task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m --task_suffix
+--task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta --task_suffix
+--task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta --task_suffix
+--task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport --task_suffix _noport
+--task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport --task_suffix _noport
+--task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport --task_suffix _noport
+--task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp --task_suffix _comp
+--task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp --task_suffix _comp
+--task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp --task_suffix _comp
+--task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long --task_suffix _long
+--task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long --task_suffix _long
+--task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long --task_suffix _long
+--task_name BBBP --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip --task_suffix _trip
+--task_name BBBP --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip --task_suffix _trip
+--task_name BBBP --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip --task_suffix _trip
+--task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m --task_suffix
+--task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta --task_suffix
+--task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta --task_suffix
+--task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport --task_suffix _noport
+--task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport --task_suffix _noport
+--task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport --task_suffix _noport
+--task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp --task_suffix _comp
+--task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp --task_suffix _comp
+--task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp --task_suffix _comp
+--task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long --task_suffix _long
+--task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long --task_suffix _long
+--task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long --task_suffix _long
+--task_name ClinTox --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip --task_suffix _trip
+--task_name ClinTox --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip --task_suffix _trip
+--task_name ClinTox --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip --task_suffix _trip
+--task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m --task_suffix
+--task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta --task_suffix
+--task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta --task_suffix
+--task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport --task_suffix _noport
+--task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport --task_suffix _noport
+--task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport --task_suffix _noport
+--task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp --task_suffix _comp
+--task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp --task_suffix _comp
+--task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp --task_suffix _comp
+--task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long --task_suffix _long
+--task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long --task_suffix _long
+--task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long --task_suffix _long
+--task_name SIDER --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip --task_suffix _trip
+--task_name SIDER --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip --task_suffix _trip
+--task_name SIDER --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip --task_suffix _trip
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m --task_suffix
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta --task_suffix
+--task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta --task_suffix
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m --task_suffix
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta --task_suffix
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta --task_suffix
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m --task_suffix
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta --task_suffix
+--task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta --task_suffix
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m --task_suffix
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta --task_suffix
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta --task_suffix
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_noport --task_suffix _noport
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_noport --task_suffix _noport
+--task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_noport --task_suffix _noport
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_noport --task_suffix _noport
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_noport --task_suffix _noport
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_noport --task_suffix _noport
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_noport --task_suffix _noport
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_noport --task_suffix _noport
+--task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_noport --task_suffix _noport
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport --task_suffix _noport
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport --task_suffix _noport
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport --task_suffix _noport
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_comp --task_suffix _comp
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_comp --task_suffix _comp
+--task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_comp --task_suffix _comp
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_comp --task_suffix _comp
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_comp --task_suffix _comp
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_comp --task_suffix _comp
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_comp --task_suffix _comp
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_comp --task_suffix _comp
+--task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_comp --task_suffix _comp
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp --task_suffix _comp
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp --task_suffix _comp
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp --task_suffix _comp
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_long --task_suffix _long
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_long --task_suffix _long
+--task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_long --task_suffix _long
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_long --task_suffix _long
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_long --task_suffix _long
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_long --task_suffix _long
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_long --task_suffix _long
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_long --task_suffix _long
+--task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_long --task_suffix _long
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long --task_suffix _long
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long --task_suffix _long
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long --task_suffix _long
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_trip --task_suffix _trip
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_trip --task_suffix _trip
+--task_name DrugBank --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_trip --task_suffix _trip
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_trip --task_suffix _trip
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_trip --task_suffix _trip
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_trip --task_suffix _trip
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_trip --task_suffix _trip
+--task_name DrugBank --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_trip --task_suffix _trip
+--task_name DrugBank --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_trip --task_suffix _trip
+--task_name DrugBank --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip --task_suffix _trip
+--task_name DrugBank --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip --task_suffix _trip
+--task_name DrugBank --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip --task_suffix _trip
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m --task_suffix
+--task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta --task_suffix
+--task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta --task_suffix
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m --task_suffix
+--task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta --task_suffix
+--task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta --task_suffix
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m --task_suffix
+--task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta --task_suffix
+--task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta --task_suffix
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m --task_suffix
+--task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta --task_suffix
+--task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta --task_suffix
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_noport --task_suffix _noport
+--task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_noport --task_suffix _noport
+--task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_noport --task_suffix _noport
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_noport --task_suffix _noport
+--task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_noport --task_suffix _noport
+--task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_noport --task_suffix _noport
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_noport --task_suffix _noport
+--task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_noport --task_suffix _noport
+--task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_noport --task_suffix _noport
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_noport --task_suffix _noport
+--task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_noport --task_suffix _noport
+--task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_noport --task_suffix _noport
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_comp --task_suffix _comp
+--task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_comp --task_suffix _comp
+--task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_comp --task_suffix _comp
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_comp --task_suffix _comp
+--task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_comp --task_suffix _comp
+--task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_comp --task_suffix _comp
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_comp --task_suffix _comp
+--task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_comp --task_suffix _comp
+--task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_comp --task_suffix _comp
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_comp --task_suffix _comp
+--task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_comp --task_suffix _comp
+--task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_comp --task_suffix _comp
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_long --task_suffix _long
+--task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_long --task_suffix _long
+--task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_long --task_suffix _long
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_long --task_suffix _long
+--task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_long --task_suffix _long
+--task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_long --task_suffix _long
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_long --task_suffix _long
+--task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_long --task_suffix _long
+--task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_long --task_suffix _long
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_long --task_suffix _long
+--task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_long --task_suffix _long
+--task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_long --task_suffix _long
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM2 --name ESM2_pebchem10m_trip --task_suffix _trip
+--task_name Davis --mol_emd chemberta --protein_emd ESM2 --name ESM2_chemberta_trip --task_suffix _trip
+--task_name Davis --mol_emd roberta --protein_emd ESM2 --name ESM2_roberta_trip --task_suffix _trip
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBert-BFD --name ProtBert-BFD_pebchem10m_trip --task_suffix _trip
+--task_name Davis --mol_emd chemberta --protein_emd ProtBert-BFD --name ProtBert-BFD_chemberta_trip --task_suffix _trip
+--task_name Davis --mol_emd roberta --protein_emd ProtBert-BFD --name ProtBert-BFD_roberta_trip --task_suffix _trip
+--task_name Davis --mol_emd pebchem10m --protein_emd ESM-1B --name ESM-1B_pebchem10m_trip --task_suffix _trip
+--task_name Davis --mol_emd chemberta --protein_emd ESM-1B --name ESM-1B_chemberta_trip --task_suffix _trip
+--task_name Davis --mol_emd roberta --protein_emd ESM-1B --name ESM-1B_roberta_trip --task_suffix _trip
+--task_name Davis --mol_emd pebchem10m --protein_emd ProtBertT5-xl --name ProtBertT5-xl_pebchem10m_trip --task_suffix _trip
+--task_name Davis --mol_emd chemberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_chemberta_trip --task_suffix _trip
+--task_name Davis --mol_emd roberta --protein_emd ProtBertT5-xl --name ProtBertT5-xl_roberta_trip --task_suffix _trip
