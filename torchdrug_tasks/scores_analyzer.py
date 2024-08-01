@@ -69,7 +69,7 @@ def task_to_selected_matic(task):
     elif task.split("_")[0] in name_to_type_dict:
         return type_to_metric[name_to_type(task.split("_")[0])]
     else:
-        return "mse"
+        return None
 
 
 def df_to_selected_matic(df):
@@ -220,8 +220,8 @@ if args.ablation == 1:
 
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
-format_results_df['task_type'] = format_results_df['task_type'].apply(lambda x: TYPE_TO_NAME[x])
 format_results_df['Metric'] = format_results_df['task_type'].apply(lambda x:METRIC_TO_NAME[task_to_selected_matic(x)])
+format_results_df['task_type'] = format_results_df['task_type'].apply(lambda x: TYPE_TO_NAME[x])
 format_results_df = format_results_df.sort_values(by=['task_type', 'task_name', 'protein_emd', 'mol_emd'])
 for i, row in format_results_df.iterrows():
     if row['task_type'] in [TYPE_TO_NAME[x] for x in ["P", "PPI", "PPIA"]]:
