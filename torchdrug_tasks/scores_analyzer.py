@@ -195,6 +195,7 @@ if args.ablation == 1:
     format_results_df = format_results_df[filter_bool]
     format_results_df = format_results_df.drop(columns=['protein_emd', 'mol_emd'])
     format_results_df = format_results_df.sort_values(by=['task_type', 'task_name'])
+    print(format_results_df)
     exit(0)
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
