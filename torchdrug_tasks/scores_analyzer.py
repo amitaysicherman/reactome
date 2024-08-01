@@ -127,7 +127,7 @@ def get_format_results_agg(group):
 
 
 # Load data
-data = pd.read_csv("data/scores/torchdrug.csv")
+data = pd.read_csv("data/scores/torchdrug.csv",on_bad_lines='warn')
 data = data.dropna()
 data = df_to_selected_matic(data)
 
