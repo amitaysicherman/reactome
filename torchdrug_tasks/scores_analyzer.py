@@ -38,10 +38,10 @@ name_to_type_dict = {
 }
 
 TYPE_TO_NAME = {
-    'P': 'Protein Function Prediction', 'PPI': 'Protein-Protein Interaction Prediction',
-    "PPIA": 'Protein-Protein Interaction Affinity Prediction',
-    'M': 'Molecule Property Prediction', 'PD': 'Protein-Drug Interaction Prediction',
-    "PDA": 'Protein-Drug Interaction Affinity Prediction'
+    'P': 'Protein Function', 'PPI': 'Protein-Protein Interaction',
+    "PPIA": 'Protein-Protein Interaction Affinity',
+    'M': 'Molecule Property', 'PD': 'Protein-Drug Interaction',
+    "PDA": 'Protein-Drug Interaction Affinity'
 }
 METRIC_TO_NAME = {
     'mse': 'Mean Squared Error', 'mae': 'Mean Absolute Error', 'r2': 'R2', 'pearsonr': 'Pearson Correlation',
