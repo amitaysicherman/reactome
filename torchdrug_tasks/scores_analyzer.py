@@ -10,7 +10,7 @@ parser.add_argument("--print_csv", type=int, default=0)
 args = parser.parse_args()
 
 no = 'trip' if args.ablation == 0 else 'no'
-ablations = ['trip', no, 'noport', 'long', 'comp']
+ablations = ['trip', no, 'noport', 'long']
 
 # Configuration Constants
 our = "our"
