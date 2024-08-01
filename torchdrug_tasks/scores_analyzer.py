@@ -5,6 +5,8 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--ablation", type=str, default="NO")
+parser.add_argument("--print_csv", type=int, default=0)
+
 args = parser.parse_args()
 
 # Configuration Constants
@@ -178,6 +180,9 @@ def print_format_latex(data: pd.DataFrame):
     data = data.set_index(index_cols_print)
     len_index = len(index_cols_print)
     col_format = 'l' * len_index + "|" + 'l' * len(data.columns)
+    if args.print_csv:
+        print(data.to_csv())
+        print(data)
     print(data.to_latex(index=True, escape=False, caption=caption, label=label, column_format=col_format).replace(
         "begin{table}", "begin{table}\n\centering"))
 
