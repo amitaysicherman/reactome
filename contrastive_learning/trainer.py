@@ -149,9 +149,9 @@ def main(args):
         train_reactions = train_reactions + validation_reactions + test_reaction
         validation_reactions = []
         test_reaction = []
-    train_loader = get_loader(train_reactions, node_index_manager, args.fuse_batch_size)
-    valid_loader = get_loader(validation_reactions, node_index_manager, args.fuse_batch_size)
-    test_loader = get_loader(test_reaction, node_index_manager, args.fuse_batch_size)
+    train_loader = get_loader(train_reactions, node_index_manager, args.fuse_batch_size, args.fuse_triples)
+    valid_loader = get_loader(validation_reactions, node_index_manager, args.fuse_batch_size, args.fuse_triples)
+    test_loader = get_loader(test_reaction, node_index_manager, args.fuse_batch_size, args.fuse_triples)
     type_to_vec_dim = get_type_to_vec_dim(args.protein_emd)
 
     model = build_models(type_to_vec_dim, args.fuse_all_to_one, args.fuse_output_dim, args.fuse_n_layers,
