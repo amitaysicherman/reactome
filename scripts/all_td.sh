@@ -1,7 +1,7 @@
 #!/bin/sh
 #!/bin/sh
 #SBATCH --time=3-00
-#SBATCH --array=1-240
+#SBATCH --array=1-256
 #SBATCH --mem=16G
 #SBATCH --requeue
 
