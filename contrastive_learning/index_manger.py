@@ -166,7 +166,7 @@ class NodesIndexManager:
 
 
 def get_from_args(args):
-    return NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.fuse_name,
+    return NodesIndexManager(pretrained_method=args.gnn_pretrained_method, fuse_name=args.name,
                              prot_emd_type=args.protein_emd,
                              mol_emd_type=args.mol_emd)
 

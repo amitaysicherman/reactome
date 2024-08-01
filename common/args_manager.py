@@ -100,7 +100,7 @@ def get_args():
 
     args = parser.parse_args()
     if args.dp_fuse_base == "":
-        args.dp_fuse_base = f'fuse2_{args.name}'
+        args.dp_fuse_base = f'{args.name}'
     if args.fuse_all_to_one == "0":
         args.fuse_all_to_one = ""
     if args.fuse_name == "" or args.fuse_name == "0":
