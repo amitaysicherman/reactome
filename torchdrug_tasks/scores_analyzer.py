@@ -1,14 +1,16 @@
 import pandas as pd
 from scipy.stats import ttest_ind
-from common.data_types import NAME_TO_UI, MOL_UI_ORDER, PROT_UI_ORDER
+from common.data_types import NAME_TO_UI, MOL_UI_ORDER, PROT_UI_ORDER, ESM_1B, PEBCHEM10M
 import argparse
 
-no = 'trip'
 parser = argparse.ArgumentParser()
 parser.add_argument("--ablation", type=int, default=0)
 parser.add_argument("--print_csv", type=int, default=0)
-ablations = [no, 'noport', 'long', 'comp', 'trip']
+
 args = parser.parse_args()
+
+no = 'trip' if args.ablation == 0 else 'no'
+ablations = [no, 'noport', 'long', 'comp', 'trip']
 
 # Configuration Constants
 our = "our"
@@ -16,6 +18,8 @@ both = "both"
 pre = "pre"
 SELECTED_METRIC = "selected_metric"
 ablation_col = "ablation"
+ablation_config_prot = ESM_1B
+ablation_config_mol = PEBCHEM10M
 
 # Define columns and mappings
 index_cols = ['task_name', 'protein_emd', 'mol_emd']
@@ -109,7 +113,7 @@ def get_format_results_agg_ablations(group):
 
 
 def get_format_results_agg_no_ablations(group):
-    group=group[group[ablation_col]==no]
+    group = group[group[ablation_col] == no]
     pre_values = group[group['conf'] == pre][SELECTED_METRIC]
     our_values = group[group['conf'] == our][SELECTED_METRIC]
     both_values = group[group['conf'] == both][SELECTED_METRIC]
@@ -177,12 +181,19 @@ columns_names = ['Pretrained Models', 'Our'] if args.ablation == 0 else ablation
 format_results_df = pd.DataFrame(format_results.tolist(), columns=columns_names,
                                  index=format_results.index)
 
-# Display the first 20 rows of the results
+if args.ablation == 1:
+    format_results = format_results_df[format_results_df['protein_emd'] == ablation_config_prot]
+    format_results = format_results[format_results['mol_emd'] == ablation_config_mol]
+
 format_results_df = format_results_df.reset_index()
 format_results_df['task_type'] = format_results_df['task_name'].apply(name_to_type)
 format_results_df['protein_emd'] = format_results_df['protein_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df['mol_emd'] = format_results_df['mol_emd'].apply(lambda x: NAME_TO_UI[x])
 format_results_df = format_results_df.sort_values(by=['task_type', 'task_name', 'protein_emd', 'mol_emd'])
+
+if args.ablation == 1:
+    print(format_results_df)
+    exit(0)
 
 
 def print_format_latex(data: pd.DataFrame):
