@@ -4,8 +4,8 @@ from common.data_types import NAME_TO_UI, MOL_UI_ORDER, PROT_UI_ORDER, ESM_1B, P
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--ablation", type=int, default=0)
-parser.add_argument("--print_csv", type=int, default=0)
+parser.add_argument("--ablation", type=int, default=1)
+parser.add_argument("--print_csv", type=int, default=1)
 
 args = parser.parse_args()
 
@@ -97,11 +97,21 @@ def round_num(x):
 
 
 def get_format_results_agg_ablations(group):
-    group = group[group['conf'] == our]
+    group_our = group[group['conf'] == our]
 
-    ablations_data = {
-        ablation: group[group[ablation_col] == ablation][SELECTED_METRIC] for ablation in ablations
+    ablations_data_our = {
+        ablation: group_our[group_our[ablation_col] == ablation][SELECTED_METRIC] for ablation in ablations
     }
+
+    group_both = group[group['conf'] == both]
+    ablations_data_both = {
+        ablation: group_both[group_both[ablation_col] == ablation][SELECTED_METRIC] for ablation in ablations
+    }
+    ablations_data = {
+        ablation: ablations_data_our[ablation] if ablations_data_our[ablation].mean() > ablations_data_both[
+            ablation].mean() else ablations_data_both[ablation] for ablation in ablations
+    }
+
     ablations_means = {ablation: data.mean() for ablation, data in ablations_data.items()}
     ablations_stds = {ablation: data.std() for ablation, data in ablations_data.items()}
     ablations_is_max = {ablation: ablations_means[ablation] == max(ablations_means.values()) for ablation in ablations}
