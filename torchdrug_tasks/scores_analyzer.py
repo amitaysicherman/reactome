@@ -200,15 +200,15 @@ format_results_df['task_type'] = format_results_df['task_name'].apply(name_to_ty
 
 if args.ablation == 1:
     filter_bool = []
-    for i, row in format_results_df.iterrows():
-        if row['task_type'] in ["P", "PPI", "PPIA"]:
-            filter_bool.append(row['protein_emd'] == ablation_config_prot)
-        elif row['task_type'] in ["M"]:
-            filter_bool.append(row['mol_emd'] == ablation_config_mol)
-        else:
-            filter_bool.append(row['protein_emd'] == ablation_config_prot and row['mol_emd'] == ablation_config_mol)
-    format_results_df = format_results_df[filter_bool]
-    format_results_df = format_results_df.drop(columns=['protein_emd', 'mol_emd'])
+    # for i, row in format_results_df.iterrows():
+    #     if row['task_type'] in ["P", "PPI", "PPIA"]:
+    #         filter_bool.append(row['protein_emd'] == ablation_config_prot)
+    #     elif row['task_type'] in ["M"]:
+    #         filter_bool.append(row['mol_emd'] == ablation_config_mol)
+    #     else:
+    #         filter_bool.append(row['protein_emd'] == ablation_config_prot and row['mol_emd'] == ablation_config_mol)
+    # format_results_df = format_results_df[filter_bool]
+    # format_results_df = format_results_df.drop(columns=['protein_emd', 'mol_emd'])
     format_results_df = format_results_df.sort_values(by=['task_type', 'task_name'])
     format_results_df['task_type'] = format_results_df['task_type'].apply(lambda x: TYPE_TO_NAME[x])
     print(format_results_df)
